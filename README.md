@@ -43,4 +43,10 @@ gh repo create chronicity --private
 export GEMINI_API_KEY=<YOUR_API_KEY_HERE>
 # source shell
 source ~/.zshrc
+# set upstream remote origin
+git remote add origin https://github.com/carecodeconnect/chronicity
+# make initial commit
+git add .
+git commit -m "Initial commit"
+git push --set-upstream origin main
 ```
