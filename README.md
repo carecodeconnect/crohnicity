@@ -30,6 +30,17 @@ Then I got Google GenAI Python SDK working to test my API key works before tryin
 
 - [Gemini API Quickstart](https://ai.google.dev/gemini-api/docs/quickstart?_gl=1*1spt4le*_up*MQ..*_ga*MjAyMjcxMjk5MC4xNzgxNzA2ODEy*_ga_P1DBVKWT6V*czE3ODE3MDY4MTEkbzEkZzAkdDE3ODE3MDY4MTEkajYwJGwwJGgxMzYxOTQ0ODQy)
 
+
+I enjoy using `uv` for Python environment/dependency management and wanted to try Ruff for linting (instead of Black) and Py for type checking, to complete my fast Rust-coded dev tool chain along with using `pytest` for unit testing as requested.
+
+- [uv](https://docs.astral.sh/uv/)
+
+- [ruff](https://astral.sh/ruff)
+
+- [ty](https://docs.astral.sh/ty/)
+
+- [pytest](https://docs.pytest.org/en/stable/)
+
 ```python
 # initialise the uv venv
 uv sync
