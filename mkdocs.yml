@@ -1,0 +1,25 @@
+site_name: Chronicity
+docs_dir: docs
+
+# Default MkDocs theme on purpose — simplest, no extra dependency. Swap in mkdocs-material later if wanted.
+nav:
+  - Home: index.md
+  - Schema (v0.2): SCHEMA.md
+  - Implementation TODO: TODO.md
+  - Questions (CAIO): QUESTIONS.md
+  - Setup: SETUP.md
+  - API reference:
+      - referral_pathway_analysis: api/referral_pathway_analysis.md
+      - tests: api/test_referral_pathway_analysis.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src, tests]
+          options:
+            docstring_style: google
+            show_source: false
+            show_root_heading: true
+            heading_level: 2

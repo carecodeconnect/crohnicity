@@ -11,3 +11,6 @@ wheels/
 
 # Gemini Google API key source file
 .env
+
+# MkDocs build output
+site/

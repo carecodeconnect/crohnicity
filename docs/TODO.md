@@ -44,3 +44,37 @@ Pin down where each kind of validation belongs, document the decision, and back 
   after aggregating into the business answers.
 - [ ] Write tests targeting whichever boundary we choose, so the gate is real rather than
   aspirational.
+
+## Reference data — canonical lookup lists
+
+- [ ] **Branded biologics registry.** Extract the biologic names mentioned across *all*
+  transcripts (Remicade, Humira, Stelara, Entyvio, …) into a curated ground-truth list of
+  canonical brand names — plus their generic/INN equivalents (infliximab, adalimumab,
+  ustekinumab, vedolizumab) and the generic term "biologic". A single model/prompt searches
+  each transcript against this list and matches/normalises mentions to populate
+  `biologic_type`. Keeps extraction consistent and auditable instead of free-text.
+- [ ] **Referral-pathway canonical points + journey types.** Build a controlled vocabulary of
+  canonical journey events (e.g. `symptom_onset`, `misdiagnosis`, `specialist_referral`,
+  `biologic_taken`, `insurance_denial`, `loss_of_response`) and higher-level journey-type
+  categories to classify the circular/contradictory pathways. Cross-cutting pattern-finding
+  across journeys will need LLM assistance; then link journey types to the other column
+  values. This is its own work project — see the `referral_pathway` notes in `docs/SCHEMA.md`.
+- [ ] **Domain-expert validation** of the consolidated `referral_pathway` phase vocabulary — a
+  clinician must sign off on the canonical phases and their merges before they drive analysis,
+  especially clinically loaded ones like `loss_of_response` (primary non-response vs. secondary
+  loss of response).
+
+## Orchestration — Dagster
+
+- [ ] Wire the pipeline with **Dagster** (declared but not yet used). Run
+  `src/referral_pathway_analysis.py` as the **final step** of the workflow — after extraction
+  and aggregation — so the phase/transition table and the interactive journey graph are
+  regenerated from the latest pathways on every run. (Note: the script currently uses a
+  hardcoded `PATHWAYS` dict; wiring it into Dagster means switching it to read the
+  `referral_pathway` column from the ground-truth/extracted data.)
+
+## Packaging — Docker
+
+- [ ] After the `src/` refactor, add a **Dockerfile** producing a **small image** (e.g.
+  `python:3.14-slim` + `uv`), so the whole pipeline can be run and tested independently of the
+  local environment and its dependencies.
