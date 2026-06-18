@@ -61,3 +61,7 @@ git add .
 git commit -m "Initial commit"
 git push --set-upstream origin main
 ```
+
+- When using Claude Code, I set the [output mode](https://code.claude.com/docs/en/output-styles) to "Explanatory" mode using `/config`. This mode "Provides educational “Insights” in between helping you complete software engineering tasks. Helps you understand implementation choices and codebase patterns." Rather than CC writing the code, I copied out the code snippets by hand, so I could understand the implications of each step. 
+
+- I exported my CC chat history using the `/export` command to show the prompting strategies I used in Explanatory mode.
