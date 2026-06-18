@@ -10,4 +10,4 @@ wheels/
 .venv
 
 # Gemini Google API key source file
-config.env
+.env
