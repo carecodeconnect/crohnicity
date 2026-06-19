@@ -78,3 +78,10 @@ Pin down where each kind of validation belongs, document the decision, and back 
 - [ ] After the `src/` refactor, add a **Dockerfile** producing a **small image** (e.g.
   `python:3.14-slim` + `uv`), so the whole pipeline can be run and tested independently of the
   local environment and its dependencies.
+
+## Polish
+
+- [ ] **Duplicate title in the pathway graphs / MkDocs** — the per-case graph heading renders
+  twice (e.g. `Referral pathway: P005` / `Referral pathway: P005`), likely the pyvis `heading`
+  argument doubling up. De-duplicate in `src/referral_pathway_analysis.py` (`render`) and check
+  the docs page.

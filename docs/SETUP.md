@@ -67,3 +67,14 @@ brew install graphviz
 - When using Claude Code, I set the [output mode](https://code.claude.com/docs/en/output-styles) to "Explanatory" mode using `/config`. This mode "Provides educational “Insights” in between helping you complete software engineering tasks. Helps you understand implementation choices and codebase patterns." Rather than CC writing the code, I copied out the code snippets by hand, so I could understand the implications of each step. 
 
 - I exported my CC chat history using the `/export` command to show the prompting strategies I used in Explanatory mode.
+
+## Code review
+
+I run Claude Code in an integrated terminal inside VS Code, in "Explanatory" output style (set
+in `.claude/settings.json`). As CC makes each change it surfaces as a **diff in a VS Code
+window**, and I review that diff before accepting it — so every update is checked against my
+intent before it lands. The Explanatory "Insights" explain *why* each change was made, which
+makes the diff review faster and more deliberate.
+
+The one-off `.py` transformation scripts CC produced (the ground-truth spreadsheet builders)
+are kept in `sandbox/` as a record of the diffs I reviewed.

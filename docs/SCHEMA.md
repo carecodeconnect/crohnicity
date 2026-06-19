@@ -40,8 +40,10 @@ of labels for evaluating the extraction pipeline.
 ## Controlled vocabularies
 
 - **Booleans** (`to_review`, `churn`, `incomplete_journey`, `biologic_prescribed`, `biologic_taken`, `biologic_not_mentioned`): `TRUE`, `FALSE`
-- **`reasons_for_biologic_prescribed`**: `DOCTOR_CHOICE`, `PATIENT_FEARS`, `COST`, `ACCESS`, `OTHER`
-- **`reasons_for_biologic_not_taken`**: `NOT_MENTIONED`, `EXPLICIT_DENIAL`, `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`, `JOURNEY_CUT_OFF`, `UNKNOWN`, `OTHER`
+- **`reasons_for_biologic_prescribed`**: `DOCTOR_CHOICE`, `PATIENT_FEARS`, `COST`, `ACCESS`, `NOT_APPLICABLE`, `OTHER`
+- **`reasons_for_biologic_not_taken`**: `NOT_MENTIONED`, `EXPLICIT_DENIAL`, `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`, `CONTRAINDICATION`, `DEFERRED`, `JOURNEY_CUT_OFF`, `UNKNOWN`, `NOT_APPLICABLE`, `OTHER`
+  - *`CONTRAINDICATION` = medically can't be given (e.g. COPD risk); `DEFERRED` = appropriate but postponed (awaiting surgery recovery / timing).*
+  - *`NOT_APPLICABLE` (in both reasons enums) = the field genuinely doesn't apply (no biologic prescribed, or it was taken) — distinct from a blank cell, which means "not yet annotated".*
   - *(`PATIENT_FEARS` belongs here — fear of needles/side-effects is a reason a biologic isn't taken, not prescribed. `INSURANCE_PROBLEMS` = denial/auth/tier; `COST` = affordability even when covered.)*
 - **`treatment_outcome`** (and `TreatmentRecord.outcome`): `SUCCESS`, `FAILED`, `PARTIAL`, `AMBIGUOUS`, `ONGOING`, `UNKNOWN`
   - *(`AMBIGUOUS` = stated but mixed/contradictory; `ONGOING` = unresolved/still escalating; `UNKNOWN` = not stated.)*
@@ -98,6 +100,7 @@ class ReasonPrescribed(str, Enum):
     PATIENT_FEARS = "PATIENT_FEARS"
     COST = "COST"
     ACCESS = "ACCESS"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
     OTHER = "OTHER"
 
 class ReasonNotTaken(str, Enum):     # renamed from ReasonDenied; expanded
@@ -106,8 +109,11 @@ class ReasonNotTaken(str, Enum):     # renamed from ReasonDenied; expanded
     INSURANCE_PROBLEMS = "INSURANCE_PROBLEMS"
     COST = "COST"
     PATIENT_FEARS = "PATIENT_FEARS"
+    CONTRAINDICATION = "CONTRAINDICATION"
+    DEFERRED = "DEFERRED"
     JOURNEY_CUT_OFF = "JOURNEY_CUT_OFF"
     UNKNOWN = "UNKNOWN"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
     OTHER = "OTHER"
 
 class ComorbidCondition(str, Enum):  # independent coexisting diagnoses; extend as found
