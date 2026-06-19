@@ -5,6 +5,6 @@ set -u
 fail=0
 uv run ruff check src tests          || fail=1
 uv run ruff format --check src tests || fail=1
-uv run ty check                      || fail=1
+uv run ty check src tests            || fail=1   # exclude notebooks/ (prototyping mirrors)
 uv run pytest -q                     || fail=1
 exit "$fail"

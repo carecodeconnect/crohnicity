@@ -51,3 +51,15 @@ Not every transcript says "biologic" — many only name a branded drug (e.g. *Hu
 whether a biologic was used, so some `biologic_*` labels may be unreliable. We need an
 authoritative list of biologic **brand + generic** names to detect/normalise reliably (relates to
 the branded-biologics registry in `docs/TODO.md`).
+
+## 7. PII / GDPR handling for production data
+
+The current `data/in/interviews.json` looks **synthetic**, so it's kept in the (private) repo.
+Before any **real** patient data enters the pipeline we need a decision on:
+
+- Is the production interview data **personal data** under GDPR (likely special-category health
+  data)? If so it must not sit in git or in `data/out/` artefacts.
+- Lawful basis, retention period, and **de-identification / pseudonymisation** before transcripts
+  are sent to an external LLM (Gemini).
+- Where production inputs/outputs should live (secure storage, not version control), and what the
+  **data-processing agreement** with the model provider must cover.

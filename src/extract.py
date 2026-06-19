@@ -32,6 +32,7 @@ MODEL = "gemini/gemini-2.5-flash-lite"
 # (e.g. the notebook runs from notebooks/, not the repo root).
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "data" / "out"  # predictions
+TESTS_OUT = OUT_DIR / "tests"  # synthetic/test outputs, not production
 LOG_DIR = ROOT / "logs"  # logs live at the project root, separate from data outputs
 
 # loguru file sink: persist each run + failures (stderr stays on by default)
@@ -46,23 +47,34 @@ SYSTEM_PROMPT = (
 )
 
 
-def extract(transcript: str, patient_id: str) -> PatientLabels:
+# Log unexpected failures (traceback) + re-raise; 503 is handled cleanly below.
+@logger.catch(exclude=litellm.ServiceUnavailableError, reraise=True)
+def extract(transcript: str, patient_id: str, out_dir: Path = OUT_DIR) -> PatientLabels:
     """Extract one patient's labels from their interview transcript via Gemini (a prediction)."""
     load_dotenv()  # GEMINI_API_KEY -> env; litellm reads it for the gemini/ provider
-    response = litellm.completion(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"patient_id: {patient_id}\n\n{transcript}"},
-        ],
-        response_format={
-            "type": "json_object",
-            "response_schema": PatientLabels.model_json_schema(),
-            "enforce_validation": True,
-        },
-    )
+    try:
+        response = litellm.completion(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": f"patient_id: {patient_id}\n\n{transcript}",
+                },
+            ],
+            response_format={
+                "type": "json_object",
+                "response_schema": PatientLabels.model_json_schema(),
+                "enforce_validation": True,
+            },
+        )
+    except litellm.ServiceUnavailableError:
+        # Gemini 503 (model busy): transient — clean message, not a stack dump.
+        logger.error("Gemini 503 (model busy) for {} — retry later", patient_id)
+        raise
     labels = PatientLabels.model_validate_json(response.choices[0].message.content)
-    save(labels)
+    path = save(labels, out_dir)
+    logger.info("extracted {} -> {}", patient_id, path)
     return labels
 
 

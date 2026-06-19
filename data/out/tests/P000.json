@@ -1,17 +1,17 @@
 {
   "patient_id": "P000",
-  "churn": null,
-  "incomplete_journey": null,
+  "churn": false,
+  "incomplete_journey": false,
   "demographics": {
-    "gender": null,
-    "age": null
+    "gender": "male",
+    "age": 38
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
-  "reasons_for_biologic_prescribed": null,
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [],
   "treatment_records": [
     {
@@ -34,6 +34,15 @@
     }
   ],
   "treatment_outcome": "SUCCESS",
-  "referral_pathway": [],
-  "evidence_notes": null
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "remission"
+  ],
+  "evidence_notes": "The patient reports being in remission due to Humira."
 }

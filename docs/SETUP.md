@@ -78,5 +78,55 @@ makes the diff review faster and more deliberate. Changes are kept **small and s
 per commit** — minimal, concise edits, not giant PR-style batches — so each commit reads as a
 diff I can review easily.
 
+### Reproducing the in-editor diff workflow
+
+So edits show as diffs in the **editor panes** (not just the terminal):
+
+1. **VS Code ≥ 1.98** with the official **Claude Code** extension — publisher **Anthropic**, id
+   [`anthropic.claude-code`](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
+   (Extensions view → search "Claude Code" → Install).
+2. Install the **standalone CLI** so `claude` is on `PATH` — the extension bundles its own CLI for
+   the chat panel but does **not** add `claude` to the terminal.
+3. Run **`claude` in VS Code's integrated terminal** (`` Ctrl+` `` / `` Cmd+` ``); it auto-connects
+   to the IDE. From an external terminal, run **`/ide`** to connect.
+
+No "diff tool" setting is involved: an active extension runs a local **`ide` MCP server**, and the
+connected CLI uses it to open every edit in VS Code's native diff viewer. The only committed repo
+setting is `"outputStyle": "Explanatory"` in `.claude/settings.json`.
+
 The one-off `.py` transformation scripts CC produced (the ground-truth spreadsheet builders)
 are kept in `sandbox/` as a record of the diffs I reviewed.
+
+## Notebooks — jupytext pairing
+
+`.ipynb` JSON doesn't diff cleanly in VS Code, so each notebook is **paired with a `py:percent`
+script via [jupytext](https://jupytext.readthedocs.io)**. The pair splits responsibilities:
+
+- **The `.py` is the *editing* source of truth** — Claude Code makes notebook code changes here,
+  so they land as clean, reviewable diffs.
+- **The `.ipynb` is the *running / viewing* source of truth** — you execute and read it in VS Code
+  / Jupyter, and its cell **outputs live here** (the `.py` stores code only).
+
+These don't conflict, because `py:percent` holds *code* and `.ipynb` holds *code + outputs*:
+`jupytext --sync` propagates code edits from the `.py` into the `.ipynb` while **preserving its
+outputs**, and *running* the notebook changes only outputs — never the code. Rule of thumb: after
+editing a `.py`, sync before running; don't hand-edit the same code in both at once.
+
+```bash
+# Claude's side — after editing the .py, propagate to the .ipynb (outputs preserved):
+jupytext --sync notebooks/03_extraction_test.py
+
+# Your side — after editing or running the .ipynb, propagate code back to the .py:
+jupytext --sync notebooks/03_extraction_test.ipynb
+
+# Pair a brand-new notebook once (creates the .py and links the two):
+jupytext --set-formats ipynb,py:percent notebooks/<name>.ipynb
+```
+
+`jupytext --sync` uses the more-recently-edited side as the source, so passing either file works.
+If *both* sides changed since the last sync it refuses (the "don't hand-edit both" rule) — force a
+direction with `jupytext --to ipynb --update notebooks/<name>.py` (keeps the `.ipynb` outputs).
+
+`notebooks/` is **excluded from the quality gate** — ruff, ty, and pytest are scoped to
+`src`/`tests` (see `tests/type_lint_unit_tests.sh` and `pyproject.toml`). These scripts are
+prototyping mirrors, not shipped code, so they aren't linted, type-checked, or collected as tests.

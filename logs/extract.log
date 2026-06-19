@@ -1,0 +1,197 @@
+2026-06-19 13:43:54.455 | INFO     | extract:extract:68 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-19 13:58:00.705 | INFO     | extract:extract:68 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-19 13:58:26.758 | ERROR    | __main__:<module>:9 - An error has been caught in function '<module>', process 'MainProcess' (42039), thread 'MainThread' (8493838592):
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py", line 3245, in completion
+    response = client.post(url=url, headers=headers, json=data, logging_obj=logging_obj)  # type: ignore
+               │      │        │            │             │                 └ <litellm.litellm_core_utils.litellm_logging.Logging object at 0x114ea8ad0>
+               │      │        │            │             └ {'contents': [{'role': 'user', 'parts': [{'text': "patient_id: P000\n\nI'm Alex, 38, male. Diagnosed with Crohn's four years ...
+               │      │        │            └ {'Content-Type': 'application/json', 'x-goog-api-key': 'AQ.Ab8RN6I5Y1XSeHop4jbvCiP_wl6qq1c3Qdq3pETJmsIEPTzDYg'}
+               │      │        └ 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent'
+               │      └ <function HTTPHandler.post at 0x111a70d50>
+               └ <litellm.llms.custom_httpx.http_handler.HTTPHandler object at 0x114ea97f0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1200, in post
+    _raise_masked_sync_error(e, stream)
+    │                           └ False
+    └ <function _raise_masked_sync_error at 0x111a3ecf0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/http_handler.py", line 441, in _raise_masked_sync_error
+    raise MaskedHTTPStatusError(e, message=_text, text=_text) from None
+          │                     │          │           └ '{\n  "error": {\n    "code": 503,\n    "message": "This model is currently experiencing high demand. Spikes in demand are us...
+          │                     │          └ '{\n  "error": {\n    "code": 503,\n    "message": "This model is currently experiencing high demand. Spikes in demand are us...
+          │                     └ HTTPStatusError("Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemi...
+          └ <class 'litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError'>
+
+litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 3525, in completion
+    response = vertex_chat_completion.completion(  # type: ignore
+               │                      └ <function VertexLLM.completion at 0x1130305c0>
+               └ <litellm.llms.vertex_ai.gemini.vertex_and_google_ai_studio_gemini.VertexLLM object at 0x1133cae40>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py", line 3249, in completion
+    raise VertexAIError(
+          └ <class 'litellm.llms.vertex_ai.common_utils.VertexAIError'>
+
+litellm.llms.vertex_ai.common_utils.VertexAIError: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/runpy.py", line 198, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+           │         │     └ {'__name__': '__main__', '__doc__': 'Entry point for launching an IPython kernel.\n\nThis is separate from the ipykernel pack...
+           │         └ <code object <module> at 0x100fe1e30, file "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/...
+           └ <function _run_code at 0x1010f8720>
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/runpy.py", line 88, in _run_code
+    exec(code, run_globals)
+         │     └ {'__name__': '__main__', '__doc__': 'Entry point for launching an IPython kernel.\n\nThis is separate from the ipykernel pack...
+         └ <code object <module> at 0x100fe1e30, file "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel_launcher.py", line 18, in <module>
+    app.launch_new_instance()
+    │   └ <bound method Application.launch_instance of <class 'ipykernel.kernelapp.IPKernelApp'>>
+    └ <module 'ipykernel.kernelapp' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykerne...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/traitlets/config/application.py", line 1082, in launch_instance
+    app.start()
+    │   └ <function IPKernelApp.start at 0x108409010>
+    └ <ipykernel.kernelapp.IPKernelApp object at 0x108322ba0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/kernelapp.py", line 807, in start
+    self.io_loop.start()
+    │    │       └ <function BaseAsyncIOLoop.start at 0x1084599b0>
+    │    └ <tornado.platform.asyncio.AsyncIOMainLoop object at 0x1089c17f0>
+    └ <ipykernel.kernelapp.IPKernelApp object at 0x108322ba0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tornado/platform/asyncio.py", line 211, in start
+    self.asyncio_loop.run_forever()
+    │    │            └ <function BaseEventLoop.run_forever at 0x101a97060>
+    │    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+    └ <tornado.platform.asyncio.AsyncIOMainLoop object at 0x1089c17f0>
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/asyncio/base_events.py", line 677, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x101a99220>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/asyncio/base_events.py", line 2046, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x101a15010>
+    └ <Handle <_asyncio.TaskStepMethWrapper object at 0x114e0c280>()>
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/asyncio/events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <_asyncio.TaskStepMethWrapper object at 0x114e0c280>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <_asyncio.TaskStepMethWrapper object at 0x114e0c280>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <_asyncio.TaskStepMethWrapper object at 0x114e0c280>()>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/kernelbase.py", line 621, in shell_main
+    await self.dispatch_shell(msg, subshell_id=subshell_id)
+          │    │              │                └ None
+          │    │              └ [<zmq.Frame(b'a92f3288-148'...36B)>, <zmq.Frame(b'<IDS|MSG>')>, <zmq.Frame(b'62ddd5746eed'...64B)>, <zmq.Frame(b'{"date":"202...
+          │    └ <function Kernel.dispatch_shell at 0x108390b40>
+          └ <ipykernel.ipkernel.IPythonKernel object at 0x1084363c0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/kernelbase.py", line 478, in dispatch_shell
+    await result
+          └ <coroutine object IPythonKernel.execute_request at 0x108af5240>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/ipkernel.py", line 372, in execute_request
+    await super().execute_request(stream, ident, parent)
+                                  │       │      └ {'header': {'date': datetime.datetime(2026, 6, 19, 12, 58, 20, 4000, tzinfo=tzutc()), 'msg_id': '12186d60-f267-452a-8a12-efb0...
+                                  │       └ [b'a92f3288-1483-46d1-8f92-df85339ed76b']
+                                  └ <zmq.Socket(zmq.PAIR) at 0x10898d150>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/kernelbase.py", line 834, in execute_request
+    reply_content = await reply_content
+                          └ <coroutine object IPythonKernel.do_execute at 0x1086a2dc0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/ipkernel.py", line 460, in do_execute
+    res = shell.run_cell(
+          │     └ <function ZMQInteractiveShell.run_cell at 0x1083d1380>
+          └ <ipykernel.zmqshell.ZMQInteractiveShell object at 0x1089a4980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/ipykernel/zmqshell.py", line 665, in run_cell
+    return super().run_cell(*args, **kwargs)
+                             │       └ {'store_history': True, 'silent': False, 'cell_id': 'vscode-notebook-cell:/Users/shoutt/projects/mama_health/chronicity/noteb...
+                             └ ('# Synthetic transcript with unambiguous facts (same as tests/test_extract.py).\ntranscript = (\n    "I\'m Alex, 38, male. D...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/IPython/core/interactiveshell.py", line 3170, in run_cell
+    result = self._run_cell(
+             │    └ <function InteractiveShell._run_cell at 0x1077871c0>
+             └ <ipykernel.zmqshell.ZMQInteractiveShell object at 0x1089a4980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/IPython/core/interactiveshell.py", line 3225, in _run_cell
+    result = runner(coro)
+             │      └ <coroutine object InteractiveShell.run_cell_async at 0x1086a2500>
+             └ <function _pseudo_sync_runner at 0x1077809e0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/IPython/core/async_helpers.py", line 128, in _pseudo_sync_runner
+    coro.send(None)
+    │    └ <method 'send' of 'coroutine' objects>
+    └ <coroutine object InteractiveShell.run_cell_async at 0x1086a2500>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/IPython/core/interactiveshell.py", line 3447, in run_cell_async
+    has_raised = await self.run_ast_nodes(code_ast.body, cell_name,
+                       │    │             │        │     └ '/var/folders/mf/01dsbj3x4yv78hwm2hz5hqcr0000gn/T/ipykernel_42039/833024719.py'
+                       │    │             │        └ [Assign(targets=[Name(id='transcript', ctx=Store())], value=Constant(value="I'm Alex, 38, male. Diagnosed with Crohn's four y...
+                       │    │             └ Module(body=[Assign(targets=[Name(id='transcript', ctx=Store(...))], value=Constant(value="I'm Alex, 38, male. Diagnosed with...
+                       │    └ <function InteractiveShell.run_ast_nodes at 0x1077877f0>
+                       └ <ipykernel.zmqshell.ZMQInteractiveShell object at 0x1089a4980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/IPython/core/interactiveshell.py", line 3688, in run_ast_nodes
+    if await self.run_code(code, result, async_=asy):
+             │    │        │     │              └ False
+             │    │        │     └ <ExecutionResult object at 114e949d0, execution_count=2 error_before_exec=None error_in_exec=None info=<ExecutionInfo object ...
+             │    │        └ <code object <module> at 0x114e712f0, file "/var/folders/mf/01dsbj3x4yv78hwm2hz5hqcr0000gn/T/ipykernel_42039/833024719.py", l...
+             │    └ <function InteractiveShell.run_code at 0x1077878a0>
+             └ <ipykernel.zmqshell.ZMQInteractiveShell object at 0x1089a4980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/IPython/core/interactiveshell.py", line 3748, in run_code
+    exec(code_obj, self.user_global_ns, self.user_ns)
+         │         │    │               │    └ <property object at 0x107753dd0>
+         │         │    │               └ <ipykernel.zmqshell.ZMQInteractiveShell object at 0x1089a4980>
+         │         │    └ <property object at 0x107753e70>
+         │         └ <ipykernel.zmqshell.ZMQInteractiveShell object at 0x1089a4980>
+         └ <code object <module> at 0x114e712f0, file "/var/folders/mf/01dsbj3x4yv78hwm2hz5hqcr0000gn/T/ipykernel_42039/833024719.py", l...
+
+> File "/var/folders/mf/01dsbj3x4yv78hwm2hz5hqcr0000gn/T/ipykernel_42039/833024719.py", line 9, in <module>
+    labels = extract(transcript, "P000", out_dir=TESTS_OUT)
+             │       │                           └ PosixPath('/Users/shoutt/projects/mama_health/chronicity/data/out/tests')
+             │       └ "I'm Alex, 38, male. Diagnosed with Crohn's four years ago. After mesalamine and prednisone failed, my gastroenterologist sta...
+             └ <function extract at 0x114e99380>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/notebooks/../src/extract.py", line 54, in extract
+    response = litellm.completion(
+               │       └ <function completion at 0x11340f1c0>
+               └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+             │                  │       └ {'model': 'gemini/gemini-2.5-flash-lite', 'messages': [{'role': 'system', 'content': "Extract the structured labels from this...
+             │                  └ ()
+             └ <function completion at 0x11340f110>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4614, in completion
+    raise exception_type(
+          └ <function exception_type at 0x111d21380>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2473, in exception_type
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 1518, in exception_type
+    raise ServiceUnavailableError(
+          └ <class 'litellm.exceptions.ServiceUnavailableError'>
+
+litellm.exceptions.ServiceUnavailableError: litellm.ServiceUnavailableError: GeminiException - {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+
+2026-06-19 13:59:34.454 | INFO     | extract:extract:68 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-19 14:14:24.976 | ERROR    | extract:extract:73 - Gemini 503 (model busy) for P000 — retry later
+2026-06-19 14:19:18.033 | INFO     | extract:extract:77 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-19 14:27:54.207 | INFO     | extract:extract:77 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json

@@ -11,7 +11,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from extract import extract, save
+from extract import TESTS_OUT, extract, save
 from schema import PatientLabels
 
 load_dotenv()  # so a key in .env is available for the live test
@@ -68,7 +68,7 @@ def test_extract_end_to_end():
     if flag != "1":
         pytest.skip("RUN_LIVE_TESTS=0 — live Gemini call skipped")
     assert os.getenv("GEMINI_API_KEY"), "GEMINI_API_KEY not loaded from .env"
-    result = extract(SYNTHETIC, "P000")
+    result = extract(SYNTHETIC, "P000", out_dir=TESTS_OUT)
     assert isinstance(result, PatientLabels)
     assert result.patient_id == "P000"
     assert result.biologic_taken is True

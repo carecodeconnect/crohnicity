@@ -45,6 +45,28 @@ Pin down where each kind of validation belongs, document the decision, and back 
 - [ ] Write tests targeting whichever boundary we choose, so the gate is real rather than
   aspirational.
 
+## Robustness — error handling + null semantics (NEXT, once the JSON loop runs)
+
+When `extract` loops over every patient in `data/in/interviews.json`, harden both the *call* and
+the *parse*. **Surface failures — never swallow them silently**: log via loguru, mark the record,
+keep the batch going where sensible, but make every failure visible and countable.
+
+- [ ] **Schema validation AND data-type validation** — not just "is it valid JSON" but "do the
+  fields hold the right types / enum members" (Pydantic catches most; add pandas dtype/enum checks
+  on the aggregated frame).
+- [ ] Handle each failure mode with a distinct, logged outcome:
+  - **Malformed JSON** (non-JSON or truncated model output).
+  - **Schema validation failures** (`litellm.JSONSchemaValidationError`, Pydantic `ValidationError`).
+  - **Rate limits / transient API errors** (back off + retry; e.g. `litellm` `num_retries`).
+  - **Partial outputs** (required fields missing).
+  - **Empty responses** (no content / empty `choices`).
+- [ ] **Null semantics** — represent nulls in a Pydantic/pandas-compatible way that distinguishes
+  genuinely **missing** (not stated -> `None`/NA) from **empty** (`[]`, `""`) and from **"doesn't
+  apply"** (the `NOT_APPLICABLE` enum members), so a later pandas analysis can tell "we don't know"
+  apart from "known to be none".
+- [ ] **Per-record failure capture** — one bad patient must not abort the run; report how many and
+  which records failed and why (counts + reasons logged, not hidden).
+
 ## Reference data — canonical lookup lists
 
 - [ ] **Branded biologics registry.** Extract the biologic names mentioned across *all*
@@ -68,6 +90,14 @@ Pin down where each kind of validation belongs, document the decision, and back 
   especially clinically loaded ones like `loss_of_response` (primary non-response vs. secondary
   loss of response).
 
+## Pipeline coordinator — `src/main.py`
+
+Once each component is built and tested (schema, `extract`/`save`, splits, referral-pathway
+render, and aggregation into the four answers), add a **minimal `src/main.py`** that wires them
+into one pipeline in the simplest way — load `data/in/interviews.json`, loop `extract` over each
+patient, persist predictions, then aggregate. Keep it a plain script; the **Dagster orchestration
+below comes after** this runs end-to-end.
+
 ## Orchestration — Dagster
 
 - [ ] Wire the pipeline with **Dagster** (declared but not yet used). Run
@@ -79,6 +109,18 @@ Pin down where each kind of validation belongs, document the decision, and back 
 - [ ] **Automate the runs once the pipeline works** — orchestrate extraction + the test harness
   via Dagster (sensor/schedule), and **log each run** (inputs, predictions, accuracy, token
   usage) for reproducibility and later optimisation.
+
+## Metrics & EDA — API-call telemetry
+
+What each call exposes (tokens, cached tokens, cost, latency, call metadata) and the two ways to
+read it — the `ModelResponse` in `extract()` vs the `RAW RESPONSE` in `logs/litellm_debug.log` —
+are documented in [`TELEMETRY.md`](TELEMETRY.md). We want this for **cost/latency optimisation and
+scaling EDA**.
+
+- [ ] **Capture per-call telemetry structurally** (don't scrape logs): persist tokens, cached
+  tokens, cost, latency, `finish_reason`, and `model_version` per patient alongside the prediction.
+- [ ] **EDA plots**: tokens & cost per case, cache-hit rate, latency distribution, and totals to
+  project cost at scale. Ties into the Dagster "log each run" item above.
 
 ## Packaging — Docker
 
