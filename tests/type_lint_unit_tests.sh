@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Manual quality gate (in lieu of pre-commit) — run on each major code update:
-#   bash tests/check.sh
+#   bash tests/type_lint_unit_tests.sh
 set -u
 fail=0
 uv run ruff check src tests          || fail=1

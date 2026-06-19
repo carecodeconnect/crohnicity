@@ -43,3 +43,11 @@ signal at all — we'd need product/usage data instead.
 - Do we need a separate **`biologic_recommended`** column to capture that step
   (recommended → prescribed → taken)? This depends on the business context — confirm whether the
   recommend-vs-prescribe distinction matters for the four questions.
+
+## 6. Biologic detection depends on knowing the brand names
+
+Not every transcript says "biologic" — many only name a branded drug (e.g. *Humira*, *Remicade*,
+*Stelara*, *Entyvio*). Without a known list of biologic names, it wasn't always possible to spot
+whether a biologic was used, so some `biologic_*` labels may be unreliable. We need an
+authoritative list of biologic **brand + generic** names to detect/normalise reliably (relates to
+the branded-biologics registry in `docs/TODO.md`).

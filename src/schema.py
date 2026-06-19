@@ -1,12 +1,12 @@
-"""Pydantic schema for one patient's ground-truth labels.
+"""Pydantic schema for one patient's labels.
 
-Mirrors the columns and controlled vocabularies in `docs/SCHEMA.md` (v0.3) and the data in
-`data/in/interviews_ground_truth_v3.ods`. Field names match the spreadsheet column names so
-annotations map 1:1, and this is the contract the LiteLLM/Gemini extraction must return.
+The same shape serves both provenances: the human-annotated *gold* set in
+`data/in/interviews_ground_truth_v3.ods`, and a model *prediction* returned by `src/extract.py`
+(an inference, not ground truth). Mirrors the columns and controlled vocabularies in
+`docs/SCHEMA.md` (v0.3); field names match the spreadsheet columns 1:1.
 
-Two spreadsheet columns are intentionally *not* modelled here: `interview_transcript` (it's the
-model's *input*, not an extracted label) and `to_review` (a human-set validation/holdout flag —
-see `src/splits.py` — not something the model produces).
+Two spreadsheet columns are intentionally *not* modelled here: `interview_transcript` (the
+model's *input*) and `to_review` (a human-set validation/holdout flag — see `src/splits.py`).
 
 The rationale for each name/type is in `docs/SCHEMA.md`; the docstrings below summarise it.
 """
@@ -153,8 +153,9 @@ class TreatmentRecord(BaseModel):
     reason_stopped: str | None = None
 
 
-class PatientGroundTruth(BaseModel):
-    """One patient's gold-standard labels — the contract the extraction pipeline must return.
+class PatientLabels(BaseModel):
+    """One patient's labels — the shared shape of the gold annotations (`.ods`) and a model
+    prediction from `extract.py`; provenance differs, structure doesn't.
 
     Field names match the v3 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
     the ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction
@@ -185,7 +186,7 @@ class PatientGroundTruth(BaseModel):
     treatment_outcome: TreatmentOutcome
 
     # Minimal typed pathway this iteration: an ordered list of canonical PathwayStep tokens (the
-    # draft step names already used to render data/out/*.html). Filled by a dedicated prompt;
+    # draft step names already used to render data/out/*.html). Filled by a simple prompt now;
     # clustering into journey TYPES comes later (docs/SCHEMA.md).
     referral_pathway: list[PathwayStep] = []
 

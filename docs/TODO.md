@@ -9,8 +9,8 @@ enforcement waits until we understand what to test and what to validate.
 We deliberately **don't** use pre-commit hooks — overkill for this project. Enforcement is a
 manual gate run on every code update (see `CLAUDE.md` → Code style).
 
-- [x] `tests/check.sh` — runs `ruff check`, `ruff format --check`, `ty check`, and `pytest`
-  (scoped to `src`/`tests`); run via `bash tests/check.sh`.
+- [x] `tests/type_lint_unit_tests.sh` — runs `ruff check`, `ruff format --check`, `ty check`, and `pytest`
+  (scoped to `src`/`tests`); run via `bash tests/type_lint_unit_tests.sh`.
 - [ ] (Optional) mirror the same checks in CI so the reviewer sees a green build.
 
 ## Refactor — notebooks → `src/` modules
@@ -59,7 +59,7 @@ Pin down where each kind of validation belongs, document the decision, and back 
   categories to classify the circular/contradictory pathways. Cross-cutting pattern-finding
   across journeys will need LLM assistance; then link journey types to the other column
   values. This is its own work project — see the `referral_pathway` notes in `docs/SCHEMA.md`.
-  - **Big post-MVP task.** This is the major *next step* after the current MVP, not part of it.
+  - **Big post-MVP task.** A *minimal* `referral_pathway` prompt is in the MVP; the **refinement** is the major next step *after* it.
     The `PathwayStep` enum in `src/schema.py` is a minimal draft only (enough to render the
     example diagrams); refining the step vocabulary, the consolidation rules, and journey-type
     clustering will take substantial, dedicated iteration — likely its own project.
@@ -76,6 +76,9 @@ Pin down where each kind of validation belongs, document the decision, and back 
   regenerated from the latest pathways on every run. (Note: the script currently uses a
   hardcoded `PATHWAYS` dict; wiring it into Dagster means switching it to read the
   `referral_pathway` column from the ground-truth/extracted data.)
+- [ ] **Automate the runs once the pipeline works** — orchestrate extraction + the test harness
+  via Dagster (sensor/schedule), and **log each run** (inputs, predictions, accuracy, token
+  usage) for reproducibility and later optimisation.
 
 ## Packaging — Docker
 

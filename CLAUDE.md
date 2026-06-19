@@ -22,7 +22,7 @@ The repo is intentionally early-stage: `src/` and `tests/` are empty. Most of th
 - **Write the shortest, most minimal, most concise code that does the job.** Favour the smallest change that works over a more general, clever, or defensive one. No speculative abstraction and no scaffolding for features we don't have yet.
 - **Small, reviewable changes.** Keep each change and commit small and self-contained so it reads as a single diff that's easy to review — not giant PR-style batches.
 - **Type checking and linting are required, not optional.** Code must pass `ruff check`, `ruff format`, and `ty check` (the Rust-based toolchain above — not Black/mypy).
-- **Run `bash tests/check.sh` on every code update** — it runs `ruff check`, `ruff format --check`, `ty check`, and `pytest`, which must all pass. Do this after each change, especially while developing the Pydantic schema. We deliberately do **not** use pre-commit hooks — overkill for this project; the discipline is manual and per-update. (Where validation belongs — the `litellm.completion(...)` prompt-call boundary vs. the Pydantic/pandas steps — is tracked in `docs/TODO.md`.)
+- **Run `bash tests/type_lint_unit_tests.sh` on every code update** — it runs `ruff check`, `ruff format --check`, `ty check`, and `pytest`, which must all pass. Do this after each change, especially while developing the Pydantic schema. We deliberately do **not** use pre-commit hooks — overkill for this project; the discipline is manual and per-update. (Where validation belongs — the `litellm.completion(...)` prompt-call boundary vs. the Pydantic/pandas steps — is tracked in `docs/TODO.md`.)
 
 ## Commands
 

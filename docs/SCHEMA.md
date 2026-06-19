@@ -145,7 +145,7 @@ class TreatmentRecord(BaseModel):
     outcome: TreatmentOutcome
     reason_stopped: str | None = None
 
-class PatientGroundTruth(BaseModel):
+class PatientLabels(BaseModel):
     patient_id: str
     to_review: bool = False
     demographics: Demographics = Demographics()   # flat gender/age columns map in here
