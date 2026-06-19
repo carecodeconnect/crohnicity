@@ -11,7 +11,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from extract import extract
+from extract import extract, save
 from schema import PatientLabels
 
 load_dotenv()  # so a key in .env is available for the live test
@@ -38,6 +38,22 @@ def test_schema_generates_and_validates():
     )
     assert record.patient_id == "P000"
     assert record.biologic_taken is True
+
+
+def test_save_writes_json(tmp_path):
+    """Offline: save() writes <patient_id>.json that round-trips back to the same labels."""
+    labels = PatientLabels.model_validate(
+        {
+            "patient_id": "P000",
+            "biologic_prescribed": True,
+            "biologic_taken": True,
+            "biologic_not_mentioned": False,
+            "treatment_outcome": "SUCCESS",
+        }
+    )
+    path = save(labels, tmp_path)
+    assert path.name == "P000.json"
+    assert PatientLabels.model_validate_json(path.read_text()) == labels
 
 
 def test_extract_end_to_end():

@@ -19,12 +19,23 @@ TO VERIFY in testing (see docs/RESOURCES.md): whether Gemini 2.5 accepts the `$d
 Pydantic emits for the nested models, and whether the LiteLLM path matches the OpenAI-SDK path.
 """
 
+from pathlib import Path
+
 import litellm
 from dotenv import load_dotenv
+from loguru import logger
 
 from schema import PatientLabels
 
 MODEL = "gemini/gemini-2.5-flash-lite"
+# Anchor paths to the repo root via __file__, so they hold regardless of caller's cwd
+# (e.g. the notebook runs from notebooks/, not the repo root).
+ROOT = Path(__file__).resolve().parents[1]
+OUT_DIR = ROOT / "data" / "out"  # predictions
+LOG_DIR = ROOT / "logs"  # logs live at the project root, separate from data outputs
+
+# loguru file sink: persist each run + failures (stderr stays on by default)
+logger.add(LOG_DIR / "extract.log", level="INFO", rotation="1 MB")
 
 SYSTEM_PROMPT = (
     "Extract the structured labels from this Crohn's disease patient interview. "
@@ -50,4 +61,14 @@ def extract(transcript: str, patient_id: str) -> PatientLabels:
             "enforce_validation": True,
         },
     )
-    return PatientLabels.model_validate_json(response.choices[0].message.content)
+    labels = PatientLabels.model_validate_json(response.choices[0].message.content)
+    save(labels)
+    return labels
+
+
+def save(labels: PatientLabels, out_dir: Path = OUT_DIR) -> Path:
+    """Write the prediction to ``<out_dir>/<patient_id>.json`` and return the path."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{labels.patient_id}.json"
+    path.write_text(labels.model_dump_json(indent=2))
+    return path
