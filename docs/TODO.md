@@ -4,13 +4,13 @@ Deferred engineering tasks, kept here so they can be picked up directly in **pla
 later. These are intentionally *not* done yet — see `CLAUDE.md` ("Code style") for why
 enforcement waits until we understand what to test and what to validate.
 
-## Quality gates — enforce the toolchain with pre-commit
+## Quality gates — manual check script (no pre-commit)
 
-- [ ] Add `pre-commit` as a dev dependency and create `.pre-commit-config.yaml`.
-- [ ] Hook: `ruff check` (lint) on commit.
-- [ ] Hook: `ruff format` (format) on commit.
-- [ ] Hook: `ty check` (type-check) on commit.
-- [ ] `pre-commit install`, and document the step in `CLAUDE.md` → Commands.
+We deliberately **don't** use pre-commit hooks — overkill for this project. Enforcement is a
+manual gate run on every code update (see `CLAUDE.md` → Code style).
+
+- [x] `tests/check.sh` — runs `ruff check`, `ruff format --check`, `ty check`, and `pytest`
+  (scoped to `src`/`tests`); run via `bash tests/check.sh`.
 - [ ] (Optional) mirror the same checks in CI so the reviewer sees a green build.
 
 ## Refactor — notebooks → `src/` modules
