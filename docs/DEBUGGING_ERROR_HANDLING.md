@@ -30,13 +30,14 @@ What it captures, and why it's handy:
 
 | Error | When | Handling | Where |
 |-------|------|----------|-------|
-| `litellm.ServiceUnavailableError` (HTTP **503**, "model busy / high demand") | Gemini temporarily overloaded | caught, logged as a concise `ERROR` line (no stack dump — `excluded` from `@logger.catch`), then re-raised so the caller sees it | `src/extract.py` |
+| `RETRYABLE` = `RateLimitError` (**429**) + `ServiceUnavailableError` (**503**) | rate-limit / quota or model busy | `litellm.completion(num_retries=2)` backs off + retries; on giving up, a concise `ERROR` line (no stack dump — `excluded` from `@logger.catch`), then re-raised | `src/extract.py` |
+| `RETRYABLE` reaching the CLI | retries exhausted mid-run | `main()` catches it and **exits gracefully** — a clean one-liner with the rate-limits URL, exit 1, no traceback (fail-fast) | `src/main.py` |
 
 ## Planned (see [`TODO.md`](TODO.md) → Robustness)
 
 Malformed JSON, schema-validation failures (`litellm.JSONSchemaValidationError` / Pydantic
-`ValidationError`), rate limits (**429** `RateLimitError`), partial outputs, empty responses, and
-per-record failure capture for the batch loop.
+`ValidationError`), partial outputs, and empty responses — decide per type whether to **skip the
+record and continue** (a single bad transcript) vs **fail-fast** (like the 429/503 above).
 
 ## Reference
 

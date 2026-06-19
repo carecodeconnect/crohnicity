@@ -1,0 +1,24 @@
+---
+title: "Chronicity — system design"
+format: gfm
+---
+
+> **Draft.** The final system-design write-up is a TODO (see `docs/TODO.md` → *Reporting*).
+> Render with `quarto render docs/DESIGN.qmd`.
+
+## Pipeline
+
+```{mermaid}
+flowchart LR
+    in["data/in/interviews.json"] --> main["main.py — loop (fire CLI)"]
+    main --> extract["extract.py — one Gemini call"]
+    extract --> schema["schema.py — PatientLabels validation"]
+    schema --> out["data/out/*.json — predictions"]
+    out --> agg["aggregate"]
+    agg --> ans["4 business answers"]
+    ans --> qmd["README.qmd — plots/tables + pathway diagrams → GFM"]
+```
+
+Separation of concerns: `schema.py` defines the shapes, `extract.py` makes one LLM call,
+`main.py` orchestrates the loop. Each run logs to `logs/` (loguru + LiteLLM debug), and
+predictions are scored against the gold `_v3.ods` values on the 20-case validation split.

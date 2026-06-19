@@ -195,3 +195,814 @@ litellm.exceptions.ServiceUnavailableError: litellm.ServiceUnavailableError: Gem
 2026-06-19 14:14:24.976 | ERROR    | extract:extract:73 - Gemini 503 (model busy) for P000 — retry later
 2026-06-19 14:19:18.033 | INFO     | extract:extract:77 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
 2026-06-19 14:27:54.207 | INFO     | extract:extract:77 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-19 14:55:06.369 | ERROR    | extract:extract:75 - Gemini 503 (model busy) for P001 — retry later
+2026-06-19 15:06:27.276 | ERROR    | extract:extract:76 - Gemini 503 (model busy) for P001 — retry later
+2026-06-19 15:16:19.943 | INFO     | extract:extract:80 - extracted P001 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P001.json
+2026-06-19 15:16:27.968 | INFO     | extract:extract:80 - extracted P002 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P002.json
+2026-06-19 15:16:28.344 | INFO     | extract:extract:80 - extracted P001 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P001.json
+2026-06-19 15:16:28.452 | ERROR    | __main__:run:33 - An error has been caught in function 'run', process 'MainProcess' (37207), thread 'MainThread' (8493838592):
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py", line 3245, in completion
+    response = client.post(url=url, headers=headers, json=data, logging_obj=logging_obj)  # type: ignore
+               │      │        │            │             │                 └ <litellm.litellm_core_utils.litellm_logging.Logging object at 0x111c2c6e0>
+               │      │        │            │             └ {'contents': [{'role': 'user', 'parts': [{'text': "patient_id: P002\n\nMy name's Michael, I'm 42, male, and my Crohn's story ...
+               │      │        │            └ {'Content-Type': 'application/json', 'x-goog-api-key': 'AQ.Ab8RN6I5Y1XSeHop4jbvCiP_wl6qq1c3Qdq3pETJmsIEPTzDYg'}
+               │      │        └ 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent'
+               │      └ <function HTTPHandler.post at 0x10d0ba2a0>
+               └ <litellm.llms.custom_httpx.http_handler.HTTPHandler object at 0x1105ec050>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1200, in post
+    _raise_masked_sync_error(e, stream)
+    │                           └ False
+    └ <function _raise_masked_sync_error at 0x10d0b8300>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/http_handler.py", line 441, in _raise_masked_sync_error
+    raise MaskedHTTPStatusError(e, message=_text, text=_text) from None
+          │                     │          │           └ '{\n  "error": {\n    "code": 429,\n    "message": "You exceeded your current quota, please check your plan and billing detai...
+          │                     │          └ '{\n  "error": {\n    "code": 429,\n    "message": "You exceeded your current quota, please check your plan and billing detai...
+          │                     └ HTTPStatusError("Client error '429 Too Many Requests' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini...
+          └ <class 'litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError'>
+
+litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError: Client error '429 Too Many Requests' for url 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 3525, in completion
+    response = vertex_chat_completion.completion(  # type: ignore
+               │                      └ <function VertexLLM.completion at 0x10e7db110>
+               └ <litellm.llms.vertex_ai.gemini.vertex_and_google_ai_studio_gemini.VertexLLM object at 0x10ebf8830>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py", line 3249, in completion
+    raise VertexAIError(
+          └ <class 'litellm.llms.vertex_ai.common_utils.VertexAIError'>
+
+litellm.llms.vertex_ai.common_utils.VertexAIError: {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\nPlease retry in 31.566457168s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.Help",
+        "links": [
+          {
+            "description": "Learn more about Gemini API quotas",
+            "url": "https://ai.google.dev/gemini-api/docs/rate-limits"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.QuotaFailure",
+        "violations": [
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.5-flash-lite",
+              "location": "global"
+            },
+            "quotaValue": "20"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.RetryInfo",
+        "retryDelay": "31s"
+      }
+    ]
+  }
+}
+
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 48, in <module>
+    fire.Fire(main)
+    │    │    └ <function main at 0x11055c7d0>
+    │    └ <function Fire at 0x103696f00>
+    └ <module 'fire' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 135, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+                      │     │          │     │                 │        └ 'main.py'
+                      │     │          │     │                 └ {}
+                      │     │          │     └ Namespace(verbose=False, interactive=False, separator='-', completion=None, help=False, trace=False)
+                      │     │          └ ['--limit=3']
+                      │     └ <function main at 0x11055c7d0>
+                      └ <function _Fire at 0x103b5e980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 468, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+    │                           └ <function _CallAndUpdateTrace at 0x103b5eae0>
+    └ <function main at 0x11055c7d0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 684, in _CallAndUpdateTrace
+    component = fn(*varargs, **kwargs)
+                │   │          └ {}
+                │   └ ['gemini/gemini-2.5-flash-lite', 3]
+                └ <function main at 0x11055c7d0>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 41, in main
+    results = run(records, model=model)
+              │   │              └ 'gemini/gemini-2.5-flash-lite'
+              │   └ [Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eig...
+              └ <function run at 0x11055c670>
+
+> File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 33, in run
+    extract(r.interview_transcript, r.patient_id, out_dir, model) for r in records
+    │       │ │                     │ │           │        │          │    └ [Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eig...
+    │       │ │                     │ │           │        │          └ Interview(patient_id='P002', interview_transcript="My name's Michael, I'm 42, male, and my Crohn's story is complicated by my...
+    │       │ │                     │ │           │        └ 'gemini/gemini-2.5-flash-lite'
+    │       │ │                     │ │           └ PosixPath('/Users/shoutt/projects/mama_health/chronicity/data/out')
+    │       │ │                     │ └ 'P002'
+    │       │ │                     └ Interview(patient_id='P002', interview_transcript="My name's Michael, I'm 42, male, and my Crohn's story is complicated by my...
+    │       │ └ "My name's Michael, I'm 42, male, and my Crohn's story is complicated by my type 2 diabetes, which I've had for ten years. Th...
+    │       └ Interview(patient_id='P002', interview_transcript="My name's Michael, I'm 42, male, and my Crohn's story is complicated by my...
+    └ <function extract at 0x110543a00>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/extract.py", line 59, in extract
+    response = litellm.completion(
+               │       └ <function completion at 0x10ebf5dd0>
+               └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+             │                  │       └ {'model': 'gemini/gemini-2.5-flash-lite', 'messages': [{'role': 'system', 'content': "Extract the structured labels from this...
+             │                  └ ()
+             └ <function completion at 0x10ebf5d20>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4614, in completion
+    raise exception_type(
+          └ <function exception_type at 0x10d3568d0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2473, in exception_type
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 1405, in exception_type
+    raise RateLimitError(
+          └ <class 'litellm.exceptions.RateLimitError'>
+
+litellm.exceptions.RateLimitError: litellm.RateLimitError: litellm.RateLimitError: geminiException - {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash-lite\nPlease retry in 31.566457168s.",
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.Help",
+        "links": [
+          {
+            "description": "Learn more about Gemini API quotas",
+            "url": "https://ai.google.dev/gemini-api/docs/rate-limits"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.QuotaFailure",
+        "violations": [
+          {
+            "quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "quotaDimensions": {
+              "model": "gemini-2.5-flash-lite",
+              "location": "global"
+            },
+            "quotaValue": "20"
+          }
+        ]
+      },
+      {
+        "@type": "type.googleapis.com/google.rpc.RetryInfo",
+        "retryDelay": "31s"
+      }
+    ]
+  }
+}
+
+2026-06-19 15:38:10.070 | ERROR    | __main__:run:34 - An error has been caught in function 'run', process 'MainProcess' (63162), thread 'MainThread' (8493838592):
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 265, in _make_common_sync_call
+    response = sync_httpx_client.post(
+               │                 └ <function HTTPHandler.post at 0x10d00a4b0>
+               └ <litellm.llms.custom_httpx.http_handler.HTTPHandler object at 0x1104f96d0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1200, in post
+    _raise_masked_sync_error(e, stream)
+    │                           └ False
+    └ <function _raise_masked_sync_error at 0x10d008510>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/http_handler.py", line 441, in _raise_masked_sync_error
+    raise MaskedHTTPStatusError(e, message=_text, text=_text) from None
+          │                     │          │           └ '{"error":"model \'gemma3\' not found"}'
+          │                     │          └ '{"error":"model \'gemma3\' not found"}'
+          │                     └ HTTPStatusError("Client error '404 Not Found' for url 'http://localhost:11434/api/chat'\nFor more information check: https://...
+          └ <class 'litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError'>
+
+litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError: Client error '404 Not Found' for url 'http://localhost:11434/api/chat'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4185, in completion
+    response = base_llm_http_handler.completion(
+               │                     └ <function BaseLLMHTTPHandler.completion at 0x10e512090>
+               └ <litellm.llms.custom_httpx.llm_http_handler.BaseLLMHTTPHandler object at 0x10eada9e0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 589, in completion
+    response = self._make_common_sync_call(
+               │    └ <function BaseLLMHTTPHandler._make_common_sync_call at 0x10e511dd0>
+               └ <litellm.llms.custom_httpx.llm_http_handler.BaseLLMHTTPHandler object at 0x10eada9e0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 290, in _make_common_sync_call
+    raise self._handle_error(e=e, provider_config=provider_config)
+          │    │                                  └ <litellm.llms.ollama.chat.transformation.OllamaChatConfig object at 0x1104d5940>
+          │    └ <function BaseLLMHTTPHandler._handle_error at 0x10e51b270>
+          └ <litellm.llms.custom_httpx.llm_http_handler.BaseLLMHTTPHandler object at 0x10eada9e0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 5312, in _handle_error
+    raise provider_config.get_error_class(
+          │               └ <function OllamaChatConfig.get_error_class at 0x11053eb90>
+          └ <litellm.llms.ollama.chat.transformation.OllamaChatConfig object at 0x1104d5940>
+
+litellm.llms.ollama.common_utils.OllamaError: {"error":"model 'gemma3' not found"}
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+             │                  │       └ {'model': 'ollama_chat/gemma3', 'num_retries': 2, 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract th...
+             │                  └ ()
+             └ <function completion at 0x10eb41f30>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4614, in completion
+    raise exception_type(
+          └ <function exception_type at 0x10d29aae0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2473, in exception_type
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2441, in exception_type
+    raise APIConnectionError(
+          └ <class 'litellm.exceptions.APIConnectionError'>
+
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - {"error":"model 'gemma3' not found"}
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 51, in <module>
+    fire.Fire(main)
+    │    │    └ <function main at 0x1104a8720>
+    │    └ <function Fire at 0x10360af00>
+    └ <module 'fire' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 135, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+                      │     │          │     │                 │        └ 'main.py'
+                      │     │          │     │                 └ {}
+                      │     │          │     └ Namespace(verbose=False, interactive=False, separator='-', completion=None, help=False, trace=False)
+                      │     │          └ ['--model=ollama_chat/gemma3', '--limit=3']
+                      │     └ <function main at 0x1104a8720>
+                      └ <function _Fire at 0x103ace980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 468, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+    │                           └ <function _CallAndUpdateTrace at 0x103aceae0>
+    └ <function main at 0x1104a8720>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 684, in _CallAndUpdateTrace
+    component = fn(*varargs, **kwargs)
+                │   │          └ {}
+                │   └ ['ollama_chat/gemma3', 3]
+                └ <function main at 0x1104a8720>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 42, in main
+    results = run(records, model=model)
+              │   │              └ 'ollama_chat/gemma3'
+              │   └ [Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eig...
+              └ <function run at 0x1104a85c0>
+
+> File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 34, in run
+    extract(r.interview_transcript, r.patient_id, out_dir, model) for r in records
+    │       │ │                     │ │           │        │          │    └ [Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eig...
+    │       │ │                     │ │           │        │          └ Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eigh...
+    │       │ │                     │ │           │        └ 'ollama_chat/gemma3'
+    │       │ │                     │ │           └ PosixPath('/Users/shoutt/projects/mama_health/chronicity/data/out')
+    │       │ │                     │ └ 'P001'
+    │       │ │                     └ Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eigh...
+    │       │ └ "I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eight years now. It all started when I was 26, working...
+    │       └ Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eigh...
+    └ <function extract at 0x11048f950>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/extract.py", line 61, in extract
+    response = litellm.completion(
+               │       └ <function completion at 0x10eb41fe0>
+               └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1720, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           │       │                        │       └ {'model': 'ollama_chat/gemma3', 'num_retries': 2, 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract th...
+           │       │                        └ ()
+           │       └ <function completion_with_retries at 0x10eb41dd0>
+           └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4652, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+           │       │                   │       └ {'model': 'ollama_chat/gemma3', 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract the structured label...
+           │       │                   └ ()
+           │       └ <function completion at 0x10eb41fe0>
+           └ <Retrying object at 0x11051cd70 (stop=<tenacity.stop.stop_after_attempt object at 0x11051c590>, wait=<tenacity.wait.wait_none...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         │    │                └ <RetryCallState 4568776192: attempt #2; slept for 0.0; last result: failed (APIConnectionError litellm.APIConnectionError: Ol...
+         │    └ <function BaseRetrying.iter at 0x1105961f0>
+         └ <Retrying object at 0x11051cd70 (stop=<tenacity.stop.stop_after_attempt object at 0x11051c590>, wait=<tenacity.wait.wait_none...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             │      └ <RetryCallState 4568776192: attempt #2; slept for 0.0; last result: failed (APIConnectionError litellm.APIConnectionError: Ol...
+             └ <function BaseRetrying._post_stop_check_actions.<locals>.exc_check at 0x110617740>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          │         └ <function RetryError.reraise at 0x110594b40>
+          └ RetryError(<Future at 0x11058a5d0 state=finished raised APIConnectionError>)
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          │    │            └ <function Future.result at 0x1037c7740>
+          │    └ <Future at 0x11058a5d0 state=finished raised APIConnectionError>
+          └ RetryError(<Future at 0x11058a5d0 state=finished raised APIConnectionError>)
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/concurrent/futures/_base.py", line 443, in result
+    return self.__get_result()
+           └ None
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/concurrent/futures/_base.py", line 395, in __get_result
+    raise self._exception
+          └ None
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             │   │       └ {'model': 'ollama_chat/gemma3', 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract the structured label...
+             │   └ ()
+             └ <function completion at 0x10eb41fe0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+             │                  │       └ {'model': 'ollama_chat/gemma3', 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract the structured label...
+             │                  └ ()
+             └ <function completion at 0x10eb41f30>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4614, in completion
+    raise exception_type(
+          └ <function exception_type at 0x10d29aae0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2473, in exception_type
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2441, in exception_type
+    raise APIConnectionError(
+          └ <class 'litellm.exceptions.APIConnectionError'>
+
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - {"error":"model 'gemma3' not found"}
+2026-06-19 15:39:25.165 | ERROR    | __main__:run:34 - An error has been caught in function 'run', process 'MainProcess' (63390), thread 'MainThread' (8493838592):
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/json_validation_rule.py", line 129, in validate_schema
+    validate(response_dict, schema=schema)
+    │        │                     └ {'$defs': {'ComorbidCondition': {'description': 'Independent coexisting diagnoses only — NOT Crohn\'s-driven sequelae (psoria...
+    │        └ {'patient_id': 'P001', 'sex': 'female', 'age': 34, 'diagnosis': "Crohn's disease", 'initial_presentation_symptoms': ['stomach...
+    └ <function validate at 0x113b61b10>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+          └ <ValidationError: "'biologic_prescribed' is a required property">
+
+jsonschema.exceptions.ValidationError: 'biologic_prescribed' is a required property
+
+Failed validating 'required' in schema:
+    {'$defs': {'ComorbidCondition': {'description': 'Independent '
+                                                    'coexisting diagnoses '
+                                                    'only — NOT '
+                                                    "Crohn's-driven "
+                                                    'sequelae (psoriasis,\n'
+                                                    'osteoporosis, etc.). '
+                                                    'Lumping '
+                                                    'treatment/disease '
+                                                    'effects in here would '
+                                                    'make a later "does\n'
+                                                    'comorbidity X predict '
+                                                    'outcome Y" analysis '
+                                                    'circular. Seeded from '
+                                                    'P001-P050; extend as '
+                                                    'found.',
+                                     'enum': ['TYPE_2_DIABETES',
+                                              'HYPERTENSION',
+                                              'HYPERLIPIDEMIA',
+                                              'ANXIETY_DISORDER',
+                                              'DEPRESSION',
+                                              'PCOS',
+                                              'ENDOMETRIOSIS',
+                                              'MIGRAINE',
+                                              'HYPOTHYROIDISM',
+                                              'FIBROMYALGIA',
+                                              'ASTHMA',
+                                              'RHEUMATOID_ARTHRITIS',
+                                              'ADHD',
+                                              'SLEEP_APNEA',
+                                              'OTHER'],
+                                     'title': 'ComorbidCondition',
+                                     'type': 'string'},
+               'Demographics': {'description': 'Self-reported gender/age, '
+                                               'grouped so we can later '
+                                               'test for demographic '
+                                               'differences in\n'
+                                               'pathways/outcomes. The '
+                                               'flat `gender`/`age` '
+                                               'spreadsheet columns map '
+                                               'into this sub-model.',
+                                'properties': {'gender': {'anyOf': [{'type': 'string'},
+                                                                    {'type': 'null'}],
+                                                          'default': None,
+                                                          'title': 'Gender'},
+                                               'age': {'anyOf': [{'type': 'integer'},
+                                                                 {'type': 'null'}],
+                                                       'default': None,
+                                                       'title': 'Age'}},
+                                'title': 'Demographics',
+                                'type': 'object'},
+               'PathwayStep': {'description': 'Canonical referral-pathway '
+                                              'steps — the draft '
+                                              'vocabulary already used to '
+                                              'render the\n'
+                                              'per-case journey graphs in '
+                                              '`data/out/*.html` (mirrors '
+                                              'the consolidated phases in\n'
+                                              '`src/referral_pathway_analysis.py`). '
+                                              'Values are lowercase to '
+                                              'match those graph tokens.\n'
+                                              '\n'
+                                              'Minimal for this iteration: '
+                                              'enough to type '
+                                              '`referral_pathway` and '
+                                              'drive the diagrams. A\n'
+                                              'dedicated extraction prompt '
+                                              'fills this field; the '
+                                              'eventual goal is clustering '
+                                              'these per-case\n'
+                                              'chains into journey *types* '
+                                              '(`docs/SCHEMA.md`). `OTHER` '
+                                              'absorbs steps not yet in '
+                                              'the vocab.',
+                               'enum': ['symptom_onset',
+                                        'self_managed',
+                                        'primary_care_contact',
+                                        'misdiagnosis',
+                                        'diagnostic_delay',
+                                        'symptoms_worsen',
+                                        'specialist_referral',
+                                        'diagnostic_testing',
+                                        'crohns_diagnosis',
+                                        'conventional_therapy',
+                                        'therapy_failed',
+                                        'adverse_reaction',
+                                        'relapse',
+                                        'acute_flare',
+                                        'complication',
+                                        'surgery',
+                                        'comorbidity',
+                                        'biologic_recommended',
+                                        'patient_fear',
+                                        'insurance_denial',
+                                        'insurance_appeal',
+                                        'insurance_approval',
+                                        'insurance_cost_barrier',
+                                        'insurance_step_therapy',
+                                        'biologic_not_taken',
+                                        'biologic_taken',
+                                        'biologic_switch',
+                                        'loss_of_response',
+                                        'remission',
+                                        'breakthrough_symptoms',
+                                        'alternative_therapy',
+                                        'planning_next_step',
+                                        'unresolved',
+                                        'other'],
+                               'title': 'PathwayStep',
+                               'type': 'string'},
+               'ReasonNotTaken': {'description': 'Why a prescribed '
+                                                 "biologic wasn't taken / "
+                                                 "wasn't reached.\n"
+                                                 '\n'
+                                                 '`PATIENT_FEARS` lives '
+                                                 'here (fear of '
+                                                 'needles/side-effects '
+                                                 'blocks *taking*, not '
+                                                 'prescribing);\n'
+                                                 '`CONTRAINDICATION` and '
+                                                 '`DEFERRED` were added '
+                                                 'from real cases (e.g. '
+                                                 'COPD risk; '
+                                                 'post-surgery).\n'
+                                                 '`NOT_APPLICABLE` '
+                                                 'distinguishes "doesn\'t '
+                                                 'apply" (biologic was '
+                                                 'taken) from a blank "not '
+                                                 'yet\n'
+                                                 'annotated" cell.',
+                                  'enum': ['NOT_MENTIONED',
+                                           'EXPLICIT_DENIAL',
+                                           'INSURANCE_PROBLEMS',
+                                           'COST',
+                                           'PATIENT_FEARS',
+                                           'CONTRAINDICATION',
+                                           'DEFERRED',
+                                           'JOURNEY_CUT_OFF',
+                                           'UNKNOWN',
+                                           'NOT_APPLICABLE',
+                                           'OTHER'],
+                                  'title': 'ReasonNotTaken',
+                                  'type': 'string'},
+               'ReasonPrescribed': {'description': 'Why a biologic *was* '
+                                                   'the chosen path.',
+                                    'enum': ['DOCTOR_CHOICE',
+                                             'PATIENT_FEARS',
+                                             'COST',
+                                             'ACCESS',
+                                             'NOT_APPLICABLE',
+                                             'OTHER'],
+                                    'title': 'ReasonPrescribed',
+                                    'type': 'string'},
+               'TreatmentOutcome': {'description': 'Overall outcome. '
+                                                   '`AMBIGUOUS`/`ONGOING` '
+                                                   "exist because Crohn's "
+                                                   'journeys are often '
+                                                   'circular —\n'
+                                                   'forcing every patient '
+                                                   'into SUCCESS/FAILED '
+                                                   'would fabricate a '
+                                                   'certainty the '
+                                                   'transcripts lack.',
+                                    'enum': ['SUCCESS',
+                                             'FAILED',
+                                             'PARTIAL',
+                                             'AMBIGUOUS',
+                                             'ONGOING',
+                                             'UNKNOWN'],
+                                    'title': 'TreatmentOutcome',
+                                    'type': 'string'},
+               'TreatmentRecord': {'description': 'One treatment in the '
+                                                  "patient's history. The "
+                                                  'free-text '
+                                                  '`treatment_records` '
+                                                  'column parses\n'
+                                                  'into a list of these '
+                                                  'later; kept minimal '
+                                                  'until the annotation '
+                                                  'convention firms up.',
+                                   'properties': {'name': {'title': 'Name',
+                                                           'type': 'string'},
+                                                  'treatment_class': {'title': 'Treatment '
+                                                                               'Class',
+                                                                      'type': 'string'},
+                                                  'outcome': {'$ref': '#/$defs/TreatmentOutcome'},
+                                                  'reason_stopped': {'anyOf': [{'type': 'string'},
+                                                                               {'type': 'null'}],
+                                                                     'default': None,
+                                                                     'title': 'Reason '
+                                                                              'Stopped'}},
+                                   'required': ['name',
+                                                'treatment_class',
+                                                'outcome'],
+                                   'title': 'TreatmentRecord',
+                                   'type': 'object'}},
+     'description': "One patient's labels — the shared shape of the gold "
+                    'annotations (`.ods`) and a model\n'
+                    'prediction from `extract.py`; provenance differs, '
+                    "structure doesn't.\n"
+                    '\n'
+                    "When produced by `extract.py` these are the model's "
+                    '**predictions** (inference, not ground\n'
+                    'truth); evaluation compares them field-by-field '
+                    'against the gold values in\n'
+                    '`data/in/interviews_ground_truth_v3.ods` for the '
+                    '20-of-50 validation cases (the `to_review`\n'
+                    'split, see `src/splits.py`).\n'
+                    '\n'
+                    'Field names match the v3 spreadsheet columns 1:1 (see '
+                    '`docs/SCHEMA.md`). Required fields are\n'
+                    'the ones every transcript can answer; the rest '
+                    'default to `None`/`[]` so a partial extraction\n'
+                    'still validates.',
+     'properties': {'patient_id': {'title': 'Patient Id', 'type': 'string'},
+                    'churn': {'anyOf': [{'type': 'boolean'},
+                                        {'type': 'null'}],
+                              'default': None,
+                              'title': 'Churn'},
+                    'incomplete_journey': {'anyOf': [{'type': 'boolean'},
+                                                     {'type': 'null'}],
+                                           'default': None,
+                                           'title': 'Incomplete Journey'},
+                    'demographics': {'$ref': '#/$defs/Demographics',
+                                     'default': {'gender': None,
+                                                 'age': None}},
+                    'biologic_prescribed': {'title': 'Biologic Prescribed',
+                                            'type': 'boolean'},
+                    'biologic_taken': {'title': 'Biologic Taken',
+                                       'type': 'boolean'},
+                    'biologic_not_mentioned': {'title': 'Biologic Not '
+                                                        'Mentioned',
+                                               'type': 'boolean'},
+                    'biologic_type': {'anyOf': [{'type': 'string'},
+                                                {'type': 'null'}],
+                                      'default': None,
+                                      'title': 'Biologic Type'},
+                    'reasons_for_biologic_prescribed': {'anyOf': [{'$ref': '#/$defs/ReasonPrescribed'},
+                                                                  {'type': 'null'}],
+                                                        'default': None},
+                    'reasons_for_biologic_not_taken': {'anyOf': [{'$ref': '#/$defs/ReasonNotTaken'},
+                                                                 {'type': 'null'}],
+                                                       'default': None},
+                    'comorbid_conditions': {'default': [],
+                                            'items': {'$ref': '#/$defs/ComorbidCondition'},
+                                            'title': 'Comorbid Conditions',
+                                            'type': 'array'},
+                    'treatment_records': {'default': [],
+                                          'items': {'$ref': '#/$defs/TreatmentRecord'},
+                                          'title': 'Treatment Records',
+                                          'type': 'array'},
+                    'treatment_outcome': {'$ref': '#/$defs/TreatmentOutcome'},
+                    'referral_pathway': {'default': [],
+                                         'items': {'$ref': '#/$defs/PathwayStep'},
+                                         'title': 'Referral Pathway',
+                                         'type': 'array'},
+                    'evidence_notes': {'anyOf': [{'type': 'string'},
+                                                 {'type': 'null'}],
+                                       'default': None,
+                                       'title': 'Evidence Notes'}},
+     'required': ['patient_id',
+                  'biologic_prescribed',
+                  'biologic_taken',
+                  'biologic_not_mentioned',
+                  'treatment_outcome'],
+     'title': 'PatientLabels',
+     'type': 'object'}
+
+On instance:
+    {'patient_id': 'P001',
+     'sex': 'female',
+     'age': 34,
+     'diagnosis': "Crohn's disease",
+     'initial_presentation_symptoms': ['stomach cramps',
+                                       'weight loss',
+                                       'diarrhea'],
+     'primary_care_physician': {'name': 'Dr. Martinez',
+                                'specialty': 'General Practice'},
+     'gastroenterologist_specialist': {'name': 'Dr. Rebecca Chen',
+                                       'specialty': 'Gastroenterology'},
+     'initial_diagnosis': 'Irritable Bowel Syndrome (IBS)',
+     'final_diagnosis': ["Crohn's disease"],
+     'current_medications': ['mesalamine',
+                             'azathioprine',
+                             'Humira',
+                             'vitamin D',
+                             'B12'],
+     'biologics_used': ['Humira'],
+     'comorbidities': ['Psoriasis'],
+     'diagnosing_tests': ['colonoscopy', 'blood work', 'imaging'],
+     'referral_pathway': ['General Practice', 'Gastroenterology']}
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1640, in wrapper
+    post_call_processing(
+    └ <function post_call_processing at 0x10f246560>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1422, in post_call_processing
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1414, in post_call_processing
+    litellm.litellm_core_utils.json_validation_rule.validate_schema(
+    │       │                  │                    └ <function validate_schema at 0x10cec64b0>
+    │       │                  └ <module 'litellm.litellm_core_utils.json_validation_rule' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/pytho...
+    │       └ <module 'litellm.litellm_core_utils' (namespace) from ['/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/si...
+    └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/json_validation_rule.py", line 131, in validate_schema
+    raise JSONSchemaValidationError(
+          └ <class 'litellm.exceptions.JSONSchemaValidationError'>
+
+litellm.exceptions.JSONSchemaValidationError: litellm.JSONSchemaValidationError: model=, returned an invalid response={"patient_id": "P001", "sex": "female", "age": 34, "diagnosis": "Crohn's disease", "initial_presentation_symptoms": ["stomach cramps", "weight loss", "diarrhea"], "primary_care_physician": {"name": "Dr. Martinez", "specialty": "General Practice"}, "gastroenterologist_specialist": {"name": "Dr. Rebecca Chen", "specialty": "Gastroenterology"}, "initial_diagnosis": "Irritable Bowel Syndrome (IBS)", "final_diagnosis": ["Crohn's disease"], "current_medications": ["mesalamine", "azathioprine", "Humira", "vitamin D", "B12"], "biologics_used": ["Humira"], "comorbidities": ["Psoriasis"], "diagnosing_tests": ["colonoscopy", "blood work", "imaging"], "referral_pathway": ["General Practice", "Gastroenterology"]}, for schema={"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. The free-text `treatment_records` column parses\ninto a list of these later; kept minimal until the annotation convention firms up.", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v3.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v3 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "incomplete_journey": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Incomplete Journey"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}.
+Access raw response with `e.raw_response`
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 51, in <module>
+    fire.Fire(main)
+    │    │    └ <function main at 0x112534720>
+    │    └ <function Fire at 0x1056f2f00>
+    └ <module 'fire' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 135, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+                      │     │          │     │                 │        └ 'main.py'
+                      │     │          │     │                 └ {}
+                      │     │          │     └ Namespace(verbose=False, interactive=False, separator='-', completion=None, help=False, trace=False)
+                      │     │          └ ['--model=ollama_chat/gemma4', '--limit=3']
+                      │     └ <function main at 0x112534720>
+                      └ <function _Fire at 0x105bb6980>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 468, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+    │                           └ <function _CallAndUpdateTrace at 0x105bb6ae0>
+    └ <function main at 0x112534720>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/fire/core.py", line 684, in _CallAndUpdateTrace
+    component = fn(*varargs, **kwargs)
+                │   │          └ {}
+                │   └ ['ollama_chat/gemma4', 3]
+                └ <function main at 0x112534720>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 42, in main
+    results = run(records, model=model)
+              │   │              └ 'ollama_chat/gemma4'
+              │   └ [Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eig...
+              └ <function run at 0x1125345c0>
+
+> File "/Users/shoutt/projects/mama_health/chronicity/src/main.py", line 34, in run
+    extract(r.interview_transcript, r.patient_id, out_dir, model) for r in records
+    │       │ │                     │ │           │        │          │    └ [Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eig...
+    │       │ │                     │ │           │        │          └ Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eigh...
+    │       │ │                     │ │           │        └ 'ollama_chat/gemma4'
+    │       │ │                     │ │           └ PosixPath('/Users/shoutt/projects/mama_health/chronicity/data/out')
+    │       │ │                     │ └ 'P001'
+    │       │ │                     └ Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eigh...
+    │       │ └ "I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eight years now. It all started when I was 26, working...
+    │       └ Interview(patient_id='P001', interview_transcript="I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eigh...
+    └ <function extract at 0x11251b950>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/src/extract.py", line 61, in extract
+    response = litellm.completion(
+               │       └ <function completion at 0x110b91fe0>
+               └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1720, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           │       │                        │       └ {'model': 'ollama_chat/gemma4', 'num_retries': 2, 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract th...
+           │       │                        └ ()
+           │       └ <function completion_with_retries at 0x110b91dd0>
+           └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/main.py", line 4652, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+           │       │                   │       └ {'model': 'ollama_chat/gemma4', 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract the structured label...
+           │       │                   └ ()
+           │       └ <function completion at 0x110b91fe0>
+           └ <Retrying object at 0x113b31010 (stop=<tenacity.stop.stop_after_attempt object at 0x113b306e0>, wait=<tenacity.wait.wait_none...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         │    │                └ <RetryCallState 4626563488: attempt #2; slept for 0.0; last result: failed (JSONSchemaValidationError litellm.JSONSchemaValid...
+         │    └ <function BaseRetrying.iter at 0x113ba3950>
+         └ <Retrying object at 0x113b31010 (stop=<tenacity.stop.stop_after_attempt object at 0x113b306e0>, wait=<tenacity.wait.wait_none...
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             │      └ <RetryCallState 4626563488: attempt #2; slept for 0.0; last result: failed (JSONSchemaValidationError litellm.JSONSchemaValid...
+             └ <function BaseRetrying._post_stop_check_actions.<locals>.exc_check at 0x11257dbc0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          │         └ <function RetryError.reraise at 0x113ba22a0>
+          └ RetryError(<Future at 0x11259c410 state=finished raised JSONSchemaValidationError>)
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          │    │            └ <function Future.result at 0x1058af740>
+          │    └ <Future at 0x11259c410 state=finished raised JSONSchemaValidationError>
+          └ RetryError(<Future at 0x11259c410 state=finished raised JSONSchemaValidationError>)
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/concurrent/futures/_base.py", line 443, in result
+    return self.__get_result()
+           └ None
+  File "/Users/shoutt/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/concurrent/futures/_base.py", line 395, in __get_result
+    raise self._exception
+          └ None
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             │   │       └ {'model': 'ollama_chat/gemma4', 'drop_params': True, 'messages': [{'role': 'system', 'content': "Extract the structured label...
+             │   └ ()
+             └ <function completion at 0x110b91fe0>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1640, in wrapper
+    post_call_processing(
+    └ <function post_call_processing at 0x10f246560>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1422, in post_call_processing
+    raise e
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/utils.py", line 1414, in post_call_processing
+    litellm.litellm_core_utils.json_validation_rule.validate_schema(
+    │       │                  │                    └ <function validate_schema at 0x10cec64b0>
+    │       │                  └ <module 'litellm.litellm_core_utils.json_validation_rule' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/pytho...
+    │       └ <module 'litellm.litellm_core_utils' (namespace) from ['/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/si...
+    └ <module 'litellm' from '/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/__init__.py'>
+  File "/Users/shoutt/projects/mama_health/chronicity/.venv/lib/python3.14/site-packages/litellm/litellm_core_utils/json_validation_rule.py", line 131, in validate_schema
+    raise JSONSchemaValidationError(
+          └ <class 'litellm.exceptions.JSONSchemaValidationError'>
+
+litellm.exceptions.JSONSchemaValidationError: litellm.JSONSchemaValidationError: model=, returned an invalid response={"patient_id": "P001", "disease_name": "Crohn's disease", "age_at_onset": 26, "years_of_diagnosis": 8, "initial_symptoms": ["Stomach cramps", "Weight loss", "Diarrhea"], "initial_diagnoses": ["IBS"], "referring_physician": {"name": "Dr. Martinez", "specialty": "Primary Care"}, "specialist_consulted": {"name": "Dr. Rebecca Chen", "specialty": "Gastroenterology"}, "diagnostic_procedures": ["Colonoscopy", "Blood work", "Imaging"], "first_line_treatment": {"drug_class": "Aminosalicylate", "drug_example": "mesalamine", "duration_months": 3}, "subsequent_treatments_attempted": [{"drug_class": "Immunomodulator", "drug_example": "azathioprine", "efficacy": "Negative/Adverse reaction"}], "current_treatment": {"drug_class": "Biologic", "drug_example": "Humira", "administration_frequency": "Every two weeks"}, "comorbidities": [{"condition": "Psoriasis", "related_to_medication": true}], "nutritional_deficiencies_addressed": ["Vitamin D", "B12"], "monitoring_schedule": {"frequency": "3 months"}, "insurance_concerns": {"issue": "Initial coverage denial", "resolution": "Appeals process (4 months)"}, "referral_pathway": ["Primary Care Physician Consulted", "Specialist Referral"]}, for schema={"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. The free-text `treatment_records` column parses\ninto a list of these later; kept minimal until the annotation convention firms up.", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v3.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v3 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "incomplete_journey": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Incomplete Journey"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}.
+Access raw response with `e.raw_response`

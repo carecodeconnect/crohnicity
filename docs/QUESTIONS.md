@@ -16,11 +16,21 @@ This decides how `churn` is annotated and what it can measure. From the data rev
 P001–P050). If "churn" means *app* churn, the interview transcripts likely don't contain the
 signal at all — we'd need product/usage data instead.
 
+**Spec hint (README):** *"Some patients disengage partway through their interview — they churn —
+leaving us with truncated journeys."* This frames churn as **disengaging partway through the
+interview itself** (a truncated transcript) — closer to our `incomplete_journey` notion (Q4) than
+to app/treatment churn, so the two definitions still need reconciling.
+
 ## 2. What is the source of the interview transcripts?
 
 - How were the `interview_transcript` texts produced — real patient interviews, clinician
   notes, synthetic / LLM-generated, or a mix?
 - This affects how much extracted detail we can trust and what biases to expect.
+
+**Partly answered (README):** the transcripts are **synthetic** ("50 synthetic interview
+transcripts"), and patient stories are **collected longitudinally**, with some patients
+disengaging partway. Still open: *how* the interviews are administered/collected (self-report,
+clinician-led, app-based?) and what the synthetic generator modelled.
 
 ## 3. Definitions of the key outcome variables — we need a data dictionary
 
@@ -63,3 +73,12 @@ Before any **real** patient data enters the pipeline we need a decision on:
   are sent to an external LLM (Gemini).
 - Where production inputs/outputs should live (secure storage, not version control), and what the
   **data-processing agreement** with the model provider must cover.
+
+## 8. What aggregation levels does the business need?
+
+The four README questions are mostly **by patient** (% on a biologic, reasons for not being on
+one, referral steps) with some **by treatment** (treatments tried before a biologic). Future
+analytics may need other grains — **by medication/biologic**, **by comorbid condition**, by
+demographic, or by journey-type. Confirm the required aggregation levels so the schema and outputs
+support them. For version-controlled, scalable platform analytics, consider **dbt SQL models** over
+the structured output (one transformation layer per grain) rather than ad-hoc pandas.

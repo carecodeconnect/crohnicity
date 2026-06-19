@@ -23,6 +23,14 @@ I got an API key for Google API Studio:
 I followed the instructions to export the API key as an environment variable here:
 
 - [Using Gemini API Keys](https://ai.google.dev/gemini-api/docs/api-key#macos---zsh)
+- **Rate limits** — the free tier caps Gemini 2.5 Flash Lite at **~20 requests/day** (under the 50
+  transcripts, so a full run needs a paid tier or spreading across days):
+  [limits & tiers](https://ai.google.dev/gemini-api/docs/rate-limits) ·
+  [current usage](https://ai.dev/rate-limit)
+- **Local model (Ollama)** to dodge the quota — `uv run python src/main.py --model=ollama_chat/<model>`
+  (needs `ollama serve` running and `ollama pull <model>`; the same call works via litellm's
+  `drop_params`, which drops the Gemini-only `response_schema`/`enforce_validation`).
+  Docs: [litellm Ollama](https://docs.litellm.ai/docs/providers/ollama)
 
 I added `config.env` to my `.gitignore` to protect the secret key, stopping it being added to git version control.
 

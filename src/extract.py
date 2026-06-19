@@ -28,6 +28,15 @@ from loguru import logger
 from schema import PatientLabels
 
 MODEL = "gemini/gemini-2.5-flash-lite"
+MAX_RETRIES = 2  # litellm retries transient 429/503 errors, with backoff
+# API errors we log cleanly and surface for a graceful CLI exit (no traceback dump):
+# 429 (rate limit), 503 (busy), connection / model-not-found, and schema mismatch.
+HANDLED = (
+    litellm.RateLimitError,
+    litellm.ServiceUnavailableError,
+    litellm.APIConnectionError,
+    litellm.JSONSchemaValidationError,
+)
 # Anchor paths to the repo root via __file__, so they hold regardless of caller's cwd
 # (e.g. the notebook runs from notebooks/, not the repo root).
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,18 +52,24 @@ SYSTEM_PROMPT = (
     "Use the schema's enum values exactly, and leave a field null/empty when the transcript "
     "doesn't support a confident value. Set patient_id to the value given in the message. "
     "For referral_pathway, list the patient's journey as an ordered sequence of the canonical "
-    "PathwayStep values."
+    "PathwayStep values. "
+    "Return only valid JSON matching the schema — no prose, no code fences."
 )
 
 
-# Log unexpected failures (traceback) + re-raise; 503 is handled cleanly below.
-@logger.catch(exclude=litellm.ServiceUnavailableError, reraise=True)
-def extract(transcript: str, patient_id: str, out_dir: Path = OUT_DIR) -> PatientLabels:
+# Log unexpected failures (traceback) + re-raise; retryable API errors handled below.
+@logger.catch(exclude=HANDLED, reraise=True)
+def extract(
+    transcript: str, patient_id: str, out_dir: Path = OUT_DIR, model: str = MODEL
+) -> PatientLabels:
     """Extract one patient's labels from their interview transcript via Gemini (a prediction)."""
     load_dotenv()  # GEMINI_API_KEY -> env; litellm reads it for the gemini/ provider
     try:
         response = litellm.completion(
-            model=MODEL,
+            model=model,
+            num_retries=MAX_RETRIES,
+            # drop params a provider doesn't support (Gemini vs Ollama)
+            drop_params=True,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {
@@ -68,9 +83,9 @@ def extract(transcript: str, patient_id: str, out_dir: Path = OUT_DIR) -> Patien
                 "enforce_validation": True,
             },
         )
-    except litellm.ServiceUnavailableError:
-        # Gemini 503 (model busy): transient — clean message, not a stack dump.
-        logger.error("Gemini 503 (model busy) for {} — retry later", patient_id)
+    except HANDLED as e:
+        # expected API/schema error (litellm already retried) — clean line, no stack dump.
+        logger.error("{} for {} — gave up after retries", type(e).__name__, patient_id)
         raise
     labels = PatientLabels.model_validate_json(response.choices[0].message.content)
     path = save(labels, out_dir)

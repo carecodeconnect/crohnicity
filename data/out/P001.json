@@ -1,0 +1,58 @@
+{
+  "patient_id": "P001",
+  "churn": null,
+  "incomplete_journey": false,
+  "demographics": {
+    "gender": "female",
+    "age": 34
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "RHEUMATOID_ARTHRITIS"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse_reaction"
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "primary_care_contact",
+    "misdiagnosis",
+    "symptoms_worsen",
+    "diagnostic_delay",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "patient_fear",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken"
+  ],
+  "evidence_notes": "Patient experienced symptoms for six months before being referred to a gastroenterologist. Initially diagnosed with IBS. Treatment history includes mesalamine and azathioprine before starting biologics. Insurance denial and appeals caused a delay in starting biologics. Has been on Humira for five years with mostly remission but occasional flares. Developed psoriasis, potentially related to Humira. Takes supplements due to absorption issues. Concerned about the high cost of medication without insurance."
+}

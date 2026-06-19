@@ -122,6 +122,16 @@ scaling EDA**.
 - [ ] **EDA plots**: tokens & cost per case, cache-hit rate, latency distribution, and totals to
   project cost at scale. Ties into the Dagster "log each run" item above.
 
+## Reporting — Quarto → GFM
+
+- [ ] **`README.qmd` business answers.** The pipeline should **dynamically generate the plots and
+  tables** answering the four PharmaCorp questions and embed them — with the per-case
+  `referral_pathway` diagrams — in a **`README.qmd`** rendered to **GitHub-flavoured markdown** via
+  `quarto render` (CLI). Gives a static, version-controlled answers doc that refreshes from the
+  latest predictions.
+- [ ] **`docs/DESIGN.qmd` system design.** Flesh out the draft Mermaid architecture into the final
+  workflow/system-design write-up; render with `quarto render docs/DESIGN.qmd`.
+
 ## Packaging — Docker
 
 - [ ] After the `src/` refactor, add a **Dockerfile** producing a **small image** (e.g.

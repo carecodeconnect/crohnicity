@@ -5,8 +5,8 @@ The same shape serves both provenances: the human-annotated *gold* set in
 (an inference, not ground truth). Mirrors the columns and controlled vocabularies in
 `docs/SCHEMA.md` (v0.3); field names match the spreadsheet columns 1:1.
 
-Two spreadsheet columns are intentionally *not* modelled here: `interview_transcript` (the
-model's *input*) and `to_review` (a human-set validation/holdout flag — see `src/splits.py`).
+`interview_transcript` is the model's *input* — its own `Interview` model below; `to_review`
+(a human-set validation/holdout flag, see `src/splits.py`) is not modelled.
 
 The rationale for each name/type is in `docs/SCHEMA.md`; the docstrings below summarise it.
 """
@@ -14,6 +14,13 @@ The rationale for each name/type is in `docs/SCHEMA.md`; the docstrings below su
 from enum import Enum
 
 from pydantic import BaseModel
+
+
+class Interview(BaseModel):
+    """One input record from interviews.json (the model's input, not its labels)."""
+
+    patient_id: str
+    interview_transcript: str
 
 
 class TreatmentOutcome(str, Enum):
@@ -156,6 +163,11 @@ class TreatmentRecord(BaseModel):
 class PatientLabels(BaseModel):
     """One patient's labels — the shared shape of the gold annotations (`.ods`) and a model
     prediction from `extract.py`; provenance differs, structure doesn't.
+
+    When produced by `extract.py` these are the model's **predictions** (inference, not ground
+    truth); evaluation compares them field-by-field against the gold values in
+    `data/in/interviews_ground_truth_v3.ods` for the 20-of-50 validation cases (the `to_review`
+    split, see `src/splits.py`).
 
     Field names match the v3 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
     the ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction

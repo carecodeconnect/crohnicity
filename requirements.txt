@@ -388,6 +388,10 @@ filelock==3.29.4 \
     # via
     #   dagster
     #   huggingface-hub
+fire==0.7.1 \
+    --hash=sha256:3b208f05c736de98fb343310d090dcc4d8c78b2a89ea4f32b837c586270a9cbf \
+    --hash=sha256:e43fd8a5033a9001e7e2973bab96070694b9f12f2e0ecf96d4683971b5ab1882
+    # via chronicity
 fonttools==4.63.0 \
     --hash=sha256:0eac00b9118c3c2f87d272e45341871c5b3066baa3c86897fa634a7c3fb59096 \
     --hash=sha256:22693918177bd9ceabec4736d338045f357769416fc6b0b2508eefef75b08616 \
@@ -759,6 +763,10 @@ jupyterlab-widgets==3.0.16 \
     --hash=sha256:423da05071d55cf27a9e602216d35a3a65a3e41cdf9c5d3b643b814ce38c19e0 \
     --hash=sha256:45fa36d9c6422cf2559198e4db481aa243c7a32d9926b500781c830c80f7ecf8
     # via ipywidgets
+jupytext==1.19.3 \
+    --hash=sha256:713c3ed4441afe0f31474d28ea2e6b61a268c04c40fd78e5ccfd7f7ac9e9f766 \
+    --hash=sha256:acf75492f80895ad8e664fd8db1708b617008dd0e71c341a1abc3d0d07310ed0
+    # via chronicity
 kiwisolver==1.5.0 \
     --hash=sha256:012b1eb16e28718fa782b5e61dc6f2da1f0792ca73bd05d54de6cb9561665fc9 \
     --hash=sha256:0255a027391d52944eae1dbb5d4cc5903f57092f3674e8e544cdd2622826b3f0 \
@@ -819,7 +827,10 @@ markdown==3.10.2 \
 markdown-it-py==4.2.0 \
     --hash=sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49 \
     --hash=sha256:9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a
-    # via rich
+    # via
+    #   jupytext
+    #   mdit-py-plugins
+    #   rich
 markupsafe==3.0.3 \
     --hash=sha256:0eb9ff8191e8498cca014656ae6b8d61f39da5f95b488805da4bb029cccbfbaf \
     --hash=sha256:1085e7fbddd3be5f89cc898938f42c0b3c711fdcb37d75221de2666af647c175 \
@@ -876,6 +887,10 @@ matplotlib-inline==0.2.2 \
     # via
     #   ipykernel
     #   ipython
+mdit-py-plugins==0.6.1 \
+    --hash=sha256:214c82fb2ac524472ab6a5bcab1de80f73b50443e187f401bfd77efbc7c6481d \
+    --hash=sha256:a2bca0f039f39dbd35fb74ae1b5f998608c437463371f0ff7f49a19a17a114d0
+    # via jupytext
 mdurl==0.1.2 \
     --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
     --hash=sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
@@ -975,6 +990,7 @@ nbformat==5.10.4 \
     --hash=sha256:3b48d6c8fbca4b299bf3982ea7db1af21580e4fec269ad087b9e81588891200b
     # via
     #   jupyter-server
+    #   jupytext
     #   nbclient
     #   nbconvert
 nest-asyncio2==1.7.2 \
@@ -1047,6 +1063,7 @@ packaging==26.2 \
     #   jupyter-server
     #   jupyterlab
     #   jupyterlab-server
+    #   jupytext
     #   matplotlib
     #   mkdocs
     #   nbconvert
@@ -1373,6 +1390,7 @@ pyyaml==6.0.3 \
     #   dagster-shared
     #   huggingface-hub
     #   jupyter-events
+    #   jupytext
     #   mkdocs
     #   mkdocs-get-deps
     #   pymdown-extensions
@@ -1633,6 +1651,10 @@ tenacity==9.1.4 \
     --hash=sha256:6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55 \
     --hash=sha256:adb31d4c263f2bd041081ab33b498309a57c77f9acf2db65aadf0898179cf93a
     # via google-genai
+termcolor==3.3.0 \
+    --hash=sha256:348871ca648ec6a9a983a13ab626c0acce02f515b9e1983332b17af7979521c5 \
+    --hash=sha256:cf642efadaf0a8ebbbf4bc7a31cec2f9b5f21a9f726f4ccbb08192c9c26f43a5
+    # via fire
 terminado==0.18.1 \
     --hash=sha256:a4468e1b37bb318f8a86514f65814e1afc977cf29b3992a4500d9dd305dcceb0 \
     --hash=sha256:de09f2c4b85de4765f7714688fff57d3e75bad1f909b589fde880460c753fd2e

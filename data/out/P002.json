@@ -1,0 +1,75 @@
+{
+  "patient_id": "P002",
+  "churn": null,
+  "incomplete_journey": null,
+  "demographics": {
+    "gender": "male",
+    "age": 42
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": "STELARA",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "COST",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "metformin",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": null
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Side effects on blood sugar control"
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional_therapy",
+      "outcome": "FAILED",
+      "reason_stopped": null
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional_therapy",
+      "outcome": "FAILED",
+      "reason_stopped": "Liver issues"
+    },
+    {
+      "name": "budesonide",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": null
+    },
+    {
+      "name": "iron supplements",
+      "treatment_class": "other",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Causes more GI upset"
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_cost_barrier",
+    "biologic_not_taken",
+    "planning_next_step",
+    "comorbidity"
+  ],
+  "evidence_notes": "Patient is worried about the cost of Stelara and is seeking financial assistance. He has developed arthritis which he believes is related to Crohn's."
+}
