@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 import fire
+import litellm
 
 from extract import HANDLED, MODEL, OUT_DIR, ROOT, extract
 from schema import Interview, PatientLabels
@@ -41,10 +42,13 @@ def main(model: str = MODEL, limit: int | None = None) -> str:
     try:
         results = run(records, model=model)
     except HANDLED as e:
-        sys.exit(
-            f"LLM call failed ({type(e).__name__}) for model '{model}' — "
-            f"see logs/ and rate limits: {RATE_LIMIT_DOCS}"
-        )
+        if isinstance(e, litellm.RateLimitError):
+            sys.exit(f"Rate limit / quota hit for '{model}' — see {RATE_LIMIT_DOCS}")
+        if isinstance(e, litellm.APIConnectionError):
+            sys.exit(f"Could not reach '{model}' — check the name / `ollama serve`.")
+        if isinstance(e, litellm.JSONSchemaValidationError):
+            sys.exit(f"'{model}' didn't match the schema — try a more capable model.")
+        sys.exit(f"'{model}' failed: {type(e).__name__} — see logs/.")
     return f"extracted {len(results)}/{len(records)} -> {OUT_DIR}"
 
 

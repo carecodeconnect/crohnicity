@@ -100,6 +100,10 @@ below comes after** this runs end-to-end.
 
 ## Orchestration — Dagster
 
+- [ ] **Per-stage dependency graph for failure visibility.** `src/pipeline.py` is a minimal start
+  (`interviews` → `predictions`). Expand to distinct assets/ops at **each stage — data ingestion →
+  transformation → model call → schema validation** — so a failure is pinpointed at *any* point,
+  ideally per-patient (the UI shows which transcript failed where, not just the whole batch).
 - [ ] Wire the pipeline with **Dagster** (declared but not yet used). Run
   `src/referral_pathway_analysis.py` as the **final step** of the workflow — after extraction
   and aggregation — so the phase/transition table and the interactive journey graph are
