@@ -59,6 +59,10 @@ Pin down where each kind of validation belongs, document the decision, and back 
   categories to classify the circular/contradictory pathways. Cross-cutting pattern-finding
   across journeys will need LLM assistance; then link journey types to the other column
   values. This is its own work project — see the `referral_pathway` notes in `docs/SCHEMA.md`.
+  - **Big post-MVP task.** This is the major *next step* after the current MVP, not part of it.
+    The `PathwayStep` enum in `src/schema.py` is a minimal draft only (enough to render the
+    example diagrams); refining the step vocabulary, the consolidation rules, and journey-type
+    clustering will take substantial, dedicated iteration — likely its own project.
 - [ ] **Domain-expert validation** of the consolidated `referral_pathway` phase vocabulary — a
   clinician must sign off on the canonical phases and their merges before they drive analysis,
   especially clinically loaded ones like `loss_of_response` (primary non-response vs. secondary
