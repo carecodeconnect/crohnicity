@@ -77,7 +77,13 @@ def render(pathways: dict[str, str], path: Path, heading: str) -> Path:
     for seq in map(phases, pathways.values()):
         nodes.update(seq)
         edges.update(zip(seq, seq[1:]))
-    net = Network(directed=True, height="750px", width="100%", cdn_resources="in_line", heading=heading)
+    net = Network(
+        directed=True,
+        height="750px",
+        width="100%",
+        cdn_resources="in_line",
+        heading=heading,
+    )
     for phase, count in nodes.items():
         net.add_node(phase, label=phase, value=count)
     for (s, d), count in edges.items():
@@ -98,7 +104,9 @@ def main() -> None:
         [(a, b, c) for (a, b), c in edges.most_common()],
         columns=["from_phase", "to_phase", "count"],
     )
-    print(f"{len(PATHWAYS)} pathways - {len(nodes)} distinct phases - {sum(edges.values())} transitions\n")
+    print(
+        f"{len(PATHWAYS)} pathways - {len(nodes)} distinct phases - {sum(edges.values())} transitions\n"
+    )
     print("PHASE FREQUENCY\n", phase_freq.to_string(index=False), "\n")
     print("TRANSITIONS (most common first)\n", transitions.to_string(index=False))
 
@@ -107,7 +115,11 @@ def main() -> None:
     # journeys into spurious shared nodes. Start with singular examples across the complexity
     # range (P005 simplest, P003 a cyclic antibody-driven switcher); journey-TYPE clustering later.
     for pid in ("P005", "P003"):
-        out = render({pid: PATHWAYS[pid]}, OUT / f"referral_pathway_{pid}.html", f"Referral pathway: {pid}")
+        out = render(
+            {pid: PATHWAYS[pid]},
+            OUT / f"referral_pathway_{pid}.html",
+            f"Referral pathway: {pid}",
+        )
         print(f"{pid} graph -> {out}")
 
 

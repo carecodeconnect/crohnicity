@@ -71,10 +71,12 @@ brew install graphviz
 ## Code review
 
 I run Claude Code in an integrated terminal inside VS Code, in "Explanatory" output style (set
-in `.claude/settings.json`). As CC makes each change it surfaces as a **diff in a VS Code
+in `.claude/settings.json`). **Every single change** CC makes surfaces as a **diff in a VS Code
 window**, and I review that diff before accepting it — so every update is checked against my
 intent before it lands. The Explanatory "Insights" explain *why* each change was made, which
-makes the diff review faster and more deliberate.
+makes the diff review faster and more deliberate. Changes are kept **small and self-contained
+per commit** — minimal, concise edits, not giant PR-style batches — so each commit reads as a
+diff I can review easily.
 
 The one-off `.py` transformation scripts CC produced (the ground-truth spreadsheet builders)
 are kept in `sandbox/` as a record of the diffs I reviewed.

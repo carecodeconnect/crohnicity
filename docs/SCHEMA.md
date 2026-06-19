@@ -1,4 +1,4 @@
-# Ground-truth annotation schema (v0.2)
+# Ground-truth annotation schema (v0.3)
 
 Columns in the ground-truth spreadsheet that stakeholders fill in to create the **gold set**
 of labels for evaluating the extraction pipeline.
@@ -8,38 +8,39 @@ of labels for evaluating the extraction pipeline.
 > spreadsheet dropdowns. Open business questions live in `docs/QUESTIONS.md`; the pathway
 > vocabulary needs domain-expert sign-off (`docs/TODO.md`).
 
-- **Working file:** `data/in/interviews_ground_truth_v2.ods` (generated from the annotated
-  `interviews_ground_truth.ods` — see "How v2 is generated").
-- **Rows:** 50 patients (`P001`–`P050`).
+- **Working file:** `data/in/interviews_ground_truth_v3.ods`, built from the annotated
+  `interviews_ground_truth.ods` → `_v2` → `_v3` by `sandbox/build_ground_truth_v*.py` (see "How
+  the working file is generated").
+- **Rows:** 50 patients (`P001`–`P050`); 20 reviewed so far (`to_review == 1`).
 - **Source columns** (`patient_id`, `interview_transcript`) come from `interviews.json` — **do not edit**.
-- **Note:** in `.ods`, booleans persist as `1.0`/`0.0` (LibreOffice), blanks as empty.
+- **Note:** booleans persist in the `.ods` as `1`/`0` (incl. `to_review`, now standardised), blanks as empty.
 
-## Columns (v2 — 18, in sheet order)
+## Columns (18, in sheet order)
 
 | # | Column | Type | Allowed values | Notes |
 |---|--------|------|----------------|-------|
 | 1 | `patient_id` | `str` | — | Primary key. **Read-only.** |
 | 2 | `interview_transcript` | `str` | — | Full interview text. **Read-only.** |
-| 3 | `to_review` | `bool` | `TRUE`/`FALSE` | **NEW.** `TRUE` = case is in the annotation scope; filter on this. |
-| 4 | `churn` | `bool` | `TRUE`/`FALSE` | Disengagement — **meaning unresolved** (app vs treatment), see `QUESTIONS.md`. |
-| 5 | `incomplete_journey` | `bool` | `TRUE`/`FALSE` | Treatment journey unresolved in the transcript. |
-| 6 | `gender` | `str` | free text | **NEW.** Self-reported (`female`/`male` as stated) → `Demographics`. |
-| 7 | `age` | `int` | — | **NEW.** Self-reported → `Demographics`. |
-| 8 | `biologic_prescribed` | `bool` | `TRUE`/`FALSE` | Was a biologic prescribed/recommended at any point? |
-| 9 | `biologic_taken` | `bool` | `TRUE`/`FALSE` | Did the patient actually start/take one? (Prescribed ≠ taken.) |
-| 10 | `biologic_not_mentioned` | `bool` | `TRUE`/`FALSE` | `TRUE` when biologics never come up at all. |
+| 3 | `to_review` | `bool` (1/0) | `1`/`0` | `1` = case is in the annotation scope; filter on this. Single source of truth for the validation/holdout split (`src/splits.py`). |
+| 4 | `churn` | `bool` (1/0) | `1`/`0` | **Definition unresolved** — working assumption: patient stops engaging with the app/service. See Open questions / `QUESTIONS.md` #1. |
+| 5 | `incomplete_journey` | `bool` (1/0) | `1`/`0` | **Definition unresolved** — working assumption: the record/interview was not completed. NOT "treatment journey unresolved". See Open questions / `QUESTIONS.md` #4. |
+| 6 | `gender` | `str` | free text | Self-reported (`female`/`male` as stated) → `Demographics`. |
+| 7 | `age` | `int` | — | Self-reported → `Demographics`. |
+| 8 | `biologic_prescribed` | `bool` (1/0) | `1`/`0` | Was a biologic prescribed/recommended at any point? (recommend vs prescribe — `QUESTIONS.md` #5.) |
+| 9 | `biologic_taken` | `bool` (1/0) | `1`/`0` | Did the patient actually start/take one? (Prescribed ≠ taken.) |
+| 10 | `biologic_not_mentioned` | `bool` (1/0) | `1`/`0` | `1` when biologics never come up at all. |
 | 11 | `biologic_type` | `str` | free text | Named biologic(s), e.g. `Humira`, `infliximab`. |
 | 12 | `reasons_for_biologic_prescribed` | `enum` | see vocab | Why a biologic *was* the chosen path. |
-| 13 | `reasons_for_biologic_not_taken` | `enum` | see vocab | **RENAMED** from `reasons_for_biologic_denied`; enum expanded. Why a prescribed biologic wasn't taken / wasn't reached. |
-| 14 | `comorbid_conditions` | `list[enum]` | see vocab | **NEW.** Independent coexisting diagnoses (not Crohn's sequelae). Comma-separated. |
+| 13 | `reasons_for_biologic_not_taken` | `enum` | see vocab | Renamed from `reasons_for_biologic_denied`. Why a prescribed biologic wasn't taken / wasn't reached. |
+| 14 | `comorbid_conditions` | `list[enum]` | see vocab | Independent coexisting diagnoses (not Crohn's sequelae). Comma-separated. |
 | 15 | `treatment_records` | `list[TreatmentRecord]` (free text) | see convention | All treatments, in order. |
-| 16 | `treatment_outcome` | `enum` | see vocab | Overall patient-level outcome; `AMBIGUOUS`/`ONGOING` added for circular journeys. |
+| 16 | `treatment_outcome` | `enum` | see vocab | Overall patient-level outcome; `AMBIGUOUS`/`ONGOING` allowed (confirmed). |
 | 17 | `referral_pathway` | `list[str]` (free text) | see convention | Canonical-event journey chain. |
-| 18 | `evidence_notes` | `str` | free text | **DEFERRED** — kept as a column, not populated yet (citing per-field sources is costly). |
+| 18 | `evidence_notes` | `str` | free text | **DEFERRED** — kept as a column, not yet populated; also the destination for any prose mis-entered into other fields. |
 
 ## Controlled vocabularies
 
-- **Booleans** (`to_review`, `churn`, `incomplete_journey`, `biologic_prescribed`, `biologic_taken`, `biologic_not_mentioned`): `TRUE`, `FALSE`
+- **Booleans** (`to_review`, `churn`, `incomplete_journey`, `biologic_prescribed`, `biologic_taken`, `biologic_not_mentioned`): `1` / `0` (stored numeric in the `.ods`).
 - **`reasons_for_biologic_prescribed`**: `DOCTOR_CHOICE`, `PATIENT_FEARS`, `COST`, `ACCESS`, `NOT_APPLICABLE`, `OTHER`
 - **`reasons_for_biologic_not_taken`**: `NOT_MENTIONED`, `EXPLICIT_DENIAL`, `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`, `CONTRAINDICATION`, `DEFERRED`, `JOURNEY_CUT_OFF`, `UNKNOWN`, `NOT_APPLICABLE`, `OTHER`
   - *`CONTRAINDICATION` = medically can't be given (e.g. COPD risk); `DEFERRED` = appropriate but postponed (awaiting surgery recovery / timing).*
@@ -49,6 +50,7 @@ of labels for evaluating the extraction pipeline.
   - *(`AMBIGUOUS` = stated but mixed/contradictory; `ONGOING` = unresolved/still escalating; `UNKNOWN` = not stated.)*
 - **`comorbid_conditions`** (seeded from P001–P050; extend as found): `TYPE_2_DIABETES`, `HYPERTENSION`, `HYPERLIPIDEMIA`, `ANXIETY_DISORDER`, `DEPRESSION`, `PCOS`, `ENDOMETRIOSIS`, `MIGRAINE`, `HYPOTHYROIDISM`, `FIBROMYALGIA`, `ASTHMA`, `RHEUMATOID_ARTHRITIS`, `ADHD`, `SLEEP_APNEA`, `OTHER`
   - *Excludes Crohn's-driven sequelae (psoriasis, osteoporosis, anemia, short-bowel, enteropathic arthritis) — those are treatment/disease effects, not independent risk factors.*
+  - *Several real diagnoses have no clean token yet (bipolar, heart disease, COPD, PSC/autoimmune hepatitis, insulin resistance, eating disorder) — see Open questions.*
 
 ## `referral_pathway` — canonical phases
 
@@ -147,8 +149,8 @@ class PatientGroundTruth(BaseModel):
     patient_id: str
     to_review: bool = False
     demographics: Demographics = Demographics()   # flat gender/age columns map in here
-    churn: bool
-    incomplete_journey: bool
+    churn: bool | None = None             # definition pending CAIO (QUESTIONS.md #1)
+    incomplete_journey: bool | None = None  # definition pending CAIO (QUESTIONS.md #4)
     biologic_prescribed: bool
     biologic_taken: bool
     biologic_not_mentioned: bool
@@ -162,27 +164,50 @@ class PatientGroundTruth(BaseModel):
     evidence_notes: str | None = None
 ```
 
-## How `v2` is generated
+## How the working file is generated
 
-A one-shot transformation cell (read → rename/add/reorder → fill only-empty cells → write)
-reads `interviews_ground_truth.ods`, applies the v2 changes, and writes
-`interviews_ground_truth_v2.ods`. **It only ever writes into empty cells, so every existing
-annotation is preserved**; the original file is untouched. A pandas→`.ods` write carries values
-only (dropdowns / frozen header / filters are re-applied in LibreOffice).
+Two one-shot scripts in `sandbox/` (kept as a reviewable record):
+
+1. `build_ground_truth_v2.py` — `interviews_ground_truth.ods` → `_v2`: rename/add/reorder
+   columns, bootstrap `to_review`, fill empty `referral_pathway`/`gender`/`age` candidates.
+2. `build_ground_truth_v3.py` — `_v2` → `_v3`: standardise `to_review` to `1`/`0`, and move any
+   prose mis-entered in the reasons columns into `evidence_notes`.
+
+Both **only write into empty cells, so existing annotations are preserved**, and both write the
+`.ods` with column widths + an autofilter via `odfpy` (the frozen header is the one manual step:
+**View ▸ Freeze Rows**). The original `.ods` is never modified.
 
 ## Open questions
 
-- **`churn` meaning** — app vs treatment vs both? (`QUESTIONS.md` #1.)
-- **`treatment_outcome`** — acceptable to record `AMBIGUOUS`/`ONGOING`, or force a call?
+- **`churn` definition** — working assumption: patient stops engaging with the **app/service**
+  (not treatment disengagement). Recorded `0` across the reviewed 20 — the interview transcripts
+  carry no app/service-usage signal, so this may prove **not derivable from transcripts** (would
+  need product/usage data). Needs CAIO sign-off (`QUESTIONS.md` #1).
+- **`incomplete_journey` definition** — working assumption: the **record/interview wasn't
+  completed**, NOT "treatment journey unresolved". Recorded `0` across the reviewed 20 (all
+  transcripts are complete narratives). Needs CAIO sign-off (`QUESTIONS.md` #4).
+- **`comorbid_conditions` token gaps** — bipolar, heart disease, COPD, PSC + autoimmune
+  hepatitis, insulin resistance, eating disorder have no canonical token. Map to `OTHER`, or
+  extend the enum?
 - **`loss_of_response`** primary vs secondary, + full pathway vocabulary — domain-expert sign-off.
-- **Boolean redundancy** — the three `biologic_*` booleans may collapse into one status enum
-  (`PRESCRIBED_AND_TAKEN` / `PRESCRIBED_NOT_TAKEN` / `NOT_PRESCRIBED` / `NOT_MENTIONED`) once real
-  annotations are in.
-- **Balanced gold set ≠ prevalence** — the 20 cases are a balanced *accuracy* set; rate-style
-  business answers need the representative full cohort.
+- **Biologic funnel** — the three `biologic_*` booleans may collapse into one status enum
+  (`PRESCRIBED_AND_TAKEN` / `PRESCRIBED_NOT_TAKEN` / `NOT_PRESCRIBED` / `NOT_MENTIONED`); relatedly,
+  a separate `biologic_recommended` step (recommend → prescribe → taken) is under consideration
+  (`QUESTIONS.md` #5).
+- **Balanced gold set ≠ prevalence** — the 20 are a balanced *accuracy* set; rate-style business
+  answers need the representative full cohort.
+
+*Resolved:* `treatment_outcome` may record `AMBIGUOUS`/`ONGOING` (confirmed — no forced
+SUCCESS/FAILED call).
 
 ## Changelog
 
+- **v0.3** — `reasons_for_biologic_not_taken` += `CONTRAINDICATION`, `DEFERRED`; both reasons enums
+  += `NOT_APPLICABLE`; `to_review` standardised to `1`/`0`; working file is now `_v3.ods` (built
+  via the `sandbox/` scripts; prose moved from reasons → `evidence_notes`); `treatment_outcome`
+  `AMBIGUOUS`/`ONGOING` confirmed acceptable; `churn`/`incomplete_journey` definitions narrowed
+  (app-disengagement / record-incomplete) and recorded `0` across the reviewed 20 pending CAIO;
+  20/50 cases reviewed.
 - **v0.2** — added `to_review`, `gender`, `age`, `comorbid_conditions`; renamed
   `reasons_for_biologic_denied` → `reasons_for_biologic_not_taken` (enum expanded:
   `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`); `treatment_outcome` += `AMBIGUOUS`, `ONGOING`;
@@ -190,3 +215,4 @@ only (dropdowns / frozen header / filters are re-applied in LibreOffice).
   `evidence_notes` deferred; added `referral_pathway` canonical vocabulary + per-case tooling;
   Pydantic plan updated (`Demographics`, `ReasonNotTaken`, `ComorbidCondition`).
 - **v0.1** — initial column set; all annotation columns empty across 50 patients.
+
