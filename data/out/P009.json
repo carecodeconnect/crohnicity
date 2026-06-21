@@ -2,7 +2,7 @@
   "patient_id": "P009",
   "churn": false,
   "demographics": {
-    "gender": "female",
+    "gender": "Female",
     "age": 36
   },
   "biologic_prescribed": true,
@@ -10,61 +10,70 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
   "comorbid_conditions": [
     "ASTHMA",
-    "RHEUMATOID_ARTHRITIS"
+    "RHEUMATOID_ARTHRITIS",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": "Minimal improvement.",
+      "reason_stopped": "Minimal improvement",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Mood swings were horrible. Not sustainable.",
+      "reason_stopped": "Mood swings were horrible, not sustainable",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "FAILED",
-      "reason_stopped": "Liver enzymes spiked. Had to stop.",
+      "reason_stopped": "Liver enzymes spiked",
       "before_biologic": true
     },
     {
       "name": "Entyvio",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunomodulator",
-      "outcome": "ONGOING",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "comorbidity",
     "diagnostic_delay",
-    "complication",
+    "acute_flare",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
     "therapy_failed",
-    "biologic_recommended",
-    "patient_fear",
+    "adverse_reaction",
     "alternative_therapy",
+    "biologic_recommended",
     "biologic_taken",
+    "comorbidity",
     "adverse_reaction",
     "loss_of_response",
-    "biologic_switch"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient resisted biologics due to needle phobia, tried alternative therapies. Now on Entyvio and methotrexate for RA. Experiencing fatigue and considering career change."
+  "evidence_notes": "Patient initially resisted biologics due to needle phobia, tried alternative therapies. Now on Entyvio for Crohn's and methotrexate for newly diagnosed RA. Experiencing side effects from methotrexate and considering switching biologics as Entyvio is losing effectiveness."
 }

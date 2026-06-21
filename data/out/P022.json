@@ -9,59 +9,60 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade, Humira",
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
-    "OTHER"
+    "HYPERTENSION",
+    "HYPERLIPIDEMIA"
   ],
   "treatment_records": [
     {
       "name": "prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "steroid-induced diabetes",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Steroid-induced diabetes",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Minimal help",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "loss of response",
+      "reason_stopped": "Developed antibodies",
       "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "acute_flare",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
-    "adverse_reaction",
-    "comorbidity",
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
@@ -69,8 +70,11 @@
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
+    "adverse_reaction",
     "alternative_therapy",
-    "planning_next_step"
+    "planning_next_step",
+    "comorbidity",
+    "other"
   ],
-  "evidence_notes": "Patient experienced a severe onset of Crohn's, leading to multiple complications including steroid-induced diabetes and osteoporosis. He has tried multiple treatments with partial success and is facing financial and social challenges. The narrative provides a comprehensive overview of his journey."
+  "evidence_notes": "Patient is currently on Humira and methotrexate, with partial improvement. He is concerned about running out of options and the possibility of surgery. The outcome is uncertain as current treatments are only partially effective and the disease is aggressive."
 }

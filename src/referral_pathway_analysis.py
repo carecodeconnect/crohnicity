@@ -1,101 +1,95 @@
-"""Explore the 10 candidate referral pathways: phase + transition frequencies, and an
-interactive directed graph that keeps the cycles a Sankey can't represent.
+"""Per-case referral-pathway graphs from the model predictions in data/out/.
 
-Prototype — the PATHWAYS dict is hardcoded for now; later this reads the referral_pathway
-column from the ground-truth spreadsheet. Run: uv run python src/referral_pathway_analysis.py
+Reads each `data/out/P###.json`, takes its `referral_pathway` (a list of canonical `PathwayStep`
+tokens — already consolidated, so no phase-mapping needed), and writes an interactive pyvis graph
+per patient to `data/out/referral_pathway_<pid>.html`. Also prints phase/transition frequencies.
+
+Capturing cycles / repetition — why & how:
+- WHY: a referral journey is often *cyclic* — relapse, loss_of_response, repeated
+  biologic_switch. The prompt asks for `referral_pathway` as an event log (repeat a step each
+  time it recurs), so a recurring phase appears more than once. A Sankey / straight chain hides
+  those loops, so we draw a directed graph that can show them.
+- HOW: a repeated phase collapses to one node the journey revisits (node size grows with the
+  visit count), and every edge's tooltip carries its traversal count `(xN)`. Layout is chosen
+  per journey: a *cyclic* one (a phase recurs) uses a force layout so loops render as loops; a
+  *linear* one uses a left-to-right hierarchy for a clean start -> outcome read. Recurrence is
+  also recoverable from `treatment_records`; the cyclical deep-dive is in README "Next Steps".
+
+Run: `uv run python src/referral_pathway_analysis.py`  (offline — reads artefacts, no Gemini calls)
 """
 
-import re
+import json
 from collections import Counter
 from pathlib import Path
 
 import pandas as pd
+from loguru import logger
 from pyvis.network import Network
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "out"
-
-# Candidate canonical-event chains for P001-P010 (drafted from the transcripts).
-PATHWAYS = {
-    "P001": "symptom_onset -> gp_visit -> misdiagnosis(IBS) -> symptoms_worsen -> specialist_referral -> colonoscopy -> crohns_diagnosis -> medication(mesalamine) -> treatment_failed -> medication(azathioprine) -> adverse_reaction -> biologic_recommended(humira) -> patient_fear -> insurance_denial -> insurance_appeal -> insurance_approval -> biologic_taken(humira) -> partial_remission",
-    "P002": "symptom_onset -> endocrinologist_visit -> misdiagnosis(gastroparesis) -> symptoms_worsen -> specialist_referral -> diagnostics -> crohns_diagnosis -> steroid(prednisone) -> medication_failed(mesalamine) -> adverse_reaction(methotrexate) -> biologic_recommended(stelara) -> insurance_cost_barrier -> biologic_not_taken -> bridge_therapy(budesonide) -> awaiting_financial_assistance -> journey_unresolved",
-    "P003": "symptom_onset -> multiple_gp_visits -> diagnostic_delay -> crohns_diagnosis -> complication(fistula) -> surgery -> medication(sulfasalazine,mesalamine,6mp,methotrexate) -> treatment_failed -> biologic_taken(remicade) -> loss_of_response(antibodies) -> biologic_switch(humira) -> loss_of_response -> biologic_switch(stelara) -> ongoing",
-    "P004": "symptom_onset -> self_managed(stress) -> acute_crisis(ER) -> ct_scan -> specialist_referral -> colonoscopy -> crohns_diagnosis -> steroid(prednisone) -> medication_failed(mesalamine) -> adverse_reaction(sulfasalazine) -> biologic_recommended(entyvio) -> insurance_cost_barrier -> biologic_not_taken -> bridge_therapy(budesonide) -> exploring_clinical_trial -> journey_unresolved",
-    "P005": "symptom_onset -> misdiagnosis(period/stress) -> specialist_referral -> colonoscopy -> crohns_diagnosis -> medication(mesalamine)+steroid(prednisone) -> relapse -> adverse_reaction(azathioprine->pancreatitis) -> biologic_taken(remicade) -> biologic_switch(humira) -> patient_fear(injections) -> partial_remission",
-    "P006": "symptom_onset -> misdiagnosis(ulcerative_colitis) -> diagnostic_delay -> crohns_diagnosis -> complication(strictures) -> surgery(resection) -> adverse_reaction(methotrexate) -> biologic_taken(humira) -> loss_of_response -> insurance_step_therapy -> biologic_switch(remicade) -> loss_of_response(antibodies) -> biologic_switch(stelara) -> ongoing",
-    "P007": "symptom_onset -> misdiagnosis(fibromyalgia/thyroid) -> diagnostic_delay -> specialist_referral -> diagnostics -> crohns_diagnosis -> steroid(prednisone)+medication(azathioprine) -> partial_response -> biologic_recommended -> biologic_taken(entyvio) -> partial_remission -> breakthrough_symptoms -> considering_combo_therapy",
-    "P008": "symptom_onset -> misdiagnosis(stress) -> acute_crisis(ER) -> colonoscopy -> crohns_diagnosis -> steroid(prednisone)+medication(mesalamine) -> complication(obstruction/surgery) -> medication(methotrexate) -> insurance_step_therapy -> adverse_reaction(6mp->pancreatitis) -> biologic_taken(remicade) -> loss_of_response -> biologic_switch(humira) -> waning_response -> considering_switch",
-    "P009": "symptom_onset -> misdiagnosis(IBS/anxiety) -> diagnostic_delay -> acute_crisis(hospitalization) -> colonoscopy -> crohns_diagnosis -> medication(mesalamine) -> steroid(prednisone) -> adverse_reaction(azathioprine) -> biologic_recommended -> patient_fear(needle_phobia) -> alternative_therapy(diet/acupuncture) -> acute_crisis -> biologic_taken(entyvio) -> loss_of_response -> comorbidity(RA) -> add_medication(methotrexate) -> considering_switch(stelara)",
-    "P010": "symptom_onset -> gp_visit -> abnormal_labs(CRP) -> specialist_referral -> colonoscopy -> crohns_diagnosis -> triple_therapy(prednisone,azathioprine,mesalamine) -> remission -> comorbidity(arthritis) -> medication_switch(methotrexate) -> crohns_flare -> biologic_recommended -> insurance_denial -> insurance_appeal -> insurance_approval -> biologic_taken(humira) -> partial_remission -> considering_switch(stelara)",
-}
+LOG_DIR = Path(__file__).resolve().parents[1] / "logs"
+# loguru file sink: persist the run summary + catch per-graph errors during regeneration
+logger.add(LOG_DIR / "referral_pathway.log", level="INFO", rotation="1 MB")
 
 
-# Consolidated canonical phase vocabulary (raw phases -> tighter set).
-# PENDING domain-expert sign-off. NOTE: loss_of_response here means *secondary* loss of
-# response (the drug worked, then stopped — e.g. anti-drug antibodies), NOT primary
-# non-response (drug never worked); the latter maps to therapy_failed.
-PHASE_MAP = {
-    "gp_visit": "primary_care_contact",
-    "multiple_gp_visits": "primary_care_contact",
-    "endocrinologist_visit": "primary_care_contact",
-    "colonoscopy": "diagnostic_testing",
-    "diagnostics": "diagnostic_testing",
-    "ct_scan": "diagnostic_testing",
-    "abnormal_labs": "diagnostic_testing",
-    "medication": "conventional_therapy",
-    "steroid": "conventional_therapy",
-    "triple_therapy": "conventional_therapy",
-    "bridge_therapy": "conventional_therapy",
-    "add_medication": "conventional_therapy",
-    "medication_switch": "conventional_therapy",
-    "steroid+medication": "conventional_therapy",  # fixes the +-order duplicate
-    "medication+steroid": "conventional_therapy",
-    "medication_failed": "therapy_failed",
-    "treatment_failed": "therapy_failed",
-    "waning_response": "loss_of_response",
-    "acute_crisis": "acute_flare",
-    "crohns_flare": "acute_flare",
-    "partial_remission": "remission",
-    "partial_response": "remission",
-    "considering_switch": "planning_next_step",
-    "considering_combo_therapy": "planning_next_step",
-    "ongoing": "unresolved",
-    "journey_unresolved": "unresolved",
-    "awaiting_financial_assistance": "unresolved",
-    "exploring_clinical_trial": "unresolved",
-}
+def load_pathways() -> dict[str, list[str]]:
+    """patient_id -> ordered referral_pathway tokens, from the persisted predictions."""
+    return {
+        p.stem: json.loads(p.read_text())["referral_pathway"]
+        for p in sorted(OUT.glob("P[0-9][0-9][0-9].json"))
+    }
 
 
-def phases(chain: str) -> list[str]:
-    """Canonical phase tokens: drop (detail) annotations, split on '->', then consolidate."""
-    raw = (p.strip() for p in re.sub(r"\([^)]*\)", "", chain).split("->") if p.strip())
-    return [PHASE_MAP.get(p, p) for p in raw]
-
-
-def render(pathways: dict[str, str], path: Path, heading: str) -> Path:
-    """Write an interactive directed graph (cycles allowed) for the given pathways."""
-    nodes, edges = Counter(), Counter()
-    for seq in map(phases, pathways.values()):
-        nodes.update(seq)
-        edges.update(zip(seq, seq[1:]))
+def render(pid: str, seq: list[str], path: Path) -> Path:
+    """Write an interactive directed graph for one patient's pathway. Recurrence shows as the loop
+    it is: a revisited phase is a single node the journey cycles back to (bigger the more it
+    recurs), with the traversal count in each edge's tooltip. Cyclic journeys use a force layout
+    (loops render as loops); linear journeys use a left-to-right hierarchy (clean start -> outcome)."""
     net = Network(
         directed=True,
         height="750px",
         width="100%",
-        cdn_resources="in_line",
-        heading=heading,
+        cdn_resources="remote",  # tiny files (load vis.js from CDN); 50 in_line copies = ~50 MB
+        heading=f"Referral pathway: {pid}",
     )
+    nodes = Counter(seq)
+    edges = Counter(zip(seq, seq[1:]))
     for phase, count in nodes.items():
-        net.add_node(phase, label=phase, value=count)
+        net.add_node(
+            phase, label=phase, value=count
+        )  # a revisited phase -> bigger node
     for (s, d), count in edges.items():
-        net.add_edge(s, d, value=count, title=f"{s} -> {d}: {count}")
+        net.add_edge(
+            s, d, title=f"{s} -> {d} (x{count})"
+        )  # count in tooltip; uniform width
+    if len(seq) != len(nodes):
+        # a phase recurs -> the journey LOOPS; a force layout draws loops as loops (hierarchical
+        # left->right can't lay out a cycle and flattens it into a confusing line).
+        net.set_options('{"physics": {"enabled": true, "solver": "forceAtlas2Based"}}')
+    else:
+        # linear journey -> hierarchical left-to-right, clean and readable start -> outcome.
+        net.set_options(
+            '{"layout": {"hierarchical": {"enabled": true, "direction": "LR", '
+            '"sortMethod": "directed", "levelSeparation": 250, "nodeSpacing": 130}}, '
+            '"physics": {"enabled": false}}'
+        )
     net.write_html(str(path), notebook=False, open_browser=False)
+    # pyvis renders `heading` twice (known quirk) — keep a single page-level <h1>.
+    html = path.read_text()
+    dup = f"<h1>Referral pathway: {pid}</h1>"
+    if html.count(dup) > 1:
+        path.write_text("".join(html.rsplit(dup, 1)))
     return path
 
 
+@logger.catch(reraise=True)
 def main() -> None:
-    """Print phase/transition frequency tables and write per-case journey graphs."""
-    nodes, edges = Counter(), Counter()
-    for seq in map(phases, PATHWAYS.values()):
+    """Write a per-case journey graph for every patient + log phase/transition frequencies.
+    Per-graph errors are logged and skipped so one bad pathway can't abort the whole regeneration."""
+    pathways = load_pathways()
+    nodes: Counter[str] = Counter()
+    edges: Counter[tuple[str, str]] = Counter()
+    for seq in pathways.values():
         nodes.update(seq)
         edges.update(zip(seq, seq[1:]))
 
@@ -104,23 +98,28 @@ def main() -> None:
         [(a, b, c) for (a, b), c in edges.most_common()],
         columns=["from_phase", "to_phase", "count"],
     )
-    print(
-        f"{len(PATHWAYS)} pathways - {len(nodes)} distinct phases - {sum(edges.values())} transitions\n"
+    logger.info(
+        "{} pathways - {} distinct phases - {} transitions",
+        len(pathways),
+        len(nodes),
+        sum(edges.values()),
     )
-    print("PHASE FREQUENCY\n", phase_freq.to_string(index=False), "\n")
-    print("TRANSITIONS (most common first)\n", transitions.to_string(index=False))
+    logger.info("PHASE FREQUENCY\n{}", phase_freq.to_string(index=False))
+    logger.info("TRANSITIONS (top 20)\n{}", transitions.head(20).to_string(index=False))
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    # A journey graph is meaningful PER CASE only: overlaying patients merges distinct
-    # journeys into spurious shared nodes. Start with singular examples across the complexity
-    # range (P005 simplest, P003 a cyclic antibody-driven switcher); journey-TYPE clustering later.
-    for pid in ("P005", "P003"):
-        out = render(
-            {pid: PATHWAYS[pid]},
-            OUT / f"referral_pathway_{pid}.html",
-            f"Referral pathway: {pid}",
-        )
-        print(f"{pid} graph -> {out}")
+    written = 0
+    for pid, seq in pathways.items():
+        try:
+            render(pid, seq, OUT / f"referral_pathway_{pid}.html")
+            written += 1
+        except Exception:
+            logger.exception("failed to render graph for {}", pid)
+    logger.info(
+        "wrote {}/{} per-case graphs -> {}/referral_pathway_*.html",
+        written,
+        len(pathways),
+        OUT,
+    )
 
 
 if __name__ == "__main__":

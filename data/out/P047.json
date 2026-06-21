@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "DEFERRED",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "DEPRESSION"
@@ -20,21 +20,21 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "transitioned to other therapies",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "aminosalicylate",
       "outcome": "PARTIAL",
-      "reason_stopped": "transitioned to other therapies",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunosuppressant",
       "outcome": "PARTIAL",
-      "reason_stopped": "ongoing",
+      "reason_stopped": null,
       "before_biologic": true
     }
   ],
@@ -43,15 +43,14 @@
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
-    "symptoms_worsen",
+    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
-    "biologic_recommended",
     "alternative_therapy",
-    "planning_next_step"
+    "biologic_recommended"
   ],
-  "evidence_notes": "Diagnosed 5 months ago after years of misdiagnosis (IBS, stress, hormones). Found in small intestine. Treatments: prednisone (30lb weight gain, self-esteem issues), mesalamine. Now trying methotrexate (hair loss, constant nausea, 30% symptom improvement). Doctor advises more time. Concerns about marriage, job. Hiding symptoms at work, fear of review. Teenagers are unaware of severity."
+  "evidence_notes": "Donna, 41, was diagnosed with Crohn's five months ago after years of misdiagnosis. She also has hypothyroidism and depression. Prednisone caused significant weight gain, and methotrexate is causing hair loss and nausea, with only slight symptom improvement. She is hiding her condition from her employer and fears for her job and marriage.\n\nKey points:\n- Diagnosed with Crohn's 5 months ago after 3 years of misdiagnosis (IBS, stress, hormones).\n- Comorbidities: Hypothyroid, depression.\n- Initial treatments: Prednisone (helped symptoms but caused 30lb weight gain), mesalamine (tried).\n- Current treatment: Methotrexate (hair loss, nausea, ~30% symptom improvement).\n- Work impact: Office manager, hiding symptoms, scared of upcoming review, making mistakes due to fatigue.\n- Social impact: Husband supportive but she perceives him looking at other women; teenagers know something is wrong but not details.\n- Overall outcome is partial improvement, with significant physical side effects and psychological distress."
 }

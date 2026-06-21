@@ -20,36 +20,41 @@
       "name": "budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "transitioned to other therapies",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "aminosalicylate",
       "outcome": "PARTIAL",
-      "reason_stopped": "transitioned to other therapies",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunosuppressant",
-      "outcome": "PARTIAL",
-      "reason_stopped": "ongoing",
+      "outcome": "FAILED",
+      "reason_stopped": null,
       "before_biologic": true
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "primary_care_contact",
     "misdiagnosis",
     "diagnostic_delay",
-    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
-    "biologic_recommended",
     "insurance_step_therapy",
     "alternative_therapy",
+    "biologic_recommended",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed 4 months ago, symptoms for 2 years. Also PCOS and insulin resistance. Initial blame on weight led to 40lb loss with no improvement, symptoms worsened. Demanded colonoscopy. Inflammation found. Treatments: budesonide and mesalamine (little improvement). Doctor mentioned biologics, but insurance requires failing more medications. Currently trying methotrexate (severe nausea, taking folic acid). Works as elementary school teacher; close calls with bathroom urgency during class. Fearful of telling principal due to budget cuts. Parents suggest diet cures (probiotics, yogurt). Boyfriend supportive but strained by canceled trips due to flares. Wedding postponed due to fear of flaring on the day. Finances tight; teacher salary. Moved back home to save money. Pain can be debilitating. Support groups difficult to attend. Online forums scary due to mentions of surgery/complications. Trying to stay positive but finding it hard."
+  "evidence_notes": "Rosa, 33, was diagnosed with Crohn's four months ago but has had symptoms for at least two years. She also has PCOS and insulin resistance. Previous doctors blamed her symptoms on weight, and despite losing 40 pounds, her issues worsened. She is currently trying methotrexate for nausea and is facing insurance hurdles for biologics. Her teaching career and personal life are significantly impacted.\n\nKey points:\n- Diagnosed with Crohn's 4 months ago, symptoms for 2+ years.\n- Comorbidities: PCOS, insulin resistance.\n- Previous misdiagnosis and ineffective weight loss attempts.\n- Initial treatments: budesonide, mesalamine (some improvement).\n- Current treatment: methotrexate (terrible nausea).\n- Insurance: requires failure of more medications before approving biologics.\n- Work impact: Elementary school teacher, struggles with bathroom urgency during class.\n- Family: parents suggest probiotics, don't understand severity.\n- Relationship: boyfriend supportive but strained by canceled plans, wedding postponed.\n- Financial: tight budget, medical bills piling up, moved back with parents.\n- Support: difficulty finding suitable support groups, online forums are scary.\n- Future: Worried about future complications, surgeries, and maintaining positivity.\n- Overall outcome is partial improvement, with significant current distress and future uncertainty."
 }

@@ -2,7 +2,7 @@
   "patient_id": "P010",
   "churn": false,
   "demographics": {
-    "gender": "male",
+    "gender": "Male",
     "age": 48
   },
   "biologic_prescribed": true,
@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
     "OTHER"
@@ -20,55 +20,55 @@
       "name": "prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Sent blood sugars through roof. Gained all weight back plus extra. Tapered after two months.",
+      "reason_stopped": "Sent blood sugars through roof",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "PARTIAL",
-      "reason_stopped": "Maintained remission for about a year, but then started having severe joint pain. Switched approach.",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": "Wasn't really helping.",
+      "reason_stopped": "Wasn't really helping",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunomodulator",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Helped joints but Crohn's flared.",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "Crohn's flared",
       "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
     "symptoms_worsen",
+    "diagnostic_delay",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "comorbidity",
     "therapy_failed",
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
-    "insurance_approval",
     "biologic_taken",
-    "biologic_switch"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient has Crohn's-related arthritis and manages type 2 diabetes. Switched from methotrexate to Humira. Concerned about insurance coverage and side effects like shingles."
+  "evidence_notes": "Patient experienced significant side effects from initial triple therapy (prednisone, azathioprine, mesalamine), particularly on blood sugar control. Humira is managing symptoms but financial burden is high. Concerned about future treatment options."
 }

@@ -9,7 +9,7 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade, Humira, Stelara",
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
@@ -18,74 +18,77 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Minimal help",
       "before_biologic": true
     },
     {
       "name": "prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "weight gain",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Weight gain",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunosuppressant",
-      "outcome": "SUCCESS",
-      "reason_stopped": null,
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Stopped working after 2 years",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": "hair loss",
+      "reason_stopped": "Hair loss",
       "before_biologic": false
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "FAILED",
-      "reason_stopped": "loss of effectiveness",
+      "reason_stopped": "Effectiveness dropped",
       "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Less effective",
       "before_biologic": false
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "adverse_reaction",
     "therapy_failed",
-    "comorbidity",
+    "adverse_reaction",
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
+    "loss_of_response",
     "biologic_switch",
     "alternative_therapy",
-    "planning_next_step"
+    "planning_next_step",
+    "comorbidity",
+    "other"
   ],
-  "evidence_notes": "Patient has had Crohn's for twelve years, along with thyroid disease and chronic migraines. She has navigated career pressures and relationship challenges due to her conditions. Her treatment journey includes multiple medications and biologics, with current partial success on Stelara. The narrative is complete."
+  "evidence_notes": "Patient has been managing Crohn's for 12 years and has experienced multiple treatment failures and side effects. Current treatment with Stelara is providing only partial relief. The patient expresses a desire for a breakthrough and is considering experimental treatments. The outcome is ongoing due to the chronic nature of the disease and the need for continuous management."
 }

@@ -18,36 +18,38 @@
   "treatment_records": [
     {
       "name": "NSAIDs",
-      "treatment_class": "NSAID",
+      "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": "Likely made Crohn's worse",
+      "reason_stopped": "Likely made Crohn's worse, part of diagnostic delay",
       "before_biologic": true
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": "Insurance denied renewal",
-      "before_biologic": true
+      "before_biologic": false
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
-    "diagnostic_testing",
-    "crohns_diagnosis",
+    "diagnostic_delay",
     "conventional_therapy",
     "therapy_failed",
+    "adverse_reaction",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "comorbidity",
     "biologic_recommended",
+    "biologic_taken",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken",
+    "relapse",
     "loss_of_response",
-    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed three years ago. Also has severe psoriasis and psoriatic arthritis. Initially treated with NSAIDs, which worsened Crohn's. Failed two biologics for psoriasis. Started Stelara for both, which helped 50%. Insurance denied renewal after a year, leading to flares. Now trying to regain baseline. Physical work is difficult. Company struggling. Wife considering early retirement. Finances strained. Diet is challenging. Depression setting in."
+  "evidence_notes": "William, 48, diagnosed with Crohn's three years ago. Also has severe psoriasis and psoriatic arthritis. Initially thought GI issues were related to arthritis meds (NSAIDs). Spent two years trying different NSAIDs. Colonoscopy revealed extensive Crohn's. Treated with Stelara, which helped both conditions about 50%. Insurance denied renewal after a year, leading to flares during appeal process. He owns a construction company, but physical work is becoming impossible due to arthritis and fatigue, impacting business. Wife is a teacher whose insurance he relies on. Concerns about affording private insurance if she retires early. Kids in college, mounting loans and medical bills. Sold rental property. Diet is contradictory for conditions. Depression is setting in, but antidepressants interact with other meds. Brother tries to help. Support group helps with shared experience of losing physical capacity. Doctor wants to add methotrexate to Stelara. Facing decision about new combo or switching biologics again."
 }

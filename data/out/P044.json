@@ -18,41 +18,41 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "aminosalicylate",
       "outcome": "PARTIAL",
-      "reason_stopped": "transitioned to other therapies",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "intolerable side effects",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunosuppressant",
       "outcome": "PARTIAL",
-      "reason_stopped": "ongoing",
+      "reason_stopped": null,
       "before_biologic": true
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_delay",
+    "self_managed",
     "symptoms_worsen",
+    "primary_care_contact",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
+    "alternative_therapy",
     "biologic_recommended",
     "patient_fear",
-    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed 2 years ago, likely had it longer. Signs in college attributed to ADHD meds and poor diet. Symptoms worsened post-graduation. Constant urgency, cramping, blood. First GI visit after a bad week. Colonoscopy showed inflammation. Treatments: mesalamine suppositories/oral (minimal help), prednisone (increased anxiety, panic attack, nearly lost job). Azathioprine started 6 months ago (40% help). Doctor wants biologics, but patient is terrified due to immunocompromise, stress, lack of sleep, and needle phobia triggering anxiety. Parents dismissive. Dating difficult ('too much work'). Architecture requires site visits, and portapotties are a nightmare. Considering leaving profession due to loans and need for income. Next appointment in two weeks, likely to agree to biologics despite fear. Anxiety and Crohn's feed each other. Therapist helping, but process is slow."
+  "evidence_notes": "Peter, 27, was diagnosed with Crohn's two years ago, with symptoms likely present since college. He also has ADHD and anxiety. His current treatment provides only partial relief, and he is hesitant about starting biologics due to fear of side effects and immunocompromise, as well as needle phobia. His career as an architect is challenging due to the nature of his work and his symptoms.\n\nKey points:\n- Diagnosed with Crohn's two years ago, symptoms likely longer.\n- Comorbidities: ADHD, anxiety disorder.\n- Initial treatments: mesalamine, prednisone (caused anxiety, panic attack).\n- Current treatment: azathioprine (started 6 months ago, ~40% improvement).\n- Biologics: recommended but patient is terrified due to side effects, immunocompromise, and needle phobia.\n- Impact on career: Architecture requires site visits to construction sites, which are difficult with Crohn's urgency; fear of missing deadlines.\n- Social impact: dating difficult, previous girlfriend left due to 'too much work'.\n- Family: parents, especially father, dismissive ('Man up'); mother sends diet cure articles.\n- Financial: significant student loans, needs income and insurance.\n- Future: Scared about starting biologics, potential long-term impact, managing chronic illness for decades.\n- Overall outcome is partial improvement, with significant anxiety and fear around next treatment steps."
 }

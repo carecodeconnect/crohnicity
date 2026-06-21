@@ -8,7 +8,7 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Humira",
+  "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
@@ -18,21 +18,21 @@
   "treatment_records": [
     {
       "name": "NSAIDs",
-      "treatment_class": "NSAID",
+      "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": "Destroyed kidneys",
+      "reason_stopped": "Caused kidney disease",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Stopped working",
-      "before_biologic": true
+      "reason_stopped": "Loss of response",
+      "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -41,15 +41,20 @@
   "treatment_outcome": "FAILED",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_delay",
     "comorbidity",
+    "adverse_reaction",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "planning_next_step",
-    "unresolved"
+    "biologic_taken",
+    "breakthrough_symptoms",
+    "comorbidity",
+    "alternative_therapy",
+    "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed ten years ago. Also has ankylosing spondylitis and chronic kidney disease from NSAID use. Started biologics immediately (Remicade for both, then Humira for Crohn's). Remicade worked initially but stopped. Humira less effective (40%). Kidney disease limits stronger options. Work impossible, on disability. Lost house, divorced. Dating impossible. Financial dependence on elderly parents. Considering surgery but recovery concerns with AS. Currently on Humira, seeking new treatment. Doctor wants to try Stelara."
+  "evidence_notes": "Daniel, 37, Crohn's for ten years. Also has ankylosing spondylitis (AS) and chronic kidney disease (CKD) from NSAID use. Started in late twenties, back pain first, then GI symptoms. Diagnosed with both Crohn's and AS. Started Remicade for both, which worked initially. Switched to Humira due to loss of response, which is less effective (40% improvement). CKD limits treatment options. Specialists disagree on treatment. Quality of life is poor due to pain, bathroom frequency, and fatigue. Work as a software architect is impossible; now on disability. Lost house, divorced. Dating is impossible. Loneliness is crushing. Parents are supportive but elderly, causing role reversal. Friends disappeared. Online support is his main connection. Diet is restricted. Clinical trials are limited for CKD patients. Surgery for Crohn's is an option, but recovery with AS is concerning. Has considered suicide but parents' well-being prevents it. Doctor wants to try Stelara, but nephrologist is reluctant. Constantly waiting for doctors to agree and insurance approval."
 }

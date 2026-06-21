@@ -2,7 +2,7 @@
   "patient_id": "P008",
   "churn": false,
   "demographics": {
-    "gender": "male",
+    "gender": "Male",
     "age": 29
   },
   "biologic_prescribed": true,
@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "ADHD",
     "ANXIETY_DISORDER"
@@ -20,61 +20,66 @@
       "name": "prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Made ADHD medication less effective, couldn't focus on finals.",
+      "reason_stopped": "Made ADHD medication less effective, couldn't focus",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": "Wasn't enough.",
+      "reason_stopped": "Wasn't enough",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "PARTIAL",
-      "reason_stopped": "Weekly injections made me nauseous. Pills better tolerated, but wasn't enough.",
+      "reason_stopped": "Weekly injections caused nausea, switched to pills",
       "before_biologic": true
     },
     {
       "name": "6-MP",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "FAILED",
-      "reason_stopped": "Developed pancreatitis.",
+      "reason_stopped": "Developed pancreatitis",
       "before_biologic": true
     },
     {
       "name": "Remicade",
       "treatment_class": "Biologic",
       "outcome": "FAILED",
-      "reason_stopped": "Lost effectiveness after two years.",
+      "reason_stopped": "Lost effectiveness",
       "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
-    "complication",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "complication",
+    "surgery",
     "therapy_failed",
     "biologic_recommended",
     "insurance_step_therapy",
+    "adverse_reaction",
     "biologic_taken",
     "loss_of_response",
-    "biologic_switch"
+    "biologic_switch",
+    "biologic_taken",
+    "loss_of_response",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient has a history of obstructions and job loss due to Crohn's. Switched from Remicade to Humira for convenience. Experiencing decreased effectiveness of Humira."
+  "evidence_notes": "Patient has tried multiple conventional therapies and biologics (Remicade, Humira). Currently on Humira but noticing decreased effectiveness. Considering Stelara or Entyvio. Manages ADHD and anxiety concurrently. High annual out-of-pocket costs."
 }

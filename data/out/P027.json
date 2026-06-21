@@ -9,7 +9,7 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade, Humira",
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
     "DEPRESSION",
@@ -17,49 +17,49 @@
   ],
   "treatment_records": [
     {
-      "name": "prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "weight gain, impact on mental health",
-      "before_biologic": true
-    },
-    {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "developed RA, less effective for both",
+      "reason_stopped": "Effectiveness dropped",
       "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Does not help both conditions well",
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     },
     {
-      "name": "methotrexate",
-      "treatment_class": "Immunosuppressant",
-      "outcome": "FAILED",
-      "reason_stopped": "hair loss",
+      "name": "prednisone",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "acute_flare",
-    "complication",
+    "misdiagnosis",
+    "adverse_reaction",
     "surgery",
     "crohns_diagnosis",
     "conventional_therapy",
-    "adverse_reaction",
-    "comorbidity",
     "biologic_recommended",
     "biologic_taken",
+    "loss_of_response",
     "biologic_switch",
-    "alternative_therapy",
-    "planning_next_step"
+    "comorbidity",
+    "planning_next_step",
+    "other"
   ],
-  "evidence_notes": "Patient has a complex medical history with Crohn's, bipolar disorder, and rheumatoid arthritis. She struggles with medication management due to interactions and contraindications, impacting her mental health, physical health, and ability to work. The narrative provides a thorough account of her challenges."
+  "evidence_notes": "Patient is struggling with multiple autoimmune conditions (Crohn's, bipolar disorder, RA) and their complex management. Current treatments (Humira and methotrexate) are not fully effective, and the patient is facing challenges with medication interactions, side effects, and mental health. The outcome is ongoing due to the complexity of the conditions and partial treatment response."
 }

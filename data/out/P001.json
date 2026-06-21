@@ -2,7 +2,7 @@
   "patient_id": "P001",
   "churn": false,
   "demographics": {
-    "gender": "female",
+    "gender": "Female",
     "age": 34
   },
   "biologic_prescribed": true,
@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "OTHER"
   ],
@@ -24,15 +24,15 @@
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "FAILED",
-      "reason_stopped": "Made me feel worse. Severe nausea, elevated liver enzymes.",
+      "reason_stopped": "Worse nausea, elevated liver enzymes",
       "before_biologic": true
     },
     {
       "name": "Humira",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
@@ -40,9 +40,11 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
     "primary_care_contact",
     "misdiagnosis",
     "symptoms_worsen",
+    "diagnostic_delay",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
@@ -52,9 +54,7 @@
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
-    "insurance_approval",
-    "biologic_taken",
-    "loss_of_response"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient reports psoriasis as a potential side effect of Humira, diagnosed by her rheumatologist."
+  "evidence_notes": "Patient experienced initial improvement on Humira but still has occasional flares, especially during stress. Developed psoriasis which may be related to Humira."
 }

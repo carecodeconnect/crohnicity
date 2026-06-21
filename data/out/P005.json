@@ -2,7 +2,7 @@
   "patient_id": "P005",
   "churn": false,
   "demographics": {
-    "gender": "female",
+    "gender": "Female",
     "age": 31
   },
   "biologic_prescribed": true,
@@ -10,50 +10,49 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "ENDOMETRIOSIS",
-    "MIGRAINE",
-    "OTHER"
+    "MIGRAINE"
   ],
   "treatment_records": [
-    {
-      "name": "prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Symptoms returned within months.",
-      "before_biologic": true
-    },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": "Symptoms returned within months.",
+      "reason_stopped": "Symptoms returned within months",
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Symptoms returned within months",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "FAILED",
-      "reason_stopped": "Developed pancreatitis, spent a week in the hospital.",
+      "reason_stopped": "Developed pancreatitis",
       "before_biologic": true
     },
     {
       "name": "Remicade",
       "treatment_class": "Biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "Infusion center was an hour away, difficult to take time off work.",
+      "reason_stopped": "Infusion center inconvenient",
       "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
@@ -64,10 +63,11 @@
     "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
-    "insurance_approval",
     "biologic_taken",
     "biologic_switch",
-    "loss_of_response"
+    "insurance_denial",
+    "insurance_appeal",
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient switched from Remicade to Humira for convenience. Experiences injection anxiety and frequent URIs. Psoriasis mentioned as possible side effect."
+  "evidence_notes": "Patient switched from Remicade to Humira for convenience. Experiences injection anxiety. Develops mini-flares during period. Possible psoriasis from Humira. Insurance prior authorization is a yearly burden."
 }

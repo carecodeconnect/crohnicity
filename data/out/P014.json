@@ -20,28 +20,30 @@
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": null,
+      "reason_stopped": "didn't help Crohn's",
       "before_biologic": true
     },
     {
       "name": "sulfasalazine",
-      "treatment_class": "5-asa",
+      "treatment_class": "aminosalicylate",
       "outcome": "FAILED",
-      "reason_stopped": "allergic reaction (hives)",
+      "reason_stopped": "allergic reaction",
       "before_biologic": true
     },
     {
       "name": "Stelara",
-      "treatment_class": "interleukin-inhibitor",
-      "outcome": "ONGOING",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
     "misdiagnosis",
+    "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
@@ -55,9 +57,7 @@
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
-    "alternative_therapy",
-    "planning_next_step",
-    "unresolved"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient has Crohn's, psoriasis, and psoriatic arthritis. Initially misdiagnosed with IBS. Tried methotrexate and sulfasalazine before Stelara, which treats both Crohn's and psoriasis. Struggling with fatigue, depression, financial costs, and physical demands of his job."
+  "evidence_notes": "Diagnosed with Crohn's three years ago, after a long history of psoriasis and a recent depression diagnosis. Initial Crohn's treatments (methotrexate for psoriasis potentially helping Crohn's, sulfasalazine) failed or caused reactions. Stelara was prescribed to treat both Crohn's and psoriasis, but required significant insurance appeals. Treatment is ongoing with partial improvement for both conditions. Patient faces challenges with fatigue, physical job demands, depression, and financial concerns, impacting family life and social interactions."
 }

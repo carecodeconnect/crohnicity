@@ -9,7 +9,7 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
-  "reasons_for_biologic_prescribed": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
@@ -17,52 +17,63 @@
   ],
   "treatment_records": [
     {
-      "name": "surgery",
-      "treatment_class": "surgery",
+      "name": "mesalamine",
+      "treatment_class": "aminosalicylate",
       "outcome": "PARTIAL",
-      "reason_stopped": "disease returned",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "SUCCESS",
-      "reason_stopped": "developed antibodies",
+      "outcome": "FAILED",
+      "reason_stopped": "antibody formation",
       "before_biologic": true
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "ongoing",
+      "reason_stopped": null,
       "before_biologic": false
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunosuppressant",
       "outcome": "PARTIAL",
-      "reason_stopped": "ongoing",
+      "reason_stopped": null,
       "before_biologic": false
+    },
+    {
+      "name": "Synthroid",
+      "treatment_class": "hormone replacement",
+      "outcome": "UNKNOWN",
+      "reason_stopped": null,
+      "before_biologic": true
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_delay",
+    "self_managed",
     "symptoms_worsen",
+    "diagnostic_delay",
+    "specialist_referral",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "surgery",
-    "adverse_reaction",
     "relapse",
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
     "biologic_taken",
-    "biologic_switch",
     "loss_of_response",
+    "biologic_switch",
+    "biologic_taken",
     "alternative_therapy",
-    "planning_next_step"
+    "comorbidity",
+    "planning_next_step",
+    "surgery"
   ],
-  "evidence_notes": "Diagnosed 12 years ago. Also has Hashimoto's thyroiditis and spinal osteoarthritis. Disease returned after first surgery (resection). Remicade worked well for 5 years, then antibodies developed. Humira provided moderate help (60%), added methotrexate improved to 75%. Thyroid issues arose, causing fatigue. Spine issues started 2 years ago. Marriage strained due to caregiver role. Daughter (8) is worried. Work as marketing director is high stress. Husband's job lacks benefits, creating financial trap. Considering Stelara. Concerned about transition period and time off work. Parents are aging and ill. Costs exceed $20k annually beyond insurance, leading to credit card debt. Support group disbanded. Online groups lack in-person connection. Discussing further surgery (resection or strictureplasty). Quality of life is a major concern."
+  "evidence_notes": "Sandra, 44, was diagnosed with Crohn's 12 years ago and has since undergone surgery and tried multiple treatments. She also has Hashimoto's thyroiditis and osteoarthritis. Her conditions significantly impact her career, marriage, and role as a mother. She is considering Stelara as her Humira is losing effectiveness.\n\nKey points:\n- Diagnosed with Crohn's at 32.\n- Had ileocecal resection surgery at 33, disease returned at anastomosis site within a year.\n- Treatments: Remicade (worked for 5 years, then antibody formation), Humira (moderate help, ~60%), methotrexate (added to Humira, improvement to ~75%).\n- Current status: Humira losing effectiveness, considering Stelara.\n- Comorbidities: Hashimoto's thyroiditis, osteoarthritis in spine.\n- Impact on family: strain on marriage, daughter (8) worries about her.\n- Work: Marketing director, high stress, reliant on income and insurance.\n- Financial: significant out-of-pocket costs (~$20k/year beyond insurance), growing debt.\n- Support: Support group disbanded, feeling isolated.\n- Future: Scared of transition to Stelara, potential surgery, managing multiple health issues, quality of life concerns.\n- Overall outcome is partial improvement, with significant challenges and a desire for better quality of life."
 }

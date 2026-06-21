@@ -18,38 +18,41 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "aminosalicylate",
       "outcome": "FAILED",
-      "reason_stopped": "ineffective",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "respiratory contraindication",
+      "reason_stopped": "contraindicated due to COPD",
       "before_biologic": true
     },
     {
       "name": "budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "ongoing",
+      "reason_stopped": null,
       "before_biologic": true
     }
   ],
   "treatment_outcome": "FAILED",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
+    "self_managed",
     "symptoms_worsen",
+    "primary_care_contact",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "adverse_reaction",
     "comorbidity",
     "biologic_recommended",
+    "planning_next_step",
     "alternative_therapy"
   ],
-  "evidence_notes": "Diagnosed 8 months ago. Also COPD and arthritis. Started with stomach flu symptoms, lasted months, lost 50lbs. Prednisone worsened breathing; respiratory doctor advised against it. Now on budesonide (minimal help, 20%). GI wants biologics, but lung doctor says too risky due to COPD and infection risk. Stuck with inadequate treatment. Quality of life is very poor (breathing, eating, mobility issues). Wife died 2 years ago. Children busy. Considering moving in with son, but wife is reluctant. Grandchildren's smiles keep him going. Worried about future. Continues treatment despite poor outlook."
+  "evidence_notes": "Victor, 62, was diagnosed with Crohn's eight months ago. He has COPD from smoking and arthritis. His symptoms have led to significant weight loss and low quality of life. Prednisone was contraindicated due to his COPD, and other treatments are providing minimal relief. He faces challenges with income and potential relocation due to health.\n\nKey points:\n- Diagnosed with Crohn's 8 months ago.\n- Comorbidities: COPD (heavy smoker), arthritis.\n- Symptoms: weight loss (50 lbs), low quality of life, fatigue, frequent bathroom trips.\n- Treatments: mesalamine (nothing), prednisone (worsened breathing, contraindicated), budesonide (minimal help, ~20%).\n- Biologics: recommended but too risky due to COPD and risk of infection.\n- Current situation: Stuck with inadequate treatment, poor quality of life.\n- Social/Financial: wife passed away, kids busy, pension covers basics but medical costs growing, considering moving in with son but reluctant from son's wife.\n- Future: Contemplating stopping treatment, but motivation from grandkids keeps him going.\n- Overall outcome is failure, with inadequate treatment options and very low quality of life."
 }

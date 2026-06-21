@@ -1,0 +1,403 @@
+---
+title: "Crohnicity: Mama Health Challenge"
+format:
+  gfm: default
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  echo: false
+  warning: false
+jupyter: python3
+---
+
+<!-- Source of truth: edit README.qmd, then `uv run quarto render README.qmd` to regenerate
+     README.md (gfm) + README.html (local verification). The analysis chunks read only the
+     persisted predictions in data/out/ — no Gemini API calls. -->
+
+## Pydantic Schema Design
+
+- Which fields should be **enums** vs. **free text** vs. **structured objects** (e.g., a list of treatment records with name, class, outcome, reason_stopped)?
+- How do you distinguish **"not mentioned"** from **"explicitly denied"** from **"cut off before we could find out"**? These are three very different states and they matter for the analysis.
+- How do you capture **evidence** — a supporting snippet, turn reference, or rationale per extracted field — so a reviewer can audit the model's decisions?
+- Socio-demographic fields: what's worth extracting, what's noise?
+
+## Extraction Pipeline
+
+- **Single-shot vs. multi-stage extraction.** One big call, or a pipeline (e.g., identify-then-extract, or narrative-then-structured)? What are the tradeoffs?
+- **Prompt design for uncertainty.** How do you instruct the model to separate absence, negation, and truncation?
+- **Determinism and reproducibility.** Temperature, structured output mode, seed, caching — what did you pick and why?
+
+## Evaluation
+
+Pick **one** approach that gives you a real signal on quality. We don't need a rigorous eval harness — we want to see you know how to probe your own pipeline:
+
+1. **Mini golden set:** hand-label 5–10 transcripts yourself on key fields, compute agreement with the model, **or**
+2. **LLM-as-judge:** a second LLM call scoring extraction fidelity on a sample against the source transcript, **or**
+3. **Consistency check:** run extraction twice (different prompts, temperatures, or models) and use disagreement as a proxy for reliability.
+
+Write up what it told you in a few lines: what the pipeline is solid on, where it's shaky, what you'd fix first with more time.
+
+I picked (1).
+
+## Analysis
+
+A short answer to PharmaCorp's four questions. Numbers with ranges or caveats where sensible. Keep it tight — the point is to demonstrate the structured output is usable, not to write a consulting deck.
+
+1. What percentage of patients in the dataset appear to be on a biologic?
+2. For patients *not* on a biologic, what are the primary reasons (doctor choice, patient fears, cost, access, something else)?
+3. What other treatments are commonly tried or discussed before a biologic is considered?
+4. What does a typical referral pathway look like, in number of steps from GP to a specialist who can prescribe a biologic?
+
+```{python}
+# | label: setup
+# Load the persisted predictions (post-extraction artefacts) — NO Gemini calls here.
+import json
+from pathlib import Path
+
+import pandas as pd
+from great_tables import GT
+from plotnine import (
+    aes,
+    coord_flip,
+    geom_col,
+    geom_histogram,
+    ggplot,
+    labs,
+    theme_grey,
+)
+
+OUT = Path("data/out")
+PLOTS = OUT / "plots"
+PLOTS.mkdir(parents=True, exist_ok=True)
+
+records = [json.loads(p.read_text()) for p in sorted(OUT.glob("P[0-9][0-9][0-9].json"))]
+df = pd.json_normalize(records)
+N = len(df)
+
+
+def md_img(rel_path: str, alt: str) -> str:
+    """Emit a GitHub-renderable image reference for a saved plot."""
+    return f"![{alt}]({rel_path})\n"
+```
+
+### Answers
+
+Computed from the persisted predictions in `data/out/` (`n = `{python} N``).
+
+**Q1 — % on a biologic.**
+
+```{python}
+# | label: q1
+on = int(df["biologic_taken"].sum())
+q1 = pd.DataFrame(
+    {
+        "status": ["on a biologic (taken)", "not on a biologic"],
+        "patients": [on, N - on],
+        "pct": [round(100 * on / N, 1), round(100 * (N - on) / N, 1)],
+    }
+)
+GT(q1).tab_header(title="Q1 — patients on a biologic")
+```
+
+`{python} round(100 * on / N)`% of patients (`{python} on`/`{python} N`) appear to be **on a biologic** (`biologic_taken == true`).
+
+*Evaluation — mini golden set.* `biologic_taken` (the field Q1 rests on) scored against the
+hand-annotated gold in `_v5.ods` (the `to_review` cases), as precision / recall / F1:
+
+```{python}
+# | label: q1-eval
+gold = pd.read_excel("data/in/interviews_ground_truth_v5.ods", engine="odf")
+gold = gold.loc[gold["to_review"] == 1, ["patient_id", "biologic_taken"]].dropna()
+ev = gold.merge(
+    df[["patient_id", "biologic_taken"]], on="patient_id", suffixes=("_gold", "_pred")
+)
+g = ev["biologic_taken_gold"].astype(bool)
+p = ev["biologic_taken_pred"].astype(bool)
+tp, fp, fn, tn = int((p & g).sum()), int((p & ~g).sum()), int((~p & g).sum()), int((~p & ~g).sum())
+prec = tp / (tp + fp) if tp + fp else float("nan")
+rec = tp / (tp + fn) if tp + fn else float("nan")
+f1 = 2 * prec * rec / (prec + rec) if prec + rec else float("nan")
+q1eval = pd.DataFrame(
+    {
+        "metric": ["precision", "recall", "F1", "accuracy", "n (gold)"],
+        "value": [
+            round(prec, 3),
+            round(rec, 3),
+            round(f1, 3),
+            round((tp + tn) / len(ev), 3),
+            len(ev),
+        ],
+    }
+)
+GT(q1eval).tab_header(title="Q1 — biologic_taken: model vs gold")
+```
+
+On the `{python} len(ev)`-case golden set, `biologic_taken` scores **F1 = `{python} round(f1, 2)`**
+(precision `{python} round(prec, 2)`, recall `{python} round(rec, 2)`; TP/FP/FN/TN =
+`{python} f"{tp}/{fp}/{fn}/{tn}"`) — so the Q1 headline is well-supported by the gold.
+
+**Q2 — reasons not on a biologic.**
+
+```{python}
+# | label: q2
+not_on = df[~df["biologic_taken"]]
+q2 = (
+    not_on["reasons_for_biologic_not_taken"]
+    .fillna("(null)")
+    .value_counts()
+    .rename_axis("reason")
+    .reset_index(name="patients")
+)
+(
+    ggplot(q2, aes("reason", "patients"))
+    + geom_col()
+    + coord_flip()
+    + theme_grey()
+    + labs(title="Q2 — reasons not on a biologic", x="", y="patients")
+).save(PLOTS / "q2_reasons.png", width=7, height=3.5, dpi=150, verbose=False)
+GT(q2).tab_header(title="Q2 — reasons not on a biologic")
+```
+
+```{python}
+# | output: asis
+print(md_img("data/out/plots/q2_reasons.png", "Q2 reasons not on a biologic"))
+```
+
+**Q3 — treatments tried before a biologic.**
+
+```{python}
+# | label: q3
+before = [
+    (t.get("treatment_class") or t.get("name"))
+    for r in records
+    for t in r["treatment_records"]
+    if t.get("before_biologic")
+]
+q3 = (
+    pd.Series(before)
+    .value_counts()
+    .rename_axis("treatment_class")
+    .reset_index(name="mentions")
+)
+(
+    ggplot(q3, aes("treatment_class", "mentions"))
+    + geom_col()
+    + coord_flip()
+    + theme_grey()
+    + labs(title="Q3 — treatments before a biologic", x="", y="mentions")
+).save(PLOTS / "q3_before_biologic.png", width=7, height=3.5, dpi=150, verbose=False)
+GT(q3).tab_header(title="Q3 — treatments tried before a biologic")
+```
+
+```{python}
+# | output: asis
+print(md_img("data/out/plots/q3_before_biologic.png", "Q3 treatments before a biologic"))
+```
+
+**Q4 — referral pathway length (steps to a biologic-prescribing specialist).**
+
+> **Caveat.** The literal "GP" node (`primary_care_contact`) appears in only 5/50 predicted
+> pathways, so a strict GP→prescriber count isn't representative. We count steps from the journey
+> **start** (or `primary_care_contact` where present) to `biologic_recommended` (present in 50/50)
+> — the point a biologic-prescribing specialist is reached. Under-emission of the GP node is a
+> prompt-fix candidate (see `docs/TODO.md`). Per-case journey graphs: `data/out/referral_pathway_P*.html`.
+
+```{python}
+# | label: q4
+def steps_to_biologic(pathway: list[str]) -> int | None:
+    if "biologic_recommended" not in pathway:
+        return None
+    start = pathway.index("primary_care_contact") if "primary_care_contact" in pathway else 0
+    return pathway.index("biologic_recommended") - start
+
+
+steps = pd.Series(
+    [steps_to_biologic(r["referral_pathway"]) for r in records], dtype="Float64"
+).dropna()
+(
+    ggplot(pd.DataFrame({"steps": steps.astype(int)}), aes("steps"))
+    + geom_histogram(binwidth=1)
+    + theme_grey()
+    + labs(title="Q4 — steps from journey start to biologic recommendation", y="patients")
+).save(PLOTS / "q4_steps.png", width=7, height=3.5, dpi=150, verbose=False)
+q4 = (
+    steps.describe()[["count", "min", "50%", "max", "mean"]]
+    .round(1)
+    .rename_axis("stat")
+    .reset_index(name="steps")
+)
+GT(q4).tab_header(title="Q4 — steps to biologic recommendation")
+```
+
+```{python}
+print(md_img("data/out/plots/q4_steps.png", "Q4 steps to biologic recommendation"))
+```
+
+A typical journey is **~`{python} int(steps.median())` steps** from start to a biologic recommendation (range `{python} int(steps.min())`–`{python} int(steps.max())`, n=`{python} int(steps.count())`).
+
+**Churn handling matters here.** Be explicit about:
+
+- How many journeys in your output look truncated vs. complete, and how you decided.
+- How you separated "biologic not mentioned" from "biologic discussed and rejected" from "patient churned before reaching that point."
+- Which of the four answers are most and least trustworthy given the churn distribution, and why.
+
+```{python}
+# | label: churn
+three_state = pd.DataFrame(
+    {
+        "state": [
+            "biologic not mentioned (absence)",
+            "discussed but not taken (negation)",
+            "churned / truncated",
+        ],
+        "patients": [
+            int(df["biologic_not_mentioned"].sum()),
+            int((df["biologic_prescribed"] & ~df["biologic_taken"]).sum()),
+            int((df["churn"] == True).sum()),  # noqa: E712
+        ],
+    }
+)
+GT(three_state).tab_header(title="Churn — three-way split")
+```
+
+The model flagged `churn = true` for only **`{python} int((df["churn"] == True).sum())`/`{python} N`** patient(s). Manual review of the flagged/edge cases (`docs/TO_REVIEW.md`) found churn detection unreliable in both directions — a false positive (P016) and a false negative (P049) — because truncation is a lexical/structural property of the transcript's *end* that the narrative under-determines. **Q1 and Q3 are the most trustworthy** answers (they depend on facts stated early); **Q4 is the least** (it depends on the full pathway surviving, and on the under-emitted GP node).
+
+### Churn — definition & handling
+
+**Definition.** The spec never defines the "interview". We read it as the patient's interaction
+with the Mama Health AI companion app — patients describe their doctors in the *third person*, so
+they're narrating *to the app*, not conversing with a clinician. **Churn is therefore
+disengagement from that app interaction**, which in the data shows up as a transcript that stops
+early. The spec backs this: *"patients disengage partway through their interview — they churn —
+leaving us with truncated journeys"*, and the transcripts vary in *"completeness… some cut off
+mid-journey"* (with a worked "incomplete, likely churn" example).
+
+**One flag, not two.** Because "churned" and "incomplete journey" are the *same* signal under this
+reading, we collapse them into a single `churn` field (ground truth `…_v4.ods` drops
+`incomplete_journey`). `churn = true` when there's evidence of **(a)** disengagement from the app
+interaction, or **(b)** a truncated / cut-off / vague narrative. Signals: completeness, cut off
+mid-journey, truncation, vagueness.
+
+**Why this matters for the answers.** `churn` is the *truncation* state that, with
+`biologic_not_mentioned` (absence) and a discussed-but-not-taken biologic (negation), gives the
+three-way split the analysis needs — "not mentioned" vs "discussed and rejected" vs "churned
+before we could find out". It stays a judgement call with residual uncertainty, but a single
+honest flag beats splitting two overlapping ones.
+
+## Evaluation Criteria
+
+- **Schema judgment.** Does your Pydantic model capture the real shape of the problem, including its messiness and uncertainty?
+- **Pipeline engineering.** Clean, typed code, sensible error handling, defensible choices on prompting, retries, validation, reproducibility.
+- **Uncertainty handling.** Do churn, ambiguity, and absent information show up as first-class signals in your output, or do they silently collapse into nulls?
+- **Evaluation mindset.** Do you know whether your pipeline is actually working, and how you know?
+- **Communication.** A README where a reader can understand your assumptions, tradeoffs, and limits in under 5 minutes.
+
+We're **not** looking for:
+- A perfect extractor — the data is intentionally hard.
+- Production-grade architecture.
+- A sprawling business-insights writeup.
+
+## Deliverables
+
+A link to your forked, completed GitHub repo containing:
+
+1. Source code in `src/`.
+2. Tests in `tests/`.
+3. `requirements.txt`.
+4. A **`README.md`** with:
+   - Your four business answers (brief, with caveats).
+   - A pipeline design section — schema choices, prompting approach, error handling, reproducibility.
+   - Your evaluation approach and what it surfaced.
+   - Churn / limitations discussion.
+   - Your "where I used AI" note.
+
+## Optional stretch tasks
+
+Only if you have spare time. We'd rather see a tight core than a bloated stretch:
+
+1. **Multi-stage or chain-of-thought prompts** with inspectable intermediate artifacts.
+2. **Confidence scoring per field**, either self-reported by the LLM or derived from consistency across samples.
+3. **Open-source model** — swap in a local model (Qwen, Llama, etc.) for one stage via `litellm` and compare quality/latency/cost.
+4. **Sankey or pathway visualization** for the referral journey.
+5. **Dockerfile** for reproducibility.
+
+I've attempted (4) as a way of answering business question (4) on referral pathways.
+
+## Next Steps
+
+With more time, after the core is complete:
+
+- **Split the single system prompt into multiple focused prompts run concurrently.** This version
+  deliberately uses one prompt; a later iteration would break extraction into per-section prompts
+  (e.g. biologic funnel, treatment history, referral pathway) run in parallel — better per-field
+  accuracy and inspectable intermediate artifacts, at the cost of more calls and orchestration.
+- **A telemetry feature for optimisation.** Per-call usage is currently logged (tokens, cost,
+  cached tokens — see [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I'd surface it as a
+  first-class artifact (a structured per-run metrics file + plots) to track cost/latency/cache-hit
+  rate and tune the pipeline at scale.
+- **Try a larger Gemini model in production.** This version uses `gemini-2.5-flash-lite` (cheap,
+  fast for iteration). With more time I'd evaluate a more capable model (e.g. `gemini-2.5-flash` /
+  `pro`) for extraction quality, weighed against its free-tier **request/token rate limits** (the
+  ~20 calls/day cap that drove the chunking design) and cost.
+- **Deep dive on cyclical journey patterns.** The `referral_pathway` initially flattened recurrence
+  (each phase emitted once); the prompt now asks the model to repeat steps when phases recur. A
+  proper follow-up would analyse the *cyclicity* itself — how many biologics patients cycle through,
+  repeated relapse / loss-of-response / switch loops, time-to-switch — and classify journeys as
+  genuinely cyclic vs linear (the recurrence is also recoverable from `treatment_records`).
+
+## Where I used AI
+
+TBA
+
+## Usage
+
+Run the extraction pipeline via the `src/main.py` CLI (python-fire). **By default it extracts all
+50 transcripts in chunks of 10 → 5 API calls**, sized to the Gemini free tier's ~20 requests/day
+cap (taken as a fixed constraint; 50 one-at-a-time calls would exceed it).
+
+```bash
+uv run python src/main.py                          # all 50, chunks of 10 (5 calls)
+uv run python src/main.py --limit=10               # run 1 only: P001–P010
+uv run python src/main.py --limit=10 --offset=10   # run 2: P011–P020 (no re-run of earlier chunks)
+```
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `--model` | `gemini/gemini-2.5-flash-lite` | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
+| `--limit` | all | slice size — run one chunk for testing / incremental runs |
+| `--offset` | `0` | which slice — incremental runs without redoing earlier chunks |
+| `--chunk-size` | `10` | transcripts per API call |
+| `--out-dir` | `data/out` | route test runs to `data/out/tests` so they don't clobber production |
+
+The post-extraction EDA (this README's tables/plots) is generated by `uv run quarto render
+README.qmd`, which reads only `data/out/` — **independent of the Gemini API**. Each chunk persists
+its predictions (one JSON per patient) as soon as it validates, so a completed chunk is durable and
+`--offset` lets you resume/retry without re-spending calls. Per-call telemetry (tokens, cost) is
+logged to `logs/extract.log`.
+
+## Data handling & privacy
+
+> ⚠️ **This repo commits `data/in/` and `data/out/` (model inputs and outputs) to git — which you
+> should NOT do in a production system.** Real patient interview data and extracted records are
+> **personal / special-category health data** under GDPR and must never be pushed to GitHub or any
+> external version control — PII exposure, data-residency, retention, and access-control all forbid it.
+>
+> It is acceptable **here only** because the dataset is **synthetic**, the repo is **private**, and
+> committing the data + outputs makes this **internal job-interview take-home auditable** end-to-end
+> by the reviewer. In production, inputs/outputs would live in secure storage under a data-processing
+> agreement and **only code** would be version-controlled. See [docs/QUESTIONS.md](docs/QUESTIONS.md) #7.
+
+## Requirements
+
+Dev environment requirements and setup — Python 3.14 (via uv), a `GEMINI_API_KEY`, and the
+VS Code + Claude Code extension diff-review workflow — are documented once in
+[docs/SETUP.md](docs/SETUP.md); this README only links there to avoid duplication.
+
+Further documentation is provided as follows:
+
+- [CLAUDE.md](CLAUDE.md) for Claude Code project instructions.
+
+- [SETUP.md](docs/SETUP.md) for installation and usage guide for users and devs.
+
+- [.claude/skills] Agent Skills formatted skills for CC to use specific to this project.

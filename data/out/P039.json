@@ -13,33 +13,33 @@
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "OTHER",
-    "OTHER"
+    "FIBROMYALGIA"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": "Weight gain",
       "before_biologic": true
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": "Hair loss",
       "before_biologic": true
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -48,18 +48,19 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
+    "comorbidity",
+    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
+    "conventional_therapy",
+    "therapy_failed",
     "comorbidity",
     "biologic_recommended",
     "biologic_taken",
-    "biologic_switch",
-    "loss_of_response",
+    "comorbidity",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed eight years ago. Also has rheumatoid arthritis and fibromyalgia. Started mesalamine, then prednisone (weight gain), then methotrexate (hair loss). Humira three years ago helps somewhat (50%). Now dealing with RA and fibromyalgia. Work suffering, income dropped. Son working part-time to help. Financial stress high. Support group is lifeline. Considering Stelara but concerned about time off work for injections."
+  "evidence_notes": "Michelle, 41, diagnosed with Crohn's eight years ago. Also has rheumatoid arthritis (RA) and recently diagnosed fibromyalgia. Started in early thirties, initially attributed to divorce stress. Symptoms included chronic diarrhea, weight loss, fatigue. Started mesalamine, then prednisone causing weight gain. Switched to methotrexate, causing hair loss. Started Humira three years ago, providing about 50% improvement. RA diagnosis followed, now injecting for both. Fibromyalgia diagnosis after years of widespread pain. Work as a real estate agent is suffering due to fatigue and pain. Son works part-time to help financially. Ex-husband remarried. Support group is a lifeline. High insurance deductible and growing medical debt. Considering Stelara but fears time off work for injections. Dating attempts have been discouraging. Focus is on son and managing daily life. Doctor suggests stress is worsening conditions. Finding joy in small improvements."
 }

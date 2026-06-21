@@ -9,7 +9,7 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
     "ANXIETY_DISORDER",
@@ -18,29 +18,29 @@
   "treatment_records": [
     {
       "name": "prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "mood swings, unbearable with anxiety",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Mood swings",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Minimal help",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "FAILED",
-      "reason_stopped": "nausea, weight loss",
-      "before_biologic": false
+      "reason_stopped": "Nausea, weight loss",
+      "before_biologic": true
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
-      "outcome": "PARTIAL",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
     }
@@ -60,7 +60,9 @@
     "biologic_recommended",
     "patient_fear",
     "biologic_taken",
-    "planning_next_step"
+    "alternative_therapy",
+    "planning_next_step",
+    "other"
   ],
-  "evidence_notes": "Young patient recently diagnosed with Crohn's and a history of anxiety and an eating disorder. She faces challenges with treatment side effects, needle phobia, and the emotional toll of managing multiple conditions while trying to start her career. The narrative is comprehensive."
+  "evidence_notes": "Patient is newly diagnosed and struggling with multiple issues including Crohn's, anxiety, and a history of eating disorders. Current treatment with methotrexate was ineffective and Humira has only been started recently. The outcome is ongoing due to the early stage of treatment and the complexity of managing multiple conditions."
 }

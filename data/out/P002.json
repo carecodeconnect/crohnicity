@@ -2,7 +2,7 @@
   "patient_id": "P002",
   "churn": false,
   "demographics": {
-    "gender": "male",
+    "gender": "Male",
     "age": 42
   },
   "biologic_prescribed": true,
@@ -10,30 +10,37 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "COST",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
   "comorbid_conditions": [
     "TYPE_2_DIABETES"
   ],
   "treatment_records": [
     {
+      "name": "metformin",
+      "treatment_class": "Diabetes medication",
+      "outcome": "UNKNOWN",
+      "reason_stopped": "Continued use for diabetes",
+      "before_biologic": true
+    },
+    {
       "name": "prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Wreaked havoc on blood sugar control, significantly increased insulin.",
+      "reason_stopped": "Wreaked havoc on blood sugar control",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "FAILED",
-      "reason_stopped": "No improvement.",
+      "reason_stopped": "No improvement",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "FAILED",
-      "reason_stopped": "Liver wasn't happy, likely due to diabetes medications.",
+      "reason_stopped": "Liver not happy",
       "before_biologic": true
     },
     {
@@ -57,7 +64,8 @@
     "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
-    "insurance_cost_barrier"
+    "insurance_cost_barrier",
+    "alternative_therapy"
   ],
-  "evidence_notes": "Patient is concerned about the cost of Stelara and is trying to get financial assistance. He is currently on budesonide. His diabetes complicates his treatment."
+  "evidence_notes": "Patient is unable to afford Stelara due to high co-pay and is seeking financial assistance. Currently on budesonide."
 }

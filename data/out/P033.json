@@ -8,7 +8,7 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira, Stelara",
+  "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
@@ -18,35 +18,35 @@
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "Triggered hypomanic episode",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Adverse reaction (hypomanic episode)",
       "before_biologic": true
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": "Nausea",
       "before_biologic": true
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Caused severe eczema",
+      "reason_stopped": "Adverse reaction (eczema)",
       "before_biologic": false
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -55,17 +55,23 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
-    "comorbidity",
+    "conventional_therapy",
+    "therapy_failed",
+    "relapse",
     "biologic_recommended",
     "biologic_taken",
+    "adverse_reaction",
     "biologic_switch",
-    "loss_of_response",
+    "biologic_taken",
+    "comorbidity",
     "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed at 19. Also has severe eczema and bipolar II. Started with mesalamine and prednisone (which triggered hypomania). Then methotrexate (nausea). Humira at 21 was a game-changer for Crohn's but caused severe eczema. Now on Stelara, which helps both somewhat. Bipolar diagnosis last year led to mood stabilizers. Managing three conditions, impacting social life and career. Currently working entry-level marketing, hiding condition."
+  "evidence_notes": "Nina, 26, diagnosed with Crohn's at 19. Also has severe eczema and bipolar II. College freshman year symptoms started, misdiagnosed, leading to diagnosis at 19. Initial treatment: mesalamine and prednisone, which triggered a hypomanic episode. Dropped out of college. Later tried methotrexate, causing nausea. Graduated at 24. Started Humira at 21, which helped Crohn's but caused severe eczema. Switched to Stelara, which helps both conditions moderately. Bipolar II diagnosis last year, now on mood stabilizers. Dating and social life are challenging due to her conditions. Works entry-level marketing, hiding her condition. Parents supportive but burnt out. Therapy (DBT) is crucial. Considering ketamine therapy for depression, but insurance won't cover. Diet is restricted due to both Crohn's and eczema. Fears surgery due to bipolar disorder. Despite challenges, she is trying to accept her timeline and find stability."
 }

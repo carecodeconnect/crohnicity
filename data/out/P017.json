@@ -18,14 +18,14 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "aminosalicylate",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "immunosuppressant",
+      "treatment_class": "immunomodulator",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": true
@@ -34,16 +34,16 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
+    "self_managed",
     "diagnostic_delay",
-    "comorbidity",
+    "specialist_referral",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "therapy_failed",
     "biologic_recommended",
     "patient_fear",
-    "alternative_therapy",
-    "planning_next_step",
-    "unresolved"
+    "planning_next_step"
   ],
-  "evidence_notes": "Recently diagnosed, experiencing mild to moderate inflammation. Currently on mesalamine and azathioprine. Doctor hesitant to start biologics, patient is questioning this approach and considering advocating for them. Dealing with fatigue, anxiety, and parental skepticism. Job security and dating are concerns."
+  "evidence_notes": "Diagnosed with Crohn's eight months ago, with mild to moderate inflammation. Initial treatment with mesalamine provided unclear benefit. Currently on azathioprine, requiring frequent monitoring. The patient is hesitant about biologics, possibly due to doctor's conservative approach or her own anxiety. She struggles with managing medications due to ADHD and anxiety, balancing multiple appointments, and fears job security due to sick time usage. Family is in denial, which adds to her self-doubt. She plans to advocate for biologics at her next appointment."
 }

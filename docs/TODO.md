@@ -11,6 +11,11 @@ enforcement waits until we understand what to test and what to validate.
   each label (biologic funnel, reasons, comorbidities, treatment outcomes, demographics) is
   populated deliberately rather than left to the model's defaults. Single prompt for this version;
   the concurrent multi-prompt split is a post-completion idea (README → Next Steps).
+- [ ] **Revisit `system.txt` in light of the post-extraction EDA** — fold in prompt adjustments the
+  EDA surfaces (e.g. churn detection accuracy, enum-coverage gaps like Q2's `DOCTOR_CHOICE`/`ACCESS`,
+  under-populated or over-defaulted fields). The churn guidance was already refined from the
+  `TO_REVIEW.md` audit (P016/P019/P049); the EDA's reported distributions may surface more, and any
+  change requires a fresh extraction run to take effect (current `data/out/` predates it).
 
 ## Chunked extraction — batched calls (free-tier RPD workaround)
 

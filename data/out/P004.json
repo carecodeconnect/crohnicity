@@ -2,7 +2,7 @@
   "patient_id": "P004",
   "churn": false,
   "demographics": {
-    "gender": "male",
+    "gender": "Male",
     "age": 55
   },
   "biologic_prescribed": true,
@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "COST",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
   "comorbid_conditions": [
     "HYPERTENSION",
     "HYPERLIPIDEMIA"
@@ -20,21 +20,21 @@
       "name": "prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Not a long-term solution.",
+      "reason_stopped": "Not a long-term solution",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": "Minimal improvement.",
+      "reason_stopped": "Minimal improvement",
       "before_biologic": true
     },
     {
       "name": "sulfasalazine",
       "treatment_class": "5-ASA",
       "outcome": "FAILED",
-      "reason_stopped": "Terrible headaches.",
+      "reason_stopped": "Terrible headaches",
       "before_biologic": true
     },
     {
@@ -50,15 +50,17 @@
     "symptom_onset",
     "self_managed",
     "symptoms_worsen",
-    "complication",
+    "comorbidity",
+    "acute_flare",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "adverse_reaction",
     "biologic_recommended",
     "insurance_cost_barrier",
     "alternative_therapy"
   ],
-  "evidence_notes": "Patient has catastrophic insurance coverage and cannot afford the biologic medication. Exploring clinical trials."
+  "evidence_notes": "Patient cannot afford Entyvio due to catastrophic insurance coverage and high cost per infusion. Exploring clinical trials. Currently managing with budesonide and diet."
 }

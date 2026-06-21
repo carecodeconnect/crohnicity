@@ -2,7 +2,7 @@
   "patient_id": "P007",
   "churn": false,
   "demographics": {
-    "gender": "female",
+    "gender": "Female",
     "age": 45
   },
   "biologic_prescribed": true,
@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "FIBROMYALGIA"
@@ -20,32 +20,31 @@
       "name": "prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Mood swings, insomnia, moon face. Tapered off after three months.",
+      "reason_stopped": "Mood swings, insomnia, not sustainable",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "PARTIAL",
-      "reason_stopped": "Alone wasn't holding things.",
+      "reason_stopped": "Not holding things",
       "before_biologic": true
     },
     {
       "name": "Entyvio",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
-    "specialist_referral",
-    "diagnostic_testing",
+    "comorbidity",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
@@ -53,7 +52,8 @@
     "insurance_approval",
     "biologic_taken",
     "breakthrough_symptoms",
+    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient has a history of extensive small bowel disease and was started on Entyvio due to better insurance coverage. Has breakthrough symptoms and is considering adding an immunomodulator."
+  "evidence_notes": "Patient started on Entyvio after prednisone and azathioprine. Experiencing breakthrough symptoms and considering adding an immunomodulator. Managing multiple chronic conditions and financial strain."
 }

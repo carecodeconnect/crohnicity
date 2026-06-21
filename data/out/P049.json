@@ -20,28 +20,29 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "manic side effects",
+      "reason_stopped": "mania",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "aminosalicylate",
       "outcome": "UNKNOWN",
-      "reason_stopped": "ongoing",
+      "reason_stopped": null,
       "before_biologic": true
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "surgery",
+    "complication",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "alternative_therapy",
     "biologic_recommended",
     "patient_fear",
-    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed last month during appendectomy. Inflammation throughout intestines. Also recovering from eating disorder and has anxiety. Diagnosis is triggering, clashing with ED recovery (authorized restriction vs. fear of food). Started prednisone in hospital (manic, 4 days without sleep). Now on mesalamine (too early to tell). GI wants aggressive treatment due to age and disease extent. Mentioned biologics but concerned about side effects (cancer, infections). Boyfriend supportive but overwhelmed; wedding/kids on hold. Parents concerned, see parallels to ED recovery. Chronic nature is feared."
+  "evidence_notes": "Tammy, 28, was diagnosed with Crohn's last month during an appendectomy. She also has a history of eating disorder recovery and anxiety. The Crohn's diagnosis is triggering her eating disorder recovery, as dietary restrictions are necessary. Biologics have been mentioned, but she is fearful of side effects. Her relationship and family are struggling to cope.\n\nKey points:\n- Diagnosed with Crohn's last month.\n- Comorbidities: eating disorder recovery, anxiety disorder.\n- Diagnosis triggered eating disorder recovery fears due to need for dietary restrictions.\n- Initial treatments: prednisone in hospital (caused mania), mesalamine (too early to tell if working).\n- Biologics: mentioned by GI, but patient fearful of side effects (cancer, infection).\n- Social impact: boyfriend overwhelmed, marriage/kids plans on hold, doubts about finding a partner due to chronic illness and mental health history.\n- Family: parents worried, fear of relapse into eating disorder.\n- Overall outcome is ongoing, with significant psychological distress and uncertainty due to new diagnosis and comorbid conditions."
 }

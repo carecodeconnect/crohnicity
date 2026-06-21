@@ -12,8 +12,7 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
-    "PCOS",
-    "ANXIETY_DISORDER"
+    "PCOS"
   ],
   "treatment_records": [
     {
@@ -25,28 +24,28 @@
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "aminosalicylate",
       "outcome": "FAILED",
-      "reason_stopped": "major flare after six months",
+      "reason_stopped": "major flare",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "worked okay for a while",
+      "reason_stopped": "unspecified, likely loss of efficacy or adverse reaction leading to switch",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "anti-tnf",
-      "outcome": "PARTIAL",
-      "reason_stopped": "developed antibodies after 18 months",
+      "treatment_class": "biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "developed antibodies",
       "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "anti-tnf",
+      "treatment_class": "biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
@@ -55,25 +54,23 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
     "primary_care_contact",
-    "misdiagnosis",
-    "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "adverse_reaction",
     "acute_flare",
     "complication",
     "surgery",
     "biologic_recommended",
-    "insurance_step_therapy",
     "biologic_taken",
-    "biologic_switch",
     "loss_of_response",
-    "alternative_therapy",
-    "planning_next_step",
-    "unresolved"
+    "biologic_switch",
+    "biologic_taken",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient experiencing significant lifestyle impacts due to Crohn's, including dating and career. Multiple treatments tried, currently on Humira after Remicade failed due to antibodies. Managing with therapy and support groups. Concerned about future fertility."
+  "evidence_notes": "Patient details her journey from diagnosis at 19 through various conventional therapies, surgery, and multiple biologics (Remicade, then Humira). She expresses concerns about fertility due to Crohn's and PCOS, the financial burden of medication, and the emotional toll of chronic illness. The current treatment with Humira is described as manageable but with ongoing uncertainty about its long-term efficacy and future health prospects. She actively engages in self-management (diet, exercise, therapy) and finds support in an online community. The narrative ends with a focus on daily goals and coping mechanisms."
 }

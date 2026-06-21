@@ -8,7 +8,7 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Humira",
+  "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
@@ -19,28 +19,28 @@
   "treatment_records": [
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "Liver enzymes climbing",
+      "reason_stopped": "Liver issues",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Developed antibodies",
+      "reason_stopped": "Loss of response (antibodies)",
       "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -49,21 +49,24 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
+    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
+    "conventional_therapy",
+    "therapy_failed",
     "comorbidity",
     "biologic_recommended",
+    "insurance_denial",
     "insurance_appeal",
-    "insurance_approval",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
+    "biologic_taken",
+    "breakthrough_symptoms",
     "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed seven years ago. Also has type 2 diabetes, hypertension, and osteoporosis from steroid use. Started on prednisone and azathioprine combo. Prednisone caused high blood sugar requiring insulin. Azathioprine caused liver issues. Switched to Remicade, worked for 3 years but developed antibodies. Now on Humira, ~50% improvement. GI wants to add methotrexate but worried about liver. Work suffering due to fatigue/brain fog. Costs high, savings disappearing. Considering clinical trial."
+  "evidence_notes": "George, 52, diagnosed with Crohn's seven years ago. Also has type 2 diabetes, hypertension, and osteoporosis (from steroid use). Symptoms started mid-forties, misdiagnosed for months. Found severe Crohn's throughout colon and ileum. Initial treatment: prednisone and azathioprine combo. Prednisone caused blood sugar to spike, requiring insulin. Azathioprine worked for two years before liver issues arose. Switched to Remicade, which worked for three years before antibodies developed. Currently on Humira with ~50% improvement. GI wants to add methotrexate, but concerned about liver damage. Work as accountant is difficult due to brain fog and fatigue. Made a significant error recently. Wife is supportive but exhausted. Retirement plans are impacted. Osteoporosis diagnosis adds another layer of difficulty. Diet is contradictory for diabetes and Crohn's. High annual medical costs. Considers clinical trials. Considers early retirement on disability but worries about wife's financial burden. Continues working, masking symptoms. Hopes for improvement with new drug."
 }

@@ -12,41 +12,40 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
-    "RHEUMATOID_ARTHRITIS",
     "OTHER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "treatment_class": "aminosalicylate",
+      "outcome": "FAILED",
+      "reason_stopped": "limited help",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "immunosuppressant",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "developed drug-induced hepatitis",
+      "reason_stopped": "drug-induced hepatitis",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "anti-tnf",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "may have triggered lupus",
-      "before_biologic": true
+      "reason_stopped": "stopped working",
+      "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "anti-tnf",
+      "treatment_class": "biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
     },
     {
       "name": "hydroxychloroquine",
-      "treatment_class": "antimalarial",
+      "treatment_class": "DMARD",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
@@ -62,17 +61,21 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "diagnostic_delay",
+    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
-    "comorbidity",
     "biologic_recommended",
     "biologic_taken",
+    "loss_of_response",
     "biologic_switch",
+    "biologic_taken",
+    "comorbidity",
     "alternative_therapy",
-    "unresolved"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient has both Crohn's and Lupus, treated with multiple medications including biologics. Switched from Remicade to Humira for both conditions. Concerned about pregnancy risks and financial burden. Managing with support groups and therapy."
+  "evidence_notes": "Patient diagnosed with Crohn's at 25 and lupus two years ago. Initial Crohn's treatments failed or caused adverse reactions (mesalamine, azathioprine). Biologics started early (Remicade), initially successful for three years, then failed. Switched to Humira for both conditions, also added hydroxychloroquine and methotrexate. Treatment is complex, involving multiple medications. Patient expresses concerns about high-risk pregnancy, financial costs, and stress from work. Finds support in therapy and online groups. Current treatment with Humira is ongoing but with uncertainty about future efficacy."
 }

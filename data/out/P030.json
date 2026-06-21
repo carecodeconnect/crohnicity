@@ -9,7 +9,7 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
     "DEPRESSION",
@@ -18,45 +18,47 @@
   "treatment_records": [
     {
       "name": "prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "bloated, loss of credibility",
+      "treatment_class": "conventional_therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Side effects (bloating), loss of credibility",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Not enough",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Body couldn't keep up",
       "before_biologic": true
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_testing",
+    "misdiagnosis",
+    "adverse_reaction",
     "crohns_diagnosis",
     "conventional_therapy",
-    "adverse_reaction",
     "therapy_failed",
-    "comorbidity",
+    "loss_of_response",
     "biologic_recommended",
     "biologic_taken",
-    "planning_next_step"
+    "planning_next_step",
+    "comorbidity",
+    "other"
   ],
-  "evidence_notes": "Young patient with aggressive Crohn's, severe depression, and ADHD, leading to the loss of his tech startup. He is struggling with unemployment, dependence on parents, and the challenges of managing multiple conditions. The narrative is comprehensive."
+  "evidence_notes": "Patient lost his startup due to Crohn's symptoms and is experiencing severe depression. He is currently on Humira with partial improvement but is struggling with executive dysfunction due to ADHD and Crohn's, making it difficult to find employment. The outcome is ongoing due to the current partial effectiveness of treatment and the challenges in returning to previous life activities."
 }

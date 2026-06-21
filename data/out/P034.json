@@ -18,35 +18,35 @@
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Budesonide",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": "Long-term steroid use not an option",
       "before_biologic": true
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "conventional",
       "outcome": "FAILED",
       "reason_stopped": "Liver issues",
       "before_biologic": true
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "conventional",
       "outcome": "FAILED",
       "reason_stopped": "Unbearable fatigue",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -62,12 +62,14 @@
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
-    "comorbidity",
+    "conventional_therapy",
+    "therapy_failed",
     "biologic_recommended",
+    "patient_fear",
     "biologic_taken",
-    "loss_of_response",
-    "alternative_therapy",
+    "breakthrough_symptoms",
+    "comorbidity",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed five years ago, likely longer. Also has COPD and peripheral neuropathy. Started conventional therapies (mesalamine, budesonide, azathioprine, methotrexate), some with adverse effects. Resisted biologics due to COPD but started Remicade a year ago due to poor quality of life. Remicade shows noticeable improvement but not remission. Managing multiple conditions impacts retirement plans and relationship with wife. Exploring adding immunomodulator to Remicade."
+  "evidence_notes": "Robert, 61, diagnosed with Crohn's five years ago, likely had it longer. Also has COPD and peripheral neuropathy. Symptoms started in mid-fifties, initially misdiagnosed as IBS and diverticulitis. Colonoscopy revealed significant damage. Treatments included mesalamine, budesonide (temporarily), azathioprine (liver issues), and methotrexate (unbearable fatigue). He resisted biologics due to COPD fears but agreed to Remicade a year ago. Remicade has shown noticeable improvement, allowing him to leave the house. Neuropathy started six months ago. Diet is restricted due to multiple conditions. His wife is frustrated by her caregiver role. Retirement plans are impacted. Grandkids don't understand his fatigue. Support group provides community. Doctor suggests adding an immunomodulator to Remicade. He aims for quality of life in his remaining years, driven by stubbornness."
 }

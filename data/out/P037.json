@@ -18,37 +18,41 @@
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "Not enough",
+      "reason_stopped": "Not enough effect while breastfeeding",
       "before_biologic": true
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "Joint pain developed",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Losing effectiveness",
       "before_biologic": false
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
-    "symptom_onset",
     "comorbidity",
+    "symptom_onset",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
+    "adverse_reaction",
+    "comorbidity",
     "biologic_recommended",
     "biologic_taken",
+    "breakthrough_symptoms",
     "loss_of_response",
-    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed six years ago after second child. Also has postpartum anxiety and lupus. Started mesalamine while breastfeeding, then azathioprine. Developed joint pain and rashes confirming lupus. Started Humira two years ago, helps moderately (60%). Struggles to be active mom, works part-time freelance. Financial stress due to husband's insurance dependency. Support group is lifeline. Considering changing biologics as Humira is losing effectiveness."
+  "evidence_notes": "Karen, 34, diagnosed with Crohn's six years ago after her second child. Also has postpartum anxiety and lupus. Symptoms started six months postpartum, initially dismissed. GI diagnosis after colonoscopy. Started mesalamine while breastfeeding, then weaned early for azathioprine, causing mom guilt. Joint pain and rashes led to lupus diagnosis. Husband struggles to understand her condition, making comments like 'you don't look sick'. Works part-time freelance writing due to fatigue. Financial stress is high. Parents help with childcare but are aging. Kids are aware of her illness, with the younger one normalizing her injections. Diet is challenging, requiring separate meals. Support group for moms with chronic illness is a lifeline. Considering changing biologics as Humira is losing effectiveness but fears transitioning. Husband's attendance at the next appointment is planned to help him understand."
 }

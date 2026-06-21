@@ -19,23 +19,23 @@
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": "Nothing",
+      "reason_stopped": "Ineffective",
       "before_biologic": true
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": "Worsened diabetes and cardiac issues",
+      "reason_stopped": "Adverse reaction (blood sugar issues)",
       "before_biologic": true
     },
     {
       "name": "Sulfasalazine",
-      "treatment_class": "5-ASA/SULFAPYRIDINE",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "Terrible headaches",
+      "reason_stopped": "Headaches",
       "before_biologic": true
     }
   ],
@@ -49,12 +49,11 @@
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
-    "comorbidity",
+    "conventional_therapy",
+    "therapy_failed",
     "biologic_recommended",
     "insurance_denial",
-    "insurance_step_therapy",
-    "planning_next_step",
-    "unresolved"
+    "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed with Crohn's last year, late onset. Also has diabetes, heart disease, arthritis. Started on mesalamine, then prednisone (which worsened diabetes/cardiac issues), now sulfasalazine. Experiencing severe GI symptoms (15 bathroom trips/day), impacting ability to work. GI doctor wants biologics, but insurance denies due to not failing enough treatments. Considering selling home. Wife is primary support."
+  "evidence_notes": "Frank is a 54-year-old male diagnosed with Crohn's last year. He also has diabetes, heart disease, and arthritis. Symptoms started two years ago but were ignored until his wife insisted he see a doctor. Colonoscopy revealed inflammation. He tried mesalamine with no effect, then prednisone which caused blood sugar issues. He is now on sulfasalazine, experiencing severe headaches. His GI wants him on biologics, but insurance requires failure of more drugs. He has 15 bathroom trips a day, forcing him to close his mechanic shop. Income is gone, living on savings. He feels isolated by his condition and the lack of understanding from others. Depression is worsening, but antidepressants interact with his heart medication. He is considering selling his house. His main goal is to get insurance approval for biologics, believing it's what they wait for."
 }

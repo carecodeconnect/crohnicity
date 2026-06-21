@@ -17,7 +17,7 @@
   "treatment_records": [
     {
       "name": "Humira",
-      "treatment_class": "anti-tnf",
+      "treatment_class": "biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
@@ -26,18 +26,18 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
     "diagnostic_delay",
-    "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "biologic_recommended",
-    "insurance_step_therapy",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
     "biologic_taken",
     "patient_fear",
-    "alternative_therapy",
-    "planning_next_step",
-    "unresolved"
+    "planning_next_step"
   ],
-  "evidence_notes": "Newly diagnosed while starting career. Started on Humira due to severity, skipping conventional steps. Anxiety prevents self-injection, relying on boyfriend. Worried about job security, social life, finances (co-pay, living at home). Processing grief and loss of health."
+  "evidence_notes": "Diagnosed with Crohn's at 24, just after college graduation. Started on Humira immediately due to moderate-to-severe disease. Struggles with self-administering injections due to anxiety, requiring partner's help. Fears disclosing diagnosis at work due to stigma and potential impact on career. Experiences fatigue and injection site reactions, leading to missed work. Social life is impacted by dietary restrictions and FOMO. Therapy is used for anxiety and processing grief related to chronic illness. Concerned about future financial stability, career progression, and potential need for more medication."
 }

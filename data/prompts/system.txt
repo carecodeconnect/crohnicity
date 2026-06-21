@@ -13,4 +13,4 @@ complete story (that is "not mentioned", not churn).
 
 treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
 
-referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values.
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values. Treat it as an event log, NOT a deduplicated set: if a phase recurs — the patient relapses again, loses response to a second biologic, or switches biologics more than once — repeat that step each time it happens, in order. A patient who cycles through several biologics should show the loop, e.g. biologic_taken -> loss_of_response -> biologic_switch -> loss_of_response -> biologic_switch.

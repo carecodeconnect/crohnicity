@@ -10,45 +10,37 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "DEFERRED",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
     "OTHER"
   ],
   "treatment_records": [
     {
-      "name": "surgery",
-      "treatment_class": "surgery",
+      "name": "mesalamine",
+      "treatment_class": "aminosalicylate",
       "outcome": "UNKNOWN",
       "reason_stopped": null,
-      "before_biologic": null
-    },
-    {
-      "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "UNKNOWN",
-      "reason_stopped": "ongoing",
-      "before_biologic": null
+      "before_biologic": true
     },
     {
       "name": "antibiotics",
       "treatment_class": "antibiotic",
       "outcome": "UNKNOWN",
-      "reason_stopped": "ongoing",
-      "before_biologic": null
+      "reason_stopped": null,
+      "before_biologic": true
     }
   ],
-  "treatment_outcome": "UNKNOWN",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "acute_flare",
+    "complication",
     "surgery",
     "crohns_diagnosis",
     "conventional_therapy",
-    "comorbidity",
     "biologic_recommended",
-    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed 3 weeks ago. Also has diabetes and heart disease. ER visit for severe pain led to diagnosis. Emergency surgery for blocked intestine. Recovery is rough; living alone. Ex-wife and neighbor help. Neighbor provides meals. Humbling. Savings depleting due to surgery bills ($100k+). Insurance fighting claims. May have to sell house. Currently on mesalamine and antibiotics. Doctor wants biologics post-surgery, but too early to tell if current meds helping."
+  "evidence_notes": "Larry, 56, was diagnosed with Crohn's three weeks ago after an emergency surgery for a blocked intestine. He has diabetes and heart disease. Recovery from surgery has been difficult, and he is living alone. He is scheduled to start biologics after healing, but financial and social support are concerns.\n\nKey points:\n- Diagnosed with Crohn's 3 weeks ago, following emergency surgery for intestinal blockage.\n- Comorbidities: diabetes, heart disease.\n- Initial treatments: mesalamine, antibiotics.\n- Biologics: planned after surgical recovery.\n- Impact on life: severe pain, difficulty with basic tasks, living alone, neighbor and meals on wheels provide some support.\n- Financial: significant surgical bills, insurance fighting claims, may have to sell house.\n- Family: children live out of state, ex-wife helps sometimes.\n- Overall outcome is ongoing, with significant immediate challenges due to surgery and diagnosis, and uncertainty about future treatment and finances."
 }

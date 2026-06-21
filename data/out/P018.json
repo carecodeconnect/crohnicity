@@ -24,9 +24,9 @@
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "aminosalicylate",
       "outcome": "FAILED",
-      "reason_stopped": null,
+      "reason_stopped": "didn't do much",
       "before_biologic": true
     },
     {
@@ -41,17 +41,16 @@
   "referral_pathway": [
     "symptom_onset",
     "self_managed",
+    "diagnostic_delay",
     "symptoms_worsen",
+    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
-    "comorbidity",
+    "adverse_reaction",
     "biologic_recommended",
     "insurance_cost_barrier",
-    "biologic_not_taken",
-    "alternative_therapy",
-    "unresolved"
+    "planning_next_step"
   ],
-  "evidence_notes": "Newly diagnosed at 58 with Crohn's, type 2 diabetes, and history of heart attack. Prednisone worsened diabetes and concerned cardiologist. Mesalamine ineffective. Now on budesonide, but GI wants to try biologics. Hesitant due to multiple medications, cost, insurance complexities (Medicare), and risk of infection. Currently managing with diet and limited medication."
+  "evidence_notes": "Newly diagnosed with Crohn's at 58, also has type 2 diabetes and history of heart attack. Initial treatments (prednisone, mesalamine, budesonide) have been challenging due to side effects impacting blood sugar and cardiologist concerns. Biologics are recommended but the patient is hesitant due to polypharmacy, cost, Medicare coverage complexities, and risk of infection. He struggles with diet due to conflicting recommendations for diabetes and Crohn's, and his quality of life is impacted, affecting his ability to golf and care for grandchildren. He is considering biologics."
 }

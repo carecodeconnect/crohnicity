@@ -9,7 +9,7 @@
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade, Humira, Stelara",
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
     "ENDOMETRIOSIS",
@@ -18,42 +18,42 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Minimal improvement",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Minimal improvement",
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "FAILED",
-      "reason_stopped": "allergic reaction",
+      "reason_stopped": "Allergic reaction",
       "before_biologic": false
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "Effectiveness limited",
       "before_biologic": false
     },
     {
       "name": "methotrexate",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "conventional_therapy",
       "outcome": "PARTIAL",
-      "reason_stopped": "hair loss",
+      "reason_stopped": "Side effects (hair loss)",
       "before_biologic": false
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -62,7 +62,6 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
@@ -76,9 +75,9 @@
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
-    "breakthrough_symptoms",
     "alternative_therapy",
-    "planning_next_step"
+    "planning_next_step",
+    "other"
   ],
-  "evidence_notes": "Patient has multiple chronic illnesses that impact her career and social life. She has tried multiple biologics with partial success and is facing financial and emotional challenges. The narrative is relatively complete, covering her diagnosis, treatment history, and current struggles."
+  "evidence_notes": "Patient reports feeling that current medications are just 'bandaids' and is looking into experimental treatments and clinical trials. The patient expresses desire for a 'real solution' but acknowledges none currently exists. The patient is choosing a medication cocktail over surgery for now but states that the answer might change in the future, indicating an ongoing and uncertain treatment outcome."
 }

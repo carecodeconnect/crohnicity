@@ -8,38 +8,37 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Stelara",
+  "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
-    "FIBROMYALGIA",
-    "OTHER"
+    "FIBROMYALGIA"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "conventional",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Cancer treatment required stopping immunosuppressants",
+      "reason_stopped": "Adverse event (cancer diagnosis, needed to stop immunosuppressants)",
       "before_biologic": false
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -49,19 +48,23 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
+    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "comorbidity",
     "acute_flare",
-    "complication",
-    "surgery",
     "comorbidity",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
-    "alternative_therapy",
-    "planning_next_step"
+    "comorbidity",
+    "acute_flare",
+    "surgery",
+    "biologic_recommended",
+    "biologic_taken",
+    "breakthrough_symptoms"
   ],
-  "evidence_notes": "Patient has Crohn's for 15 years, fibromyalgia, and is a breast cancer survivor. Started on conventional therapies (mesalamine, prednisone), then biologics (Remicade) 7 years ago. Stopped Remicade for cancer treatment, leading to severe Crohn's flares. Currently on Stelara, which is only partially effective. Managing multiple chronic illnesses, impact on family and career is significant. Exploring surgery as next step if Stelara fails."
+  "evidence_notes": "Patient is a 46-year-old female diagnosed with Crohn's disease 15 years ago. She also has fibromyalgia and is a recent breast cancer survivor. Her Crohn's was diagnosed at 31 and was moderate to severe. She initially managed with mesalamine and prednisone. Fibromyalgia developed later, requiring additional medications like Cymbalta. She started biologics 7 years ago with Remicade, which worked for 3 years. Cancer diagnosis at 44 led to stopping immunosuppressants for chemo, causing Crohn's to flare severely. After cancer treatment, she started Stelara, which is working somewhat but not achieving remission. She experiences partial obstructions due to scar tissue. Her quality of life is significantly impacted, affecting her career (she's on disability) and family relationships. She manages multiple conditions with strict diet and attends various support groups. She is exploring purpose through a blog and continues to fight, motivated by her family."
 }
