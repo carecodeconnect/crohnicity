@@ -1010,3 +1010,4 @@ Access raw response with `e.raw_response`
 2026-06-21 08:09:21.712 | INFO     | extract:extract:94 - extracted P001 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P001.json
 2026-06-21 08:09:24.829 | INFO     | extract:extract:94 - extracted P002 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P002.json
 2026-06-21 08:09:29.087 | INFO     | extract:extract:94 - extracted P003 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P003.json
+2026-06-21 09:10:32.738 | INFO     | extract:extract:86 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json

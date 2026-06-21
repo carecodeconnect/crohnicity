@@ -18,19 +18,22 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": null
+      "reason_stopped": null,
+      "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": null
+      "reason_stopped": null,
+      "before_biologic": true
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": null
+      "reason_stopped": null,
+      "before_biologic": false
     }
   ],
   "treatment_outcome": "SUCCESS",
@@ -41,8 +44,7 @@
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "biologic_taken",
-    "remission"
+    "biologic_taken"
   ],
-  "evidence_notes": "The patient reports being in remission due to Humira."
+  "evidence_notes": null
 }
