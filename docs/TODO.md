@@ -4,6 +4,14 @@ Deferred engineering tasks, kept here so they can be picked up directly in **pla
 later. These are intentionally *not* done yet — see `CLAUDE.md` ("Code style") for why
 enforcement waits until we understand what to test and what to validate.
 
+## Prompt — cover every field (next task)
+
+- [ ] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
+  *every* field in `PatientLabels` — not just `churn`, `before_biologic`, `referral_pathway` — so
+  each label (biologic funnel, reasons, comorbidities, treatment outcomes, demographics) is
+  populated deliberately rather than left to the model's defaults. Single prompt for this version;
+  the concurrent multi-prompt split is a post-completion idea (README → Next Steps).
+
 ## Quality gates — manual check script (no pre-commit)
 
 We deliberately **don't** use pre-commit hooks — overkill for this project. Enforcement is a

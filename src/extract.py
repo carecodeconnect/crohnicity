@@ -47,16 +47,8 @@ LOG_DIR = ROOT / "logs"  # logs live at the project root, separate from data out
 # loguru file sink: persist each run + failures (stderr stays on by default)
 logger.add(LOG_DIR / "extract.log", level="INFO", rotation="1 MB")
 
-SYSTEM_PROMPT = (
-    "Extract the structured labels from this Crohn's disease patient interview. "
-    "Use the schema's enum values exactly, and leave a field null/empty when the transcript "
-    "doesn't support a confident value. Set patient_id to the value given in the message. "
-    "For referral_pathway, list the patient's journey as an ordered sequence of the canonical "
-    "PathwayStep values. "
-    "For each treatment_records entry, set before_biologic to true if it was tried before the "
-    "patient started or was offered a biologic, and false otherwise. "
-    "Return only valid JSON matching the schema — no prose, no code fences."
-)
+# Prompt lives in data/prompts/system.txt so it can be edited/reviewed as its own artifact.
+SYSTEM_PROMPT = (ROOT / "data" / "prompts" / "system.txt").read_text().strip()
 
 
 # Log unexpected failures (traceback) + re-raise; retryable API errors handled below.
