@@ -7,6 +7,7 @@ and the ``.qmd`` keeps only presentation (plots, tables, prose). See ``docs/TODO
 """
 
 import json
+from collections import Counter
 from pathlib import Path
 
 import pandas as pd
@@ -138,6 +139,38 @@ def n_cyclic(records: list[dict]) -> int:
     return sum(
         len(r["referral_pathway"]) != len(set(r["referral_pathway"])) for r in records
     )
+
+
+def pick_cyclic_example(records: list[dict]) -> str:
+    """A representative patient whose journey *loops* (a phase recurs), chosen deterministically —
+    the shortest cyclic pathway, ties broken by lowest id — so the README example renders the same
+    run-to-run (no hardcoded id). Falls back to the shortest pathway overall if none cycle."""
+    cyclic = [
+        r
+        for r in records
+        if len(r["referral_pathway"]) != len(set(r["referral_pathway"]))
+    ]
+    pool = cyclic or records
+    return min(
+        pool, key=lambda r: (len(r["referral_pathway"]), int(r["patient_id"][1:]))
+    )["patient_id"]
+
+
+def pathway_mermaid(records: list[dict], pid: str) -> str:
+    """A GitHub-renderable Mermaid flowchart of one patient's ``referral_pathway`` — the static
+    in-README preview of the interactive pyvis graph. A revisited phase is one node the journey
+    loops back to; an edge's ``xN`` label is its traversal count."""
+    seq = next(r["referral_pathway"] for r in records if r["patient_id"] == pid)
+    ids = {step: f"n{i}" for i, step in enumerate(dict.fromkeys(seq))}
+    edges = Counter(zip(seq, seq[1:]))
+    lines = ["```mermaid", "flowchart LR"]
+    lines += [f'    {nid}["{step}"]' for step, nid in ids.items()]
+    lines += [
+        f"    {ids[a]} -->{f'|x{c}| ' if c > 1 else ''}{ids[b]}"
+        for (a, b), c in edges.items()
+    ]
+    lines.append("```")
+    return "\n".join(lines)
 
 
 def churn_three_state(df: pd.DataFrame) -> pd.DataFrame:

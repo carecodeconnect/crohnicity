@@ -2215,8 +2215,6 @@ vertical-align: -.125em;
   <li><a href="#answers" id="toc-answers" class="nav-link" data-scroll-target="#answers">Answers</a></li>
   <li><a href="#churn-definition-handling" id="toc-churn-definition-handling" class="nav-link" data-scroll-target="#churn-definition-handling">Churn — definition &amp; handling</a></li>
   </ul></li>
-  <li><a href="#evaluation-criteria" id="toc-evaluation-criteria" class="nav-link" data-scroll-target="#evaluation-criteria">Evaluation Criteria</a></li>
-  <li><a href="#deliverables" id="toc-deliverables" class="nav-link" data-scroll-target="#deliverables">Deliverables</a></li>
   <li><a href="#optional-stretch-tasks" id="toc-optional-stretch-tasks" class="nav-link" data-scroll-target="#optional-stretch-tasks">Optional stretch tasks</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
   <li><a href="#where-i-used-ai" id="toc-where-i-used-ai" class="nav-link" data-scroll-target="#where-i-used-ai">Where I used AI</a>
@@ -2234,6 +2232,11 @@ vertical-align: -.125em;
   </ul></li>
   <li><a href="#data-handling-privacy" id="toc-data-handling-privacy" class="nav-link" data-scroll-target="#data-handling-privacy">Data handling &amp; privacy</a></li>
   <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
+  <li><a href="#docs-further-reading" id="toc-docs-further-reading" class="nav-link" data-scroll-target="#docs-further-reading">Docs &amp; further reading</a>
+  <ul class="collapse">
+  <li><a href="#browse-the-docs-locally-mkdocs" id="toc-browse-the-docs-locally-mkdocs" class="nav-link" data-scroll-target="#browse-the-docs-locally-mkdocs">Browse the docs locally (MkDocs)</a></li>
+  </ul></li>
+  <li><a href="#project-layout" id="toc-project-layout" class="nav-link" data-scroll-target="#project-layout">Project layout</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="README.md"><i class="bi bi-file-code"></i>Github (GFM)</a></li></ul></div></nav>
 </div>
@@ -2468,7 +2471,7 @@ vertical-align: -.125em;
 <section id="q4-referral-pathway-length-steps-to-a-biologic-prescribing-specialist" class="level4">
 <h4 class="anchored" data-anchor-id="q4-referral-pathway-length-steps-to-a-biologic-prescribing-specialist">Q4 — referral pathway length (steps to a biologic-prescribing specialist)</h4>
 <blockquote class="blockquote">
-<p><strong>Caveat.</strong> The literal “GP” node (<code>primary_care_contact</code>) appears in only 7/50 predicted pathways, so a strict GP→prescriber count isn’t representative. We count steps from the journey <strong>start</strong> (or <code>primary_care_contact</code> where present) to <code>biologic_recommended</code> (present in 48/50) — the point a biologic-prescribing specialist is reached. Under-emission of the GP node is a prompt-fix candidate (see <code>docs/TODO.md</code>). Per-case journey graphs: <code>data/out/html/referral_pathway_P*.html</code>.</p>
+<p><strong>Caveat.</strong> The literal “GP” node (<code>primary_care_contact</code>) appears in only 7/50 predicted pathways, so a strict GP→prescriber count isn’t representative. We count steps from the journey <strong>start</strong> (or <code>primary_care_contact</code> where present) to <code>biologic_recommended</code> (present in 48/50) — the point a biologic-prescribing specialist is reached. Under-emission of the GP node is a prompt-fix candidate (see <code>docs/TODO.md</code>). The per-case interactive journey graphs are linked below.</p>
 </blockquote>
 <div id="q4" class="cell" data-execution_count="8">
 <table class="caption-top table table-sm table-striped small">
@@ -2529,14 +2532,38 @@ vertical-align: -.125em;
 </figure>
 </div>
 <p>The <strong>most common</strong> journey length is <strong>9 steps</strong> (the modal value — highest patient count in the chart), with a <strong>median of ~9</strong> (range 4–13, n=48).</p>
-<p>Crucially, <strong>16/50 journeys are cyclic</strong> — the patient loops back through relapse / <code>loss_of_response</code> / <code>biologic_switch</code> (recurrence the prompt now captures; the per-case graphs in <code>data/out/html/referral_pathway_P*.html</code> render these as loops). So “a typical referral pathway” is as much about <strong>recurrence</strong> (repeated biologic switching) as about step count — a linear step number alone understates the journey for the <strong>32%</strong> of patients whose journey loops.</p>
+<p>Crucially, <strong>16/50 journeys are cyclic</strong> — the patient loops back through relapse / <code>loss_of_response</code> / <code>biologic_switch</code> (recurrence the prompt now captures; the per-case graphs render these as loops — see the deep-dive below). So “a typical referral pathway” is as much about <strong>recurrence</strong> (repeated biologic switching) as about step count — a linear step number alone understates the journey for the <strong>32%</strong> of patients whose journey loops.</p>
+<p><strong>Deep dive — the individual journeys.</strong> Open <a href="data/out/html/index.html"><code>data/out/html/index.html</code></a> to browse all 50 interactive per-case pathway graphs. As a teaser, here is patient <strong>P013</strong> — a <em>cyclic</em> journey (a phase recurs, so it renders as a loop); the full interactive version is at <a href="data/out/html/referral_pathway_P013.html"><code>referral_pathway_P013.html</code></a>:</p>
+<pre class="mermaid"><code>flowchart LR
+    n0[&quot;symptom_onset&quot;]
+    n1[&quot;specialist_referral&quot;]
+    n2[&quot;diagnostic_testing&quot;]
+    n3[&quot;crohns_diagnosis&quot;]
+    n4[&quot;conventional_therapy&quot;]
+    n5[&quot;adverse_reaction&quot;]
+    n6[&quot;biologic_recommended&quot;]
+    n7[&quot;biologic_taken&quot;]
+    n8[&quot;loss_of_response&quot;]
+    n9[&quot;biologic_switch&quot;]
+    n10[&quot;comorbidity&quot;]
+    n0 --&gt;n1
+    n1 --&gt;n2
+    n2 --&gt;n3
+    n3 --&gt;n4
+    n4 --&gt;n5
+    n5 --&gt;n6
+    n6 --&gt;n7
+    n7 --&gt;n8
+    n8 --&gt;n9
+    n9 --&gt;n10
+    n10 --&gt;n7</code></pre>
 <p><strong>Churn handling matters here.</strong> Be explicit about:</p>
 <ul>
 <li>How many journeys in your output look truncated vs. complete, and how you decided.</li>
 <li>How you separated “biologic not mentioned” from “biologic discussed and rejected” from “patient churned before reaching that point.”</li>
 <li>Which of the four answers are most and least trustworthy given the churn distribution, and why.</li>
 </ul>
-<div id="churn" class="cell" data-execution_count="10">
+<div id="churn" class="cell" data-execution_count="11">
 <table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
@@ -2573,45 +2600,27 @@ vertical-align: -.125em;
 <p><strong>Why this matters for the answers.</strong> <code>churn</code> is the <em>truncation</em> state that, with <code>biologic_not_mentioned</code> (absence) and a discussed-but-not-taken biologic (negation), gives the three-way split the analysis needs — “not mentioned” vs “discussed and rejected” vs “churned before we could find out”. It stays a judgement call with residual uncertainty, but a single honest flag beats splitting two overlapping ones.</p>
 </section>
 </section>
-<section id="evaluation-criteria" class="level2">
-<h2 class="anchored" data-anchor-id="evaluation-criteria">Evaluation Criteria</h2>
-<ul>
-<li><strong>Schema judgment.</strong> Does your Pydantic model capture the real shape of the problem, including its messiness and uncertainty?</li>
-<li><strong>Pipeline engineering.</strong> Clean, typed code, sensible error handling, defensible choices on prompting, retries, validation, reproducibility.</li>
-<li><strong>Uncertainty handling.</strong> Do churn, ambiguity, and absent information show up as first-class signals in your output, or do they silently collapse into nulls?</li>
-<li><strong>Evaluation mindset.</strong> Do you know whether your pipeline is actually working, and how you know?</li>
-<li><strong>Communication.</strong> A README where a reader can understand your assumptions, tradeoffs, and limits in under 5 minutes.</li>
-</ul>
-<p>We’re <strong>not</strong> looking for: - A perfect extractor — the data is intentionally hard. - Production-grade architecture. - A sprawling business-insights writeup.</p>
-</section>
-<section id="deliverables" class="level2">
-<h2 class="anchored" data-anchor-id="deliverables">Deliverables</h2>
-<p>A link to your forked, completed GitHub repo containing:</p>
-<ol type="1">
-<li>Source code in <code>src/</code>.</li>
-<li>Tests in <code>tests/</code>.</li>
-<li><code>requirements.txt</code>.</li>
-<li>A <strong><code>README.md</code></strong> with:
-<ul>
-<li>Your four business answers (brief, with caveats).</li>
-<li>A pipeline design section — schema choices, prompting approach, error handling, reproducibility.</li>
-<li>Your evaluation approach and what it surfaced.</li>
-<li>Churn / limitations discussion.</li>
-<li>Your “where I used AI” note.</li>
-</ul></li>
-</ol>
-</section>
 <section id="optional-stretch-tasks" class="level2">
 <h2 class="anchored" data-anchor-id="optional-stretch-tasks">Optional stretch tasks</h2>
-<p>Only if you have spare time. We’d rather see a tight core than a bloated stretch:</p>
-<ol type="1">
-<li><strong>Multi-stage or chain-of-thought prompts</strong> with inspectable intermediate artifacts.</li>
-<li><strong>Confidence scoring per field</strong>, either self-reported by the LLM or derived from consistency across samples.</li>
-<li><strong>Open-source model</strong> — swap in a local model (Qwen, Llama, etc.) for one stage via <code>litellm</code> and compare quality/latency/cost.</li>
-<li><strong>Sankey or pathway visualization</strong> for the referral journey.</li>
-<li><strong>Dockerfile</strong> for reproducibility.</li>
-</ol>
-<p>I’ve attempted (4) as a way of answering business question (4) on referral pathways.</p>
+<p>The brief offers five optional stretches but asks for <em>a tight core over a bloated stretch</em>, so I picked the one that directly answers a business question and put the rest of my effort into reproducibility and orchestration.</p>
+<p><strong>Attempted.</strong></p>
+<ul>
+<li><strong>(4) Pathway visualisation — successful.</strong> The interactive per-case referral-journey graphs (the deep-dive under Q4) answer business question 4. I chose a directed graph over a Sankey deliberately — it shows <em>recurrence</em> (relapse / loss-of-response loops), which a Sankey flattens.</li>
+<li><strong>(3) Open-source model swap (local Ollama) — attempted, an instructive failure.</strong> The plumbing works: <code>--model</code> routes extraction through any LiteLLM-supported model with no code change (e.g. <code>uv run python src/main.py --model=ollama_chat/qwen3:30b-a3b</code> for a local Qwen, also a way to dodge the Gemini quota), and <code>extract()</code> drops provider-unsupported params automatically. But the local models I tried did <strong>not</strong> return reliable schema-valid output — they invent fields and off-vocabulary enum values, so <code>tests/test_ollama.py</code> records this as a graceful <code>xfail</code> rather than a pass. <strong>Insight:</strong> the strict structured-output + <code>enforce_validation</code> Gemini honours is exactly where local models fall down, so the swap isn’t drop-in for this task — it would need a tolerant per-record parse (or a JSON-tuned model) first.</li>
+</ul>
+<p><strong>Beyond the brief’s list — extra stretches I added.</strong></p>
+<ul>
+<li><strong>Dagster orchestration.</strong> The whole pipeline is an asset graph (<code>uv run dg dev</code>), so a failure is pinpointed per-stage in the UI instead of as one opaque error — and the same <code>src/</code> functions still run standalone from the CLI (<a href="docs/SYSTEM_DESIGN.md">SYSTEM_DESIGN.md</a>).</li>
+<li><strong>Determinism + an accidental consistency check.</strong> <code>temperature = 0</code> is pinned, and the repeated runs gave a free reliability signal — a partial take on stretches (2)/(3) (see <em>Evaluation</em> and <em>Extraction Pipeline → Determinism</em>).</li>
+<li><strong>Reproducible reporting + an API docsite.</strong> This README is Quarto-rendered from the persisted predictions (no API call), and a MkDocs + mkdocstrings site documents the <code>src/</code> API.</li>
+<li><strong>Centralised config + a quality gate.</strong> One <code>config.json</code> feeds every entry point; <code>ruff</code> / <code>ruff format</code> / <code>ty</code> / <code>pytest</code> (with coverage) gate every change.</li>
+</ul>
+<p><strong>Deferred to keep the core tight</strong> (tracked in <em>Next Steps</em> / <a href="docs/TODO.md"><code>docs/TODO.md</code></a>).</p>
+<ul>
+<li><strong>(1) Multi-stage / chain-of-thought prompts</strong> with inspectable intermediates — my #1 <em>Next Step</em>.</li>
+<li><strong>(2) Per-field confidence scoring</strong> (self-reported, or from consistency across samples).</li>
+<li><strong>(5) Dockerfile</strong> for cross-machine reproducibility.</li>
+</ul>
 </section>
 <section id="next-steps" class="level2">
 <h2 class="anchored" data-anchor-id="next-steps">Next Steps</h2>
@@ -2656,10 +2665,10 @@ vertical-align: -.125em;
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <p><strong>Dagster, driven by the <code>dg</code> CLI, is the main entry point.</strong> It orchestrates the whole pipeline end-to-end — extract → EDA / README render → referral graphs → docsite — and shows which stage failed in the UI. Launch a run two ways — the UI’s <em>Materialize all</em>, or headless from a second terminal:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run dg dev <span class="at">-m</span> pipeline <span class="at">-d</span> src   <span class="co"># UI at http://127.0.0.1:3000 → &quot;Materialize all&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...or headless from another terminal (no UI):</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run dg launch <span class="at">--assets</span> <span class="st">&quot;*&quot;</span> <span class="at">-m</span> pipeline <span class="at">-d</span> src</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run dg dev <span class="at">-m</span> pipeline <span class="at">-d</span> src   <span class="co"># UI at http://127.0.0.1:3000 → &quot;Materialize all&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...or headless from another terminal (no UI):</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run dg launch <span class="at">--assets</span> <span class="st">&quot;*&quot;</span> <span class="at">-m</span> pipeline <span class="at">-d</span> src</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <blockquote class="blockquote">
 <p>Set <code>DAGSTER_HOME</code> in <code>.env</code> to persist run history to <code>.dagster_home/</code> (see DEV_SETUP); without it Dagster uses a temp dir. The instance config <code>.dagster_home/dagster.yaml</code> is committed (it shows the pipeline wiring); Dagster runs <strong>locally only</strong> — it never pushes to GitHub, so publishing refreshed artefacts (data + logs + README) is your separate <code>git</code> step.</p>
 </blockquote>
@@ -2667,9 +2676,9 @@ vertical-align: -.125em;
 <section id="extraction-srcmain.py" class="level3">
 <h3 class="anchored" data-anchor-id="extraction-srcmain.py">Extraction (<code>src/main.py</code>)</h3>
 <p>Run the extraction pipeline via the <code>src/main.py</code> CLI (python-fire). <strong>By default it extracts all 50 transcripts in chunks of 10 → 5 API calls</strong>, sized to the Gemini free tier’s ~20 requests/day cap (taken as a fixed constraint; 50 one-at-a-time calls would exceed it).</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/main.py                          <span class="co"># all 50, chunks of 10 (5 calls)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/main.py <span class="at">--limit</span><span class="op">=</span>10               <span class="co"># run 1 only: P001–P010</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/main.py <span class="at">--limit</span><span class="op">=</span>10 <span class="at">--offset</span><span class="op">=</span>10   <span class="co"># run 2: P011–P020 (no re-run of earlier chunks)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/main.py                          <span class="co"># all 50, chunks of 10 (5 calls)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/main.py <span class="at">--limit</span><span class="op">=</span>10               <span class="co"># run 1 only: P001–P010</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/main.py <span class="at">--limit</span><span class="op">=</span>10 <span class="at">--offset</span><span class="op">=</span>10   <span class="co"># run 2: P011–P020 (no re-run of earlier chunks)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -2716,28 +2725,28 @@ vertical-align: -.125em;
 <section id="referral-pathway-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="referral-pathway-graphs">Referral-pathway graphs</h3>
 <p>Generate the per-case journey graphs + phase/transition tables behind Q4 (reads the pathways, no API call):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/referral_pathway_analysis.py   <span class="co"># writes data/out/html/referral_pathway_P*.html</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/referral_pathway_analysis.py   <span class="co"># writes data/out/html/referral_pathway_P*.html</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="rebuild-the-answers-doc" class="level3">
 <h3 class="anchored" data-anchor-id="rebuild-the-answers-doc">Rebuild the answers doc</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run quarto render README.qmd                  <span class="co"># regenerate README.md (gfm) + README.html from data/out/</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run quarto render README.qmd                  <span class="co"># regenerate README.md (gfm) + README.html from data/out/</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="development-quality-gate" class="level3">
 <h3 class="anchored" data-anchor-id="development-quality-gate">Development — quality gate</h3>
 <p>Run the manual gate on every code change (no pre-commit hooks, by design — see <code>CLAUDE.md</code>):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> tests/type_lint_unit_tests.sh   <span class="co"># ruff check + ruff format --check + ty check + pytest (src + tests)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> tests/type_lint_unit_tests.sh   <span class="co"># ruff check + ruff format --check + ty check + pytest (src + tests)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>…or the individual tools:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check src tests                            <span class="co"># lint</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff format src tests                           <span class="co"># auto-format</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ty check src tests                              <span class="co"># type-check (Rust-based; not mypy)</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest <span class="at">-q</span>                                       <span class="co"># unit tests</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="va">RUN_RENDER_TEST</span><span class="op">=</span>1 <span class="ex">uv</span> run pytest tests/test_render.py   <span class="co"># gated end-to-end render smoke test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check src tests                            <span class="co"># lint</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff format src tests                           <span class="co"># auto-format</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ty check src tests                              <span class="co"># type-check (Rust-based; not mypy)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest <span class="at">-q</span>                                       <span class="co"># unit tests</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="va">RUN_RENDER_TEST</span><span class="op">=</span>1 <span class="ex">uv</span> run pytest tests/test_render.py   <span class="co"># gated end-to-end render smoke test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="docsite-api-reference" class="level3">
 <h3 class="anchored" data-anchor-id="docsite-api-reference">Docsite (API reference)</h3>
 <p>Preview the mkdocstrings API site locally — it regenerates from the docstrings on every build:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs serve   <span class="co"># live preview at http://127.0.0.1:8000</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs build   <span class="co"># render the static site to site/ (gitignored)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs serve   <span class="co"># live preview at http://127.0.0.1:8000</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs build   <span class="co"># render the static site to site/ (gitignored)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="data-handling-privacy" class="level2">
@@ -2750,11 +2759,62 @@ vertical-align: -.125em;
 <section id="requirements" class="level2">
 <h2 class="anchored" data-anchor-id="requirements">Requirements</h2>
 <p>Dev environment requirements and setup — Python 3.14 (via uv), a <code>GEMINI_API_KEY</code>, and the VS Code + Claude Code extension diff-review workflow — are documented once in <a href="docs/DEV_SETUP.md">docs/DEV_SETUP.md</a>; this README only links there to avoid duplication.</p>
-<p>Further documentation is provided as follows:</p>
+</section>
+<section id="docs-further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="docs-further-reading">Docs &amp; further reading</h2>
+<p>Project instructions are in <a href="CLAUDE.md">CLAUDE.md</a>; the rest lives in <a href="docs/"><code>docs/</code></a>:</p>
+<p><em>Design &amp; decisions</em></p>
 <ul>
-<li><p><a href="CLAUDE.md">CLAUDE.md</a> for Claude Code project instructions.</p></li>
-<li><p><a href="docs/DEV_SETUP.md">DEV_SETUP.md</a> for installation and usage guide for users and devs.</p></li>
+<li><a href="docs/SYSTEM_DESIGN.md">SYSTEM_DESIGN.md</a> — architecture diagram: the Dagster asset graph + the library-first CLI/gate relation.</li>
+<li><a href="docs/SCHEMA.md">SCHEMA.md</a> — the ground-truth annotation schema (v0.4) and the Pydantic-model rationale.</li>
+<li><a href="docs/QUESTIONS.md">QUESTIONS.md</a> — outstanding questions for the CAIO (assumptions needing a domain decision).</li>
+<li><a href="docs/HYPOTHESES.md">HYPOTHESES.md</a> — early hypotheses about the data and the disease journey.</li>
 </ul>
+<p><em>Process &amp; operations</em></p>
+<ul>
+<li><a href="docs/DEV_SETUP.md">DEV_SETUP.md</a> — local dev setup: uv, the Jupyter kernel, Dagster (<code>dg</code>), the quality gate.</li>
+<li><a href="docs/TODO.md">TODO.md</a> — deferred engineering tasks + the <em>Tomorrow — pre-interview</em> checklist (the clean <code>temperature=0</code> re-run).</li>
+<li><a href="docs/TELEMETRY.md">TELEMETRY.md</a> — per-call API telemetry (tokens, cached tokens, cost, latency) and how to read it.</li>
+<li><a href="docs/TO_REVIEW.md">TO_REVIEW.md</a> — the manual gold-set edge-case audit (the churn false-positive / false-negative findings).</li>
+<li><a href="docs/DEBUGGING_ERROR_HANDLING.md">DEBUGGING_ERROR_HANDLING.md</a> — debugging notes + error-handling behaviour seen in development.</li>
+</ul>
+<p><em>Reference</em></p>
+<ul>
+<li><a href="docs/RESOURCES.md">RESOURCES.md</a> — external references (Crohn’s pathways, biologics).</li>
+<li><a href="docs/TASK_INSTRUCTIONS.md">TASK_INSTRUCTIONS.md</a> — the original Mama Health challenge brief.</li>
+</ul>
+<section id="browse-the-docs-locally-mkdocs" class="level3">
+<h3 class="anchored" data-anchor-id="browse-the-docs-locally-mkdocs">Browse the docs locally (MkDocs)</h3>
+<p><code>docs/</code> plus an auto-generated <code>src/</code> API reference render as a small site via <a href="https://www.mkdocs.org/">MkDocs</a> + mkdocstrings:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs serve     <span class="co"># live preview at http://127.0.0.1:8000 (hot-reloads on edit)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs build     <span class="co"># render the static site to site/ (git-ignored)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>mkdocs build</code> is also wired as the independent <code>docsite</code> asset in the Dagster run (see <a href="docs/SYSTEM_DESIGN.md">SYSTEM_DESIGN.md</a>).</p>
+</section>
+</section>
+<section id="project-layout" class="level2">
+<h2 class="anchored" data-anchor-id="project-layout">Project layout</h2>
+<pre class="text"><code>.
+├── src/                              # pipeline library (imported by BOTH Dagster + the CLI)
+│   ├── config.py                     #   central config loader (reads config.json)
+│   ├── schema.py                     #   Pydantic models + enums (PatientLabels, …)
+│   ├── extract.py                    #   the Gemini call — chunked, structured-output, temperature=0
+│   ├── main.py                       #   fire CLI: load → run_chunked → persist
+│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs; docsite
+│   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
+│   ├── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
+│   └── splits.py                     #   validation-split helper
+├── tests/                            # pytest suite + the quality gate
+│   ├── test_*.py
+│   └── type_lint_unit_tests.sh       #   ruff + ruff format + ty + pytest (the gate)
+├── data/                             # in/ static input (interviews.json + gold .ods) · out/ generated artefacts (json · html · plots) · prompts/
+├── docs/                             # design notes + the MkDocs docsite source (above)
+├── notebooks/                        # jupytext-paired prototyping (.py is the edit source)
+├── sandbox/                          # one-off scripts kept as a dev record (gold-set builders)
+├── logs/                             # loguru run logs (extract · referral · dagster) + litellm debug
+├── config.json                       # single source of truth for params (model, temperature, paths…)
+├── pyproject.toml / uv.lock          # uv-managed deps + lockfile
+├── mkdocs.yml                        # docsite config
+└── README.qmd → README.md            # this report (edit the .qmd, render to .md)</code></pre>
 </section>
 
 </main>

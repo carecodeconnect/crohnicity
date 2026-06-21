@@ -90,6 +90,23 @@ def render(pid: str, seq: list[str], path: Path) -> Path:
     return path
 
 
+def render_index(pids: list[str], path: Path) -> Path:
+    """A gallery landing page linking every per-case graph — open this one file to browse all
+    journeys (the README's deep-dive entry point for the interactive pathways)."""
+    links = "\n".join(
+        f'      <li><a href="referral_pathway_{pid}.html">{pid}</a></li>'
+        for pid in pids
+    )
+    path.write_text(
+        "<!doctype html>\n<html lang='en'>\n<head><meta charset='utf-8'>\n"
+        "<title>Crohnicity — referral pathways</title></head>\n<body>\n"
+        f"  <h1>Referral pathways — {len(pids)} patients</h1>\n"
+        "  <p>Interactive per-case journey graphs. Click a patient id to open their pathway.</p>\n"
+        f"  <ul>\n{links}\n  </ul>\n</body>\n</html>\n"
+    )
+    return path
+
+
 @logger.catch(reraise=True)
 def main() -> None:
     """Write a per-case journey graph for every patient + log phase/transition frequencies.
@@ -129,6 +146,8 @@ def main() -> None:
         len(pathways),
         HTML_DIR,
     )
+    render_index(list(pathways), HTML_DIR / "index.html")
+    logger.info("wrote gallery index -> {}/index.html", HTML_DIR)
 
 
 if __name__ == "__main__":

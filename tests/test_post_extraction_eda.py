@@ -83,3 +83,16 @@ def test_churn_false_negatives_flags_gold_churn_the_model_missed() -> None:
     assert (
         "P049" in fn
     )  # the gold-annotated truncated case the model under-detects (TO_REVIEW)
+
+
+def test_pathway_mermaid_renders_a_cyclic_example() -> None:
+    """`pick_cyclic_example` returns a looping journey and `pathway_mermaid` emits a
+    GitHub-renderable mermaid block for it (one node per distinct phase). Powers the Q4 teaser."""
+    pid = eda.pick_cyclic_example(RECORDS)
+    seq = next(r["referral_pathway"] for r in RECORDS if r["patient_id"] == pid)
+    assert len(seq) != len(set(seq))  # genuinely cyclic — a phase recurs
+    block = eda.pathway_mermaid(RECORDS, pid)
+    assert block.startswith("```mermaid")
+    assert block.rstrip().endswith("```")
+    assert "flowchart LR" in block
+    assert all(f'n{i}["' in block for i in range(len(set(seq))))

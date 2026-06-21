@@ -326,8 +326,8 @@ biologic](data/out/plots/q3_before_biologic.png)
 > `primary_care_contact` where present) to `biologic_recommended`
 > (present in 48/50) — the point a biologic-prescribing specialist is
 > reached. Under-emission of the GP node is a prompt-fix candidate (see
-> `docs/TODO.md`). Per-case journey graphs:
-> `data/out/html/referral_pathway_P*.html`.
+> `docs/TODO.md`). The per-case interactive journey graphs are linked
+> below.
 
 | steps | patients |
 |------:|---------:|
@@ -350,11 +350,44 @@ highest patient count in the chart), with a **median of ~9** (range
 
 Crucially, **16/50 journeys are cyclic** — the patient loops back
 through relapse / `loss_of_response` / `biologic_switch` (recurrence the
-prompt now captures; the per-case graphs in
-`data/out/html/referral_pathway_P*.html` render these as loops). So “a
-typical referral pathway” is as much about **recurrence** (repeated
-biologic switching) as about step count — a linear step number alone
-understates the journey for the **32%** of patients whose journey loops.
+prompt now captures; the per-case graphs render these as loops — see the
+deep-dive below). So “a typical referral pathway” is as much about
+**recurrence** (repeated biologic switching) as about step count — a
+linear step number alone understates the journey for the **32%** of
+patients whose journey loops.
+
+**Deep dive — the individual journeys.** Open
+[`data/out/html/index.html`](data/out/html/index.html) to browse all 50
+interactive per-case pathway graphs. As a teaser, here is patient
+**P013** — a *cyclic* journey (a phase recurs, so it renders as a loop);
+the full interactive version is at
+[`referral_pathway_P013.html`](data/out/html/referral_pathway_P013.html):
+
+``` mermaid
+flowchart LR
+    n0["symptom_onset"]
+    n1["specialist_referral"]
+    n2["diagnostic_testing"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["adverse_reaction"]
+    n6["biologic_recommended"]
+    n7["biologic_taken"]
+    n8["loss_of_response"]
+    n9["biologic_switch"]
+    n10["comorbidity"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n5
+    n5 -->n6
+    n6 -->n7
+    n7 -->n8
+    n8 -->n9
+    n9 -->n10
+    n10 -->n7
+```
 
 **Churn handling matters here.** Be explicit about:
 
@@ -425,55 +458,60 @@ the analysis needs — “not mentioned” vs “discussed and rejected” vs
 residual uncertainty, but a single honest flag beats splitting two
 overlapping ones.
 
-## Evaluation Criteria
-
-- **Schema judgment.** Does your Pydantic model capture the real shape
-  of the problem, including its messiness and uncertainty?
-- **Pipeline engineering.** Clean, typed code, sensible error handling,
-  defensible choices on prompting, retries, validation, reproducibility.
-- **Uncertainty handling.** Do churn, ambiguity, and absent information
-  show up as first-class signals in your output, or do they silently
-  collapse into nulls?
-- **Evaluation mindset.** Do you know whether your pipeline is actually
-  working, and how you know?
-- **Communication.** A README where a reader can understand your
-  assumptions, tradeoffs, and limits in under 5 minutes.
-
-We’re **not** looking for: - A perfect extractor — the data is
-intentionally hard. - Production-grade architecture. - A sprawling
-business-insights writeup.
-
-## Deliverables
-
-A link to your forked, completed GitHub repo containing:
-
-1.  Source code in `src/`.
-2.  Tests in `tests/`.
-3.  `requirements.txt`.
-4.  A **`README.md`** with:
-    - Your four business answers (brief, with caveats).
-    - A pipeline design section — schema choices, prompting approach,
-      error handling, reproducibility.
-    - Your evaluation approach and what it surfaced.
-    - Churn / limitations discussion.
-    - Your “where I used AI” note.
-
 ## Optional stretch tasks
 
-Only if you have spare time. We’d rather see a tight core than a bloated
-stretch:
+The brief offers five optional stretches but asks for *a tight core over
+a bloated stretch*, so I picked the one that directly answers a business
+question and put the rest of my effort into reproducibility and
+orchestration.
 
-1.  **Multi-stage or chain-of-thought prompts** with inspectable
-    intermediate artifacts.
-2.  **Confidence scoring per field**, either self-reported by the LLM or
-    derived from consistency across samples.
-3.  **Open-source model** — swap in a local model (Qwen, Llama, etc.)
-    for one stage via `litellm` and compare quality/latency/cost.
-4.  **Sankey or pathway visualization** for the referral journey.
-5.  **Dockerfile** for reproducibility.
+**Attempted.**
 
-I’ve attempted (4) as a way of answering business question (4) on
-referral pathways.
+- **(4) Pathway visualisation — successful.** The interactive per-case
+  referral-journey graphs (the deep-dive under Q4) answer business
+  question 4. I chose a directed graph over a Sankey deliberately — it
+  shows *recurrence* (relapse / loss-of-response loops), which a Sankey
+  flattens.
+- **(3) Open-source model swap (local Ollama) — attempted, an
+  instructive failure.** The plumbing works: `--model` routes extraction
+  through any LiteLLM-supported model with no code change
+  (e.g. `uv run python src/main.py --model=ollama_chat/qwen3:30b-a3b`
+  for a local Qwen, also a way to dodge the Gemini quota), and
+  `extract()` drops provider-unsupported params automatically. But the
+  local models I tried did **not** return reliable schema-valid output —
+  they invent fields and off-vocabulary enum values, so
+  `tests/test_ollama.py` records this as a graceful `xfail` rather than
+  a pass. **Insight:** the strict structured-output +
+  `enforce_validation` Gemini honours is exactly where local models fall
+  down, so the swap isn’t drop-in for this task — it would need a
+  tolerant per-record parse (or a JSON-tuned model) first.
+
+**Beyond the brief’s list — extra stretches I added.**
+
+- **Dagster orchestration.** The whole pipeline is an asset graph
+  (`uv run dg dev`), so a failure is pinpointed per-stage in the UI
+  instead of as one opaque error — and the same `src/` functions still
+  run standalone from the CLI
+  ([SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
+- **Determinism + an accidental consistency check.** `temperature = 0`
+  is pinned, and the repeated runs gave a free reliability signal — a
+  partial take on stretches (2)/(3) (see *Evaluation* and *Extraction
+  Pipeline → Determinism*).
+- **Reproducible reporting + an API docsite.** This README is
+  Quarto-rendered from the persisted predictions (no API call), and a
+  MkDocs + mkdocstrings site documents the `src/` API.
+- **Centralised config + a quality gate.** One `config.json` feeds every
+  entry point; `ruff` / `ruff format` / `ty` / `pytest` (with coverage)
+  gate every change.
+
+**Deferred to keep the core tight** (tracked in *Next Steps* /
+[`docs/TODO.md`](docs/TODO.md)).
+
+- **(1) Multi-stage / chain-of-thought prompts** with inspectable
+  intermediates — my \#1 *Next Step*.
+- **(2) Per-field confidence scoring** (self-reported, or from
+  consistency across samples).
+- **(5) Dockerfile** for cross-machine reproducibility.
 
 ## Next Steps
 
@@ -753,9 +791,78 @@ workflow — are documented once in
 [docs/DEV_SETUP.md](docs/DEV_SETUP.md); this README only links there to
 avoid duplication.
 
-Further documentation is provided as follows:
+## Docs & further reading
 
-- [CLAUDE.md](CLAUDE.md) for Claude Code project instructions.
+Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in
+[`docs/`](docs/):
 
-- [DEV_SETUP.md](docs/DEV_SETUP.md) for installation and usage guide for
-  users and devs.
+*Design & decisions*
+
+- [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) — architecture diagram: the
+  Dagster asset graph + the library-first CLI/gate relation.
+- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema
+  (v0.4) and the Pydantic-model rationale.
+- [QUESTIONS.md](docs/QUESTIONS.md) — outstanding questions for the CAIO
+  (assumptions needing a domain decision).
+- [HYPOTHESES.md](docs/HYPOTHESES.md) — early hypotheses about the data
+  and the disease journey.
+
+*Process & operations*
+
+- [DEV_SETUP.md](docs/DEV_SETUP.md) — local dev setup: uv, the Jupyter
+  kernel, Dagster (`dg`), the quality gate.
+- [TODO.md](docs/TODO.md) — deferred engineering tasks + the *Tomorrow —
+  pre-interview* checklist (the clean `temperature=0` re-run).
+- [TELEMETRY.md](docs/TELEMETRY.md) — per-call API telemetry (tokens,
+  cached tokens, cost, latency) and how to read it.
+- [TO_REVIEW.md](docs/TO_REVIEW.md) — the manual gold-set edge-case
+  audit (the churn false-positive / false-negative findings).
+- [DEBUGGING_ERROR_HANDLING.md](docs/DEBUGGING_ERROR_HANDLING.md) —
+  debugging notes + error-handling behaviour seen in development.
+
+*Reference*
+
+- [RESOURCES.md](docs/RESOURCES.md) — external references (Crohn’s
+  pathways, biologics).
+- [TASK_INSTRUCTIONS.md](docs/TASK_INSTRUCTIONS.md) — the original Mama
+  Health challenge brief.
+
+### Browse the docs locally (MkDocs)
+
+`docs/` plus an auto-generated `src/` API reference render as a small
+site via [MkDocs](https://www.mkdocs.org/) + mkdocstrings:
+
+``` bash
+uv run mkdocs serve     # live preview at http://127.0.0.1:8000 (hot-reloads on edit)
+uv run mkdocs build     # render the static site to site/ (git-ignored)
+```
+
+`mkdocs build` is also wired as the independent `docsite` asset in the
+Dagster run (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
+
+## Project layout
+
+``` text
+.
+├── src/                              # pipeline library (imported by BOTH Dagster + the CLI)
+│   ├── config.py                     #   central config loader (reads config.json)
+│   ├── schema.py                     #   Pydantic models + enums (PatientLabels, …)
+│   ├── extract.py                    #   the Gemini call — chunked, structured-output, temperature=0
+│   ├── main.py                       #   fire CLI: load → run_chunked → persist
+│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs; docsite
+│   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
+│   ├── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
+│   └── splits.py                     #   validation-split helper
+├── tests/                            # pytest suite + the quality gate
+│   ├── test_*.py
+│   └── type_lint_unit_tests.sh       #   ruff + ruff format + ty + pytest (the gate)
+├── data/                             # in/ static input (interviews.json + gold .ods) · out/ generated artefacts (json · html · plots) · prompts/
+├── docs/                             # design notes + the MkDocs docsite source (above)
+├── notebooks/                        # jupytext-paired prototyping (.py is the edit source)
+├── sandbox/                          # one-off scripts kept as a dev record (gold-set builders)
+├── logs/                             # loguru run logs (extract · referral · dagster) + litellm debug
+├── config.json                       # single source of truth for params (model, temperature, paths…)
+├── pyproject.toml / uv.lock          # uv-managed deps + lockfile
+├── mkdocs.yml                        # docsite config
+└── README.qmd → README.md            # this report (edit the .qmd, render to .md)
+```
