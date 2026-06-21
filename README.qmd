@@ -15,6 +15,8 @@ jupyter: python3
      README.md (gfm) + README.html (local verification). The analysis chunks read only the
      persisted predictions in data/out/ — no Gemini API calls. -->
 
+***Crohnicity*** = **Crohn's** + **chronicity** — the disease and its time dimension. Crohn's is a chronic, lifelong condition, and the Mama Health AI companion records each patient's treatment journey **longitudinally over time**, so the temporal axis is central to the data.
+
 ## Pydantic Schema Design
 
 - Which fields should be **enums** vs. **free text** vs. **structured objects** (e.g., a list of treatment records with name, class, outcome, reason_stopped)?
@@ -56,12 +58,10 @@ import json
 from pathlib import Path
 
 import pandas as pd
-from great_tables import GT
 from plotnine import (
     aes,
     coord_flip,
     geom_col,
-    geom_histogram,
     ggplot,
     labs,
     theme_grey,
@@ -74,21 +74,31 @@ PLOTS.mkdir(parents=True, exist_ok=True)
 records = [json.loads(p.read_text()) for p in sorted(OUT.glob("P[0-9][0-9][0-9].json"))]
 df = pd.json_normalize(records)
 N = len(df)
+# pathway-anchor counts (referenced programmatically in the Q4 prose — never hard-code)
+gp_count = sum("primary_care_contact" in r["referral_pathway"] for r in records)
+bio_count = sum("biologic_recommended" in r["referral_pathway"] for r in records)
 
 
 def md_img(rel_path: str, alt: str) -> str:
     """Emit a GitHub-renderable image reference for a saved plot."""
     return f"![{alt}]({rel_path})\n"
+
+
+def md_table(frame: pd.DataFrame) -> str:
+    """A GitHub-native markdown table (great_tables' CSS is stripped by GitHub's GFM sanitiser).
+    No title — the section heading / lead-in prose already labels each table."""
+    return f"{frame.to_markdown(index=False)}\n"
 ```
 
 ### Answers
 
 Computed from the persisted predictions in `data/out/` (`n = `{python} N``).
 
-**Q1 — % on a biologic.**
+#### Q1 — % on a biologic
 
 ```{python}
 # | label: q1
+# | output: asis
 on = int(df["biologic_taken"].sum())
 q1 = pd.DataFrame(
     {
@@ -97,7 +107,7 @@ q1 = pd.DataFrame(
         "pct": [round(100 * on / N, 1), round(100 * (N - on) / N, 1)],
     }
 )
-GT(q1).tab_header(title="Q1 — patients on a biologic")
+print(md_table(q1))
 ```
 
 `{python} round(100 * on / N)`% of patients (`{python} on`/`{python} N`) appear to be **on a biologic** (`biologic_taken == true`).
@@ -107,6 +117,7 @@ hand-annotated gold in `_v5.ods` (the `to_review` cases), as precision / recall 
 
 ```{python}
 # | label: q1-eval
+# | output: asis
 gold = pd.read_excel("data/in/interviews_ground_truth_v5.ods", engine="odf")
 gold = gold.loc[gold["to_review"] == 1, ["patient_id", "biologic_taken"]].dropna()
 ev = gold.merge(
@@ -130,17 +141,24 @@ q1eval = pd.DataFrame(
         ],
     }
 )
-GT(q1eval).tab_header(title="Q1 — biologic_taken: model vs gold")
+print(md_table(q1eval))
 ```
 
 On the `{python} len(ev)`-case golden set, `biologic_taken` scores **F1 = `{python} round(f1, 2)`**
 (precision `{python} round(prec, 2)`, recall `{python} round(rec, 2)`; TP/FP/FN/TN =
 `{python} f"{tp}/{fp}/{fn}/{tn}"`) — so the Q1 headline is well-supported by the gold.
 
-**Q2 — reasons not on a biologic.**
+*Limitation.* This is measured only on the hand-annotated gold (`to_review`) split —
+**`{python} len(ev)` of `{python} N`** patients (those with a non-null `biologic_taken`) — so the
+metric carries real **sampling uncertainty** (a few flips would move it noticeably), and the gold
+is a **single-annotator judgement** with its own error. A trustworthy at-scale accuracy estimate
+would need a larger, ideally multi-annotator audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
+
+#### Q2 — reasons not on a biologic
 
 ```{python}
 # | label: q2
+# | output: asis
 not_on = df[~df["biologic_taken"]]
 q2 = (
     not_on["reasons_for_biologic_not_taken"]
@@ -149,6 +167,8 @@ q2 = (
     .rename_axis("reason")
     .reset_index(name="patients")
 )
+# order the bars by count (largest at top after coord_flip)
+q2["reason"] = pd.Categorical(q2["reason"], categories=list(q2["reason"])[::-1], ordered=True)
 (
     ggplot(q2, aes("reason", "patients"))
     + geom_col()
@@ -156,7 +176,7 @@ q2 = (
     + theme_grey()
     + labs(title="Q2 — reasons not on a biologic", x="", y="patients")
 ).save(PLOTS / "q2_reasons.png", width=7, height=3.5, dpi=150, verbose=False)
-GT(q2).tab_header(title="Q2 — reasons not on a biologic")
+print(md_table(q2))
 ```
 
 ```{python}
@@ -164,7 +184,7 @@ GT(q2).tab_header(title="Q2 — reasons not on a biologic")
 print(md_img("data/out/plots/q2_reasons.png", "Q2 reasons not on a biologic"))
 ```
 
-**Q3 — treatments tried before a biologic.**
+#### Q3 — treatments tried before a biologic
 
 ```{python}
 # | label: q3
@@ -180,6 +200,10 @@ q3 = (
     .rename_axis("treatment_class")
     .reset_index(name="mentions")
 )
+# order the bars by count (largest at top after coord_flip)
+q3["treatment_class"] = pd.Categorical(
+    q3["treatment_class"], categories=list(q3["treatment_class"])[::-1], ordered=True
+)
 (
     ggplot(q3, aes("treatment_class", "mentions"))
     + geom_col()
@@ -187,7 +211,7 @@ q3 = (
     + theme_grey()
     + labs(title="Q3 — treatments before a biologic", x="", y="mentions")
 ).save(PLOTS / "q3_before_biologic.png", width=7, height=3.5, dpi=150, verbose=False)
-GT(q3).tab_header(title="Q3 — treatments tried before a biologic")
+print(md_table(q3))
 ```
 
 ```{python}
@@ -195,16 +219,18 @@ GT(q3).tab_header(title="Q3 — treatments tried before a biologic")
 print(md_img("data/out/plots/q3_before_biologic.png", "Q3 treatments before a biologic"))
 ```
 
-**Q4 — referral pathway length (steps to a biologic-prescribing specialist).**
+#### Q4 — referral pathway length (steps to a biologic-prescribing specialist)
 
-> **Caveat.** The literal "GP" node (`primary_care_contact`) appears in only 5/50 predicted
-> pathways, so a strict GP→prescriber count isn't representative. We count steps from the journey
-> **start** (or `primary_care_contact` where present) to `biologic_recommended` (present in 50/50)
-> — the point a biologic-prescribing specialist is reached. Under-emission of the GP node is a
-> prompt-fix candidate (see `docs/TODO.md`). Per-case journey graphs: `data/out/referral_pathway_P*.html`.
+> **Caveat.** The literal "GP" node (`primary_care_contact`) appears in only
+> `{python} gp_count`/`{python} N` predicted pathways, so a strict GP→prescriber count isn't
+> representative. We count steps from the journey **start** (or `primary_care_contact` where
+> present) to `biologic_recommended` (present in `{python} bio_count`/`{python} N`) — the point a
+> biologic-prescribing specialist is reached. Under-emission of the GP node is a prompt-fix
+> candidate (see `docs/TODO.md`). Per-case journey graphs: `data/out/referral_pathway_P*.html`.
 
 ```{python}
 # | label: q4
+# | output: asis
 def steps_to_biologic(pathway: list[str]) -> int | None:
     if "biologic_recommended" not in pathway:
         return None
@@ -215,26 +241,31 @@ def steps_to_biologic(pathway: list[str]) -> int | None:
 steps = pd.Series(
     [steps_to_biologic(r["referral_pathway"]) for r in records], dtype="Float64"
 ).dropna()
-(
-    ggplot(pd.DataFrame({"steps": steps.astype(int)}), aes("steps"))
-    + geom_histogram(binwidth=1)
-    + theme_grey()
-    + labs(title="Q4 — steps from journey start to biologic recommendation", y="patients")
-).save(PLOTS / "q4_steps.png", width=7, height=3.5, dpi=150, verbose=False)
-q4 = (
-    steps.describe()[["count", "min", "50%", "max", "mean"]]
-    .round(1)
-    .rename_axis("stat")
-    .reset_index(name="steps")
+# how many journeys loop (a phase recurs) — recurrence the prompt now captures
+cyclic = sum(len(r["referral_pathway"]) != len(set(r["referral_pathway"])) for r in records)
+q4_dist = steps.astype(int).value_counts().rename_axis("steps").reset_index(name="patients")
+mode_steps = int(q4_dist.iloc[0]["steps"])  # most common length (highest patient count)
+# x ordered by frequency, descending (tallest bar first) — value_counts is already sorted
+q4_plot = q4_dist.assign(
+    steps=pd.Categorical(q4_dist["steps"], categories=list(q4_dist["steps"]), ordered=True)
 )
-GT(q4).tab_header(title="Q4 — steps to biologic recommendation")
+(
+    ggplot(q4_plot, aes("steps", "patients"))
+    + geom_col()
+    + theme_grey()
+    + labs(title="Q4 — steps to biologic recommendation (by frequency)", x="steps", y="patients")
+).save(PLOTS / "q4_steps.png", width=7, height=3.5, dpi=150, verbose=False)
+print(md_table(q4_dist))
 ```
 
 ```{python}
+# | output: asis
 print(md_img("data/out/plots/q4_steps.png", "Q4 steps to biologic recommendation"))
 ```
 
-A typical journey is **~`{python} int(steps.median())` steps** from start to a biologic recommendation (range `{python} int(steps.min())`–`{python} int(steps.max())`, n=`{python} int(steps.count())`).
+The **most common** journey length is **`{python} mode_steps` steps** (the modal value — highest patient count in the chart), with a **median of ~`{python} int(steps.median())`** (range `{python} int(steps.min())`–`{python} int(steps.max())`, n=`{python} int(steps.count())`).
+
+Crucially, **`{python} cyclic`/`{python} N` journeys are cyclic** — the patient loops back through relapse / `loss_of_response` / `biologic_switch` (recurrence the prompt now captures; the per-case graphs in `data/out/referral_pathway_P*.html` render these as loops). So "a typical referral pathway" is as much about **recurrence** (repeated biologic switching) as about step count — a linear step number alone understates the journey for the **`{python} round(100 * cyclic / N)`%** of patients whose journey loops.
 
 **Churn handling matters here.** Be explicit about:
 
@@ -244,6 +275,7 @@ A typical journey is **~`{python} int(steps.median())` steps** from start to a b
 
 ```{python}
 # | label: churn
+# | output: asis
 three_state = pd.DataFrame(
     {
         "state": [
@@ -258,7 +290,7 @@ three_state = pd.DataFrame(
         ],
     }
 )
-GT(three_state).tab_header(title="Churn — three-way split")
+print(md_table(three_state))
 ```
 
 The model flagged `churn = true` for only **`{python} int((df["churn"] == True).sum())`/`{python} N`** patient(s). Manual review of the flagged/edge cases (`docs/TO_REVIEW.md`) found churn detection unreliable in both directions — a false positive (P016) and a false negative (P049) — because truncation is a lexical/structural property of the transcript's *end* that the narrative under-determines. **Q1 and Q3 are the most trustworthy** answers (they depend on facts stated early); **Q4 is the least** (it depends on the full pathway surviving, and on the under-emitted GP node).
