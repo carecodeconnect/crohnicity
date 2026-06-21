@@ -2,7 +2,14 @@ Extract the structured labels from this Crohn's disease patient interview. Retur
 
 Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
 
-churn: set true when the interview looks truncated or the patient disengaged before their story resolved — the narrative is cut off mid-journey, trails off, is very short or vague, or ends with no clear outcome. Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise complete story (that is "not mentioned", not churn).
+churn: set true when the interview looks truncated — the patient disengaged before their story resolved. Judge this mainly from how the transcript ENDS:
+- Set true when it ends mid-sentence or mid-word with no resolution (e.g. cut off at "Chronic..."), i.e. a genuine cut-off.
+- Treat a trailing "..." as a cut-off ONLY if "..." does NOT appear elsewhere in the transcript as a stylistic/pausing device. If "..." recurs as a habit, 
+or the final sentence reads as a complete (even if downbeat or emotional) ending, set false — a detailed, engaged narrative that closes on a complete sentence 
+is NOT churn even if it trails off in tone.
+- When the ending is ambiguous and there is no clear structural signal of a cut-off, prefer false (the transcript alone under-determines app-disengagement).
+Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise 
+complete story (that is "not mentioned", not churn).
 
 treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
 
