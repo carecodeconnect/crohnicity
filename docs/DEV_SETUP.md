@@ -54,16 +54,16 @@ I enjoy using `uv` for Python environment/dependency management and wanted to tr
 uv sync
 # recreate requirements.txt
 uv export --format requirements.txt --output-file requirements.txt 
-# sync uv venv with jupyter kernel called "chronicity" so i can recognise it in my juypyter notebook
+# sync uv venv with jupyter kernel called "crohnicity" so i can recognise it in my juypyter notebook
 uv run python -m ipykernel install --user --name "$(basename $PWD)" --display-name "Python ($(basename $PWD))"
 # create a private GitHub repo using the gh cli tool
-gh repo create chronicity --private 
+gh repo create crohnicity --private 
 # create environment variable
 export GEMINI_API_KEY=<YOUR_API_KEY_HERE>
 # source shell
 source ~/.zshrc
 # set upstream remote origin
-git remote add origin https://github.com/carecodeconnect/chronicity
+git remote add origin https://github.com/carecodeconnect/crohnicity
 # make initial commit
 git add .
 git commit -m "Initial commit"
@@ -71,6 +71,28 @@ git push --set-upstream origin main
 # for experimenting with graphviz non-linear cyclical referral_pathway diagram
 brew install graphviz
 ```
+
+### Relocating / renaming the project root
+
+Renaming the project folder (e.g. `chronicity` → `crohnicity`) breaks the venv's and kernel's
+absolute paths, so after renaming + reopening the editor:
+
+```bash
+uv sync --reinstall                                                       # recreate .venv AND rewrite console-script shebangs (pytest, etc.) for the new path — not plain `uv sync`
+uv run python -m ipykernel install --user --name crohnicity --display-name "Python (crohnicity)"   # re-point the jupyter kernel (used by the notebooks + README.qmd)
+git remote set-url origin https://github.com/carecodeconnect/crohnicity.git
+uv run quarto render README.qmd                                           # regenerate README.md (gfm)
+uv run python src/referral_pathway_analysis.py                            # regenerate the per-case graphs
+RUN_RENDER_TEST=1 uv run pytest tests/test_render.py                      # verify the render pipeline end-to-end
+```
+
+**Why `--reinstall` and not plain `uv sync`:** a rename leaves the venv's Python console-scripts
+(`.venv/bin/pytest`, …) with a shebang hardcoding the *old* interpreter path, so `uv run pytest`
+fails with `Failed to spawn: pytest — No such file or directory (os error 2)`. Plain `uv sync` sees
+the packages already installed and won't regenerate the scripts; `--reinstall` forces the
+entry-point shebangs to be rewritten to the new path. Native binaries (`ruff`, `ty`) have no shebang
+and keep working — which is why *only* `pytest` breaks after a rename. (If `--reinstall` ever isn't
+enough, `rm -rf .venv && uv sync` recreates the venv from scratch.)
 
 - When using Claude Code, I set the [output mode](https://code.claude.com/docs/en/output-styles) to "Explanatory" mode using `/config`. This mode "Provides educational “Insights” in between helping you complete software engineering tasks. Helps you understand implementation choices and codebase patterns." Rather than CC writing the code, I copied out the code snippets by hand, so I could understand the implications of each step. 
 

@@ -26,8 +26,9 @@ import pandas as pd
 from loguru import logger
 from pyvis.network import Network
 
-OUT = Path(__file__).resolve().parents[1] / "data" / "out"
-LOG_DIR = Path(__file__).resolve().parents[1] / "logs"
+from config import LOG_DIR, OUT_DIR
+
+OUT = OUT_DIR
 # loguru file sink: persist the run summary + catch per-graph errors during regeneration
 logger.add(LOG_DIR / "referral_pathway.log", level="INFO", rotation="1 MB")
 

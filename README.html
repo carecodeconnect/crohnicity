@@ -2220,7 +2220,13 @@ vertical-align: -.125em;
   <li><a href="#optional-stretch-tasks" id="toc-optional-stretch-tasks" class="nav-link" data-scroll-target="#optional-stretch-tasks">Optional stretch tasks</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
   <li><a href="#where-i-used-ai" id="toc-where-i-used-ai" class="nav-link" data-scroll-target="#where-i-used-ai">Where I used AI</a></li>
-  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a>
+  <ul class="collapse">
+  <li><a href="#referral-pathway-graphs" id="toc-referral-pathway-graphs" class="nav-link" data-scroll-target="#referral-pathway-graphs">Referral-pathway graphs</a></li>
+  <li><a href="#rebuild-the-answers-doc" id="toc-rebuild-the-answers-doc" class="nav-link" data-scroll-target="#rebuild-the-answers-doc">Rebuild the answers doc</a></li>
+  <li><a href="#development-quality-gate" id="toc-development-quality-gate" class="nav-link" data-scroll-target="#development-quality-gate">Development — quality gate</a></li>
+  <li><a href="#docsite-api-reference" id="toc-docsite-api-reference" class="nav-link" data-scroll-target="#docsite-api-reference">Docsite (API reference)</a></li>
+  </ul></li>
   <li><a href="#data-handling-privacy" id="toc-data-handling-privacy" class="nav-link" data-scroll-target="#data-handling-privacy">Data handling &amp; privacy</a></li>
   <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
   </ul>
@@ -2259,6 +2265,13 @@ vertical-align: -.125em;
 <li>How do you capture <strong>evidence</strong> — a supporting snippet, turn reference, or rationale per extracted field — so a reviewer can audit the model’s decisions?</li>
 <li>Socio-demographic fields: what’s worth extracting, what’s noise?</li>
 </ul>
+<p><strong>Answers (provisional).</strong></p>
+<ul>
+<li><strong>Enums vs. free text vs. objects.</strong> Closed vocabularies the analysis groups on are <strong>enums</strong> — <code>TreatmentOutcome</code>, <code>ReasonPrescribed</code>, <code>ReasonNotTaken</code>, <code>ComorbidCondition</code>, <code>PathwayStep</code> — so <code>value_counts</code>/joins get stable categories and membership is checked at the model boundary (<code>enforce_validation</code>). Open, high-cardinality, not-yet-canonical fields stay <strong>free text</strong>: <code>biologic_type</code>, <code>TreatmentRecord.name</code>/<code>treatment_class</code> (a branded-drug + treatment-class registry is future work — <code>docs/TODO.md</code>). Repeated, multi-attribute things are <strong>structured objects/lists</strong>: <code>treatment_records</code> (a list of <code>TreatmentRecord</code>, each carrying <code>before_biologic</code>, the flag that answers Q3), <code>demographics</code>, and <code>referral_pathway</code> (<code>list[PathwayStep]</code>). The visible cost of the free-text choice shows up in the <strong>Q3 table</strong> — <code>conventional_therapy</code>/<code>conventional</code> and case variants are one class left un-normalised.</li>
+<li><strong>Three states, not one null.</strong> “Not mentioned” (absence), “explicitly denied” (negation) and “cut off” (truncation) are kept as <em>separate</em> signals rather than collapsed into a null: absence → <code>biologic_not_mentioned</code> + null/empty fields + <code>NOT_MENTIONED</code>; negation → the <code>biologic_prescribed</code> vs. <code>biologic_taken</code> pair + a specific <code>ReasonNotTaken</code> (<code>EXPLICIT_DENIAL</code>/<code>INSURANCE_PROBLEMS</code>/…); truncation → <code>churn</code> + <code>JOURNEY_CUT_OFF</code>. A <code>NOT_APPLICABLE</code> member marks “genuinely doesn’t apply” so it isn’t confused with a blank “not yet annotated” cell. This is the split the churn table under Q4 operationalises.</li>
+<li><strong>Evidence / auditability.</strong> The model <strong>does populate <code>evidence_notes</code></strong> — a free-text rationale per patient (all 50 predictions carry one, e.g. <em>“cycled through Remicade, Humira due to loss of response; currently on Stelara; injection anxiety”</em>). What’s <strong>deferred is the manual side</strong>: the gold annotation keeps <code>evidence_notes</code> as an unfilled column (<code>docs/SCHEMA.md</code>), and structured <strong>per-field</strong> evidence — a snippet/turn-ref <em>per field</em> rather than one blob — is stretch task 2 (it costs tokens + prompt complexity). The broader audit trail is the <strong>logged raw model output</strong> (<code>logs/extract.log</code> keeps the system prompt, schema, input and pre-validation response per call) plus the <strong>gold-set comparison</strong> (<code>docs/TO_REVIEW.md</code>).</li>
+<li><strong>Socio-demographics.</strong> Deliberately minimal — <code>Demographics{gender, age}</code>, self-reported, grouped so a later “do pathways/outcomes differ by demographic” cut is possible; everything else is noise for these four questions.</li>
+</ul>
 </section>
 <section id="extraction-pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="extraction-pipeline">Extraction Pipeline</h2>
@@ -2266,6 +2279,12 @@ vertical-align: -.125em;
 <li><strong>Single-shot vs. multi-stage extraction.</strong> One big call, or a pipeline (e.g., identify-then-extract, or narrative-then-structured)? What are the tradeoffs?</li>
 <li><strong>Prompt design for uncertainty.</strong> How do you instruct the model to separate absence, negation, and truncation?</li>
 <li><strong>Determinism and reproducibility.</strong> Temperature, structured output mode, seed, caching — what did you pick and why?</li>
+</ul>
+<p><strong>Answers (provisional).</strong></p>
+<ul>
+<li><strong>Single-shot, batched — not multi-stage.</strong> One system prompt extracts <em>all</em> <code>PatientLabels</code> fields in a single structured call per patient; transcripts are then <strong>batched</strong> (10 per request) only to fit Gemini’s free-tier ~20-requests/day cap — batching ≠ staging, it’s still one pass over every field, just several patients per call. Single-shot minimises calls (decisive under the rate cap), keeps the code simple, and lets the model set inter-dependent fields (<code>biologic_prescribed</code>/<code>biologic_taken</code>, <code>churn</code>, <code>referral_pathway</code>) with the whole story in view. The cost: every field competes for attention in one prompt, so the hard fields suffer — the EDA shows <code>churn</code> unreliable and the GP node under-emitted. A multi-stage split (per-section prompts run concurrently, with inspectable intermediates) is the #1 item in <em>Next Steps</em> below; it trades more calls + orchestration for better per-field accuracy.</li>
+<li><strong>Uncertainty: absence vs. negation vs. truncation.</strong> The prompt separates them by construction, onto the three schema mechanisms above. A global rule — <em>“Leave a field null or empty when the transcript does not support a confident value”</em> — covers <strong>absence</strong>. <strong>Negation</strong> rides on the prescribed-vs-taken booleans + the <code>ReasonNotTaken</code> enum. <strong>Truncation</strong> gets the most explicit instruction: judge <code>churn</code> from how the transcript <em>ends</em>, treat a trailing “…” as a cut-off <em>only</em> if “…” isn’t a recurring stylistic device, prefer <code>false</code> when ambiguous, and — critically — <em>“keep this truncation signal distinct from a topic simply being absent … (that is ‘not mentioned’, not churn).”</em> Honest limit: truncation is a lexical/structural property of the transcript’s end that the narrative under-determines, so the instruction alone isn’t enough — the gold audit caught a false positive (P016) and a false negative (P049), and a deterministic tail-of-text rule would do better (<code>docs/TO_REVIEW.md</code>).</li>
+<li><strong>Determinism &amp; reproducibility.</strong> Three levers, in decreasing order of leverage. <strong>(1) Structured-output mode</strong> — <code>response_format={&quot;type&quot;: &quot;json_object&quot;, &quot;response_schema&quot;: PatientLabels.model_json_schema(), &quot;enforce_validation&quot;: true}</code>: a Pydantic-derived schema constrains the <em>shape</em> and enum membership, and LiteLLM validates the reply (raising <code>JSONSchemaValidationError</code> on a mismatch), so format/parse variance is removed and downstream pandas never meets an off-vocabulary value. <strong>(2) Persisted predictions</strong> — each chunk writes one validated JSON per patient to <code>data/out/</code>, and the whole analysis (this README) reads <em>only</em> those frozen artefacts with no API call, so every number and plot is <strong>exactly reproducible run-to-run</strong> regardless of LLM nondeterminism; this is the real guarantee. <strong>(3) Decoding params</strong> — <code>temperature</code> is left at the provider default this iteration; pinning it to <code>0</code> (greedy) and adding a seed where Gemini honours it is the open determinism step (<code>docs/TODO.md</code>), though with a reasoning-capable model bit-exact output isn’t guaranteed anyway, and (1)+(2) already remove the variance that affects the answers. No explicit prompt <strong>caching</strong> yet — the static system prompt + schema are identical across calls, so implicit context caching may apply, and cached-token counts are logged (<code>docs/TELEMETRY.md</code>).</li>
 </ul>
 </section>
 <section id="evaluation" class="level2">
@@ -2278,6 +2297,7 @@ vertical-align: -.125em;
 </ol>
 <p>Write up what it told you in a few lines: what the pipeline is solid on, where it’s shaky, what you’d fix first with more time.</p>
 <p>I picked (1).</p>
+<p><strong>What it surfaced (provisional).</strong> Gold labels live in <code>interviews_ground_truth_v5.ods</code>, scored on the <code>to_review</code> validation split (19 cases with a non-null label). Headline: <code>biologic_taken</code> — the field Q1 rests on — scores <strong>F1 = 0.95</strong> (precision 0.90 / recall 1.00), computed inline under Q1 below, so the “% on a biologic” answer is well-supported. Where it’s shaky: <strong><code>churn</code></strong> is unreliable in both directions (a false positive <em>and</em> a false negative in the gold audit — <code>docs/TO_REVIEW.md</code>) because truncation is a lexical/structural signal the narrative under-determines; <strong><code>treatment_class</code></strong> drifts (un-normalised free-text categories inflate the Q3 count); and the <strong>GP node</strong> (<code>primary_care_contact</code>) is under-emitted (9/50), weakening the strict Q4 step count. Fix-first order: a deterministic tail-of-text churn rule, a treatment/biologic registry to normalise classes, and a larger, multi-annotator gold set — today’s is single-annotator over 19/50, so the metric carries real sampling uncertainty.</p>
 </section>
 <section id="analysis" class="level2">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
@@ -2570,6 +2590,7 @@ vertical-align: -.125em;
 <li><strong>A telemetry feature for optimisation.</strong> Per-call usage is currently logged (tokens, cost, cached tokens — see <a href="docs/TELEMETRY.md">docs/TELEMETRY.md</a>); with more time I’d surface it as a first-class artifact (a structured per-run metrics file + plots) to track cost/latency/cache-hit rate and tune the pipeline at scale.</li>
 <li><strong>Try a larger Gemini model in production.</strong> This version uses <code>gemini-2.5-flash-lite</code> (cheap, fast for iteration). With more time I’d evaluate a more capable model (e.g. <code>gemini-2.5-flash</code> / <code>pro</code>) for extraction quality, weighed against its free-tier <strong>request/token rate limits</strong> (the ~20 calls/day cap that drove the chunking design) and cost.</li>
 <li><strong>Deep dive on cyclical journey patterns.</strong> The <code>referral_pathway</code> initially flattened recurrence (each phase emitted once); the prompt now asks the model to repeat steps when phases recur. A proper follow-up would analyse the <em>cyclicity</em> itself — how many biologics patients cycle through, repeated relapse / loss-of-response / switch loops, time-to-switch — and classify journeys as genuinely cyclic vs linear (the recurrence is also recoverable from <code>treatment_records</code>).</li>
+<li><strong>Productionise as a FastAPI inference endpoint (deployment MVP).</strong> Wrap <code>extract()</code> in a <strong>FastAPI</strong> service (already a declared dependency): <code>POST</code> an <code>interview_transcript</code>, get back a validated <code>PatientLabels</code> JSON generated <strong>dynamically by a cloud-hosted model</strong> — turning the current offline batch CLI into a real-time production inference path. Package the API <strong>into the Docker image</strong> (the Packaging item in <code>docs/TODO.md</code>) so one container serves it, and ship it via <strong>CI/CD to a cloud service</strong> for an always-on, auto-deployed endpoint.</li>
 </ul>
 </section>
 <section id="where-i-used-ai" class="level2">
@@ -2624,6 +2645,32 @@ vertical-align: -.125em;
 </tbody>
 </table>
 <p>The post-extraction EDA (this README’s tables/plots) is generated by <code>uv run quarto render README.qmd</code>, which reads only <code>data/out/</code> — <strong>independent of the Gemini API</strong>. Each chunk persists its predictions (one JSON per patient) as soon as it validates, so a completed chunk is durable and <code>--offset</code> lets you resume/retry without re-spending calls. Per-call telemetry (tokens, cost) is logged to <code>logs/extract.log</code>.</p>
+<section id="referral-pathway-graphs" class="level3">
+<h3 class="anchored" data-anchor-id="referral-pathway-graphs">Referral-pathway graphs</h3>
+<p>Generate the per-case journey graphs + phase/transition tables behind Q4 (reads the pathways, no API call):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python src/referral_pathway_analysis.py   <span class="co"># writes data/out/referral_pathway_P*.html</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="rebuild-the-answers-doc" class="level3">
+<h3 class="anchored" data-anchor-id="rebuild-the-answers-doc">Rebuild the answers doc</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run quarto render README.qmd                  <span class="co"># regenerate README.md (gfm) + README.html from data/out/</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="development-quality-gate" class="level3">
+<h3 class="anchored" data-anchor-id="development-quality-gate">Development — quality gate</h3>
+<p>Run the manual gate on every code change (no pre-commit hooks, by design — see <code>CLAUDE.md</code>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> tests/type_lint_unit_tests.sh   <span class="co"># ruff check + ruff format --check + ty check + pytest (src + tests)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>…or the individual tools:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check src tests                            <span class="co"># lint</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff format src tests                           <span class="co"># auto-format</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ty check src tests                              <span class="co"># type-check (Rust-based; not mypy)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest <span class="at">-q</span>                                       <span class="co"># unit tests</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="va">RUN_RENDER_TEST</span><span class="op">=</span>1 <span class="ex">uv</span> run pytest tests/test_render.py   <span class="co"># gated end-to-end render smoke test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="docsite-api-reference" class="level3">
+<h3 class="anchored" data-anchor-id="docsite-api-reference">Docsite (API reference)</h3>
+<p>Preview the mkdocstrings API site locally — it regenerates from the docstrings on every build:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs serve   <span class="co"># live preview at http://127.0.0.1:8000</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run mkdocs build   <span class="co"># render the static site to site/ (gitignored)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
 </section>
 <section id="data-handling-privacy" class="level2">
 <h2 class="anchored" data-anchor-id="data-handling-privacy">Data handling &amp; privacy</h2>
@@ -2634,12 +2681,11 @@ vertical-align: -.125em;
 </section>
 <section id="requirements" class="level2">
 <h2 class="anchored" data-anchor-id="requirements">Requirements</h2>
-<p>Dev environment requirements and setup — Python 3.14 (via uv), a <code>GEMINI_API_KEY</code>, and the VS Code + Claude Code extension diff-review workflow — are documented once in <a href="docs/SETUP.md">docs/SETUP.md</a>; this README only links there to avoid duplication.</p>
+<p>Dev environment requirements and setup — Python 3.14 (via uv), a <code>GEMINI_API_KEY</code>, and the VS Code + Claude Code extension diff-review workflow — are documented once in <a href="docs/DEV_SETUP.md">docs/DEV_SETUP.md</a>; this README only links there to avoid duplication.</p>
 <p>Further documentation is provided as follows:</p>
 <ul>
 <li><p><a href="CLAUDE.md">CLAUDE.md</a> for Claude Code project instructions.</p></li>
-<li><p><a href="docs/SETUP.md">SETUP.md</a> for installation and usage guide for users and devs.</p></li>
-<li><p>[.claude/skills] Agent Skills formatted skills for CC to use specific to this project.</p></li>
+<li><p><a href="docs/DEV_SETUP.md">DEV_SETUP.md</a> for installation and usage guide for users and devs.</p></li>
 </ul>
 </section>
 

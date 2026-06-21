@@ -26,10 +26,9 @@ import litellm
 from dotenv import load_dotenv
 from loguru import logger
 
+from config import LOG_DIR, MAX_RETRIES, MAX_TOKENS, MODEL, OUT_DIR, PROMPT
 from schema import BatchPredictions, Interview, PatientLabels
 
-MODEL = "gemini/gemini-2.5-flash-lite"
-MAX_RETRIES = 2  # litellm retries transient 429/503 errors, with backoff
 # API errors we log cleanly and surface for a graceful CLI exit (no traceback dump):
 # 429 (rate limit), 503 (busy), connection / model-not-found, and schema mismatch.
 HANDLED = (
@@ -38,18 +37,15 @@ HANDLED = (
     litellm.APIConnectionError,
     litellm.JSONSchemaValidationError,
 )
-# Anchor paths to the repo root via __file__, so they hold regardless of caller's cwd
-# (e.g. the notebook runs from notebooks/, not the repo root).
-ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "data" / "out"  # predictions
-TESTS_OUT = OUT_DIR / "tests"  # synthetic/test outputs, not production
-LOG_DIR = ROOT / "logs"  # logs live at the project root, separate from data outputs
+TESTS_OUT = (
+    OUT_DIR / "tests"
+)  # synthetic/test outputs, not production (OUT_DIR from config)
 
 # loguru file sink: persist each run + failures (stderr stays on by default)
 logger.add(LOG_DIR / "extract.log", level="INFO", rotation="1 MB")
 
-# Prompt lives in data/prompts/system.txt so it can be edited/reviewed as its own artifact.
-SYSTEM_PROMPT = (ROOT / "data" / "prompts" / "system.txt").read_text().strip()
+# Prompt lives in data/prompts/system.txt (PROMPT in config) — a reviewable artifact.
+SYSTEM_PROMPT = PROMPT.read_text().strip()
 # the schema sent to the model on every call
 RESPONSE_SCHEMA = PatientLabels.model_json_schema()
 
@@ -153,7 +149,7 @@ def extract_batch(
             model=model,
             num_retries=MAX_RETRIES,
             drop_params=True,
-            max_tokens=8192,  # headroom for ~N records (keep chunk_size <= ~15)
+            max_tokens=MAX_TOKENS,  # headroom for ~N records (keep chunk_size <= ~15)
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT + BATCH_SUFFIX},
                 {"role": "user", "content": user_message},

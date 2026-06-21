@@ -1,5 +1,5 @@
 ---
-title: "Chronicity — system design"
+title: "Crohnicity — system design"
 format: gfm
 ---
 

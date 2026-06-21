@@ -1,0 +1,12 @@
+{
+  "model": "gemini/gemini-2.5-flash-lite",
+  "interviews": "data/in/interviews.json",
+  "gold": "data/in/interviews_ground_truth_v5.ods",
+  "prompt": "data/prompts/system.txt",
+  "out_dir": "data/out",
+  "plots_dir": "data/out/plots",
+  "log_dir": "logs",
+  "chunk_size": 10,
+  "max_retries": 2,
+  "max_tokens": 8192
+}

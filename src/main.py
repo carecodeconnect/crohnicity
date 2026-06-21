@@ -17,10 +17,11 @@ from pathlib import Path
 import fire
 import litellm
 
-from extract import HANDLED, MODEL, OUT_DIR, ROOT, extract_batch
+from config import CHUNK_SIZE, INTERVIEWS, MODEL, OUT_DIR
+from extract import HANDLED, extract_batch
 from schema import Interview, PatientLabels
 
-IN_PATH = ROOT / "data" / "in" / "interviews.json"  # committed input transcripts
+IN_PATH = INTERVIEWS  # committed input transcripts (config.INTERVIEWS)
 RATE_LIMIT_DOCS = "https://ai.google.dev/gemini-api/docs/rate-limits"
 
 
@@ -43,7 +44,7 @@ def main(
     model: str = MODEL,
     limit: int | None = None,
     offset: int = 0,
-    chunk_size: int = 10,
+    chunk_size: int = CHUNK_SIZE,
     out_dir: str = str(OUT_DIR),
 ) -> str:
     """CLI (fire): extract interviews `[offset : offset+limit]` with `model`, `chunk_size`

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project context
 
-Chronicity is a take-home challenge for Mama Health. The deliverable is a pipeline that ingests patient interview transcripts (`data/in/interviews.json`, 50 Crohn's disease patients) and produces structured output that answers four business questions. The expected artefacts (per `README.md`) are: the four business answers, a pipeline design write-up, an evaluation section, a churn/limitations discussion, and an AI-usage note.
+Crohnicity is a take-home challenge for Mama Health. The deliverable is a pipeline that ingests patient interview transcripts (`data/in/interviews.json`, 50 Crohn's disease patients) and produces structured output that answers four business questions. The expected artefacts (per `README.md`) are: the four business answers, a pipeline design write-up, an evaluation section, a churn/limitations discussion, and an AI-usage note.
 
 Pipeline code lives in `src/`, with matching `pytest` tests in `tests/`. `notebooks/` are for prototyping and visual inspection — `00_setup.ipynb` records *why* the stack was chosen. Design notes, open questions, and the work backlog live in `docs/` (`SCHEMA.md`, `QUESTIONS.md`, `TODO.md`).
 
@@ -36,8 +36,8 @@ uv sync
 # regenerate requirements.txt after dep changes
 uv export --format requirements.txt --output-file requirements.txt
 
-# register the venv as a Jupyter kernel named "chronicity"
-uv run python -m ipykernel install --user --name chronicity --display-name "Python (chronicity)"
+# register the venv as a Jupyter kernel named "crohnicity"
+uv run python -m ipykernel install --user --name crohnicity --display-name "Python (crohnicity)"
 
 # run things inside the venv
 uv run pytest                       # all tests
@@ -60,4 +60,4 @@ uv run mkdocs build                 # render the static site to site/
 - **LLM access pattern**: go through `litellm.completion(model="gemini/...", ...)`, not the raw `google-genai` SDK. The SDK is only present because it was used in the notebook to sanity-check the API key before LiteLLM was wired in. LiteLLM gives us `response_format={"type": "json_object"}` and a `response_schema` hook for Gemini (with optional `enforce_validation: true`) — prefer that over hand-parsing model output.
 - **Reproducibility**: `gemini-2.5-flash-lite` supports reasoning (`litellm.supports_reasoning(...)` returns True) and caching/TTL. If you add prompt caching or thinking-mode toggles, document them where they're set — they affect token accounting and run-to-run determinism.
 - **Data layout**: `data/in/` is committed input (`interviews.json`), `data/out/` is for generated artefacts, `data/prompts/` for prompt templates. Keep generated outputs out of `data/in/`.
-- **Notebooks**: jupytext-paired (`ipynb,py:percent`). **Edit notebook code in the `.py`** (the editing source of truth → clean diffs) and run `jupytext --sync`; **never hand-edit the `.ipynb`** — that's the human's running/viewing copy, where outputs live. `notebooks/` is excluded from the gate. Full workflow: `docs/SETUP.md`.
+- **Notebooks**: jupytext-paired (`ipynb,py:percent`). **Edit notebook code in the `.py`** (the editing source of truth → clean diffs) and run `jupytext --sync`; **never hand-edit the `.ipynb`** — that's the human's running/viewing copy, where outputs live. `notebooks/` is excluded from the gate. Full workflow: `docs/DEV_SETUP.md`.

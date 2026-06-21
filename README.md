@@ -24,6 +24,50 @@ data.
   the model’s decisions?
 - Socio-demographic fields: what’s worth extracting, what’s noise?
 
+**Answers (provisional).**
+
+- **Enums vs. free text vs. objects.** Closed vocabularies the analysis
+  groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`,
+  `ReasonNotTaken`, `ComorbidCondition`, `PathwayStep` — so
+  `value_counts`/joins get stable categories and membership is checked
+  at the model boundary (`enforce_validation`). Open, high-cardinality,
+  not-yet-canonical fields stay **free text**: `biologic_type`,
+  `TreatmentRecord.name`/`treatment_class` (a branded-drug +
+  treatment-class registry is future work — `docs/TODO.md`). Repeated,
+  multi-attribute things are **structured objects/lists**:
+  `treatment_records` (a list of `TreatmentRecord`, each carrying
+  `before_biologic`, the flag that answers Q3), `demographics`, and
+  `referral_pathway` (`list[PathwayStep]`). The visible cost of the
+  free-text choice shows up in the **Q3 table** —
+  `conventional_therapy`/`conventional` and case variants are one class
+  left un-normalised.
+- **Three states, not one null.** “Not mentioned” (absence), “explicitly
+  denied” (negation) and “cut off” (truncation) are kept as *separate*
+  signals rather than collapsed into a null: absence →
+  `biologic_not_mentioned` + null/empty fields + `NOT_MENTIONED`;
+  negation → the `biologic_prescribed` vs. `biologic_taken` pair + a
+  specific `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…);
+  truncation → `churn` + `JOURNEY_CUT_OFF`. A `NOT_APPLICABLE` member
+  marks “genuinely doesn’t apply” so it isn’t confused with a blank “not
+  yet annotated” cell. This is the split the churn table under Q4
+  operationalises.
+- **Evidence / auditability.** The model **does populate
+  `evidence_notes`** — a free-text rationale per patient (all 50
+  predictions carry one, e.g. *“cycled through Remicade, Humira due to
+  loss of response; currently on Stelara; injection anxiety”*). What’s
+  **deferred is the manual side**: the gold annotation keeps
+  `evidence_notes` as an unfilled column (`docs/SCHEMA.md`), and
+  structured **per-field** evidence — a snippet/turn-ref *per field*
+  rather than one blob — is stretch task 2 (it costs tokens + prompt
+  complexity). The broader audit trail is the **logged raw model
+  output** (`logs/extract.log` keeps the system prompt, schema, input
+  and pre-validation response per call) plus the **gold-set comparison**
+  (`docs/TO_REVIEW.md`).
+- **Socio-demographics.** Deliberately minimal —
+  `Demographics{gender, age}`, self-reported, grouped so a later “do
+  pathways/outcomes differ by demographic” cut is possible; everything
+  else is noise for these four questions.
+
 ## Extraction Pipeline
 
 - **Single-shot vs. multi-stage extraction.** One big call, or a
@@ -33,6 +77,59 @@ data.
   separate absence, negation, and truncation?
 - **Determinism and reproducibility.** Temperature, structured output
   mode, seed, caching — what did you pick and why?
+
+**Answers (provisional).**
+
+- **Single-shot, batched — not multi-stage.** One system prompt extracts
+  *all* `PatientLabels` fields in a single structured call per patient;
+  transcripts are then **batched** (10 per request) only to fit Gemini’s
+  free-tier ~20-requests/day cap — batching ≠ staging, it’s still one
+  pass over every field, just several patients per call. Single-shot
+  minimises calls (decisive under the rate cap), keeps the code simple,
+  and lets the model set inter-dependent fields
+  (`biologic_prescribed`/`biologic_taken`, `churn`, `referral_pathway`)
+  with the whole story in view. The cost: every field competes for
+  attention in one prompt, so the hard fields suffer — the EDA shows
+  `churn` unreliable and the GP node under-emitted. A multi-stage split
+  (per-section prompts run concurrently, with inspectable intermediates)
+  is the \#1 item in *Next Steps* below; it trades more calls +
+  orchestration for better per-field accuracy.
+- **Uncertainty: absence vs. negation vs. truncation.** The prompt
+  separates them by construction, onto the three schema mechanisms
+  above. A global rule — *“Leave a field null or empty when the
+  transcript does not support a confident value”* — covers **absence**.
+  **Negation** rides on the prescribed-vs-taken booleans + the
+  `ReasonNotTaken` enum. **Truncation** gets the most explicit
+  instruction: judge `churn` from how the transcript *ends*, treat a
+  trailing “…” as a cut-off *only* if “…” isn’t a recurring stylistic
+  device, prefer `false` when ambiguous, and — critically — *“keep this
+  truncation signal distinct from a topic simply being absent … (that is
+  ‘not mentioned’, not churn).”* Honest limit: truncation is a
+  lexical/structural property of the transcript’s end that the narrative
+  under-determines, so the instruction alone isn’t enough — the gold
+  audit caught a false positive (P016) and a false negative (P049), and
+  a deterministic tail-of-text rule would do better
+  (`docs/TO_REVIEW.md`).
+- **Determinism & reproducibility.** Three levers, in decreasing order
+  of leverage. **(1) Structured-output mode** —
+  `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`:
+  a Pydantic-derived schema constrains the *shape* and enum membership,
+  and LiteLLM validates the reply (raising `JSONSchemaValidationError`
+  on a mismatch), so format/parse variance is removed and downstream
+  pandas never meets an off-vocabulary value. **(2) Persisted
+  predictions** — each chunk writes one validated JSON per patient to
+  `data/out/`, and the whole analysis (this README) reads *only* those
+  frozen artefacts with no API call, so every number and plot is
+  **exactly reproducible run-to-run** regardless of LLM nondeterminism;
+  this is the real guarantee. **(3) Decoding params** — `temperature` is
+  left at the provider default this iteration; pinning it to `0`
+  (greedy) and adding a seed where Gemini honours it is the open
+  determinism step (`docs/TODO.md`), though with a reasoning-capable
+  model bit-exact output isn’t guaranteed anyway, and (1)+(2) already
+  remove the variance that affects the answers. No explicit prompt
+  **caching** yet — the static system prompt + schema are identical
+  across calls, so implicit context caching may apply, and cached-token
+  counts are logged (`docs/TELEMETRY.md`).
 
 ## Evaluation
 
@@ -52,6 +149,22 @@ Write up what it told you in a few lines: what the pipeline is solid on,
 where it’s shaky, what you’d fix first with more time.
 
 I picked (1).
+
+**What it surfaced (provisional).** Gold labels live in
+`interviews_ground_truth_v5.ods`, scored on the `to_review` validation
+split (19 cases with a non-null label). Headline: `biologic_taken` — the
+field Q1 rests on — scores **F1 = 0.95** (precision 0.90 / recall 1.00),
+computed inline under Q1 below, so the “% on a biologic” answer is
+well-supported. Where it’s shaky: **`churn`** is unreliable in both
+directions (a false positive *and* a false negative in the gold audit —
+`docs/TO_REVIEW.md`) because truncation is a lexical/structural signal
+the narrative under-determines; **`treatment_class`** drifts
+(un-normalised free-text categories inflate the Q3 count); and the **GP
+node** (`primary_care_contact`) is under-emitted (9/50), weakening the
+strict Q4 step count. Fix-first order: a deterministic tail-of-text
+churn rule, a treatment/biologic registry to normalise classes, and a
+larger, multi-annotator gold set — today’s is single-annotator over
+19/50, so the metric carries real sampling uncertainty.
 
 ## Analysis
 
@@ -307,6 +420,15 @@ With more time, after the core is complete:
   patients cycle through, repeated relapse / loss-of-response / switch
   loops, time-to-switch — and classify journeys as genuinely cyclic vs
   linear (the recurrence is also recoverable from `treatment_records`).
+- **Productionise as a FastAPI inference endpoint (deployment MVP).**
+  Wrap `extract()` in a **FastAPI** service (already a declared
+  dependency): `POST` an `interview_transcript`, get back a validated
+  `PatientLabels` JSON generated **dynamically by a cloud-hosted model**
+  — turning the current offline batch CLI into a real-time production
+  inference path. Package the API **into the Docker image** (the
+  Packaging item in `docs/TODO.md`) so one container serves it, and ship
+  it via **CI/CD to a cloud service** for an always-on, auto-deployed
+  endpoint.
 
 ## Where I used AI
 
@@ -340,6 +462,50 @@ The post-extraction EDA (this README’s tables/plots) is generated by
 durable and `--offset` lets you resume/retry without re-spending calls.
 Per-call telemetry (tokens, cost) is logged to `logs/extract.log`.
 
+### Referral-pathway graphs
+
+Generate the per-case journey graphs + phase/transition tables behind Q4
+(reads the pathways, no API call):
+
+``` bash
+uv run python src/referral_pathway_analysis.py   # writes data/out/referral_pathway_P*.html
+```
+
+### Rebuild the answers doc
+
+``` bash
+uv run quarto render README.qmd                  # regenerate README.md (gfm) + README.html from data/out/
+```
+
+### Development — quality gate
+
+Run the manual gate on every code change (no pre-commit hooks, by design
+— see `CLAUDE.md`):
+
+``` bash
+bash tests/type_lint_unit_tests.sh   # ruff check + ruff format --check + ty check + pytest (src + tests)
+```
+
+…or the individual tools:
+
+``` bash
+uv run ruff check src tests                            # lint
+uv run ruff format src tests                           # auto-format
+uv run ty check src tests                              # type-check (Rust-based; not mypy)
+uv run pytest -q                                       # unit tests
+RUN_RENDER_TEST=1 uv run pytest tests/test_render.py   # gated end-to-end render smoke test
+```
+
+### Docsite (API reference)
+
+Preview the mkdocstrings API site locally — it regenerates from the
+docstrings on every build:
+
+``` bash
+uv run mkdocs serve   # live preview at http://127.0.0.1:8000
+uv run mkdocs build   # render the static site to site/ (gitignored)
+```
+
 ## Data handling & privacy
 
 > ⚠️ **This repo commits `data/in/` and `data/out/` (model inputs and
@@ -360,15 +526,13 @@ Per-call telemetry (tokens, cost) is logged to `logs/extract.log`.
 
 Dev environment requirements and setup — Python 3.14 (via uv), a
 `GEMINI_API_KEY`, and the VS Code + Claude Code extension diff-review
-workflow — are documented once in [docs/SETUP.md](docs/SETUP.md); this
-README only links there to avoid duplication.
+workflow — are documented once in
+[docs/DEV_SETUP.md](docs/DEV_SETUP.md); this README only links there to
+avoid duplication.
 
 Further documentation is provided as follows:
 
 - [CLAUDE.md](CLAUDE.md) for Claude Code project instructions.
 
-- [SETUP.md](docs/SETUP.md) for installation and usage guide for users
-  and devs.
-
-- \[.claude/skills\] Agent Skills formatted skills for CC to use
-  specific to this project.
+- [DEV_SETUP.md](docs/DEV_SETUP.md) for installation and usage guide for
+  users and devs.

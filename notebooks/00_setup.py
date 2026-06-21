@@ -8,13 +8,13 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.19.3
 #   kernelspec:
-#     display_name: Python (chronicity)
+#     display_name: Python (crohnicity)
 #     language: python
-#     name: chronicity
+#     name: crohnicity
 # ---
 
 # %% [markdown]
-# # Chronicity Project Setup
+# # Crohnicity Project Setup
 #
 # This notebook runs the setup for all the tools we need.
 

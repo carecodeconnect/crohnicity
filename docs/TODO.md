@@ -44,6 +44,32 @@ extract the logic into proper Python modules.
 - [ ] Keep notebooks as thin exploration/drivers that import from `src/`, not as the source of truth.
 - [ ] Mirror the module layout with `pytest` unit tests under `tests/` (currently empty) — this is the prerequisite for the Tests section below.
 
+## Post-extraction EDA — extract `README.qmd` chunks into `src/post_extraction_eda.py`
+
+The post-extraction EDA is a distinct **phase**: it runs *after* the inference loop and reads only
+the persisted artefacts in `data/out/` (the validated predictions, plus `_v5.ods` for the gold
+eval) — no Gemini calls. Its logic currently lives inline in the `README.qmd` `{python}` cells, so
+it can't be reused anywhere else or unit-tested.
+
+- [ ] **Move each `README.qmd` code cell into a reusable function** in `src/post_extraction_eda.py`
+  — e.g. `load_predictions(out_dir) -> DataFrame`, `q1_biologic_share(df)`, `q1_gold_eval(df, gold)`,
+  `q2_reasons(df)`, `q3_before_biologic(records)`, `q4_steps(records)`, `churn_three_state(df)`.
+  Pure functions over the `data/out/` artefacts — **reusable anywhere** (notebooks, the QMD, tests,
+  a future Dagster asset).
+- [ ] **The QMD cells then just import and call** these functions, so `README.qmd` holds only
+  presentation (tables/plots/prose) and `src/` holds the computation — the same notebooks→`src/`
+  split (above) applied to the report.
+- [ ] **Cover the functions with `pytest`** (now importable + deterministic over fixed artefacts) and
+  bring them under the `tests/type_lint_unit_tests.sh` gate.
+- [ ] **Plot the eval metrics.** Add a **precision / recall / F1** (and accuracy) bar plot beside the
+  Q1 gold-eval table in `README.qmd`, driven by `gold_eval(df)` — same plotnine treatment as the
+  Q2–Q4 charts — so the eval is visual, not just a table.
+- [ ] **Visualise gold coverage + its uncertainty.** A plot showing only **20/50** patients are
+  manually gold-scored (the `to_review` split; 19 with a non-null `biologic_taken`) vs the **~30/50**
+  with **unknown** ground truth, plus a **confidence interval** on the implied at-scale accuracy
+  (e.g. a Wilson / binomial CI, or bootstrap, on the 19-case metrics) — so the README's *sampling
+  uncertainty* caveat is **quantified and shown**, not merely asserted.
+
 ## Tests — once we have a mental model of what to test
 
 - [ ] Add `pytest` tests under `tests/` (currently empty).
@@ -89,6 +115,14 @@ keep the batch going where sensible, but make every failure visible and countabl
 - [ ] **Per-record failure capture** — one bad patient must not abort the run; report how many and
   which records failed and why (counts + reasons logged, not hidden).
 
+## Determinism — pin decoding params
+
+- [ ] **Pin `temperature=0`** (greedy) on the `litellm.completion` calls in `src/extract.py`, and pass
+  a `seed` where Gemini honours it, to minimise extraction sampling variance. Today only structured-
+  output mode + the persisted `data/out/` artefacts guarantee reproducibility (see README → Extraction
+  Pipeline → Determinism); this is the remaining decoding-side lever. A change requires a fresh run to
+  take effect (current `data/out/` predates it).
+
 ## Reference data — canonical lookup lists
 
 - [ ] **Branded biologics registry.** Extract the biologic names mentioned across *all*
@@ -122,6 +156,29 @@ below comes after** this runs end-to-end.
 
 ## Orchestration — Dagster
 
+**Design decision — Dagster is the day-of entry point.** `uv run dagster dev -f src/pipeline.py` is
+THE "full" run: it auto-orchestrates the whole end-to-end pipeline (ingest → extract → validate →
+aggregate → referral-pathway render → post-extraction EDA) and **flags problems at a high level in
+the UI**. The `src/main.py` CLI and the `.sh`/`.py` scripts stay runnable **standalone**, to
+test/show one sub-part on demand — they are *not* nested under Dagster. This works because **both
+the CLI and the Dagster assets call the same `src/` functions** (library-first: an asset *wraps* a
+function; it does not shell out to `uv run python src/main.py`). Verification becomes Dagster **asset checks**, not just a standalone gate: the
+`tests/type_lint_unit_tests.sh` gate — **ruff** (lint), **ruff format**, **`ty`** (typing) and
+**`pytest`** (unit tests) for the repo — plus the render smoke test, expressed as
+`@dg.asset_check`s so a failed lint / type-check / test lights up **red in the same UI** alongside
+the data assets (these check the *code* rather than a data artefact; the asset check just surfaces
+them at a glance). Plain `bash tests/type_lint_unit_tests.sh` stays available for a quick headless run. This is the
+payoff of, and depends on, the "notebooks → `src/`" and "post-extraction EDA →
+`src/post_extraction_eda.py`" refactors above: once every stage is an importable function, both
+frontends compose the same units.
+
+**Static input → no sensor this version.** `data/in/interviews.json` is the single **static,
+committed** input — the `interviews` source asset always reads it as-is; the pipeline **never
+re-downloads or re-fetches** it. So there is **no Dagster sensor/schedule** watching for new data;
+the full run is **manual / on-demand** (materialise the assets in the UI). A sensor/schedule only
+earns its place once the input becomes *dynamic* — e.g. new transcripts arriving via the FastAPI
+endpoint in the README's Next Steps.
+
 - [ ] **Per-stage dependency graph for failure visibility.** `src/pipeline.py` is a minimal start
   (`interviews` → `predictions`). Expand to distinct assets/ops at **each stage — data ingestion →
   transformation → model call → schema validation** — so a failure is pinpointed at *any* point,
@@ -132,9 +189,16 @@ below comes after** this runs end-to-end.
   regenerated from the latest pathways on every run. (Note: the script currently uses a
   hardcoded `PATHWAYS` dict; wiring it into Dagster means switching it to read the
   `referral_pathway` column from the ground-truth/extracted data.)
+- [ ] **Doc/report artifacts as final assets (decided — orchestrate them).** Make the **README
+  render** (`quarto render README.qmd`) and the **referral graphs** downstream assets of
+  `predictions` (they read `data/out/`), and the **docsite** (`mkdocs build`) an **independent**
+  final asset — it depends on source *docstrings*, not the data, so it carries no upstream data edge
+  but rebuilds in the same `dagster dev` run. One orchestrated run then regenerates every code+data
+  artifact with per-step status in the UI; the docsite stays dynamic (docstrings re-read each build).
 - [ ] **Automate the runs once the pipeline works** — orchestrate extraction + the test harness
-  via Dagster (sensor/schedule), and **log each run** (inputs, predictions, accuracy, token
-  usage) for reproducibility and later optimisation.
+  via Dagster, and **log each run** (inputs, predictions, accuracy, token usage) for
+  reproducibility and later optimisation. (A **sensor/schedule** is deferred — see the static-input
+  note above; it's only warranted once the input is dynamic.)
 
 ## Metrics & EDA — API-call telemetry
 
@@ -155,14 +219,49 @@ scaling EDA**.
   `referral_pathway` diagrams — in a **`README.qmd`** rendered to **GitHub-flavoured markdown** via
   `quarto render` (CLI). Gives a static, version-controlled answers doc that refreshes from the
   latest predictions.
-- [ ] **`docs/DESIGN.qmd` system design.** Flesh out the draft Mermaid architecture into the final
-  workflow/system-design write-up; render with `quarto render docs/DESIGN.qmd`.
+- [ ] **System-design diagram — the FINAL large build task.** Rename `docs/DESIGN.qmd` →
+  **`docs/SYSTEM_DESIGN.qmd`** and turn its draft into the **simplest possible** Quarto **Mermaid**
+  chart of the real workflow, whose job is to clarify the **Dagster / `uv run` relation**:
+  `dagster dev -f src/pipeline.py` is the orchestrating entry point, while `uv run python
+  src/main.py` (CLI) and the `.sh` gate run the *same* `src/` functions **standalone** (library-first,
+  not nested); static `data/in/interviews.json` input → no sensor; the gate surfaced as asset checks.
+  **Do this last**, once Dagster actually runs, so the diagram matches the built workflow — then
+  **link it from `README.qmd`** (there is no link today). While here, fix the draft's stale bits:
+  title `Chronicity` → `Crohnicity`, `_v3.ods` → `_v5.ods`, and the `main.py`-as-orchestrator flow →
+  the Dagster asset graph. Render with `quarto render docs/SYSTEM_DESIGN.qmd`.
 
 ## Packaging — Docker
 
-- [ ] After the `src/` refactor, add a **Dockerfile** producing a **small image** (e.g.
-  `python:3.14-slim` + `uv`), so the whole pipeline can be run and tested independently of the
-  local environment and its dependencies.
+- [ ] After the `src/` refactor, add the **simplest possible Dockerfile** producing the **smallest
+  image** for this use case (e.g. `python:3.14-slim` + `uv sync --frozen`), so the whole pipeline can
+  be built, run and tested **on any machine** independently of the local environment — the
+  cross-machine reproducibility check (does it run off my laptop?).
+
+## Final clean-up sweep — before the final build
+
+The last pass before finalising, **after** the pipeline runs end-to-end. Do **all** of:
+
+- [ ] **Centralise config in a `config.json`.** Every setting used by *any* script
+  (`.py`/`.qmd`/`.sh`) reads from one file: model-name defaults, the gold dataset path + version
+  (`_v5.ods`), the source `data/in/interviews.json` path, the `data/out/` location, chunk size, etc.
+  No hard-coded paths/params scattered across `extract.py` / `main.py` / `post_extraction_eda.py` /
+  `referral_pathway_analysis.py` / `README.qmd` — a single source of truth that all files load.
+- [ ] **Kill redundancy + fix drift.** Redundant code/docs and drifted definitions/docstrings —
+  e.g. the mkdocs nav says "Schema (v0.2)" while `SCHEMA.md` is v0.4; stale `_v3.ods`/`_v4.ods`
+  mentions; the `DESIGN.qmd` draft's `_v3.ods` + `main.py`-as-orchestrator flow; duplicated setup text.
+- [ ] **Every TODO item addressed** (this file) — each one done, or consciously moved to
+  README → *Next Steps* as post-MVP.
+- [ ] **Every question answered in `README.qmd`** — all four business questions *and* the schema /
+  pipeline / evaluation dev-questions carry a written answer (no prompt-only sections left).
+- [ ] **Docsite builds complete.** `uv run mkdocs build` covers *all* `src/` modules + tests via
+  mkdocstrings — done (`api/src.md` + `api/tests.md` cover all 8 src modules + tests); remaining:
+  keep nav labels current (e.g. "Schema (v0.2)" -> v0.4).
+- [ ] **Review `src/splits.py`'s place in the pipeline.** The validation/holdout split derives from
+  the `to_review` flag, but the eval now reads the gold directly (`gold_eval` filters
+  `to_review == 1` itself) and only 20/50 cases are annotated — so `splits.py` may be redundant now.
+  Check whether anything still imports it; if not, **move `splits.py` + `test_splits.py` to
+  `sandbox/`** (with the other once-used/adhoc scripts, kept as a dev-documentation record) rather
+  than deleting — and drop their `api/src.md` / `api/tests.md` entries so the docsite still builds.
 
 ## Polish
 

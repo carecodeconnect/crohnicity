@@ -315,7 +315,7 @@ cycler==0.12.1 \
 dagster==1.13.9 \
     --hash=sha256:8d2eb51521ca8731ecb4c7a05e8e35ba9421ea6a6cddb15b80be95fe2e1555d0 \
     --hash=sha256:e17bfe66413fa585e5bd204e455ed1958a04017869c6111a55c94f3d9e48f63e
-    # via chronicity
+    # via crohnicity
 dagster-pipes==1.13.9 \
     --hash=sha256:1e5f08a216a77093483857189644ad164e78e1fb9d123a703276b946804072c9 \
     --hash=sha256:68fb92bf8c5d9a64c40439d1a02d6bfbf5cd4e66da9290bb0dc15e3c676709c9
@@ -363,7 +363,7 @@ executing==2.2.1 \
 fastapi==0.137.1 \
     --hash=sha256:64f6983c59e45c4b9fdc44e57cb8035c2451ee91ea8e8ec042aca37de7cf6b69 \
     --hash=sha256:822360704230d9533d8d9475399613525968aa2f0b5bd2a3ccc9f18c88fd541c
-    # via chronicity
+    # via crohnicity
 fastjsonschema==2.21.2 \
     --hash=sha256:1c797122d0a86c5cace2e54bf4e819c36223b552017172f32c5c024a6b77e463 \
     --hash=sha256:b1eb43748041c880796cd077f1a07c3d94e93ae84bba5ed36800a33554ae05de
@@ -391,7 +391,7 @@ filelock==3.29.4 \
 fire==0.7.1 \
     --hash=sha256:3b208f05c736de98fb343310d090dcc4d8c78b2a89ea4f32b837c586270a9cbf \
     --hash=sha256:e43fd8a5033a9001e7e2973bab96070694b9f12f2e0ecf96d4683971b5ab1882
-    # via chronicity
+    # via crohnicity
 fonttools==4.63.0 \
     --hash=sha256:0eac00b9118c3c2f87d272e45341871c5b3066baa3c86897fa634a7c3fb59096 \
     --hash=sha256:22693918177bd9ceabec4736d338045f357769416fc6b0b2508eefef75b08616 \
@@ -471,11 +471,11 @@ google-auth==2.55.0 \
 google-genai==2.8.0 \
     --hash=sha256:37a9b3cb127d763e7f4ca47452ae3562c87728773bd1b149f7b559c239da2bc1 \
     --hash=sha256:4da0a223a100f4b37f609a68b835e3326ab0fa313314dc0fd9d34e76ee293844
-    # via chronicity
+    # via crohnicity
 graphviz==0.21 \
     --hash=sha256:20743e7183be82aaaa8ad6c93f8893c923bd6658a04c32ee115edb3c8a835f78 \
     --hash=sha256:54f33de9f4f911d7e84e4191749cac8cc5653f815b06738c54db9a15ab8b1e42
-    # via chronicity
+    # via crohnicity
 greenlet==3.5.1 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'ppc64le' or platform_machine == 'win32' or platform_machine == 'x86_64' \
     --hash=sha256:111e2390ffffc47d5840b01711dd7fac07d4c09283d0283e7f3264b14e284c64 \
     --hash=sha256:17d86354f0ae6b61bf9be5148d0dd34e06c3cb7c602c671f79f29ac3b150e659 \
@@ -598,7 +598,7 @@ ipykernel==7.3.0 \
     --hash=sha256:897eb64da762549ef610698fca5e9675195ec6ac8ec7f19d81ce1ca20c876057 \
     --hash=sha256:9acaaaf97d16355166e4085afe9d225bfbdf2b7ef520f9df3be8f2b248275e09
     # via
-    #   chronicity
+    #   crohnicity
     #   jupyter
     #   jupyter-console
     #   jupyterlab
@@ -606,7 +606,7 @@ ipython==9.14.1 \
     --hash=sha256:5d4a9ecaa3b10e6e5f269dd0948bdb58ca9cb851899cd23e07c320d3eb11613c \
     --hash=sha256:f913bf74df06d458e46ced84ca506c23797590d594b236fe60b14df213291e7b
     # via
-    #   chronicity
+    #   crohnicity
     #   ipykernel
     #   ipywidgets
     #   jupyter-console
@@ -697,7 +697,7 @@ jsonschema-specifications==2025.9.1 \
 jupyter==1.1.1 \
     --hash=sha256:7a59533c22af65439b24bbe60373a4e95af8f16ac65a6c00820ad378e3f7cc83 \
     --hash=sha256:d55467bceabdea49d7e3624af7e33d59c37fff53ed3a350e1ac957bed731de7a
-    # via chronicity
+    # via crohnicity
 jupyter-client==8.9.1 \
     --hash=sha256:0b7a295bc46e8751e9adae84781f726c851c1d911bd793edc4a3bde942e3da81 \
     --hash=sha256:a58f730dd9e728ba16ba1d62ebccf7ffe1ebbdbce4e95cfae941b7321ae1f4fa
@@ -766,7 +766,7 @@ jupyterlab-widgets==3.0.16 \
 jupytext==1.19.3 \
     --hash=sha256:713c3ed4441afe0f31474d28ea2e6b61a268c04c40fd78e5ccfd7f7ac9e9f766 \
     --hash=sha256:acf75492f80895ad8e664fd8db1708b617008dd0e71c341a1abc3d0d07310ed0
-    # via chronicity
+    # via crohnicity
 kiwisolver==1.5.0 \
     --hash=sha256:012b1eb16e28718fa782b5e61dc6f2da1f0792ca73bd05d54de6cb9561665fc9 \
     --hash=sha256:0255a027391d52944eae1dbb5d4cc5903f57092f3674e8e544cdd2622826b3f0 \
@@ -807,11 +807,11 @@ lark==1.3.1 \
 litellm==1.89.1 \
     --hash=sha256:a52a67625d89cb1787ef48c4b3c1ab9c2574ea304f56900bc631844297a13bd4 \
     --hash=sha256:eb9292f90afe46dcce4bfef6bbeaa54494945813763e1c0917f4e9a1c584c1a4
-    # via chronicity
+    # via crohnicity
 loguru==0.7.3 \
     --hash=sha256:19480589e77d47b8d85b2c827ad95d49bf31b0dcde16593892eb51dd18706eb6 \
     --hash=sha256:31a33c10c8e1e10422bfd431aeb5d351c7cf7fa671e3c4df004162264b28220c
-    # via chronicity
+    # via crohnicity
 mako==1.3.12 \
     --hash=sha256:8f61569480282dbf557145ce441e4ba888be453c30989f879f0d652e39f53ea9 \
     --hash=sha256:9f778e93289bd410bb35daadeb4fc66d95a746f0b75777b942088b7fd7af550a
@@ -879,7 +879,7 @@ matplotlib==3.11.0 \
     --hash=sha256:d9695457a467ff86d23f35037a43deb6f1134dd6d3e2ac8ce1e2087cff09ffb9 \
     --hash=sha256:dfabef0230d0697aa0d717385194dd41162e00207a68bf4abf94c2bf4c27dca0
     # via
-    #   chronicity
+    #   crohnicity
     #   plotnine
     #   wordcloud
 matplotlib-inline==0.2.2 \
@@ -930,13 +930,13 @@ mkdocstrings==1.0.4 \
     --hash=sha256:3969a6515b77db65fd097b53c1b7aa4ae840bd71a2ee62a6a3e89503446d7172 \
     --hash=sha256:63464b4b29053514f32a1dbbf604e52876d5e638111b0c295ab7ed3cac73ca9b
     # via
-    #   chronicity
+    #   crohnicity
     #   mkdocstrings-python
 mkdocstrings-python==2.0.4 \
     --hash=sha256:58c73c5d358e64e9b1673447663f4a2f8a8941e392e225fc0a0c893758cc452f \
     --hash=sha256:fd87c173e1e719a85997b6d4f852cdc55f36710e0ed08da3a7bd9abe79c9db00
     # via
-    #   chronicity
+    #   crohnicity
     #   mkdocstrings
 multidict==6.7.1 \
     --hash=sha256:0458c978acd8e6ea53c81eefaddbbee9c6c5e591f41b3f5e8e194780fe026581 \
@@ -1006,7 +1006,7 @@ networkx==3.6.1 \
     --hash=sha256:26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509 \
     --hash=sha256:d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762
     # via
-    #   chronicity
+    #   crohnicity
     #   pyvis
 notebook==7.5.7 \
     --hash=sha256:1f95f79d117e47d20b5555b5c85a397d2cfecf136978aaab767cf0314b09165b \
@@ -1053,7 +1053,7 @@ numpy==2.4.6 \
     #   wordcloud
 odfpy==1.4.1 \
     --hash=sha256:db766a6e59c5103212f3cc92ec8dd50a0f3a02790233ed0b52148b70d3c438ec
-    # via chronicity
+    # via crohnicity
 openai==2.42.0 \
     --hash=sha256:5263ee2868608571499df225471770238c8f3ff1ac296874bfc096bbabb6da3a \
     --hash=sha256:8cd46b1877cfd4aea7ade9474940cc4f78dbd41cce3893de11c12510d0b70caf
@@ -1061,7 +1061,7 @@ openai==2.42.0 \
 openpyxl==3.1.5 \
     --hash=sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2 \
     --hash=sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050
-    # via chronicity
+    # via crohnicity
 packaging==26.2 \
     --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e \
     --hash=sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661
@@ -1098,7 +1098,7 @@ pandas==3.0.3 \
     --hash=sha256:bd3a518890b400d32f9023722dc9a9a5c969f00b415419a3c06c043f09bb5d7d \
     --hash=sha256:e3a2ec42c98ffa2565a67e08e218d06d72576d758d90facb7c00805194d8f360
     # via
-    #   chronicity
+    #   crohnicity
     #   mizani
     #   plotnine
     #   statsmodels
@@ -1166,7 +1166,7 @@ platformdirs==4.10.0 \
 plotnine==0.15.7 \
     --hash=sha256:5226f0d3bae405bfa0797d213177ee3ac634b687fca352cffc313ca0b21aa1a2 \
     --hash=sha256:6e578bdd93c7ba12ce495dcdeaf8651f8e4ccdceb0c85b94c8195566d709c2a0
-    # via chronicity
+    # via crohnicity
 pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
     --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
@@ -1279,7 +1279,7 @@ pydantic==2.13.4 \
     --hash=sha256:45a282cde31d808236fd7ea9d919b128653c8b38b393d1c4ab335c62924d9aba \
     --hash=sha256:c40756b57adaa8b1efeeced5c196f3f3b7c435f90e84ea7f443901bec8099ef6
     # via
-    #   chronicity
+    #   crohnicity
     #   dagster-shared
     #   fastapi
     #   google-genai
@@ -1343,7 +1343,7 @@ pyreadline3==3.5.6 ; sys_platform == 'win32' \
 pytest==9.1.0 \
     --hash=sha256:41dd9148c08072446394cefd3d79701701335a9f4cae69ba92e39f6c7f5c061c \
     --hash=sha256:8ebb0e7888bdf2bdfc602ec51f8f62d50200af37356c74e503c79a94f5c81f32
-    # via chronicity
+    # via crohnicity
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
@@ -1357,7 +1357,7 @@ python-dotenv==1.2.2 \
     --hash=sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a \
     --hash=sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3
     # via
-    #   chronicity
+    #   crohnicity
     #   dagster
     #   litellm
 python-json-logger==4.1.0 \
@@ -1370,7 +1370,7 @@ pytz==2026.2 \
     # via dagster
 pyvis==0.3.2 \
     --hash=sha256:5720c4ca8161dc5d9ab352015723abb7a8bb8fb443edeb07f7a322db34a97555
-    # via chronicity
+    # via crohnicity
 pywin32==312 ; sys_platform == 'win32' \
     --hash=sha256:5c1fbe4a937a73ae9297384a3da38518cbc694c68ad8a809b2e19acd350f03ed \
     --hash=sha256:9fce94568364e0155e6dfb781ac5d95903be8baf28670632beab1b523f300daa \
@@ -1604,7 +1604,7 @@ ruff==0.15.17 \
     --hash=sha256:ecfc3c7878fff94633ab0348524e093f9ce3243080416dd7d14f8ba400174719 \
     --hash=sha256:f3be1fbb34bcdfd146240d8fb92a709d4c2c8191348580a3c044ec60fa0b4456 \
     --hash=sha256:f6ad73b14c2d18a3bf8ad7cb6974294d7f613a7898604826058e6ac64918ef4d
-    # via chronicity
+    # via crohnicity
 scipy==1.18.0 \
     --hash=sha256:18e9575f1569b2c54174e6159d32942e03731177f63dce7975f0a0c88d102f5b \
     --hash=sha256:1a4441f15d620578772a49e5ab48c0ee1f7a0220e387110283062729136b2553 \
@@ -1708,7 +1708,7 @@ tabulate==0.10.0 \
     --hash=sha256:e2cfde8f79420f6deeffdeda9aaec3b6bc5abce947655d17ac662b126e48a60d \
     --hash=sha256:f0b0622e567335c8fabaaa659f1b33bcb6ddfe2e496071b743aa113f8774f2d3
     # via
-    #   chronicity
+    #   crohnicity
     #   dagster
 tenacity==9.1.4 \
     --hash=sha256:6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55 \
@@ -1855,7 +1855,7 @@ ty==0.0.49 \
     --hash=sha256:ab90c1baf3b1701d282fce4b02fa552a962d109f8972c46ef6b22429503bfea4 \
     --hash=sha256:ae2142fc126a01effcca0c222908b0e6654b5ba1266d4e4d406e4866aef8e1d1 \
     --hash=sha256:b4ce8ecf6ba6fc79bd137cc0557a754f7e5f2dfe9436412551d480d680e248ad
-    # via chronicity
+    # via crohnicity
 typer==0.25.1 \
     --hash=sha256:75caa44ed46a03fb2dab8808753ffacdbfea88495e74c85a28c5eefcf5f39c89 \
     --hash=sha256:9616eb8853a09ffeabab1698952f33c6f29ffdbceb4eaeecf571880e8d7664cc
@@ -1984,7 +1984,7 @@ wordcloud==1.9.6 \
     --hash=sha256:e11c048f9056a9dda20627c29c578cb34f6778b152d0f0eb0dd33581faf03f65 \
     --hash=sha256:eabd94c69435b19163991da8e71310bb4873e31982e54ff4cf62317f0e1223b0 \
     --hash=sha256:f9bfe99fde048e109343858a7a866bdccd95f70cabe171aa7fd9fb7609bff12b
-    # via chronicity
+    # via crohnicity
 yarl==1.24.2 \
     --hash=sha256:0063adad533e57171b79db3943b229d40dfafeeee579767f96541f106bac5f1b \
     --hash=sha256:081c2bf54efe03774d0311172bc04fedf9ca01e644d4cd8c805688e527209bdc \
