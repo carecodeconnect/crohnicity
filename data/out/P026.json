@@ -1,0 +1,71 @@
+{
+  "patient_id": "P026",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 50
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "difficult to taper, doctor concern about bone density",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "elevated liver enzymes",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "feeling drunk, inability to work safely",
+      "before_biologic": false
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "loss of effectiveness",
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient with a long history of Crohn's, compounded by Barrett's esophagus and chronic back pain from his construction job. He has tried multiple treatments with limited success and is concerned about future treatment options, career viability, and financial implications. The narrative is complete."
+}

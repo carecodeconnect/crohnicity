@@ -1,0 +1,55 @@
+{
+  "patient_id": "P045",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 33
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [
+    "PCOS",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "insurance_step_therapy",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed 4 months ago, symptoms for 2 years. Also PCOS and insulin resistance. Initial blame on weight led to 40lb loss with no improvement, symptoms worsened. Demanded colonoscopy. Inflammation found. Treatments: budesonide and mesalamine (little improvement). Doctor mentioned biologics, but insurance requires failing more medications. Currently trying methotrexate (severe nausea, taking folic acid). Works as elementary school teacher; close calls with bathroom urgency during class. Fearful of telling principal due to budget cuts. Parents suggest diet cures (probiotics, yogurt). Boyfriend supportive but strained by canceled trips due to flares. Wedding postponed due to fear of flaring on the day. Finances tight; teacher salary. Moved back home to save money. Pain can be debilitating. Support groups difficult to attend. Online forums scary due to mentions of surgery/complications. Trying to stay positive but finding it hard."
+}

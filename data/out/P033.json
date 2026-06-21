@@ -1,0 +1,71 @@
+{
+  "patient_id": "P033",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 26
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira, Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "Triggered hypomanic episode",
+      "before_biologic": true
+    },
+    {
+      "name": "Methotrexate",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Nausea",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Caused severe eczema",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed at 19. Also has severe eczema and bipolar II. Started with mesalamine and prednisone (which triggered hypomania). Then methotrexate (nausea). Humira at 21 was a game-changer for Crohn's but caused severe eczema. Now on Stelara, which helps both somewhat. Bipolar diagnosis last year led to mood stabilizers. Managing three conditions, impacting social life and career. Currently working entry-level marketing, hiding condition."
+}

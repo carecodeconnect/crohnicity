@@ -1,60 +1,59 @@
 {
-  "patient_id": "P001",
+  "patient_id": "P007",
   "churn": false,
   "demographics": {
     "gender": "female",
-    "age": 34
+    "age": 45
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
-    "OTHER"
+    "HYPOTHYROIDISM",
+    "FIBROMYALGIA"
   ],
   "treatment_records": [
     {
-      "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Not much improvement",
+      "reason_stopped": "Mood swings, insomnia, moon face. Tapered off after three months.",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
       "treatment_class": "Immunomodulator",
-      "outcome": "FAILED",
-      "reason_stopped": "Made me feel worse. Severe nausea, elevated liver enzymes.",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Alone wasn't holding things.",
       "before_biologic": true
     },
     {
-      "name": "Humira",
+      "name": "Entyvio",
       "treatment_class": "Biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "primary_care_contact",
     "misdiagnosis",
+    "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
-    "insurance_denial",
-    "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
-    "loss_of_response"
+    "breakthrough_symptoms",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient reports psoriasis as a potential side effect of Humira, diagnosed by her rheumatologist."
+  "evidence_notes": "Patient has a history of extensive small bowel disease and was started on Entyvio due to better insurance coverage. Has breakthrough symptoms and is considering adding an immunomodulator."
 }

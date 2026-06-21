@@ -1,0 +1,69 @@
+{
+  "patient_id": "P040",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 52
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "HYPERTENSION",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Liver enzymes climbing",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Developed antibodies",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed seven years ago. Also has type 2 diabetes, hypertension, and osteoporosis from steroid use. Started on prednisone and azathioprine combo. Prednisone caused high blood sugar requiring insulin. Azathioprine caused liver issues. Switched to Remicade, worked for 3 years but developed antibodies. Now on Humira, ~50% improvement. GI wants to add methotrexate but worried about liver. Work suffering due to fatigue/brain fog. Costs high, savings disappearing. Considering clinical trial."
+}

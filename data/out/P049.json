@@ -1,0 +1,47 @@
+{
+  "patient_id": "P049",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 28
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "comorbid_conditions": [
+    "OTHER",
+    "ANXIETY_DISORDER"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "manic side effects",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "UNKNOWN",
+      "reason_stopped": "ongoing",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "surgery",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "biologic_recommended",
+    "patient_fear",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed last month during appendectomy. Inflammation throughout intestines. Also recovering from eating disorder and has anxiety. Diagnosis is triggering, clashing with ED recovery (authorized restriction vs. fear of food). Started prednisone in hospital (manic, 4 days without sleep). Now on mesalamine (too early to tell). GI wants aggressive treatment due to age and disease extent. Mentioned biologics but concerned about side effects (cancer, infections). Boyfriend supportive but overwhelmed; wedding/kids on hold. Parents concerned, see parallels to ED recovery. Chronic nature is feared."
+}

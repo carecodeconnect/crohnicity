@@ -1,9 +1,9 @@
 """Pydantic schema for one patient's labels.
 
 The same shape serves both provenances: the human-annotated *gold* set in
-`data/in/interviews_ground_truth_v3.ods`, and a model *prediction* returned by `src/extract.py`
+`data/in/interviews_ground_truth_v4.ods`, and a model *prediction* returned by `src/extract.py`
 (an inference, not ground truth). Mirrors the columns and controlled vocabularies in
-`docs/SCHEMA.md` (v0.3); field names match the spreadsheet columns 1:1.
+`docs/SCHEMA.md`; field names match the spreadsheet columns 1:1.
 
 `interview_transcript` is the model's *input* — its own `Interview` model below; `to_review`
 (a human-set validation/holdout flag, see `src/splits.py`) is not modelled.
@@ -170,20 +170,19 @@ class PatientLabels(BaseModel):
 
     When produced by `extract.py` these are the model's **predictions** (inference, not ground
     truth); evaluation compares them field-by-field against the gold values in
-    `data/in/interviews_ground_truth_v3.ods` for the 20-of-50 validation cases (the `to_review`
+    `data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`
     split, see `src/splits.py`).
 
-    Field names match the v3 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
+    Field names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
     the ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction
     still validates.
     """
 
     patient_id: str
 
-    # Optional because their definitions are unresolved (CAIO) and may not be derivable from
-    # transcripts at all — see the open questions in docs/SCHEMA.md and docs/QUESTIONS.md.
+    # Truncation/disengagement signal: true if the interview looks cut off before the story
+    # resolved. `incomplete_journey` was merged into this in v4 — see README "Churn".
     churn: bool | None = None
-    incomplete_journey: bool | None = None
 
     demographics: Demographics = Demographics()
 
@@ -207,3 +206,10 @@ class PatientLabels(BaseModel):
     referral_pathway: list[PathwayStep] = []
 
     evidence_notes: str | None = None  # deferred — citing per-field sources is costly
+
+
+class BatchPredictions(BaseModel):
+    """Wrapper for a chunked extraction call: one `PatientLabels` per patient in the chunk.
+    Object root (not a bare list) so Gemini structured output handles it cleanly."""
+
+    predictions: list[PatientLabels]

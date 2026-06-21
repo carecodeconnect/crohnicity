@@ -1,0 +1,43 @@
+{
+  "patient_id": "P019",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 24
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Humira",
+      "treatment_class": "anti-tnf",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "biologic_recommended",
+    "insurance_step_therapy",
+    "biologic_taken",
+    "patient_fear",
+    "alternative_therapy",
+    "planning_next_step",
+    "unresolved"
+  ],
+  "evidence_notes": "Newly diagnosed while starting career. Started on Humira due to severity, skipping conventional steps. Anxiety prevents self-injection, relying on boyfriend. Worried about job security, social life, finances (co-pay, living at home). Processing grief and loss of health."
+}

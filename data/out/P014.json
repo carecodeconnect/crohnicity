@@ -1,46 +1,46 @@
 {
-  "patient_id": "P001",
+  "patient_id": "P014",
   "churn": false,
   "demographics": {
-    "gender": "female",
-    "age": 34
+    "gender": "male",
+    "age": 41
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
-    "OTHER"
+    "OTHER",
+    "DEPRESSION"
   ],
   "treatment_records": [
     {
-      "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Not much improvement",
-      "before_biologic": true
-    },
-    {
-      "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "Made me feel worse. Severe nausea, elevated liver enzymes.",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
-      "name": "Humira",
-      "treatment_class": "Biologic",
+      "name": "sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "allergic reaction (hives)",
+      "before_biologic": true
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "interleukin-inhibitor",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "primary_care_contact",
     "misdiagnosis",
     "symptoms_worsen",
     "specialist_referral",
@@ -49,12 +49,15 @@
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
+    "comorbidity",
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
-    "loss_of_response"
+    "alternative_therapy",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient reports psoriasis as a potential side effect of Humira, diagnosed by her rheumatologist."
+  "evidence_notes": "Patient has Crohn's, psoriasis, and psoriatic arthritis. Initially misdiagnosed with IBS. Tried methotrexate and sulfasalazine before Stelara, which treats both Crohn's and psoriasis. Struggling with fatigue, depression, financial costs, and physical demands of his job."
 }

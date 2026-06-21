@@ -62,3 +62,34 @@ prefer Source 1.
 
 Latency isn't in either payload — derive it from the call (wall-clock around `completion()`, or the
 debug log's request/response timestamps).
+
+## Measured diagnostics — `gemini/gemini-2.5-flash-lite`, this dataset
+
+From the live single-patient runs (logged in `logs/litellm_debug.log`; `extract.py` also logs a
+per-call `telemetry: ...` line to `logs/extract.log`):
+
+| Metric | Per single-patient call |
+|---|---|
+| `prompt_tokens` | ~270 (system prompt + transcript; **the `response_schema` is not billed as prompt tokens**) |
+| `completion_tokens` | ~400 (the JSON record) |
+| `total_tokens` | ~670 |
+| `cached_tokens` | ~90 (context-cache hit on the static system prompt) |
+| cost | ~$0.00019 / call → **~$0.01 for all 50** |
+
+**Free-tier rate limits observed (the binding constraints, not tokens):**
+
+| Limit | Value | Implication |
+|---|---|---|
+| **Requests/day (RPD)** | **20** (from the 429: `generate_content_free_tier_requests, limit: 20`) | **50 individual calls can't finish in one free-tier day** — the real blocker |
+| Tokens/min (TPM) | 250,000 | irrelevant at ~670 tok/call |
+| Requests/min (RPM) | ~10–15 | fine for sequential calls |
+
+**Takeaways for optimisation/diagnosis:**
+
+- Cost/tokens are *not* the constraint — **request count (20/day) is**. Optimise for fewer requests
+  (chunking N patients/call), not fewer tokens. A 10-patient chunk ≈ 4.9K tokens, well within TPM,
+  output ~4K < the ~8K default cap → **10×5 = 5 requests** fits the daily cap.
+- The system prompt is **context-cached** (~90 tokens cached/call) — keeping it stable across calls
+  preserves the cache hit.
+- **Local Ollama**: `response.usage` still populates (litellm normalises it), but `cost_usd` is
+  `None`/0 (no billing) — so cost EDA only applies to the Gemini path.

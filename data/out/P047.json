@@ -1,0 +1,57 @@
+{
+  "patient_id": "P047",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 41
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "DEFERRED",
+  "comorbid_conditions": [
+    "HYPOTHYROIDISM",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed 5 months ago after years of misdiagnosis (IBS, stress, hormones). Found in small intestine. Treatments: prednisone (30lb weight gain, self-esteem issues), mesalamine. Now trying methotrexate (hair loss, constant nausea, 30% symptom improvement). Doctor advises more time. Concerns about marriage, job. Hiding symptoms at work, fear of review. Teenagers are unaware of severity."
+}

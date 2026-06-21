@@ -1,0 +1,53 @@
+{
+  "patient_id": "P036",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 48
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "NSAIDs",
+      "treatment_class": "NSAID",
+      "outcome": "FAILED",
+      "reason_stopped": "Likely made Crohn's worse",
+      "before_biologic": true
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Insurance denied renewal",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed three years ago. Also has severe psoriasis and psoriatic arthritis. Initially treated with NSAIDs, which worsened Crohn's. Failed two biologics for psoriasis. Started Stelara for both, which helped 50%. Insurance denied renewal after a year, leading to flares. Now trying to regain baseline. Physical work is difficult. Company struggling. Wife considering early retirement. Finances strained. Diet is challenging. Depression setting in."
+}

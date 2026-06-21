@@ -1,0 +1,56 @@
+{
+  "patient_id": "P016",
+  "churn": true,
+  "demographics": {
+    "gender": "male",
+    "age": 44
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "made him aggressive",
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "acute_flare",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_cost_barrier",
+    "biologic_not_taken",
+    "alternative_therapy",
+    "unresolved"
+  ],
+  "evidence_notes": "Patient diagnosed two years ago. Struggling with physical job demands and frequent bathroom trips. Tried mesalamine, prednisone, and sulfasalazine with poor results. Hesitant to start biologics due to cost, insurance battles, and immunosuppression risks. Considering options but facing significant financial and work-related barriers."
+}

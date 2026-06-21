@@ -1,0 +1,66 @@
+{
+  "patient_id": "P041",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 35
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": null,
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ENDOMETRIOSIS",
+    "MIGRAINE"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient is 35, diagnosed at 28. Also deals with severe endometriosis and chronic migraines. Initially thought symptoms were stress/diet. Hospitalization led to diagnosis. Treatments included prednisone and mesalamine, causing career impact. Remicade worked for 4 years, then stopped. Endometriosis became severe, posing difficult treatment choices due to immunosuppression needs for Crohn's vs. surgery. Currently on Stelara for Crohn's (60% better). Endo pain is significant. Trying continuous birth control and pain meds, but opioids trigger Crohn's. Migraines increasing. Switched to a less demanding finance role for flexibility, but still faces stigma. Concerns about dating and genetics for children. Therapy is ongoing, but therapist notes complexity of multiple conditions. Constantly fighting insurance for prior authorizations. Considering clinical trials. Doctor recommended combination therapy (Stelara + methotrexate). Goals shifted from excellence to manageability."
+}

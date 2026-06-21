@@ -1,0 +1,91 @@
+{
+  "patient_id": "P029",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 38
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira, Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "HYPOTHYROIDISM",
+    "MIGRAINE"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "weight gain",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "SUCCESS",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": "hair loss",
+      "before_biologic": false
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "loss of effectiveness",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "biologic_switch",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient has had Crohn's for twelve years, along with thyroid disease and chronic migraines. She has navigated career pressures and relationship challenges due to her conditions. Her treatment journey includes multiple medications and biologics, with current partial success on Stelara. The narrative is complete."
+}

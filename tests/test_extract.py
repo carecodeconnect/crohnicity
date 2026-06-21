@@ -12,7 +12,7 @@ import pytest
 from dotenv import load_dotenv
 
 from extract import TESTS_OUT, extract, save
-from schema import PatientLabels
+from schema import BatchPredictions, PatientLabels
 
 load_dotenv()  # so a key in .env is available for the live test
 
@@ -54,6 +54,26 @@ def test_save_writes_json(tmp_path):
     path = save(labels, tmp_path)
     assert path.name == "P000.json"
     assert PatientLabels.model_validate_json(path.read_text()) == labels
+
+
+def test_batch_predictions_schema():
+    """Offline: BatchPredictions wraps a list of PatientLabels (the chunked-call response shape)."""
+    assert "predictions" in BatchPredictions.model_json_schema()["properties"]
+    batch = BatchPredictions.model_validate(
+        {
+            "predictions": [
+                {
+                    "patient_id": "P000",
+                    "biologic_prescribed": True,
+                    "biologic_taken": True,
+                    "biologic_not_mentioned": False,
+                    "treatment_outcome": "SUCCESS",
+                }
+            ]
+        }
+    )
+    assert len(batch.predictions) == 1
+    assert batch.predictions[0].patient_id == "P000"
 
 
 def test_extract_end_to_end():

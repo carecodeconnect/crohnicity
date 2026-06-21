@@ -1,66 +1,58 @@
 {
-  "patient_id": "P003",
+  "patient_id": "P008",
   "churn": false,
   "demographics": {
-    "gender": "female",
-    "age": 28
+    "gender": "male",
+    "age": 29
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Stelara",
+  "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
-    "ANXIETY_DISORDER",
-    "PCOS",
-    "OTHER"
+    "ADHD",
+    "ANXIETY_DISORDER"
   ],
   "treatment_records": [
     {
-      "name": "sulfasalazine",
-      "treatment_class": "5-ASA",
-      "outcome": "FAILED",
-      "reason_stopped": "Nothing really worked well.",
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Made ADHD medication less effective, couldn't focus on finals.",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
-      "outcome": "FAILED",
-      "reason_stopped": "Nothing really worked well.",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Wasn't enough.",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Weekly injections made me nauseous. Pills better tolerated, but wasn't enough.",
       "before_biologic": true
     },
     {
       "name": "6-MP",
       "treatment_class": "Immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "Nothing really worked well.",
-      "before_biologic": true
-    },
-    {
-      "name": "methotrexate",
-      "treatment_class": "Immunomodulator",
-      "outcome": "FAILED",
-      "reason_stopped": "Nothing really worked well.",
+      "reason_stopped": "Developed pancreatitis.",
       "before_biologic": true
     },
     {
       "name": "Remicade",
       "treatment_class": "Biologic",
       "outcome": "FAILED",
-      "reason_stopped": "Developed antibodies after three years.",
-      "before_biologic": false
-    },
-    {
-      "name": "Humira",
-      "treatment_class": "Biologic",
-      "outcome": "FAILED",
       "reason_stopped": "Lost effectiveness after two years.",
       "before_biologic": false
     },
     {
-      "name": "Stelara",
+      "name": "Humira",
       "treatment_class": "Biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
@@ -70,19 +62,19 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
+    "misdiagnosis",
     "complication",
-    "surgery",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "conventional_therapy",
+    "adverse_reaction",
     "therapy_failed",
     "biologic_recommended",
-    "patient_fear",
-    "insurance_denial",
-    "insurance_appeal",
-    "insurance_approval",
+    "insurance_step_therapy",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch"
   ],
-  "evidence_notes": "Patient has a history of multiple biologics (Remicade, Humira) before Stelara. Experienced injection anxiety and insurance battles with each switch."
+  "evidence_notes": "Patient has a history of obstructions and job loss due to Crohn's. Switched from Remicade to Humira for convenience. Experiencing decreased effectiveness of Humira."
 }

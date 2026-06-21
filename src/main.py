@@ -1,11 +1,13 @@
-"""Pipeline coordinator: loop the single-call extract.extract() over interviews.json.
+"""Pipeline coordinator: chunked extraction over interviews.json via the fire CLI.
 
-Thin orchestration — schema.py defines the shapes, extract.py makes one LLM call + persists it,
-and this module loads the inputs and runs extract over each patient. CLI via python-fire:
+schema.py defines the shapes, extract.py makes the LLM call + persists each prediction; this module
+slices the inputs and batches them. By default it runs **all 50 in chunks of 10 (5 calls)** — sized
+to the free-tier 20-requests/day cap. Flags tune the slice/model for incremental or test runs:
 
-    uv run python src/main.py --limit=3
-    uv run python src/main.py --model=gemini/gemini-2.5-flash
-    uv run python src/main.py --model=ollama_chat/gemma4   # local; needs `ollama serve`
+    uv run python src/main.py                                          # all 50, chunks of 10 (5 calls)
+    uv run python src/main.py --limit=10                              # run 1 only: P001-P010
+    uv run python src/main.py --limit=10 --offset=10                  # run 2: P011-P020 (no re-run)
+    uv run python src/main.py --model=ollama_chat/qwen3:30b-a3b --limit=1 --out-dir=data/out/tests
 """
 
 import json
@@ -15,7 +17,7 @@ from pathlib import Path
 import fire
 import litellm
 
-from extract import HANDLED, MODEL, OUT_DIR, ROOT, extract
+from extract import HANDLED, MODEL, OUT_DIR, ROOT, extract_batch
 from schema import Interview, PatientLabels
 
 IN_PATH = ROOT / "data" / "in" / "interviews.json"  # committed input transcripts
@@ -27,20 +29,35 @@ def load_interviews(path: Path = IN_PATH) -> list[Interview]:
     return [Interview.model_validate(r) for r in json.loads(path.read_text())]
 
 
-def run(
-    records: list[Interview], model: str = MODEL, out_dir: Path = OUT_DIR
+def run_chunked(
+    records: list[Interview], model: str, out_dir: Path, chunk_size: int
 ) -> list[PatientLabels]:
-    """Run extract() over each interview with `model` -> list[PatientLabels] (each persisted)."""
-    return [
-        extract(r.interview_transcript, r.patient_id, out_dir, model) for r in records
-    ]
+    """Run extract_batch over chunks of `chunk_size` — fewer Gemini requests for the daily cap."""
+    out: list[PatientLabels] = []
+    for i in range(0, len(records), chunk_size):
+        out += extract_batch(records[i : i + chunk_size], out_dir, model)
+    return out
 
 
-def main(model: str = MODEL, limit: int | None = None) -> str:
-    """CLI (fire): extract the first `limit` interviews (or all) with `model`."""
-    records = load_interviews()[:limit]
+def main(
+    model: str = MODEL,
+    limit: int | None = None,
+    offset: int = 0,
+    chunk_size: int = 10,
+    out_dir: str = str(OUT_DIR),
+) -> str:
+    """CLI (fire): extract interviews `[offset : offset+limit]` with `model`, `chunk_size`
+    transcripts per call, into `out_dir`.
+
+    **Default (bare command): all 50 transcripts in chunks of 10 → 5 API calls.** Sized to the
+    Google AI (Gemini) **free tier's ~20 requests/day** cap, which we take as a fixed constraint:
+    50 one-at-a-time calls would blow it, so we batch. `--limit`/`--offset` run a slice
+    incrementally (e.g. one chunk per day, or to retry a failed chunk) without redoing earlier ones.
+    """
+    end = offset + limit if limit is not None else None
+    records = load_interviews()[offset:end]
     try:
-        results = run(records, model=model)
+        results = run_chunked(records, model, Path(out_dir), chunk_size)
     except HANDLED as e:
         if isinstance(e, litellm.RateLimitError):
             sys.exit(f"Rate limit / quota hit for '{model}' — see {RATE_LIMIT_DOCS}")
@@ -49,7 +66,8 @@ def main(model: str = MODEL, limit: int | None = None) -> str:
         if isinstance(e, litellm.JSONSchemaValidationError):
             sys.exit(f"'{model}' didn't match the schema — try a more capable model.")
         sys.exit(f"'{model}' failed: {type(e).__name__} — see logs/.")
-    return f"extracted {len(results)}/{len(records)} -> {OUT_DIR}"
+    span = f"{records[0].patient_id}..{records[-1].patient_id}" if records else "—"
+    return f"extracted {len(results)}/{len(records)} ({span}) -> {out_dir}"
 
 
 if __name__ == "__main__":

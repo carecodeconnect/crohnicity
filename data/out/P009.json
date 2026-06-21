@@ -1,0 +1,70 @@
+{
+  "patient_id": "P009",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 36
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Entyvio",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "ASTHMA",
+    "RHEUMATOID_ARTHRITIS"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Minimal improvement.",
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Mood swings were horrible. Not sustainable.",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "Liver enzymes spiked. Had to stop.",
+      "before_biologic": true
+    },
+    {
+      "name": "Entyvio",
+      "treatment_class": "Biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunomodulator",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "complication",
+    "therapy_failed",
+    "biologic_recommended",
+    "patient_fear",
+    "alternative_therapy",
+    "biologic_taken",
+    "adverse_reaction",
+    "loss_of_response",
+    "biologic_switch"
+  ],
+  "evidence_notes": "Patient resisted biologics due to needle phobia, tried alternative therapies. Now on Entyvio and methotrexate for RA. Experiencing fatigue and considering career change."
+}

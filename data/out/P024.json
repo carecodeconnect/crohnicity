@@ -1,0 +1,58 @@
+{
+  "patient_id": "P024",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 40
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "SLEEP_APNEA"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "blood sugar issues",
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_step_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient recently diagnosed with severe Crohn's. He is experiencing significant symptoms impacting his work and family life. He is currently trying sulfasalazine while appealing for biologic approval due to insurance requirements. The narrative focuses on his current struggles and urgent need for effective treatment."
+}

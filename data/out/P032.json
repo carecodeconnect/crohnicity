@@ -1,0 +1,60 @@
+{
+  "patient_id": "P032",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 54
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "HYPERTENSION",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing",
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "Worsened diabetes and cardiac issues",
+      "before_biologic": true
+    },
+    {
+      "name": "Sulfasalazine",
+      "treatment_class": "5-ASA/SULFAPYRIDINE",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Terrible headaches",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "primary_care_contact",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_step_therapy",
+    "planning_next_step",
+    "unresolved"
+  ],
+  "evidence_notes": "Diagnosed with Crohn's last year, late onset. Also has diabetes, heart disease, arthritis. Started on mesalamine, then prednisone (which worsened diabetes/cardiac issues), now sulfasalazine. Experiencing severe GI symptoms (15 bathroom trips/day), impacting ability to work. GI doctor wants biologics, but insurance denies due to not failing enough treatments. Considering selling home. Wife is primary support."
+}

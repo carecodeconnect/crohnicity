@@ -1,7 +1,6 @@
 {
   "patient_id": "P000",
   "churn": false,
-  "incomplete_journey": false,
   "demographics": {
     "gender": "male",
     "age": 38
@@ -11,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [],
   "treatment_records": [
     {
@@ -44,7 +43,8 @@
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "biologic_taken"
+    "biologic_taken",
+    "remission"
   ],
   "evidence_notes": null
 }

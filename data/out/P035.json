@@ -1,0 +1,78 @@
+{
+  "patient_id": "P035",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 30
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Entyvio",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Missed school",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Developed liver issues",
+      "before_biologic": false
+    },
+    {
+      "name": "Ursodiol",
+      "treatment_class": "Bile Acid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Entyvio",
+      "treatment_class": "Biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "Not working perfectly",
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "planning_next_step",
+    "unresolved"
+  ],
+  "evidence_notes": "Diagnosed at 16. Also has PSC and autoimmune hepatitis. Started on Remicade at 17, which worked for years. Developed liver issues at 22, stopped meds, got worse. Now on Entyvio for Crohn's (liver-safe) and immunosuppressants for autoimmune hepatitis. Neither works perfectly. Fatigue is unbearable. Boyfriend left. Potential need for liver transplant. Works part-time. Facing medical bankruptcy. Looking into clinical trials."
+}

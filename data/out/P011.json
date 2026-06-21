@@ -1,0 +1,79 @@
+{
+  "patient_id": "P011",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 26
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "PCOS",
+    "ANXIETY_DISORDER"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "tapered off",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "major flare after six months",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": "worked okay for a while",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "anti-tnf",
+      "outcome": "PARTIAL",
+      "reason_stopped": "developed antibodies after 18 months",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "anti-tnf",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "primary_care_contact",
+    "misdiagnosis",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "acute_flare",
+    "complication",
+    "surgery",
+    "biologic_recommended",
+    "insurance_step_therapy",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step",
+    "unresolved"
+  ],
+  "evidence_notes": "Patient experiencing significant lifestyle impacts due to Crohn's, including dating and career. Multiple treatments tried, currently on Humira after Remicade failed due to antibodies. Managing with therapy and support groups. Concerned about future fertility."
+}

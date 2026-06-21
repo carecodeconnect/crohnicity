@@ -1,0 +1,68 @@
+{
+  "patient_id": "P043",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 44
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": null,
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "HYPOTHYROIDISM",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "surgery",
+      "treatment_class": "surgery",
+      "outcome": "PARTIAL",
+      "reason_stopped": "disease returned",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "developed antibodies",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "crohns_diagnosis",
+    "surgery",
+    "adverse_reaction",
+    "relapse",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed 12 years ago. Also has Hashimoto's thyroiditis and spinal osteoarthritis. Disease returned after first surgery (resection). Remicade worked well for 5 years, then antibodies developed. Humira provided moderate help (60%), added methotrexate improved to 75%. Thyroid issues arose, causing fatigue. Spine issues started 2 years ago. Marriage strained due to caregiver role. Daughter (8) is worried. Work as marketing director is high stress. Husband's job lacks benefits, creating financial trap. Considering Stelara. Concerned about transition period and time off work. Parents are aging and ill. Costs exceed $20k annually beyond insurance, leading to credit card debt. Support group disbanded. Online groups lack in-person connection. Discussing further surgery (resection or strictureplasty). Quality of life is a major concern."
+}

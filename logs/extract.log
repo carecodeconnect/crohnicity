@@ -1011,3 +1011,3202 @@ Access raw response with `e.raw_response`
 2026-06-21 08:09:24.829 | INFO     | extract:extract:94 - extracted P002 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P002.json
 2026-06-21 08:09:29.087 | INFO     | extract:extract:94 - extracted P003 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P003.json
 2026-06-21 09:10:32.738 | INFO     | extract:extract:86 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-21 09:31:40.753 | INFO     | extract:extract:85 - P000 input: patient_id: P000
+
+I'm Alex, 38, male. Diagnosed with Crohn's four years ago. After mesalamine and prednisone failed, my gastroenterologist started me on Humira, which I've taken ever since and it keeps me in remission.
+2026-06-21 09:31:40.753 | INFO     | extract:extract:86 - P000 output: {"patient_id":"P000","churn":false,"demographics":{"gender":"male","age":38},"biologic_prescribed":true,"biologic_taken":true,"biologic_not_mentioned":false,"biologic_type":"Humira","reasons_for_biologic_prescribed":"DOCTOR_CHOICE","reasons_for_biologic_not_taken":null,"comorbid_conditions":[],"treatment_records":[{"name":"mesalamine","treatment_class":"conventional","outcome":"FAILED","reason_stopped":null,"before_biologic":true},{"name":"prednisone","treatment_class":"conventional","outcome":"FAILED","reason_stopped":null,"before_biologic":true},{"name":"Humira","treatment_class":"biologic","outcome":"SUCCESS","reason_stopped":null,"before_biologic":false}],"treatment_outcome":"SUCCESS","referral_pathway":["symptom_onset","diagnostic_testing","crohns_diagnosis","conventional_therapy","therapy_failed","biologic_recommended","biologic_taken","remission"],"evidence_notes":null}
+2026-06-21 09:31:40.754 | INFO     | extract:extract:87 - extracted P000 -> /Users/shoutt/projects/mama_health/chronicity/data/out/tests/P000.json
+2026-06-21 09:41:13.725 | INFO     | extract:_log_request_config:67 - system prompt sent to model:
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences.
+
+Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
+
+churn: set true when the interview looks truncated or the patient disengaged before their story resolved — the narrative is cut off mid-journey, trails off, is very short or vague, or ends with no clear outcome. Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
+
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values.
+2026-06-21 09:41:13.726 | INFO     | extract:_log_request_config:68 - response schema sent to model: {"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. `before_biologic` marks treatments tried before a\nbiologic was started or considered \u2014 the before/after split that answers business Q3 (what is\ntried before a biologic). Set by the model, not inferred downstream, because the biologic may\nnot appear as a treatment at all (e.g. prescribed-but-not-taken).", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}, "before_biologic": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Before Biologic"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}
+2026-06-21 10:03:47.364 | INFO     | extract:_log_request_config:65 - system prompt sent to model:
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences.
+
+Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
+
+churn: set true when the interview looks truncated or the patient disengaged before their story resolved — the narrative is cut off mid-journey, trails off, is very short or vague, or ends with no clear outcome. Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
+
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values.
+2026-06-21 10:03:47.364 | INFO     | extract:_log_request_config:66 - response schema sent to model: {"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. `before_biologic` marks treatments tried before a\nbiologic was started or considered \u2014 the before/after split that answers business Q3 (what is\ntried before a biologic). Set by the model, not inferred downstream, because the biologic may\nnot appear as a treatment at all (e.g. prescribed-but-not-taken).", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}, "before_biologic": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Before Biologic"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}
+2026-06-21 10:03:47.364 | INFO     | extract:extract:79 - P001 input: patient_id: P001
+
+I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eight years now. It all started when I was 26, working as a marketing manager in Chicago. The first symptoms were these terrible stomach cramps that would hit me out of nowhere, usually after meals. I thought it was just stress from work, you know how it is in that industry. My primary care doctor, Dr. Martinez, initially diagnosed me with IBS and told me to manage my stress better, eat more fiber. But the symptoms kept getting worse. I was losing weight rapidly, dropped about 20 pounds in two months, and the diarrhea was becoming unmanageable. I remember having to map out bathrooms everywhere I went. Finally, after about six months of this nightmare, Dr. Martinez referred me to a gastroenterologist, Dr. Rebecca Chen. The wait for the appointment was another two months. Dr. Chen ordered a colonoscopy right away, along with blood work and imaging. The colonoscopy showed significant inflammation in my ileum and parts of my colon, classic Crohn's presentation she said. We started with mesalamine, 4 grams daily. I was hopeful, but after three months, there wasn't much improvement. Then we tried azathioprine, which actually made me feel worse. I developed severe nausea and my liver enzymes went up. That's when Dr. Chen brought up biologics. She explained that Humira or Remicade could be game-changers for someone with moderate to severe Crohn's like mine. I was terrified of the injections and the potential side effects - increased infection risk, possible lymphoma. Plus, my insurance initially denied coverage. It took three appeals and four months of back and forth before they approved it. I've been on Humira for five years now, self-injecting every two weeks. The first few months were rough, lots of injection site reactions, but now it's just part of my routine. My Crohn's is mostly in remission, though I still have the occasional flare, especially when I'm stressed. I also developed psoriasis about two years ago, which my rheumatologist says might be related to the Humira, but the benefits outweigh the risks for me. I take vitamin D and B12 supplements because of absorption issues, and I see Dr. Chen every three months for monitoring. The annual cost without insurance would be about $70,000, which is insane. Thank god my employer has good coverage now. Looking back, I wish I had pushed harder for a specialist referral earlier. Those first six months of suffering were unnecessary.
+2026-06-21 10:08:25.830 | ERROR    | extract:extract:98 - JSONSchemaValidationError for P001 — gave up after retries
+2026-06-21 10:08:25.831 | INFO     | extract:extract:79 - P002 input: patient_id: P002
+
+My name's Michael, I'm 42, male, and my Crohn's story is complicated by my type 2 diabetes, which I've had for ten years. The digestive issues started about three years ago. At first, my endocrinologist thought it was diabetic gastroparesis because I was having trouble controlling my blood sugar and experiencing nausea after meals. We adjusted my metformin dose, tried different timing with meals, but nothing helped. The abdominal pain got progressively worse, and I started having bloody diarrhea, which finally triggered a GI referral. The gastroenterologist, Dr. Patel, was thorough. Colonoscopy, endoscopy, CT enterography, the works. Diagnosed with Crohn's affecting my terminal ileum and ascending colon. Started on prednisone for immediate relief, which wreaked havoc on my blood sugar control. Had to significantly increase my insulin. Then tried mesalamine, no improvement. Moved to methotrexate, but my liver wasn't happy, probably because of my diabetes medications. Dr. Patel wanted to start me on a biologic, specifically Stelara, but my insurance classified it as tier 4, meaning I'd have to pay $800 per month even with coverage. I'm a high school teacher, that's not feasible. We're currently trying to get financial assistance from the drug company. Meanwhile, I'm on budesonide, which helps somewhat but isn't a long-term solution. The diet restrictions are killing me - between managing diabetes and Crohn's, I feel like I can't eat anything. My wife has been amazing through all this, but I can see it's wearing on her too. I've also developed anemia from the chronic bleeding, so I'm on iron supplements, which ironically cause more GI upset. Sometimes I wonder if the cure is worse than the disease. Dr. Patel keeps pushing for the biologic, saying it could change my life, but the financial burden terrifies me. We're already paying off medical debt from my diabetes complications two years ago when I had a minor stroke. I'm seeing him again next month to discuss options. Maybe by then, the financial assistance will come through. I'm also dealing with arthritis now, which Dr. Patel says is related to the Crohn's. It's in my knees and lower back, makes teaching all day really challenging. Taking way too much sick leave, worried about my job security.
+2026-06-21 10:14:09.947 | ERROR    | extract:extract:98 - JSONSchemaValidationError for P002 — gave up after retries
+2026-06-21 10:14:09.949 | INFO     | extract:extract:79 - P003 input: patient_id: P003
+
+I'm Emma, 28 years old, diagnosed with Crohn's at 16. Female, also have anxiety disorder and PCOS. My journey has been long. Started in high school with what my parents thought was just teenage stomach issues. Saw multiple doctors over two years before getting diagnosed. By then, I had developed a fistula that required surgery. Been through the medication rollercoaster - started with sulfasalazine, then mesalamine, then 6-MP, then methotrexate. Nothing really worked well. Finally started Remicade infusions at 19. Life-changing at first, but after three years, developed antibodies and it stopped working. Switched to Humira, worked for about two years, then lost effectiveness. Currently on Stelara every 8 weeks. The injection anxiety never goes away, even after all these years. Each biologic switch required insurance pre-authorization battles that took months. The fatigue is what gets me most. People don't understand that Crohn's isn't just bathroom issues. It's joint pain, skin problems, extreme exhaustion. I had to drop out of college twice. Finally finished my degree online at 26. Dating has been challenging - when do you tell someone you have a chronic illness? How do you explain canceling dates because of flares? Found a supportive partner last year who comes to my infusions with me. Financially, it's been devastating. Even with insurance, my out-of-pocket costs are about $6,000 annually. I live with my parents because I can't afford rent and medical expenses. Want to have kids someday but terrified about pregnancy with Crohn's and going off medications. My GI doctor says many women do fine, but the risk scares me. Also developed osteopenia from years of steroid use. Taking calcium and doing weight-bearing exercises. The mental health aspect is huge - the anxiety about finding bathrooms, the depression from chronic pain. See a therapist regularly, which is another expense. Tried every diet - SCD, low FODMAP, paleo. Nothing makes a dramatic difference. Stress is my biggest trigger. Lost three jobs due to excessive sick days before finding remote work. That's been a game-changer for managing symptoms.
+2026-06-21 10:17:26.433 | INFO     | extract:_log_request_config:65 - system prompt sent to model:
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences.
+
+Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
+
+churn: set true when the interview looks truncated or the patient disengaged before their story resolved — the narrative is cut off mid-journey, trails off, is very short or vague, or ends with no clear outcome. Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
+
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values.
+2026-06-21 10:17:26.433 | INFO     | extract:_log_request_config:66 - response schema sent to model: {"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. `before_biologic` marks treatments tried before a\nbiologic was started or considered \u2014 the before/after split that answers business Q3 (what is\ntried before a biologic). Set by the model, not inferred downstream, because the biologic may\nnot appear as a treatment at all (e.g. prescribed-but-not-taken).", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}, "before_biologic": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Before Biologic"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}
+2026-06-21 10:17:26.433 | INFO     | extract:extract:79 - P001 input: patient_id: P001
+
+I'm Sarah, 34 years old, and I've been dealing with Crohn's for about eight years now. It all started when I was 26, working as a marketing manager in Chicago. The first symptoms were these terrible stomach cramps that would hit me out of nowhere, usually after meals. I thought it was just stress from work, you know how it is in that industry. My primary care doctor, Dr. Martinez, initially diagnosed me with IBS and told me to manage my stress better, eat more fiber. But the symptoms kept getting worse. I was losing weight rapidly, dropped about 20 pounds in two months, and the diarrhea was becoming unmanageable. I remember having to map out bathrooms everywhere I went. Finally, after about six months of this nightmare, Dr. Martinez referred me to a gastroenterologist, Dr. Rebecca Chen. The wait for the appointment was another two months. Dr. Chen ordered a colonoscopy right away, along with blood work and imaging. The colonoscopy showed significant inflammation in my ileum and parts of my colon, classic Crohn's presentation she said. We started with mesalamine, 4 grams daily. I was hopeful, but after three months, there wasn't much improvement. Then we tried azathioprine, which actually made me feel worse. I developed severe nausea and my liver enzymes went up. That's when Dr. Chen brought up biologics. She explained that Humira or Remicade could be game-changers for someone with moderate to severe Crohn's like mine. I was terrified of the injections and the potential side effects - increased infection risk, possible lymphoma. Plus, my insurance initially denied coverage. It took three appeals and four months of back and forth before they approved it. I've been on Humira for five years now, self-injecting every two weeks. The first few months were rough, lots of injection site reactions, but now it's just part of my routine. My Crohn's is mostly in remission, though I still have the occasional flare, especially when I'm stressed. I also developed psoriasis about two years ago, which my rheumatologist says might be related to the Humira, but the benefits outweigh the risks for me. I take vitamin D and B12 supplements because of absorption issues, and I see Dr. Chen every three months for monitoring. The annual cost without insurance would be about $70,000, which is insane. Thank god my employer has good coverage now. Looking back, I wish I had pushed harder for a specialist referral earlier. Those first six months of suffering were unnecessary.
+2026-06-21 10:19:17.333 | ERROR    | extract:extract:98 - JSONSchemaValidationError for P003 — gave up after retries
+2026-06-21 10:22:07.784 | ERROR    | extract:extract:98 - JSONSchemaValidationError for P001 — gave up after retries
+2026-06-21 10:25:20.976 | INFO     | extract:_log_request_config:65 - system prompt sent to model:
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences.
+
+Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
+
+churn: set true when the interview looks truncated or the patient disengaged before their story resolved — the narrative is cut off mid-journey, trails off, is very short or vague, or ends with no clear outcome. Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
+
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values.
+2026-06-21 10:25:20.977 | INFO     | extract:_log_request_config:66 - response schema sent to model: {"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. `before_biologic` marks treatments tried before a\nbiologic was started or considered \u2014 the before/after split that answers business Q3 (what is\ntried before a biologic). Set by the model, not inferred downstream, because the biologic may\nnot appear as a treatment at all (e.g. prescribed-but-not-taken).", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}, "before_biologic": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Before Biologic"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}
+2026-06-21 10:25:20.977 | INFO     | extract:extract:79 - P000 input: patient_id: P000
+
+I'm Alex, 38, male. Diagnosed with Crohn's four years ago. After mesalamine and prednisone failed, my gastroenterologist started me on Humira, which keeps me in remission.
+2026-06-21 10:27:58.988 | ERROR    | extract:extract:98 - JSONSchemaValidationError for P000 — gave up after retries
+2026-06-21 10:34:45.365 | INFO     | extract:_log_request_config:65 - system prompt sent to model:
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences.
+
+Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
+
+churn: set true when the interview looks truncated or the patient disengaged before their story resolved — the narrative is cut off mid-journey, trails off, is very short or vague, or ends with no clear outcome. Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+treatment_records: for each entry, set before_biologic true if the treatment was tried before the patient started or was offered a biologic, and false otherwise.
+
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values.
+2026-06-21 10:34:45.366 | INFO     | extract:_log_request_config:66 - response schema sent to model: {"$defs": {"ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n`NOT_APPLICABLE` distinguishes \"doesn't apply\" (biologic was taken) from a blank \"not yet\nannotated\" cell.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "JOURNEY_CUT_OFF", "UNKNOWN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Why a biologic *was* the chosen path.", "enum": ["DOCTOR_CHOICE", "PATIENT_FEARS", "COST", "ACCESS", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. `before_biologic` marks treatments tried before a\nbiologic was started or considered \u2014 the before/after split that answers business Q3 (what is\ntried before a biologic). Set by the model, not inferred downstream, because the biologic may\nnot appear as a treatment at all (e.g. prescribed-but-not-taken).", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}, "before_biologic": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Before Biologic"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`\nsplit, see `src/splits.py`).\n\nField names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"anyOf": [{"$ref": "#/$defs/ReasonNotTaken"}, {"type": "null"}], "default": null}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}
+2026-06-21 10:34:45.366 | INFO     | extract:extract:79 - P000 input: patient_id: P000
+
+I'm Alex, 38, male. Diagnosed with Crohn's four years ago. After mesalamine and prednisone failed, my gastroenterologist started me on Humira, which keeps me in remission.
+2026-06-21 10:37:25.832 | ERROR    | extract:extract:98 - JSONSchemaValidationError for P000 — gave up after retries
+2026-06-21 10:49:48.773 | INFO     | extract:extract_batch:150 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-21 10:50:11.710 | INFO     | extract:extract_batch:173 - batch telemetry: patients=10 total_tokens=11570 cost_usd=0.0029815999999999996
+2026-06-21 10:50:11.710 | INFO     | extract:extract_batch:180 - batch raw response: {
+  "predictions": [
+    {
+      "patient_id": "P001",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": ["OTHER"],
+      "demographics": {
+        "age": 34,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient reports psoriasis as a potential side effect of Humira, diagnosed by her rheumatologist.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "primary_care_contact",
+        "misdiagnosis",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "loss_of_response"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Not much improvement"
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Made me feel worse. Severe nausea, elevated liver enzymes."
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P002",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": ["TYPE_2_DIABETES"],
+      "demographics": {
+        "age": 42,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient is concerned about the cost of Stelara and is trying to get financial assistance. He is currently on budesonide. His diabetes complicates his treatment.",
+      "reasons_for_biologic_not_taken": "COST",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "comorbidity",
+        "misdiagnosis",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "insurance_cost_barrier"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Wreaked havoc on blood sugar control, significantly increased insulin."
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "No improvement."
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Liver wasn't happy, likely due to diabetes medications."
+        },
+        {
+          "name": "budesonide",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P003",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": ["ANXIETY_DISORDER", "PCOS", "OTHER"],
+      "demographics": {
+        "age": 28,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient has a history of multiple biologics (Remicade, Humira) before Stelara. Experienced injection anxiety and insurance battles with each switch.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "complication",
+        "surgery",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "patient_fear",
+        "insurance_denial",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "loss_of_response",
+        "biologic_switch"
+      ],
+      "treatment_records": [
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Nothing really worked well."
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Nothing really worked well."
+        },
+        {
+          "name": "6-MP",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Nothing really worked well."
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Nothing really worked well."
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "FAILED",
+          "before_biologic": false,
+          "reason_stopped": "Developed antibodies after three years."
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "FAILED",
+          "before_biologic": false,
+          "reason_stopped": "Lost effectiveness after two years."
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P004",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Entyvio",
+      "churn": false,
+      "comorbid_conditions": ["HYPERTENSION", "HYPERLIPIDEMIA"],
+      "demographics": {
+        "age": 55,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient has catastrophic insurance coverage and cannot afford the biologic medication. Exploring clinical trials.",
+      "reasons_for_biologic_not_taken": "COST",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "self_managed",
+        "symptoms_worsen",
+        "complication",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "insurance_cost_barrier",
+        "alternative_therapy"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Not a long-term solution."
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Minimal improvement."
+        },
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Terrible headaches."
+        },
+        {
+          "name": "budesonide",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P005",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": ["ENDOMETRIOSIS", "MIGRAINE", "OTHER"],
+      "demographics": {
+        "age": 31,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient switched from Remicade to Humira for convenience. Experiences injection anxiety and frequent URIs. Psoriasis mentioned as possible side effect.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "insurance_approval",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Symptoms returned within months."
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Symptoms returned within months."
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Developed pancreatitis, spent a week in the hospital."
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "Infusion center was an hour away, difficult to take time off work."
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P006",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": ["DEPRESSION", "SLEEP_APNEA", "OTHER"],
+      "demographics": {
+        "age": 38,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient has a history of surgery due to strictures and lung problems from methotrexate. Has failed multiple biologics (Humira, Remicade) before Stelara.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "complication",
+        "surgery",
+        "conventional_therapy",
+        "adverse_reaction",
+        "therapy_failed",
+        "biologic_recommended",
+        "insurance_approval",
+        "biologic_taken",
+        "loss_of_response",
+        "biologic_switch"
+      ],
+      "treatment_records": [
+        {
+          "name": "methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Developed lung problems."
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "FAILED",
+          "before_biologic": false,
+          "reason_stopped": "Stopped working after three years."
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "FAILED",
+          "before_biologic": false,
+          "reason_stopped": "Developed antibodies within six months."
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P007",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Entyvio",
+      "churn": false,
+      "comorbid_conditions": ["HYPOTHYROIDISM", "FIBROMYALGIA"],
+      "demographics": {
+        "age": 45,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient has a history of extensive small bowel disease and was started on Entyvio due to better insurance coverage. Has breakthrough symptoms and is considering adding an immunomodulator.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "adverse_reaction",
+        "biologic_recommended",
+        "insurance_approval",
+        "biologic_taken",
+        "breakthrough_symptoms",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Mood swings, insomnia, moon face. Tapered off after three months."
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Alone wasn't holding things."
+        },
+        {
+          "name": "Entyvio",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P008",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": ["ADHD", "ANXIETY_DISORDER"],
+      "demographics": {
+        "age": 29,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient has a history of obstructions and job loss due to Crohn's. Switched from Remicade to Humira for convenience. Experiencing decreased effectiveness of Humira.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "complication",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "adverse_reaction",
+        "therapy_failed",
+        "biologic_recommended",
+        "insurance_step_therapy",
+        "biologic_taken",
+        "loss_of_response",
+        "biologic_switch"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Made ADHD medication less effective, couldn't focus on finals."
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Wasn't enough."
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Weekly injections made me nauseous. Pills better tolerated, but wasn't enough."
+        },
+        {
+          "name": "6-MP",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Developed pancreatitis."
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "FAILED",
+          "before_biologic": false,
+          "reason_stopped": "Lost effectiveness after two years."
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P009",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Entyvio",
+      "churn": false,
+      "comorbid_conditions": ["ASTHMA", "RHEUMATOID_ARTHRITIS"],
+      "demographics": {
+        "age": 36,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient resisted biologics due to needle phobia, tried alternative therapies. Now on Entyvio and methotrexate for RA. Experiencing fatigue and considering career change.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "complication",
+        "therapy_failed",
+        "biologic_recommended",
+        "patient_fear",
+        "alternative_therapy",
+        "biologic_taken",
+        "adverse_reaction",
+        "loss_of_response",
+        "biologic_switch"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Minimal improvement."
+        },
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Mood swings were horrible. Not sustainable."
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Liver enzymes spiked. Had to stop."
+        },
+        {
+          "name": "Entyvio",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P010",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": ["TYPE_2_DIABETES", "OTHER"],
+      "demographics": {
+        "age": 48,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient has Crohn's-related arthritis and manages type 2 diabetes. Switched from methotrexate to Humira. Concerned about insurance coverage and side effects like shingles.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "adverse_reaction",
+        "therapy_failed",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "biologic_switch"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Sent blood sugars through roof. Gained all weight back plus extra. Tapered after two months."
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Maintained remission for about a year, but then started having severe joint pain. Switched approach."
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Wasn't really helping."
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "Helped joints but Crohn's flared."
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    }
+  ]
+}
+2026-06-21 10:50:11.711 | INFO     | extract:extract_batch:183 - extracted P001 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P001.json
+2026-06-21 10:50:11.711 | INFO     | extract:extract_batch:183 - extracted P002 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P002.json
+2026-06-21 10:50:11.712 | INFO     | extract:extract_batch:183 - extracted P003 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P003.json
+2026-06-21 10:50:11.712 | INFO     | extract:extract_batch:183 - extracted P004 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P004.json
+2026-06-21 10:50:11.712 | INFO     | extract:extract_batch:183 - extracted P005 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P005.json
+2026-06-21 10:50:11.713 | INFO     | extract:extract_batch:183 - extracted P006 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P006.json
+2026-06-21 10:50:11.713 | INFO     | extract:extract_batch:183 - extracted P007 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P007.json
+2026-06-21 10:50:11.713 | INFO     | extract:extract_batch:183 - extracted P008 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P008.json
+2026-06-21 10:50:11.713 | INFO     | extract:extract_batch:183 - extracted P009 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P009.json
+2026-06-21 10:50:11.713 | INFO     | extract:extract_batch:183 - extracted P010 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P010.json
+2026-06-21 10:55:07.402 | INFO     | extract:extract_batch:150 - batch input (10 patients): ['P011', 'P012', 'P013', 'P014', 'P015', 'P016', 'P017', 'P018', 'P019', 'P020']
+2026-06-21 10:55:29.349 | INFO     | extract:extract_batch:173 - batch telemetry: patients=10 total_tokens=12611 cost_usd=0.0030730999999999996
+2026-06-21 10:55:29.349 | INFO     | extract:extract_batch:180 - batch raw response: {
+  "predictions": [
+    {
+      "patient_id": "P011",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "PCOS",
+        "ANXIETY_DISORDER"
+      ],
+      "demographics": {
+        "age": 26,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient experiencing significant lifestyle impacts due to Crohn's, including dating and career. Multiple treatments tried, currently on Humira after Remicade failed due to antibodies. Managing with therapy and support groups. Concerned about future fertility.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "primary_care_contact",
+        "misdiagnosis",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "acute_flare",
+        "complication",
+        "surgery",
+        "biologic_recommended",
+        "insurance_step_therapy",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "tapered off"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "major flare after six months"
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "worked okay for a while"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "anti-tnf",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "developed antibodies after 18 months"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "anti-tnf",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P012",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Entyvio",
+      "churn": false,
+      "comorbid_conditions": [
+        "HYPERTENSION"
+      ],
+      "demographics": {
+        "age": 52,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient was diagnosed late after decades of undiagnosed symptoms. Resisted biologics due to existing heart condition and medication burden. Finally started Entyvio after insurance battles. Experiencing slow but noticeable improvement, managing with diet and lifestyle changes.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "self_managed",
+        "primary_care_contact",
+        "symptoms_worsen",
+        "diagnostic_delay",
+        "acute_flare",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "patient_fear",
+        "insurance_denial",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "PARTIAL",
+          "before_biologic": true
+        },
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "cardiologist worried about heart"
+        },
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "terrible headaches"
+        },
+        {
+          "name": "Entyvio",
+          "treatment_class": "integrin-inhibitor",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P013",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "RHEUMATOID_ARTHRITIS",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 33,
+        "gender": "female"
+      },
+      "evidence_notes": "Patient has both Crohn's and Lupus, treated with multiple medications including biologics. Switched from Remicade to Humira for both conditions. Concerned about pregnancy risks and financial burden. Managing with support groups and therapy.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "alternative_therapy",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "PARTIAL",
+          "before_biologic": true
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "immunosuppressant",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "developed drug-induced hepatitis"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "anti-tnf",
+          "outcome": "SUCCESS",
+          "before_biologic": true,
+          "reason_stopped": "may have triggered lupus"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "anti-tnf",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        },
+        {
+          "name": "hydroxychloroquine",
+          "treatment_class": "antimalarial",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunomodulator",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P014",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "DEPRESSION"
+      ],
+      "demographics": {
+        "age": 41,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient has Crohn's, psoriasis, and psoriatic arthritis. Initially misdiagnosed with IBS. Tried methotrexate and sulfasalazine before Stelara, which treats both Crohn's and psoriasis. Struggling with fatigue, depression, financial costs, and physical demands of his job.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true
+        },
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "allergic reaction (hives)"
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "interleukin-inhibitor",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P015",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": [
+        "MIGRAINE",
+        "FIBROMYALGIA"
+      ],
+      "demographics": {
+        "age": 37,
+        "gender": "female"
+      },
+      "evidence_notes": "Single mother of two with Crohn's, migraines, and fibromyalgia. Progressed through multiple conventional therapies and biologics (Remicade, Humira) due to failures and pregnancy. Currently on Stelara with moderate success. Managing significant fatigue, financial strain, and social isolation. Considering combination therapy.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "relapse",
+        "acute_flare",
+        "comorbidity",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_appeal",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "horrible side effects"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "flaring again within three months"
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "immunosuppressant",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "severe joint pain"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "anti-tnf",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "stopped working during second pregnancy"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "anti-tnf",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "failed after three years"
+        },
+        {
+          "name": "Cimzia",
+          "treatment_class": "anti-tnf",
+          "outcome": "UNKNOWN",
+          "before_biologic": false,
+          "reason_stopped": "insurance denied it three times"
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "interleukin-inhibitor",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P016",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": null,
+      "churn": true,
+      "comorbid_conditions": [],
+      "demographics": {
+        "age": 44,
+        "gender": "male"
+      },
+      "evidence_notes": "Patient diagnosed two years ago. Struggling with physical job demands and frequent bathroom trips. Tried mesalamine, prednisone, and sulfasalazine with poor results. Hesitant to start biologics due to cost, insurance battles, and immunosuppression risks. Considering options but facing significant financial and work-related barriers.",
+      "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "self_managed",
+        "symptoms_worsen",
+        "acute_flare",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_cost_barrier",
+        "biologic_not_taken",
+        "alternative_therapy",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "PARTIAL",
+          "before_biologic": true
+        },
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "made him aggressive"
+        },
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true
+        }
+      ]
+    },
+    {
+      "patient_id": "P017",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "ADHD",
+        "ANXIETY_DISORDER"
+      ],
+      "demographics": {
+        "age": 29,
+        "gender": "female"
+      },
+      "evidence_notes": "Recently diagnosed, experiencing mild to moderate inflammation. Currently on mesalamine and azathioprine. Doctor hesitant to start biologics, patient is questioning this approach and considering advocating for them. Dealing with fatigue, anxiety, and parental skepticism. Job security and dating are concerns.",
+      "reasons_for_biologic_not_taken": "DEFERRED",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "comorbidity",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "biologic_recommended",
+        "patient_fear",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "PARTIAL",
+          "before_biologic": true
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "immunosuppressant",
+          "outcome": "ONGOING",
+          "before_biologic": true
+        }
+      ]
+    },
+    {
+      "patient_id": "P018",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "TYPE_2_DIABETES"
+      ],
+      "demographics": {
+        "age": 58,
+        "gender": "male"
+      },
+      "evidence_notes": "Newly diagnosed at 58 with Crohn's, type 2 diabetes, and history of heart attack. Prednisone worsened diabetes and concerned cardiologist. Mesalamine ineffective. Now on budesonide, but GI wants to try biologics. Hesitant due to multiple medications, cost, insurance complexities (Medicare), and risk of infection. Currently managing with diet and limited medication.",
+      "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "self_managed",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "comorbidity",
+        "biologic_recommended",
+        "insurance_cost_barrier",
+        "biologic_not_taken",
+        "alternative_therapy",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "blood sugars went crazy, cardiologist unhappy"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true
+        },
+        {
+          "name": "budesonide",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true
+        }
+      ]
+    },
+    {
+      "patient_id": "P019",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "ANXIETY_DISORDER"
+      ],
+      "demographics": {
+        "age": 24,
+        "gender": "female"
+      },
+      "evidence_notes": "Newly diagnosed while starting career. Started on Humira due to severity, skipping conventional steps. Anxiety prevents self-injection, relying on boyfriend. Worried about job security, social life, finances (co-pay, living at home). Processing grief and loss of health.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "specialist_referral",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "biologic_recommended",
+        "insurance_step_therapy",
+        "biologic_taken",
+        "patient_fear",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "Humira",
+          "treatment_class": "anti-tnf",
+          "outcome": "ONGOING",
+          "before_biologic": false
+        }
+      ]
+    },
+    {
+      "patient_id": "P020",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "ONGOING",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [],
+      "demographics": {
+        "age": 46,
+        "gender": "male"
+      },
+      "evidence_notes": "Diagnosed 7 years ago, works in construction. Progressed through prednisone, mesalamine, sulfasalazine, and methotrexate with significant side effects and limited success. Remicade failed due to loss of response. Currently on Humira, which is also losing effectiveness. Facing insurance battles for Stelara, financial strain, and social isolation.",
+      "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "self_managed",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_appeal",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "made him rage"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-asa",
+          "outcome": "PARTIAL",
+          "before_biologic": true
+        },
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-asa",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "killer headaches"
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "made him so nauseous he couldn't work"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "anti-tnf",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "effectiveness dropped, stopped working completely"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "anti-tnf",
+          "outcome": "ONGOING",
+          "before_biologic": false,
+          "reason_stopped": "starting to notice it's not working as well"
+        }
+      ]
+    }
+  ]
+}
+2026-06-21 10:55:29.350 | INFO     | extract:extract_batch:183 - extracted P011 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P011.json
+2026-06-21 10:55:29.350 | INFO     | extract:extract_batch:183 - extracted P012 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P012.json
+2026-06-21 10:55:29.351 | INFO     | extract:extract_batch:183 - extracted P013 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P013.json
+2026-06-21 10:55:29.351 | INFO     | extract:extract_batch:183 - extracted P014 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P014.json
+2026-06-21 10:55:29.351 | INFO     | extract:extract_batch:183 - extracted P015 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P015.json
+2026-06-21 10:55:29.352 | INFO     | extract:extract_batch:183 - extracted P016 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P016.json
+2026-06-21 10:55:29.352 | INFO     | extract:extract_batch:183 - extracted P017 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P017.json
+2026-06-21 10:55:29.352 | INFO     | extract:extract_batch:183 - extracted P018 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P018.json
+2026-06-21 10:55:29.352 | INFO     | extract:extract_batch:183 - extracted P019 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P019.json
+2026-06-21 10:55:29.352 | INFO     | extract:extract_batch:183 - extracted P020 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P020.json
+2026-06-21 11:02:19.152 | INFO     | extract:extract_batch:150 - batch input (10 patients): ['P021', 'P022', 'P023', 'P024', 'P025', 'P026', 'P027', 'P028', 'P029', 'P030']
+2026-06-21 11:02:39.182 | INFO     | extract:extract_batch:173 - batch telemetry: patients=10 total_tokens=12893 cost_usd=0.0030143
+2026-06-21 11:02:39.183 | INFO     | extract:extract_batch:180 - batch raw response: {"predictions": [
+  {
+    "patient_id": "P021",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Remicade, Humira, Stelara",
+    "churn": false,
+    "comorbid_conditions": ["ENDOMETRIOSIS", "FIBROMYALGIA"],
+    "demographics": {
+      "age": 31,
+      "gender": "Female"
+    },
+    "evidence_notes": "Patient has multiple chronic illnesses that impact her career and social life. She has tried multiple biologics with partial success and is facing financial and emotional challenges. The narrative is relatively complete, covering her diagnosis, treatment history, and current struggles.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "biologic_recommended", "insurance_denial", "insurance_appeal", "insurance_approval", "biologic_taken", "breakthrough_symptoms", "alternative_therapy", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "azathioprine",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "Remicade",
+        "treatment_class": "Biologic",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "allergic reaction"
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "PARTIAL",
+        "before_biologic": false,
+        "reason_stopped": "hair loss"
+      },
+      {
+        "name": "Stelara",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  },
+  {
+    "patient_id": "P022",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Remicade, Humira",
+    "churn": false,
+    "comorbid_conditions": ["TYPE_2_DIABETES", "OTHER"],
+    "demographics": {
+      "age": 35,
+      "gender": "Male"
+    },
+    "evidence_notes": "Patient experienced a severe onset of Crohn's, leading to multiple complications including steroid-induced diabetes and osteoporosis. He has tried multiple treatments with partial success and is facing financial and social challenges. The narrative provides a comprehensive overview of his journey.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "acute_flare", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "comorbidity", "biologic_recommended", "insurance_denial", "insurance_appeal", "insurance_approval", "biologic_taken", "loss_of_response", "biologic_switch", "alternative_therapy", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "steroid-induced diabetes"
+      },
+      {
+        "name": "azathioprine",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "Remicade",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false,
+        "reason_stopped": "loss of response"
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  },
+  {
+    "patient_id": "P023",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Humira",
+    "churn": false,
+    "comorbid_conditions": ["PCOS", "DEPRESSION"],
+    "demographics": {
+      "age": 26,
+      "gender": "Female"
+    },
+    "evidence_notes": "Patient faced significant diagnostic delays and initial misdiagnoses. She has tried several conventional treatments with adverse effects and is now on Humira with partial response. The narrative covers her struggles with the disease, its impact on her career and relationships, and financial concerns.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "primary_care_contact", "therapy_failed", "adverse_reaction", "comorbidity", "biologic_recommended", "insurance_denial", "insurance_approval", "biologic_taken", "alternative_therapy", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "weight gain, PCOS complications"
+      },
+      {
+        "name": "azathioprine",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "pancreatitis"
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "nausea, inability to teach"
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  },
+  {
+    "patient_id": "P024",
+    "biologic_prescribed": true,
+    "biologic_taken": false,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "ONGOING",
+    "biologic_type": null,
+    "churn": false,
+    "comorbid_conditions": ["TYPE_2_DIABETES", "SLEEP_APNEA"],
+    "demographics": {
+      "age": 40,
+      "gender": "Male"
+    },
+    "evidence_notes": "Patient recently diagnosed with severe Crohn's. He is experiencing significant symptoms impacting his work and family life. He is currently trying sulfasalazine while appealing for biologic approval due to insurance requirements. The narrative focuses on his current struggles and urgent need for effective treatment.",
+    "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "comorbidity", "biologic_recommended", "insurance_denial", "insurance_step_therapy", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "blood sugar issues"
+      },
+      {
+        "name": "sulfasalazine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      }
+    ]
+  },
+  {
+    "patient_id": "P025",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "ONGOING",
+    "biologic_type": "Humira",
+    "churn": false,
+    "comorbid_conditions": ["ANXIETY_DISORDER", "OTHER"],
+    "demographics": {
+      "age": 22,
+      "gender": "Female"
+    },
+    "evidence_notes": "Young patient recently diagnosed with Crohn's and a history of anxiety and an eating disorder. She faces challenges with treatment side effects, needle phobia, and the emotional toll of managing multiple conditions while trying to start her career. The narrative is comprehensive.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "biologic_recommended", "patient_fear", "biologic_taken", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "mood swings, unbearable with anxiety"
+      },
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "nausea, weight loss"
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  },
+  {
+    "patient_id": "P026",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Remicade",
+    "churn": false,
+    "comorbid_conditions": ["OTHER", "OTHER"],
+    "demographics": {
+      "age": 50,
+      "gender": "Male"
+    },
+    "evidence_notes": "Patient with a long history of Crohn's, compounded by Barrett's esophagus and chronic back pain from his construction job. He has tried multiple treatments with limited success and is concerned about future treatment options, career viability, and financial implications. The narrative is complete.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "adverse_reaction", "therapy_failed", "comorbidity", "biologic_recommended", "biologic_taken", "loss_of_response", "biologic_switch", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "difficult to taper, doctor concern about bone density"
+      },
+      {
+        "name": "azathioprine",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "elevated liver enzymes"
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "feeling drunk, inability to work safely"
+      },
+      {
+        "name": "Remicade",
+        "treatment_class": "Biologic",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "loss of effectiveness"
+      }
+    ]
+  },
+  {
+    "patient_id": "P027",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Remicade, Humira",
+    "churn": false,
+    "comorbid_conditions": ["DEPRESSION", "RHEUMATOID_ARTHRITIS"],
+    "demographics": {
+      "age": 32,
+      "gender": "Female"
+    },
+    "evidence_notes": "Patient has a complex medical history with Crohn's, bipolar disorder, and rheumatoid arthritis. She struggles with medication management due to interactions and contraindications, impacting her mental health, physical health, and ability to work. The narrative provides a thorough account of her challenges.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "acute_flare", "complication", "surgery", "crohns_diagnosis", "conventional_therapy", "adverse_reaction", "comorbidity", "biologic_recommended", "biologic_taken", "biologic_switch", "alternative_therapy", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "weight gain, impact on mental health"
+      },
+      {
+        "name": "Remicade",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false,
+        "reason_stopped": "developed RA, less effective for both"
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "hair loss"
+      }
+    ]
+  },
+  {
+    "patient_id": "P028",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Entyvio",
+    "churn": false,
+    "comorbid_conditions": ["OTHER", "OTHER"],
+    "demographics": {
+      "age": 43,
+      "gender": "Male"
+    },
+    "evidence_notes": "Patient with Crohn's and chronic kidney disease, facing challenges due to NSAID use before diagnosis. His treatment options are limited, and there's disagreement between specialists. He is struggling with business losses and family impact. The narrative is comprehensive.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "adverse_reaction", "therapy_failed", "comorbidity", "biologic_recommended", "insurance_denial", "insurance_appeal", "insurance_approval", "biologic_taken", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "budesonide",
+        "treatment_class": "Corticosteroid",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "Entyvio",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  },
+  {
+    "patient_id": "P029",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Remicade, Humira, Stelara",
+    "churn": false,
+    "comorbid_conditions": ["HYPOTHYROIDISM", "MIGRAINE"],
+    "demographics": {
+      "age": 38,
+      "gender": "Female"
+    },
+    "evidence_notes": "Patient has had Crohn's for twelve years, along with thyroid disease and chronic migraines. She has navigated career pressures and relationship challenges due to her conditions. Her treatment journey includes multiple medications and biologics, with current partial success on Stelara. The narrative is complete.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "adverse_reaction", "therapy_failed", "comorbidity", "biologic_recommended", "insurance_denial", "insurance_appeal", "insurance_approval", "biologic_taken", "biologic_switch", "alternative_therapy", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "weight gain"
+      },
+      {
+        "name": "azathioprine",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "SUCCESS",
+        "before_biologic": true
+      },
+      {
+        "name": "methotrexate",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "PARTIAL",
+        "before_biologic": false,
+        "reason_stopped": "hair loss"
+      },
+      {
+        "name": "Remicade",
+        "treatment_class": "Biologic",
+        "outcome": "FAILED",
+        "before_biologic": false,
+        "reason_stopped": "loss of effectiveness"
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      },
+      {
+        "name": "Stelara",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  },
+  {
+    "patient_id": "P030",
+    "biologic_prescribed": true,
+    "biologic_taken": true,
+    "biologic_not_mentioned": false,
+    "treatment_outcome": "PARTIAL",
+    "biologic_type": "Humira",
+    "churn": false,
+    "comorbid_conditions": ["DEPRESSION", "ADHD"],
+    "demographics": {
+      "age": 29,
+      "gender": "Male"
+    },
+    "evidence_notes": "Young patient with aggressive Crohn's, severe depression, and ADHD, leading to the loss of his tech startup. He is struggling with unemployment, dependence on parents, and the challenges of managing multiple conditions. The narrative is comprehensive.",
+    "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+    "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+    "referral_pathway": ["symptom_onset", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "adverse_reaction", "therapy_failed", "comorbidity", "biologic_recommended", "biologic_taken", "planning_next_step"],
+    "treatment_records": [
+      {
+        "name": "prednisone",
+        "treatment_class": "Corticosteroid",
+        "outcome": "FAILED",
+        "before_biologic": true,
+        "reason_stopped": "bloated, loss of credibility"
+      },
+      {
+        "name": "mesalamine",
+        "treatment_class": "5-ASA",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "azathioprine",
+        "treatment_class": "Immunosuppressant",
+        "outcome": "PARTIAL",
+        "before_biologic": true
+      },
+      {
+        "name": "Humira",
+        "treatment_class": "Biologic",
+        "outcome": "PARTIAL",
+        "before_biologic": false
+      }
+    ]
+  }
+]}
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P021 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P021.json
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P022 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P022.json
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P023 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P023.json
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P024 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P024.json
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P025 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P025.json
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P026 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P026.json
+2026-06-21 11:02:39.184 | INFO     | extract:extract_batch:183 - extracted P027 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P027.json
+2026-06-21 11:02:39.185 | INFO     | extract:extract_batch:183 - extracted P028 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P028.json
+2026-06-21 11:02:39.185 | INFO     | extract:extract_batch:183 - extracted P029 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P029.json
+2026-06-21 11:02:39.185 | INFO     | extract:extract_batch:183 - extracted P030 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P030.json
+2026-06-21 11:05:36.652 | INFO     | extract:extract_batch:150 - batch input (10 patients): ['P031', 'P032', 'P033', 'P034', 'P035', 'P036', 'P037', 'P038', 'P039', 'P040']
+2026-06-21 11:06:09.506 | INFO     | extract:extract_batch:173 - batch telemetry: patients=10 total_tokens=14420 cost_usd=0.0033163999999999997
+2026-06-21 11:06:09.506 | INFO     | extract:extract_batch:180 - batch raw response: {
+  "predictions": [
+    {
+      "patient_id": "P031",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Remicade, Stelara",
+      "churn": false,
+      "comorbid_conditions": [
+        "FIBROMYALGIA",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 46,
+        "gender": "Female"
+      },
+      "evidence_notes": "Patient has Crohn's for 15 years, fibromyalgia, and is a breast cancer survivor. Started on conventional therapies (mesalamine, prednisone), then biologics (Remicade) 7 years ago. Stopped Remicade for cancer treatment, leading to severe Crohn's flares. Currently on Stelara, which is only partially effective. Managing multiple chronic illnesses, impact on family and career is significant. Exploring surgery as next step if Stelara fails.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "acute_flare",
+        "complication",
+        "surgery",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "SUCCESS",
+          "before_biologic": false,
+          "reason_stopped": "Cancer treatment required stopping immunosuppressants"
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    },
+    {
+      "patient_id": "P032",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "FAILED",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "TYPE_2_DIABETES",
+        "HYPERTENSION",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 54,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed with Crohn's last year, late onset. Also has diabetes, heart disease, arthritis. Started on mesalamine, then prednisone (which worsened diabetes/cardiac issues), now sulfasalazine. Experiencing severe GI symptoms (15 bathroom trips/day), impacting ability to work. GI doctor wants biologics, but insurance denies due to not failing enough treatments. Considering selling home. Wife is primary support.",
+      "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "self_managed",
+        "primary_care_contact",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_step_therapy",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Nothing"
+        },
+        {
+          "name": "Prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Worsened diabetes and cardiac issues"
+        },
+        {
+          "name": "Sulfasalazine",
+          "treatment_class": "5-ASA/SULFAPYRIDINE",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Terrible headaches"
+        }
+      ]
+    },
+    {
+      "patient_id": "P033",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira, Stelara",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 26,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed at 19. Also has severe eczema and bipolar II. Started with mesalamine and prednisone (which triggered hypomania). Then methotrexate (nausea). Humira at 21 was a game-changer for Crohn's but caused severe eczema. Now on Stelara, which helps both somewhat. Bipolar diagnosis last year led to mood stabilizers. Managing three conditions, impacting social life and career. Currently working entry-level marketing, hiding condition.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Triggered hypomanic episode"
+        },
+        {
+          "name": "Methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Nausea"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "SUCCESS",
+          "before_biologic": false,
+          "reason_stopped": "Caused severe eczema"
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    },
+    {
+      "patient_id": "P034",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Remicade",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 61,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed five years ago, likely longer. Also has COPD and peripheral neuropathy. Started conventional therapies (mesalamine, budesonide, azathioprine, methotrexate), some with adverse effects. Resisted biologics due to COPD but started Remicade a year ago due to poor quality of life. Remicade shows noticeable improvement but not remission. Managing multiple conditions impacts retirement plans and relationship with wife. Exploring adding immunomodulator to Remicade.",
+      "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Budesonide",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Long-term steroid use not an option"
+        },
+        {
+          "name": "Azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Liver issues"
+        },
+        {
+          "name": "Methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Unbearable fatigue"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    },
+    {
+      "patient_id": "P035",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "FAILED",
+      "biologic_type": "Remicade, Entyvio",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 30,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed at 16. Also has PSC and autoimmune hepatitis. Started on Remicade at 17, which worked for years. Developed liver issues at 22, stopped meds, got worse. Now on Entyvio for Crohn's (liver-safe) and immunosuppressants for autoimmune hepatitis. Neither works perfectly. Fatigue is unbearable. Boyfriend left. Potential need for liver transplant. Works part-time. Facing medical bankruptcy. Looking into clinical trials.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Missed school"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "SUCCESS",
+          "before_biologic": false,
+          "reason_stopped": "Developed liver issues"
+        },
+        {
+          "name": "Ursodiol",
+          "treatment_class": "Bile Acid",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        },
+        {
+          "name": "Azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        },
+        {
+          "name": "Entyvio",
+          "treatment_class": "Biologic",
+          "outcome": "FAILED",
+          "before_biologic": false,
+          "reason_stopped": "Not working perfectly"
+        }
+      ]
+    },
+    {
+      "patient_id": "P036",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 48,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed three years ago. Also has severe psoriasis and psoriatic arthritis. Initially treated with NSAIDs, which worsened Crohn's. Failed two biologics for psoriasis. Started Stelara for both, which helped 50%. Insurance denied renewal after a year, leading to flares. Now trying to regain baseline. Physical work is difficult. Company struggling. Wife considering early retirement. Finances strained. Diet is challenging. Depression setting in.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "comorbidity",
+        "biologic_recommended",
+        "insurance_denial",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "NSAIDs",
+          "treatment_class": "NSAID",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Likely made Crohn's worse"
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Insurance denied renewal"
+        }
+      ]
+    },
+    {
+      "patient_id": "P037",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "ANXIETY_DISORDER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 34,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed six years ago after second child. Also has postpartum anxiety and lupus. Started mesalamine while breastfeeding, then azathioprine. Developed joint pain and rashes confirming lupus. Started Humira two years ago, helps moderately (60%). Struggles to be active mom, works part-time freelance. Financial stress due to husband's insurance dependency. Support group is lifeline. Considering changing biologics as Humira is losing effectiveness.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "comorbidity",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "biologic_taken",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Not enough"
+        },
+        {
+          "name": "Azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Joint pain developed"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    },
+    {
+      "patient_id": "P038",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "FAILED",
+      "biologic_type": "Remicade, Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 37,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed ten years ago. Also has ankylosing spondylitis and chronic kidney disease from NSAID use. Started biologics immediately (Remicade for both, then Humira for Crohn's). Remicade worked initially but stopped. Humira less effective (40%). Kidney disease limits stronger options. Work impossible, on disability. Lost house, divorced. Dating impossible. Financial dependence on elderly parents. Considering surgery but recovery concerns with AS. Currently on Humira, seeking new treatment. Doctor wants to try Stelara.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "loss_of_response",
+        "biologic_switch",
+        "planning_next_step",
+        "unresolved"
+      ],
+      "treatment_records": [
+        {
+          "name": "NSAIDs",
+          "treatment_class": "NSAID",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "Destroyed kidneys"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "SUCCESS",
+          "before_biologic": true,
+          "reason_stopped": "Stopped working"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    },
+    {
+      "patient_id": "P039",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 41,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed eight years ago. Also has rheumatoid arthritis and fibromyalgia. Started mesalamine, then prednisone (weight gain), then methotrexate (hair loss). Humira three years ago helps somewhat (50%). Now dealing with RA and fibromyalgia. Work suffering, income dropped. Son working part-time to help. Financial stress high. Support group is lifeline. Considering Stelara but concerned about time off work for injections.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "Mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Weight gain"
+        },
+        {
+          "name": "Methotrexate",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Hair loss"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    },
+    {
+      "patient_id": "P040",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Remicade, Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "TYPE_2_DIABETES",
+        "HYPERTENSION",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 52,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed seven years ago. Also has type 2 diabetes, hypertension, and osteoporosis from steroid use. Started on prednisone and azathioprine combo. Prednisone caused high blood sugar requiring insulin. Azathioprine caused liver issues. Switched to Remicade, worked for 3 years but developed antibodies. Now on Humira, ~50% improvement. GI wants to add methotrexate but worried about liver. Work suffering due to fatigue/brain fog. Costs high, savings disappearing. Considering clinical trial.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "comorbidity",
+        "biologic_recommended",
+        "insurance_appeal",
+        "insurance_approval",
+        "biologic_taken",
+        "loss_of_response",
+        "biologic_switch",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "Prednisone",
+          "treatment_class": "Corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": null
+        },
+        {
+          "name": "Azathioprine",
+          "treatment_class": "Immunomodulator",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "Liver enzymes climbing"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "Biologic",
+          "outcome": "SUCCESS",
+          "before_biologic": false,
+          "reason_stopped": "Developed antibodies"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "Biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": null
+        }
+      ]
+    }
+  ]
+}
+2026-06-21 11:06:09.507 | INFO     | extract:extract_batch:183 - extracted P031 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P031.json
+2026-06-21 11:06:09.507 | INFO     | extract:extract_batch:183 - extracted P032 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P032.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P033 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P033.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P034 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P034.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P035 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P035.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P036 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P036.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P037 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P037.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P038 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P038.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P039 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P039.json
+2026-06-21 11:06:09.508 | INFO     | extract:extract_batch:183 - extracted P040 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P040.json
+2026-06-21 11:07:53.672 | INFO     | extract:extract_batch:150 - batch input (10 patients): ['P041', 'P042', 'P043', 'P044', 'P045', 'P046', 'P047', 'P048', 'P049', 'P050']
+2026-06-21 11:08:44.166 | INFO     | extract:extract_batch:173 - batch telemetry: patients=10 total_tokens=11087 cost_usd=0.00262652
+2026-06-21 11:08:44.166 | INFO     | extract:extract_batch:180 - batch raw response: {
+  "predictions": [
+    {
+      "patient_id": "P041",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Stelara",
+      "churn": false,
+      "comorbid_conditions": [
+        "ENDOMETRIOSIS",
+        "MIGRAINE"
+      ],
+      "demographics": {
+        "age": 35,
+        "gender": "Female"
+      },
+      "evidence_notes": "Patient is 35, diagnosed at 28. Also deals with severe endometriosis and chronic migraines. Initially thought symptoms were stress/diet. Hospitalization led to diagnosis. Treatments included prednisone and mesalamine, causing career impact. Remicade worked for 4 years, then stopped. Endometriosis became severe, posing difficult treatment choices due to immunosuppression needs for Crohn's vs. surgery. Currently on Stelara for Crohn's (60% better). Endo pain is significant. Trying continuous birth control and pain meds, but opioids trigger Crohn's. Migraines increasing. Switched to a less demanding finance role for flexibility, but still faces stigma. Concerns about dating and genetics for children. Therapy is ongoing, but therapist notes complexity of multiple conditions. Constantly fighting insurance for prior authorizations. Considering clinical trials. Doctor recommended combination therapy (Stelara + methotrexate). Goals shifted from excellence to manageability.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": null,
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "loss of response"
+        },
+        {
+          "name": "Stelara",
+          "treatment_class": "biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P042",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "RHEUMATOID_ARTHRITIS",
+        "DEPRESSION"
+      ],
+      "demographics": {
+        "age": 39,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed 5 years ago. Also has psoriatic arthritis and depression. Symptoms started gradually, attributed to diet/stress. Blood in stool led to diagnosis. Initial treatments: mesalamine, prednisone, sulfasalazine (allergic reaction), methotrexate (nausea). Started Humira, which helps both Crohn's and psoriatic arthritis (70% improvement). Marriage counseling is ongoing due to strain. Children (5 and 3) don't understand. Work is fully remote. Medical costs are growing ($10k/year out-of-pocket). Concerns about finances and future biologic failures. Support group exists but mostly women; found online group for dads with chronic illness. Worried about biologic failure and future surgery with young kids.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": null,
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "sulfasalazine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "allergic reaction"
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunosuppressant",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "intolerable side effects"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P043",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "HYPOTHYROIDISM",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 44,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed 12 years ago. Also has Hashimoto's thyroiditis and spinal osteoarthritis. Disease returned after first surgery (resection). Remicade worked well for 5 years, then antibodies developed. Humira provided moderate help (60%), added methotrexate improved to 75%. Thyroid issues arose, causing fatigue. Spine issues started 2 years ago. Marriage strained due to caregiver role. Daughter (8) is worried. Work as marketing director is high stress. Husband's job lacks benefits, creating financial trap. Considering Stelara. Concerned about transition period and time off work. Parents are aging and ill. Costs exceed $20k annually beyond insurance, leading to credit card debt. Support group disbanded. Online groups lack in-person connection. Discussing further surgery (resection or strictureplasty). Quality of life is a major concern.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": null,
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "crohns_diagnosis",
+        "surgery",
+        "adverse_reaction",
+        "relapse",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "biologic_taken",
+        "biologic_switch",
+        "loss_of_response",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "surgery",
+          "treatment_class": "surgery",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "disease returned"
+        },
+        {
+          "name": "Remicade",
+          "treatment_class": "biologic",
+          "outcome": "SUCCESS",
+          "before_biologic": true,
+          "reason_stopped": "developed antibodies"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "ongoing"
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunosuppressant",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P044",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "ADHD",
+        "ANXIETY_DISORDER"
+      ],
+      "demographics": {
+        "age": 27,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed 2 years ago, likely had it longer. Signs in college attributed to ADHD meds and poor diet. Symptoms worsened post-graduation. Constant urgency, cramping, blood. First GI visit after a bad week. Colonoscopy showed inflammation. Treatments: mesalamine suppositories/oral (minimal help), prednisone (increased anxiety, panic attack, nearly lost job). Azathioprine started 6 months ago (40% help). Doctor wants biologics, but patient is terrified due to immunocompromise, stress, lack of sleep, and needle phobia triggering anxiety. Parents dismissive. Dating difficult ('too much work'). Architecture requires site visits, and portapotties are a nightmare. Considering leaving profession due to loans and need for income. Next appointment in two weeks, likely to agree to biologics despite fear. Anxiety and Crohn's feed each other. Therapist helping, but process is slow.",
+      "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "patient_fear",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "intolerable side effects"
+        },
+        {
+          "name": "azathioprine",
+          "treatment_class": "immunosuppressant",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P045",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "PCOS",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 33,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed 4 months ago, symptoms for 2 years. Also PCOS and insulin resistance. Initial blame on weight led to 40lb loss with no improvement, symptoms worsened. Demanded colonoscopy. Inflammation found. Treatments: budesonide and mesalamine (little improvement). Doctor mentioned biologics, but insurance requires failing more medications. Currently trying methotrexate (severe nausea, taking folic acid). Works as elementary school teacher; close calls with bathroom urgency during class. Fearful of telling principal due to budget cuts. Parents suggest diet cures (probiotics, yogurt). Boyfriend supportive but strained by canceled trips due to flares. Wedding postponed due to fear of flaring on the day. Finances tight; teacher salary. Moved back home to save money. Pain can be debilitating. Support groups difficult to attend. Online forums scary due to mentions of surgery/complications. Trying to stay positive but finding it hard.",
+      "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "conventional_therapy",
+        "therapy_failed",
+        "biologic_recommended",
+        "insurance_step_therapy",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "budesonide",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunosuppressant",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P046",
+      "biologic_prescribed": true,
+      "biologic_taken": true,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": "Humira",
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 49,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed 18 months ago, likely had it longer. Construction foreman, also pre-diabetic and chronic back pain. Always had stomach issues attributed to job/diet. Blood in stool led to diagnosis of severe disease with multiple strictures. Options limited by other conditions. Prednisone worsened blood sugar. Mesalamine ineffective. Currently on Humira (50% improvement). Company moved him to desk duty due to work limitations. Fears being pushed out of his 28-year job. Wife is working double shifts. Sold assets to manage medical bills. Insurance covers 80% of biologics, still thousands out-of-pocket.",
+      "reasons_for_biologic_not_taken": null,
+      "reasons_for_biologic_prescribed": null,
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "comorbidity",
+        "biologic_recommended",
+        "biologic_taken",
+        "alternative_therapy"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "worsened blood sugar"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "ineffective"
+        },
+        {
+          "name": "Humira",
+          "treatment_class": "biologic",
+          "outcome": "PARTIAL",
+          "before_biologic": false,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P047",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "HYPOTHYROIDISM",
+        "DEPRESSION"
+      ],
+      "demographics": {
+        "age": 41,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed 5 months ago after years of misdiagnosis (IBS, stress, hormones). Found in small intestine. Treatments: prednisone (30lb weight gain, self-esteem issues), mesalamine. Now trying methotrexate (hair loss, constant nausea, 30% symptom improvement). Doctor advises more time. Concerns about marriage, job. Hiding symptoms at work, fear of review. Teenagers are unaware of severity.",
+      "reasons_for_biologic_not_taken": "DEFERRED",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "misdiagnosis",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "adverse_reaction",
+        "biologic_recommended",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "transitioned to other therapies"
+        },
+        {
+          "name": "methotrexate",
+          "treatment_class": "immunosuppressant",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P048",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "UNKNOWN",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "TYPE_2_DIABETES",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 56,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed 3 weeks ago. Also has diabetes and heart disease. ER visit for severe pain led to diagnosis. Emergency surgery for blocked intestine. Recovery is rough; living alone. Ex-wife and neighbor help. Neighbor provides meals. Humbling. Savings depleting due to surgery bills ($100k+). Insurance fighting claims. May have to sell house. Currently on mesalamine and antibiotics. Doctor wants biologics post-surgery, but too early to tell if current meds helping.",
+      "reasons_for_biologic_not_taken": "DEFERRED",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "acute_flare",
+        "surgery",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "comorbidity",
+        "biologic_recommended",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "surgery",
+          "treatment_class": "surgery",
+          "outcome": "UNKNOWN",
+          "before_biologic": null,
+          "reason_stopped": null
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "UNKNOWN",
+          "before_biologic": null,
+          "reason_stopped": "ongoing"
+        },
+        {
+          "name": "antibiotics",
+          "treatment_class": "antibiotic",
+          "outcome": "UNKNOWN",
+          "before_biologic": null,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P049",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "PARTIAL",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "ANXIETY_DISORDER"
+      ],
+      "demographics": {
+        "age": 28,
+        "gender": "Female"
+      },
+      "evidence_notes": "Diagnosed last month during appendectomy. Inflammation throughout intestines. Also recovering from eating disorder and has anxiety. Diagnosis is triggering, clashing with ED recovery (authorized restriction vs. fear of food). Started prednisone in hospital (manic, 4 days without sleep). Now on mesalamine (too early to tell). GI wants aggressive treatment due to age and disease extent. Mentioned biologics but concerned about side effects (cancer, infections). Boyfriend supportive but overwhelmed; wedding/kids on hold. Parents concerned, see parallels to ED recovery. Chronic nature is feared.",
+      "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "surgery",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "adverse_reaction",
+        "biologic_recommended",
+        "patient_fear",
+        "alternative_therapy",
+        "planning_next_step"
+      ],
+      "treatment_records": [
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "manic side effects"
+        },
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "UNKNOWN",
+          "before_biologic": true,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    },
+    {
+      "patient_id": "P050",
+      "biologic_prescribed": true,
+      "biologic_taken": false,
+      "biologic_not_mentioned": false,
+      "treatment_outcome": "FAILED",
+      "biologic_type": null,
+      "churn": false,
+      "comorbid_conditions": [
+        "OTHER",
+        "OTHER"
+      ],
+      "demographics": {
+        "age": 62,
+        "gender": "Male"
+      },
+      "evidence_notes": "Diagnosed 8 months ago. Also COPD and arthritis. Started with stomach flu symptoms, lasted months, lost 50lbs. Prednisone worsened breathing; respiratory doctor advised against it. Now on budesonide (minimal help, 20%). GI wants biologics, but lung doctor says too risky due to COPD and infection risk. Stuck with inadequate treatment. Quality of life is very poor (breathing, eating, mobility issues). Wife died 2 years ago. Children busy. Considering moving in with son, but wife is reluctant. Grandchildren's smiles keep him going. Worried about future. Continues treatment despite poor outlook.",
+      "reasons_for_biologic_not_taken": "CONTRAINDICATION",
+      "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+      "referral_pathway": [
+        "symptom_onset",
+        "diagnostic_delay",
+        "symptoms_worsen",
+        "diagnostic_testing",
+        "crohns_diagnosis",
+        "conventional_therapy",
+        "therapy_failed",
+        "comorbidity",
+        "biologic_recommended",
+        "alternative_therapy"
+      ],
+      "treatment_records": [
+        {
+          "name": "mesalamine",
+          "treatment_class": "5-ASA",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "ineffective"
+        },
+        {
+          "name": "prednisone",
+          "treatment_class": "corticosteroid",
+          "outcome": "FAILED",
+          "before_biologic": true,
+          "reason_stopped": "respiratory contraindication"
+        },
+        {
+          "name": "budesonide",
+          "treatment_class": "corticosteroid",
+          "outcome": "PARTIAL",
+          "before_biologic": true,
+          "reason_stopped": "ongoing"
+        }
+      ]
+    }
+  ]
+}
+2026-06-21 11:08:44.168 | INFO     | extract:extract_batch:183 - extracted P041 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P041.json
+2026-06-21 11:08:44.169 | INFO     | extract:extract_batch:183 - extracted P042 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P042.json
+2026-06-21 11:08:44.169 | INFO     | extract:extract_batch:183 - extracted P043 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P043.json
+2026-06-21 11:08:44.169 | INFO     | extract:extract_batch:183 - extracted P044 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P044.json
+2026-06-21 11:08:44.169 | INFO     | extract:extract_batch:183 - extracted P045 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P045.json
+2026-06-21 11:08:44.170 | INFO     | extract:extract_batch:183 - extracted P046 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P046.json
+2026-06-21 11:08:44.170 | INFO     | extract:extract_batch:183 - extracted P047 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P047.json
+2026-06-21 11:08:44.170 | INFO     | extract:extract_batch:183 - extracted P048 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P048.json
+2026-06-21 11:08:44.170 | INFO     | extract:extract_batch:183 - extracted P049 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P049.json
+2026-06-21 11:08:44.171 | INFO     | extract:extract_batch:183 - extracted P050 -> /Users/shoutt/projects/mama_health/chronicity/data/out/P050.json

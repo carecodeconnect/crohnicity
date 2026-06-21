@@ -1,9 +1,9 @@
 {
-  "patient_id": "P001",
+  "patient_id": "P025",
   "churn": false,
   "demographics": {
-    "gender": "female",
-    "age": 34
+    "gender": "Female",
+    "age": 22
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
@@ -12,36 +12,44 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
+    "ANXIETY_DISORDER",
     "OTHER"
   ],
   "treatment_records": [
     {
-      "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Not much improvement",
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "mood swings, unbearable with anxiety",
       "before_biologic": true
     },
     {
-      "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
-      "outcome": "FAILED",
-      "reason_stopped": "Made me feel worse. Severe nausea, elevated liver enzymes.",
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
       "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "nausea, weight loss",
+      "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "primary_care_contact",
     "misdiagnosis",
+    "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
@@ -50,11 +58,9 @@
     "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
-    "insurance_denial",
-    "insurance_appeal",
-    "insurance_approval",
+    "patient_fear",
     "biologic_taken",
-    "loss_of_response"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient reports psoriasis as a potential side effect of Humira, diagnosed by her rheumatologist."
+  "evidence_notes": "Young patient recently diagnosed with Crohn's and a history of anxiety and an eating disorder. She faces challenges with treatment side effects, needle phobia, and the emotional toll of managing multiple conditions while trying to start her career. The narrative is comprehensive."
 }

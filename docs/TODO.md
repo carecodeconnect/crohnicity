@@ -12,6 +12,15 @@ enforcement waits until we understand what to test and what to validate.
   populated deliberately rather than left to the model's defaults. Single prompt for this version;
   the concurrent multi-prompt split is a post-completion idea (README → Next Steps).
 
+## Chunked extraction — batched calls (free-tier RPD workaround)
+
+- [x] `--chunk-size N` on `src/main.py` sends N transcripts per Gemini call via `extract_batch()` +
+  a `BatchPredictions` wrapper, so 50 patients fit the **20-requests/day** free-tier cap (10×5 = 5
+  calls). Per-call telemetry (`total_tokens`, `cost`) is logged to `logs/extract.log` so token
+  usage + calls/day are monitorable by grepping the log. **Strict** parse (a malformed chunk fails
+  wholly) — minimal; a tolerant per-record parse is future hardening (see Robustness). Reuses the
+  existing loguru logging; no new infrastructure.
+
 ## Quality gates — manual check script (no pre-commit)
 
 We deliberately **don't** use pre-commit hooks — overkill for this project. Enforcement is a

@@ -1,4 +1,4 @@
-# Ground-truth annotation schema (v0.3)
+# Ground-truth annotation schema (v0.4)
 
 Columns in the ground-truth spreadsheet that stakeholders fill in to create the **gold set**
 of labels for evaluating the extraction pipeline.
@@ -8,39 +8,38 @@ of labels for evaluating the extraction pipeline.
 > spreadsheet dropdowns. Open business questions live in `docs/QUESTIONS.md`; the pathway
 > vocabulary needs domain-expert sign-off (`docs/TODO.md`).
 
-- **Working file:** `data/in/interviews_ground_truth_v3.ods`, built from the annotated
-  `interviews_ground_truth.ods` → `_v2` → `_v3` by `sandbox/build_ground_truth_v*.py` (see "How
-  the working file is generated").
+- **Working file:** `data/in/interviews_ground_truth_v4.ods`, built from the annotated
+  `interviews_ground_truth.ods` → `_v2` → `_v3` → `_v4` by `sandbox/build_ground_truth_v*.py` (see
+  "How the working file is generated").
 - **Rows:** 50 patients (`P001`–`P050`); 20 reviewed so far (`to_review == 1`).
 - **Source columns** (`patient_id`, `interview_transcript`) come from `interviews.json` — **do not edit**.
 - **Note:** booleans persist in the `.ods` as `1`/`0` (incl. `to_review`, now standardised), blanks as empty.
 
-## Columns (18, in sheet order)
+## Columns (17, in sheet order)
 
 | # | Column | Type | Allowed values | Notes |
 |---|--------|------|----------------|-------|
 | 1 | `patient_id` | `str` | — | Primary key. **Read-only.** |
 | 2 | `interview_transcript` | `str` | — | Full interview text. **Read-only.** |
 | 3 | `to_review` | `bool` (1/0) | `1`/`0` | `1` = case is in the annotation scope; filter on this. Single source of truth for the validation/holdout split (`src/splits.py`). |
-| 4 | `churn` | `bool` (1/0) | `1`/`0` | **Definition unresolved** — working assumption: patient stops engaging with the app/service. See Open questions / `QUESTIONS.md` #1. |
-| 5 | `incomplete_journey` | `bool` (1/0) | `1`/`0` | **Definition unresolved** — working assumption: the record/interview was not completed. NOT "treatment journey unresolved". See Open questions / `QUESTIONS.md` #4. |
-| 6 | `gender` | `str` | free text | Self-reported (`female`/`male` as stated) → `Demographics`. |
-| 7 | `age` | `int` | — | Self-reported → `Demographics`. |
-| 8 | `biologic_prescribed` | `bool` (1/0) | `1`/`0` | Was a biologic prescribed/recommended at any point? (recommend vs prescribe — `QUESTIONS.md` #5.) |
-| 9 | `biologic_taken` | `bool` (1/0) | `1`/`0` | Did the patient actually start/take one? (Prescribed ≠ taken.) |
-| 10 | `biologic_not_mentioned` | `bool` (1/0) | `1`/`0` | `1` when biologics never come up at all. |
-| 11 | `biologic_type` | `str` | free text | Named biologic(s), e.g. `Humira`, `infliximab`. |
-| 12 | `reasons_for_biologic_prescribed` | `enum` | see vocab | Why a biologic *was* the chosen path. |
-| 13 | `reasons_for_biologic_not_taken` | `enum` | see vocab | Renamed from `reasons_for_biologic_denied`. Why a prescribed biologic wasn't taken / wasn't reached. |
-| 14 | `comorbid_conditions` | `list[enum]` | see vocab | Independent coexisting diagnoses (not Crohn's sequelae). Comma-separated. |
-| 15 | `treatment_records` | `list[TreatmentRecord]` (free text) | see convention | All treatments, in order. |
-| 16 | `treatment_outcome` | `enum` | see vocab | Overall patient-level outcome; `AMBIGUOUS`/`ONGOING` allowed (confirmed). |
-| 17 | `referral_pathway` | `list[str]` (free text) | see convention | Canonical-event journey chain. |
-| 18 | `evidence_notes` | `str` | free text | **DEFERRED** — kept as a column, not yet populated; also the destination for any prose mis-entered into other fields. |
+| 4 | `churn` | `bool` (1/0) | `1`/`0` | `1` = interview truncated / patient disengaged before the story resolved (cut off, trails off, vague). **Merges the old `incomplete_journey`** (v4). See README "Churn" / `QUESTIONS.md` #1. |
+| 5 | `gender` | `str` | free text | Self-reported (`female`/`male` as stated) → `Demographics`. |
+| 6 | `age` | `int` | — | Self-reported → `Demographics`. |
+| 7 | `biologic_prescribed` | `bool` (1/0) | `1`/`0` | Was a biologic prescribed/recommended at any point? (recommend vs prescribe — `QUESTIONS.md` #5.) |
+| 8 | `biologic_taken` | `bool` (1/0) | `1`/`0` | Did the patient actually start/take one? (Prescribed ≠ taken.) |
+| 9 | `biologic_not_mentioned` | `bool` (1/0) | `1`/`0` | `1` when biologics never come up at all. |
+| 10 | `biologic_type` | `str` | free text | Named biologic(s), e.g. `Humira`, `infliximab`. |
+| 11 | `reasons_for_biologic_prescribed` | `enum` | see vocab | Why a biologic *was* the chosen path. |
+| 12 | `reasons_for_biologic_not_taken` | `enum` | see vocab | Renamed from `reasons_for_biologic_denied`. Why a prescribed biologic wasn't taken / wasn't reached. |
+| 13 | `comorbid_conditions` | `list[enum]` | see vocab | Independent coexisting diagnoses (not Crohn's sequelae). Comma-separated. |
+| 14 | `treatment_records` | `list[TreatmentRecord]` (free text) | see convention | All treatments, in order. Each carries `before_biologic` (the before/after split for Q3). |
+| 15 | `treatment_outcome` | `enum` | see vocab | Overall patient-level outcome; `AMBIGUOUS`/`ONGOING` allowed (confirmed). |
+| 16 | `referral_pathway` | `list[str]` (free text) | see convention | Canonical-event journey chain. |
+| 17 | `evidence_notes` | `str` | free text | **DEFERRED** — kept as a column, not yet populated; also the destination for any prose mis-entered into other fields. |
 
 ## Controlled vocabularies
 
-- **Booleans** (`to_review`, `churn`, `incomplete_journey`, `biologic_prescribed`, `biologic_taken`, `biologic_not_mentioned`): `1` / `0` (stored numeric in the `.ods`).
+- **Booleans** (`to_review`, `churn`, `biologic_prescribed`, `biologic_taken`, `biologic_not_mentioned`): `1` / `0` (stored numeric in the `.ods`).
 - **`reasons_for_biologic_prescribed`**: `DOCTOR_CHOICE`, `PATIENT_FEARS`, `COST`, `ACCESS`, `NOT_APPLICABLE`, `OTHER`
 - **`reasons_for_biologic_not_taken`**: `NOT_MENTIONED`, `EXPLICIT_DENIAL`, `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`, `CONTRAINDICATION`, `DEFERRED`, `JOURNEY_CUT_OFF`, `UNKNOWN`, `NOT_APPLICABLE`, `OTHER`
   - *`CONTRAINDICATION` = medically can't be given (e.g. COPD risk); `DEFERRED` = appropriate but postponed (awaiting surgery recovery / timing).*
@@ -149,8 +148,7 @@ class PatientLabels(BaseModel):
     patient_id: str
     to_review: bool = False
     demographics: Demographics = Demographics()   # flat gender/age columns map in here
-    churn: bool | None = None             # definition pending CAIO (QUESTIONS.md #1)
-    incomplete_journey: bool | None = None  # definition pending CAIO (QUESTIONS.md #4)
+    churn: bool | None = None             # truncation/disengagement; merges incomplete_journey (v4)
     biologic_prescribed: bool
     biologic_taken: bool
     biologic_not_mentioned: bool
@@ -179,13 +177,11 @@ Both **only write into empty cells, so existing annotations are preserved**, and
 
 ## Open questions
 
-- **`churn` definition** — working assumption: patient stops engaging with the **app/service**
-  (not treatment disengagement). Recorded `0` across the reviewed 20 — the interview transcripts
-  carry no app/service-usage signal, so this may prove **not derivable from transcripts** (would
-  need product/usage data). Needs CAIO sign-off (`QUESTIONS.md` #1).
-- **`incomplete_journey` definition** — working assumption: the **record/interview wasn't
-  completed**, NOT "treatment journey unresolved". Recorded `0` across the reviewed 20 (all
-  transcripts are complete narratives). Needs CAIO sign-off (`QUESTIONS.md` #4).
+- **`churn` definition (resolved for this version)** — `churn` = the interview is truncated /
+  the patient disengaged before the story resolved (reading the "interview" as the patient's
+  interaction with the Mama Health app). The old `incomplete_journey` is **merged into `churn`**
+  (v4) — same truncation signal, one flag. Still a judgement call; CAIO confirmation welcome
+  (`QUESTIONS.md` #1).
 - **`comorbid_conditions` token gaps** — bipolar, heart disease, COPD, PSC + autoimmune
   hepatitis, insulin resistance, eating disorder have no canonical token. Map to `OTHER`, or
   extend the enum?
@@ -202,6 +198,13 @@ SUCCESS/FAILED call).
 
 ## Changelog
 
+- **v0.4** — **`incomplete_journey` merged into `churn` and dropped** (working file `_v4.ods`).
+  *Why:* reading the "interview" as the patient's interaction with the Mama Health app, `churn`
+  (app disengagement) and `incomplete_journey` (truncated transcript) are the **same signal**, so
+  one honest flag beats two overlapping ones (see README "Churn"). `churn` is therefore defined
+  (interview truncated / patient disengaged), no longer "pending CAIO". `TreatmentRecord` gained
+  `before_biologic` (the before/after split for Q3). `PatientLabels` is now implemented in
+  `src/schema.py`; the system prompt lives in `data/prompts/system.txt`.
 - **v0.3** — `reasons_for_biologic_not_taken` += `CONTRAINDICATION`, `DEFERRED`; both reasons enums
   += `NOT_APPLICABLE`; `to_review` standardised to `1`/`0`; working file is now `_v3.ods` (built
   via the `sandbox/` scripts; prose moved from reasons → `evidence_notes`); `treatment_outcome`

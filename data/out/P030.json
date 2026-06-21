@@ -1,9 +1,9 @@
 {
-  "patient_id": "P001",
+  "patient_id": "P030",
   "churn": false,
   "demographics": {
-    "gender": "female",
-    "age": 34
+    "gender": "Male",
+    "age": 29
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
@@ -12,27 +12,35 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
   "comorbid_conditions": [
-    "OTHER"
+    "DEPRESSION",
+    "ADHD"
   ],
   "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "bloated, loss of credibility",
+      "before_biologic": true
+    },
     {
       "name": "mesalamine",
       "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": "Not much improvement",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "Immunomodulator",
-      "outcome": "FAILED",
-      "reason_stopped": "Made me feel worse. Severe nausea, elevated liver enzymes.",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "Humira",
       "treatment_class": "Biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
@@ -40,21 +48,15 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "primary_care_contact",
-    "misdiagnosis",
-    "symptoms_worsen",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
+    "therapy_failed",
+    "comorbidity",
     "biologic_recommended",
-    "insurance_denial",
-    "insurance_appeal",
-    "insurance_approval",
     "biologic_taken",
-    "loss_of_response"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient reports psoriasis as a potential side effect of Humira, diagnosed by her rheumatologist."
+  "evidence_notes": "Young patient with aggressive Crohn's, severe depression, and ADHD, leading to the loss of his tech startup. He is struggling with unemployment, dependence on parents, and the challenges of managing multiple conditions. The narrative is comprehensive."
 }

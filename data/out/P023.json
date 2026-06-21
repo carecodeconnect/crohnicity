@@ -1,0 +1,73 @@
+{
+  "patient_id": "P023",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 26
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "PCOS",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "weight gain, PCOS complications",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "pancreatitis",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "nausea, inability to teach",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "primary_care_contact",
+    "therapy_failed",
+    "adverse_reaction",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_approval",
+    "biologic_taken",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient faced significant diagnostic delays and initial misdiagnoses. She has tried several conventional treatments with adverse effects and is now on Humira with partial response. The narrative covers her struggles with the disease, its impact on her career and relationships, and financial concerns."
+}

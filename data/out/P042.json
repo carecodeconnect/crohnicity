@@ -1,0 +1,73 @@
+{
+  "patient_id": "P042",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 39
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": null,
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "RHEUMATOID_ARTHRITIS",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "transitioned to other therapies",
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "allergic reaction",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "intolerable side effects",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed 5 years ago. Also has psoriatic arthritis and depression. Symptoms started gradually, attributed to diet/stress. Blood in stool led to diagnosis. Initial treatments: mesalamine, prednisone, sulfasalazine (allergic reaction), methotrexate (nausea). Started Humira, which helps both Crohn's and psoriatic arthritis (70% improvement). Marriage counseling is ongoing due to strain. Children (5 and 3) don't understand. Work is fully remote. Medical costs are growing ($10k/year out-of-pocket). Concerns about finances and future biologic failures. Support group exists but mostly women; found online group for dads with chronic illness. Worried about biologic failure and future surgery with young kids."
+}

@@ -1,0 +1,94 @@
+{
+  "patient_id": "P015",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 37
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "MIGRAINE",
+    "FIBROMYALGIA"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "horrible side effects",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "flaring again within three months",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "severe joint pain",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "anti-tnf",
+      "outcome": "PARTIAL",
+      "reason_stopped": "stopped working during second pregnancy",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "anti-tnf",
+      "outcome": "PARTIAL",
+      "reason_stopped": "failed after three years",
+      "before_biologic": false
+    },
+    {
+      "name": "Cimzia",
+      "treatment_class": "anti-tnf",
+      "outcome": "UNKNOWN",
+      "reason_stopped": "insurance denied it three times",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "interleukin-inhibitor",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "relapse",
+    "acute_flare",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step",
+    "unresolved"
+  ],
+  "evidence_notes": "Single mother of two with Crohn's, migraines, and fibromyalgia. Progressed through multiple conventional therapies and biologics (Remicade, Humira) due to failures and pregnancy. Currently on Stelara with moderate success. Managing significant fatigue, financial strain, and social isolation. Considering combination therapy."
+}

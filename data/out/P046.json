@@ -1,0 +1,56 @@
+{
+  "patient_id": "P046",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 49
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": null,
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "worsened blood sugar",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "ineffective",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "alternative_therapy"
+  ],
+  "evidence_notes": "Diagnosed 18 months ago, likely had it longer. Construction foreman, also pre-diabetic and chronic back pain. Always had stomach issues attributed to job/diet. Blood in stool led to diagnosis of severe disease with multiple strictures. Options limited by other conditions. Prednisone worsened blood sugar. Mesalamine ineffective. Currently on Humira (50% improvement). Company moved him to desk duty due to work limitations. Fears being pushed out of his 28-year job. Wife is working double shifts. Sold assets to manage medical bills. Insurance covers 80% of biologics, still thousands out-of-pocket."
+}

@@ -1,0 +1,55 @@
+{
+  "patient_id": "P050",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 62
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "CONTRAINDICATION",
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "ineffective",
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "respiratory contraindication",
+      "before_biologic": true
+    },
+    {
+      "name": "budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "ongoing",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "comorbidity",
+    "biologic_recommended",
+    "alternative_therapy"
+  ],
+  "evidence_notes": "Diagnosed 8 months ago. Also COPD and arthritis. Started with stomach flu symptoms, lasted months, lost 50lbs. Prednisone worsened breathing; respiratory doctor advised against it. Now on budesonide (minimal help, 20%). GI wants biologics, but lung doctor says too risky due to COPD and infection risk. Stuck with inadequate treatment. Quality of life is very poor (breathing, eating, mobility issues). Wife died 2 years ago. Children busy. Considering moving in with son, but wife is reluctant. Grandchildren's smiles keep him going. Worried about future. Continues treatment despite poor outlook."
+}

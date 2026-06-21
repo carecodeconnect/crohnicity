@@ -1,0 +1,76 @@
+{
+  "patient_id": "P022",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 35
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "steroid-induced diabetes",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "Immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "acute_flare",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient experienced a severe onset of Crohn's, leading to multiple complications including steroid-induced diabetes and osteoporosis. He has tried multiple treatments with partial success and is facing financial and social challenges. The narrative provides a comprehensive overview of his journey."
+}

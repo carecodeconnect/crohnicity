@@ -109,6 +109,14 @@ With more time, after the core is complete:
   deliberately uses one prompt; a later iteration would break extraction into per-section prompts
   (e.g. biologic funnel, treatment history, referral pathway) run in parallel — better per-field
   accuracy and inspectable intermediate artifacts, at the cost of more calls and orchestration.
+- **A telemetry feature for optimisation.** Per-call usage is currently logged (tokens, cost,
+  cached tokens — see [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I'd surface it as a
+  first-class artifact (a structured per-run metrics file + plots) to track cost/latency/cache-hit
+  rate and tune the pipeline at scale.
+- **Try a larger Gemini model in production.** This version uses `gemini-2.5-flash-lite` (cheap,
+  fast for iteration). With more time I'd evaluate a more capable model (e.g. `gemini-2.5-flash` /
+  `pro`) for extraction quality, weighed against its free-tier **request/token rate limits** (the
+  ~20 calls/day cap that drove the chunking design) and cost.
 
 ## Where I used AI
 
@@ -116,7 +124,39 @@ TBA
 
 ## Usage
 
-TBA
+Run the extraction pipeline via the `src/main.py` CLI (python-fire). **By default it extracts all
+50 transcripts in chunks of 10 → 5 API calls**, sized to the Gemini free tier's ~20 requests/day
+cap (taken as a fixed constraint; 50 one-at-a-time calls would exceed it).
+
+```bash
+uv run python src/main.py                          # all 50, chunks of 10 (5 calls)
+uv run python src/main.py --limit=10               # run 1 only: P001–P010
+uv run python src/main.py --limit=10 --offset=10   # run 2: P011–P020 (no re-run of earlier chunks)
+```
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `--model` | `gemini/gemini-2.5-flash-lite` | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
+| `--limit` | all | slice size — run one chunk for testing / incremental runs |
+| `--offset` | `0` | which slice — incremental runs without redoing earlier chunks |
+| `--chunk-size` | `10` | transcripts per API call |
+| `--out-dir` | `data/out` | route test runs to `data/out/tests` so they don't clobber production |
+
+Each chunk persists its predictions (one JSON per patient) as soon as it validates, so a completed
+chunk is durable and `--offset` lets you resume/retry without re-spending calls. Per-call telemetry
+(tokens, cost) is logged to `logs/extract.log`.
+
+## Data handling & privacy
+
+> ⚠️ **This repo commits `data/in/` and `data/out/` (model inputs and outputs) to git — which you
+> should NOT do in a production system.** Real patient interview data and extracted records are
+> **personal / special-category health data** under GDPR and must never be pushed to GitHub or any
+> external version control — PII exposure, data-residency, retention, and access-control all forbid it.
+>
+> It is acceptable **here only** because the dataset is **synthetic**, the repo is **private**, and
+> committing the data + outputs makes this **internal job-interview take-home auditable** end-to-end
+> by the reviewer. In production, inputs/outputs would live in secure storage under a data-processing
+> agreement and **only code** would be version-controlled. See [docs/QUESTIONS.md](docs/QUESTIONS.md) #7.
 
 ## Requirements
 

@@ -1,0 +1,54 @@
+{
+  "patient_id": "P037",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 34
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Not enough",
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Joint pain developed",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "comorbidity",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed six years ago after second child. Also has postpartum anxiety and lupus. Started mesalamine while breastfeeding, then azathioprine. Developed joint pain and rashes confirming lupus. Started Humira two years ago, helps moderately (60%). Struggles to be active mom, works part-time freelance. Financial stress due to husband's insurance dependency. Support group is lifeline. Considering changing biologics as Humira is losing effectiveness."
+}

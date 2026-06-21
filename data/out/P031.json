@@ -1,0 +1,67 @@
+{
+  "patient_id": "P031",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 46
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "FIBROMYALGIA",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Cancer treatment required stopping immunosuppressants",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "acute_flare",
+    "complication",
+    "surgery",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient has Crohn's for 15 years, fibromyalgia, and is a breast cancer survivor. Started on conventional therapies (mesalamine, prednisone), then biologics (Remicade) 7 years ago. Stopped Remicade for cancer treatment, leading to severe Crohn's flares. Currently on Stelara, which is only partially effective. Managing multiple chronic illnesses, impact on family and career is significant. Exploring surgery as next step if Stelara fails."
+}
