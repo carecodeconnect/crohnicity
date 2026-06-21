@@ -356,14 +356,16 @@ deep-dive below). So “a typical referral pathway” is as much about
 linear step number alone understates the journey for the **32%** of
 patients whose journey loops.
 
-**Deep dive — the individual journeys.** Open
-[`data/out/html/index.html`](data/out/html/index.html) to browse all 50
-interactive per-case pathway graphs. As a teaser, here is patient
-**P013** — a *cyclic* journey (a phase recurs, so it renders as a loop);
-the full interactive version is at
-[`referral_pathway_P013.html`](data/out/html/referral_pathway_P013.html):
+**Deep dive — the individual journeys.** Two views of the same data: a
+GitHub-viewable static gallery of all 50 pathways as Mermaid diagrams in
+[docs/referral_pathways.md](docs/referral_pathways.md), and the
+**interactive** pyvis graphs in [`data/out/html/`](data/out/html/) (open
+`index.html`) — these render **live in a browser from a local clone**;
+GitHub only shows them as source. As a teaser, here is patient **P013**
+— a *cyclic* journey (a phase recurs, so it renders as a loop):
 
 ``` mermaid
+%%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
     n1["specialist_referral"]

@@ -1,19 +1,22 @@
 site_name: Crohnicity
 docs_dir: docs
 
-# Default MkDocs theme on purpose — simplest, no extra dependency. Swap in mkdocs-material later if wanted.
+# Default MkDocs theme (simplest); the one added plugin is mermaid2, to render the referral-pathway
+# gallery's Mermaid diagrams in the docsite. Swap in mkdocs-material later if wanted.
 nav:
   - Home: index.md
   - Schema (v0.4): SCHEMA.md
   - Implementation TODO: TODO.md
   - Questions (CAIO): QUESTIONS.md
   - Dev Setup: DEV_SETUP.md
+  - Referral pathways: referral_pathways.md
   - API reference:
       - Source (src/): api/src.md
       - Tests (tests/): api/tests.md
 
 plugins:
   - search
+  - mermaid2
   - mkdocstrings:
       handlers:
         python:

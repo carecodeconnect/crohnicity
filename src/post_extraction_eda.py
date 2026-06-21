@@ -163,7 +163,8 @@ def pathway_mermaid(records: list[dict], pid: str) -> str:
     seq = next(r["referral_pathway"] for r in records if r["patient_id"] == pid)
     ids = {step: f"n{i}" for i, step in enumerate(dict.fromkeys(seq))}
     edges = Counter(zip(seq, seq[1:]))
-    lines = ["```mermaid", "flowchart LR"]
+    # neutral theme = light background (readable on GitHub incl. dark mode, and in Quarto HTML)
+    lines = ["```mermaid", "%%{init: {'theme':'neutral'}}%%", "flowchart LR"]
     lines += [f'    {nid}["{step}"]' for step, nid in ids.items()]
     lines += [
         f"    {ids[a]} -->{f'|x{c}| ' if c > 1 else ''}{ids[b]}"

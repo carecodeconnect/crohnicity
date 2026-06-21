@@ -16,6 +16,7 @@ business answers, evaluation and Next Steps.*
 ## Architecture
 
 ``` mermaid
+%%{init: {'theme':'neutral'}}%%
 flowchart TB
     cfg["config.json → src/config.py<br/>model · temperature=0 · paths · chunk size"]
 

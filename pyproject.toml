@@ -19,6 +19,7 @@ dependencies = [
     "litellm>=1.89.1",
     "loguru>=0.7.3",
     "matplotlib>=3.11.0",
+    "mkdocs-mermaid2-plugin>=1.2.3",
     "mkdocstrings>=1.0.4",
     "mkdocstrings-python>=2.0.4",
     "networkx>=3.6.1",

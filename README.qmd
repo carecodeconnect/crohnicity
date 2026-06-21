@@ -288,11 +288,12 @@ Crucially, **`{python} cyclic`/`{python} N` journeys are cyclic** — the patien
 # | output: asis
 ex_pid = eda.pick_cyclic_example(records)
 print(
-    f"**Deep dive — the individual journeys.** Open "
-    f"[`data/out/html/index.html`](data/out/html/index.html) to browse all {N} interactive "
-    f"per-case pathway graphs. As a teaser, here is patient **{ex_pid}** — a *cyclic* journey "
-    f"(a phase recurs, so it renders as a loop); the full interactive version is at "
-    f"[`referral_pathway_{ex_pid}.html`](data/out/html/referral_pathway_{ex_pid}.html):\n"
+    f"**Deep dive — the individual journeys.** Two views of the same data: a GitHub-viewable "
+    f"static gallery of all {N} pathways as Mermaid diagrams in "
+    f"[docs/referral_pathways.md](docs/referral_pathways.md), and the **interactive** pyvis graphs "
+    f"in [`data/out/html/`](data/out/html/) (open `index.html`) — these render **live in a browser "
+    f"from a local clone**; GitHub only shows them as source. As a teaser, here is patient "
+    f"**{ex_pid}** — a *cyclic* journey (a phase recurs, so it renders as a loop):\n"
 )
 print(eda.pathway_mermaid(records, ex_pid))
 ```

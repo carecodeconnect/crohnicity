@@ -2533,8 +2533,9 @@ vertical-align: -.125em;
 </div>
 <p>The <strong>most common</strong> journey length is <strong>9 steps</strong> (the modal value — highest patient count in the chart), with a <strong>median of ~9</strong> (range 4–13, n=48).</p>
 <p>Crucially, <strong>16/50 journeys are cyclic</strong> — the patient loops back through relapse / <code>loss_of_response</code> / <code>biologic_switch</code> (recurrence the prompt now captures; the per-case graphs render these as loops — see the deep-dive below). So “a typical referral pathway” is as much about <strong>recurrence</strong> (repeated biologic switching) as about step count — a linear step number alone understates the journey for the <strong>32%</strong> of patients whose journey loops.</p>
-<p><strong>Deep dive — the individual journeys.</strong> Open <a href="data/out/html/index.html"><code>data/out/html/index.html</code></a> to browse all 50 interactive per-case pathway graphs. As a teaser, here is patient <strong>P013</strong> — a <em>cyclic</em> journey (a phase recurs, so it renders as a loop); the full interactive version is at <a href="data/out/html/referral_pathway_P013.html"><code>referral_pathway_P013.html</code></a>:</p>
-<pre class="mermaid"><code>flowchart LR
+<p><strong>Deep dive — the individual journeys.</strong> Two views of the same data: a GitHub-viewable static gallery of all 50 pathways as Mermaid diagrams in <a href="docs/referral_pathways.md">docs/referral_pathways.md</a>, and the <strong>interactive</strong> pyvis graphs in <a href="data/out/html/"><code>data/out/html/</code></a> (open <code>index.html</code>) — these render <strong>live in a browser from a local clone</strong>; GitHub only shows them as source. As a teaser, here is patient <strong>P013</strong> — a <em>cyclic</em> journey (a phase recurs, so it renders as a loop):</p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;:&#39;neutral&#39;}}%%
+flowchart LR
     n0[&quot;symptom_onset&quot;]
     n1[&quot;specialist_referral&quot;]
     n2[&quot;diagnostic_testing&quot;]
