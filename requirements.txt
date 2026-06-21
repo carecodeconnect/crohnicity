@@ -132,7 +132,9 @@ attrs==26.1.0 \
 babel==2.18.0 \
     --hash=sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d \
     --hash=sha256:e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35
-    # via jupyterlab-server
+    # via
+    #   great-tables
+    #   jupyterlab-server
 beautifulsoup4==4.15.0 \
     --hash=sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7 \
     --hash=sha256:d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9
@@ -175,6 +177,7 @@ cffi==2.0.0 \
     # via
     #   argon2-cffi-bindings
     #   cryptography
+    #   multimark
     #   pyzmq
 charset-normalizer==3.4.7 \
     --hash=sha256:03853ed82eeebbce3c2abfdbc98c96dc205f32a79627688ac9a27370ea61a49c \
@@ -220,6 +223,8 @@ click==8.4.1 \
     #   huggingface-hub
     #   litellm
     #   mkdocs
+    #   multimark
+    #   nokap
     #   typer
 colorama==0.4.6 ; sys_platform == 'win32' \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
@@ -360,6 +365,10 @@ executing==2.2.1 \
     --hash=sha256:3632cc370565f6648cc328b32435bd120a1e4ebb20c77e3fdde9a13cd1e533c4 \
     --hash=sha256:760643d3452b4d777d295bb167ccc74c64a81df23fb5e08eff250c425a4b2017
     # via stack-data
+faicons==0.2.2 \
+    --hash=sha256:6b7d7b19180179b6b83783f91bf6c9311c0f00ae0f97d41be1d24d9942361659 \
+    --hash=sha256:d45d7c2635b53582a3375c67d7e975a28a91d2c16ef5f6b5033b5cdd507224b6
+    # via great-tables
 fastapi==0.137.1 \
     --hash=sha256:64f6983c59e45c4b9fdc44e57cb8035c2451ee91ea8e8ec042aca37de7cf6b69 \
     --hash=sha256:822360704230d9533d8d9475399613525968aa2f0b5bd2a3ccc9f18c88fd541c
@@ -476,6 +485,10 @@ graphviz==0.21 \
     --hash=sha256:20743e7183be82aaaa8ad6c93f8893c923bd6658a04c32ee115edb3c8a835f78 \
     --hash=sha256:54f33de9f4f911d7e84e4191749cac8cc5653f815b06738c54db9a15ab8b1e42
     # via chronicity
+great-tables==0.22.0 \
+    --hash=sha256:7a7f81c2d1eb66d88166e864ac820966c23f04e4ecb41eeca8f9df1e1b21764d \
+    --hash=sha256:ccf031d90cab599328232bc32afadef215da1457dbc025d0972048cc2050fd57
+    # via chronicity
 greenlet==3.5.1 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'ppc64le' or platform_machine == 'win32' or platform_machine == 'x86_64' \
     --hash=sha256:111e2390ffffc47d5840b01711dd7fac07d4c09283d0283e7f3264b14e284c64 \
     --hash=sha256:17d86354f0ae6b61bf9be5148d0dd34e06c3cb7c602c671f79f29ac3b150e659 \
@@ -556,6 +569,12 @@ hf-xet==1.5.1 ; platform_machine == 'AMD64' or platform_machine == 'aarch64' or 
     --hash=sha256:e7dbb40617410f432182d918e37c12303fe6700fd6aa6c5964e30a535a4461d6 \
     --hash=sha256:f7b3002f95d1c13e24bcb4537baa8f0eb3838957067c91bb4959bc004a6435f5
     # via huggingface-hub
+htmltools==0.7.0 \
+    --hash=sha256:92e5d06aeadb56e0ff63b236971bc58bb9cf6058c7235e3af57868e7bf113e1b \
+    --hash=sha256:b95f922b7038f1b935ce24691ae74cb1ab9526d9c9cf1c2e2f329c38ef227a10
+    # via
+    #   faicons
+    #   great-tables
 httpcore==1.0.9 \
     --hash=sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55 \
     --hash=sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8
@@ -589,7 +608,13 @@ idna==3.18 \
 importlib-metadata==8.9.0 \
     --hash=sha256:58850626cef4bd2df100378b0f2aea9724a7b92f10770d547725b047078f99ee \
     --hash=sha256:e0f761b6ea91ced3b0844c14c9d955224d538105921f8e6754c00f6ca79fba7f
-    # via litellm
+    # via
+    #   great-tables
+    #   litellm
+importlib-resources==7.1.0 \
+    --hash=sha256:0722d4c6212489c530f2a145a34c0a7a3b4721bc96a15fada5930e2a0b760708 \
+    --hash=sha256:1bd7b48b4088eddb2cd16382150bb515af0bd2c70128194392725f82ad2c96a1
+    # via great-tables
 iniconfig==2.3.0 \
     --hash=sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730 \
     --hash=sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12
@@ -880,6 +905,7 @@ matplotlib==3.11.0 \
     --hash=sha256:dfabef0230d0697aa0d717385194dd41162e00207a68bf4abf94c2bf4c27dca0
     # via
     #   chronicity
+    #   plotnine
     #   wordcloud
 matplotlib-inline==0.2.2 \
     --hash=sha256:3c821cf1c209f59fb2d2d64abbf5b23b67bcb2210d663f9918dd851c6da1fcf6 \
@@ -905,6 +931,10 @@ mistune==3.2.1 \
     --hash=sha256:78cdb0ba5e938053ccf63651b352508d2efa9411dc8810bfb05f2dc5140c0048 \
     --hash=sha256:7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28
     # via nbconvert
+mizani==0.14.4 \
+    --hash=sha256:28934d91516d922d7cb0382c82a6c513692abc0174c42a50294ae571520633f9 \
+    --hash=sha256:ed72bf249e2a18b5dcc65cd54c7eaa5444b2cb09c7e18aafa2ab6f05f1b78620
+    # via plotnine
 mkdocs==1.6.1 \
     --hash=sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2 \
     --hash=sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e
@@ -975,6 +1005,9 @@ multidict==6.7.1 \
     # via
     #   aiohttp
     #   yarl
+multimark==0.2.0 \
+    --hash=sha256:15a53111c52e0a65c200b57a5068a618734af52fc5d6512e8b9884fadbb2b8b8
+    # via great-tables
 nbclient==0.11.0 \
     --hash=sha256:04a134a5b087f2c5887f228aca155db50169b8cd9334dee6942c8e927e56081a \
     --hash=sha256:ef7fa0d59d6e1d41103933d8a445a18d5de860ca6b613b87b8574accdb3c2895
@@ -1003,6 +1036,10 @@ networkx==3.6.1 \
     # via
     #   chronicity
     #   pyvis
+nokap==0.1.0 \
+    --hash=sha256:36f2cae8d4251945dbe311ef68916c7eddfe51da490aabe0d68c5d13294b2539 \
+    --hash=sha256:63071cf5e7c4f0487532f6281c6ea85d90673d5cd835ffe5e64c913989742eb9
+    # via great-tables
 notebook==7.5.7 \
     --hash=sha256:1f95f79d117e47d20b5555b5c85a397d2cfecf136978aaab767cf0314b09165b \
     --hash=sha256:d6d59288a25303b25e1dcb71e9b017ec3a785f7d92f38b9bc288ca1970d5b0a8
@@ -1039,7 +1076,12 @@ numpy==2.4.6 \
     # via
     #   contourpy
     #   matplotlib
+    #   mizani
     #   pandas
+    #   patsy
+    #   plotnine
+    #   scipy
+    #   statsmodels
     #   wordcloud
 odfpy==1.4.1 \
     --hash=sha256:db766a6e59c5103212f3cc92ec8dd50a0f3a02790233ed0b52148b70d3c438ec
@@ -1057,6 +1099,7 @@ packaging==26.2 \
     --hash=sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661
     # via
     #   dagster-shared
+    #   htmltools
     #   huggingface-hub
     #   ipykernel
     #   jupyter-events
@@ -1068,6 +1111,7 @@ packaging==26.2 \
     #   mkdocs
     #   nbconvert
     #   pytest
+    #   statsmodels
 pandas==3.0.3 \
     --hash=sha256:0d589105b3c14645af1738ff279b2995102d8f7a03b0a66dc8d95550eb513e04 \
     --hash=sha256:13fc1e853d9e04743d11ba75a985ccbc2a317fe07d8af61e445a6fd24dacd6a6 \
@@ -1086,7 +1130,11 @@ pandas==3.0.3 \
     --hash=sha256:bab900348131a7db1f69a7309ef141fd5680f1487094193bcbbb61791573bf8f \
     --hash=sha256:bd3a518890b400d32f9023722dc9a9a5c969f00b415419a3c06c043f09bb5d7d \
     --hash=sha256:e3a2ec42c98ffa2565a67e08e218d06d72576d758d90facb7c00805194d8f360
-    # via chronicity
+    # via
+    #   chronicity
+    #   mizani
+    #   plotnine
+    #   statsmodels
 pandocfilters==1.5.1 \
     --hash=sha256:002b4a555ee4ebc03f8b66307e287fa492e4a77b4ea14d3f934328297bb4939e \
     --hash=sha256:93be382804a9cdb0a7267585f157e5d1731bbe5545a85b268d6f5fe6232de2bc
@@ -1103,6 +1151,10 @@ pathspec==1.1.1 \
     --hash=sha256:17db5ecd524104a120e173814c90367a96a98d07c45b2e10c2f3919fff91bf5a \
     --hash=sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189
     # via mkdocs
+patsy==1.0.2 \
+    --hash=sha256:37bfddbc58fcf0362febb5f54f10743f8b21dd2aa73dec7e7ef59d1b02ae668a \
+    --hash=sha256:cdc995455f6233e90e22de72c37fcadb344e7586fb83f06696f54d92f8ce74c0
+    # via statsmodels
 pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32' \
     --hash=sha256:7236d1e080e4936be2dc3e326cec0af72acf9212a7e1d060210e70a47e253523 \
     --hash=sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f
@@ -1144,6 +1196,10 @@ platformdirs==4.10.0 \
     #   dagster-shared
     #   jupyter-core
     #   mkdocs-get-deps
+plotnine==0.15.7 \
+    --hash=sha256:5226f0d3bae405bfa0797d213177ee3ac634b687fca352cffc313ca0b21aa1a2 \
+    --hash=sha256:6e578bdd93c7ba12ce495dcdeaf8651f8e4ccdceb0c85b94c8195566d709c2a0
+    # via chronicity
 pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
     --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
@@ -1582,6 +1638,32 @@ ruff==0.15.17 \
     --hash=sha256:f3be1fbb34bcdfd146240d8fb92a709d4c2c8191348580a3c044ec60fa0b4456 \
     --hash=sha256:f6ad73b14c2d18a3bf8ad7cb6974294d7f613a7898604826058e6ac64918ef4d
     # via chronicity
+scipy==1.18.0 \
+    --hash=sha256:18e9575f1569b2c54174e6159d32942e03731177f63dce7975f0a0c88d102f5b \
+    --hash=sha256:1a4441f15d620578772a49e5ab48c0ee1f7a0220e387110283062729136b2553 \
+    --hash=sha256:1ad44305cfa24b1ba5803cbbebf033590ccbac1aa5d612d727b785325ab408b0 \
+    --hash=sha256:2d8bbdc6c817f5b4006a54d799d4f5bab6f910193cbb9a1ff310833d4d270f61 \
+    --hash=sha256:2ef3abc54a4ffc53765374b0d5728532dfdd2585ed23f6b11c206a1f0b1b9af8 \
+    --hash=sha256:368e0a705903c466aa5f08eefb39e6b1b6b2d659e7352a31fd9e2438365be0f8 \
+    --hash=sha256:3f1ac564d3bf6c03d861d2cd87a1bea0da2887136f7fb1bf519c05a8971452d6 \
+    --hash=sha256:40395a5fcd1abee49a5c7aaa98c29db393eedc835138560a588c47ec16156690 \
+    --hash=sha256:4c256ee70c0d1a8a2ace807e199ccd4e3f57037433842abb3fb36bc17eaa9578 \
+    --hash=sha256:56abf29a7c067dde59be8b9a22d606a4ea1b2f2a4b756d9d903c62818f5dacce \
+    --hash=sha256:67b2ad2ad54c72ca6d04975a9b2df8c3638c34ddd5b28738e94fc2b57929d378 \
+    --hash=sha256:6aa94e78ec192a30063a5e72e561c28af769dc311190b24fe91774eff1969709 \
+    --hash=sha256:7a7f3b01647384dbc3a711e8c6778e0aabbe93959249fef5c7393396bcac0867 \
+    --hash=sha256:7c7a51b33ce387193c97f228320cf8e87361daa1bba750638677729598b3e677 \
+    --hash=sha256:84031d7b052a54fae2f8632e0ec802073d385476eb9a63079bce6e23ef9283d4 \
+    --hash=sha256:8ca01e8ae69f1b18e9a58d91afead31be3cef0dd905a10249dac559ee15460a0 \
+    --hash=sha256:945c1761b93f38d7f99ae81ae80c63e621471608c7eeead563f6df025585cd58 \
+    --hash=sha256:9aac6192fac56bf2ca534389d24623f07b39ff83317d58287285e7fbd622ff76 \
+    --hash=sha256:e40baea28ae7f5475c779741e2d90b1247c78531207b49c7030e698ff81cee3f \
+    --hash=sha256:f2a6af57bd9e4a75d70e4117e78a1bbee84f79ae3fbb6d0111005d6ebcc4cb8d \
+    --hash=sha256:f351e0dd702687d12a402b867a1b4146a256923e1c38317cbc472f6372b94707
+    # via
+    #   mizani
+    #   plotnine
+    #   statsmodels
 send2trash==2.1.0 \
     --hash=sha256:0da2f112e6d6bb22de6aa6daa7e144831a4febf2a87261451c4ad849fe9a873c \
     --hash=sha256:1c72b39f09457db3c05ce1d19158c2cbef4c32b8bedd02c155e49282b7ea7459
@@ -1639,6 +1721,18 @@ starlette==1.3.1 \
     --hash=sha256:05d0213193f2fbaae60e2ecb593b4add4262ad4e46536b54abe36f11a71724e0 \
     --hash=sha256:c7372aae11c3c3f26a42df7bd626cec2f47d03483d261d369516a615a53714c6
     # via fastapi
+statsmodels==0.14.4 ; sys_platform == 'emscripten' \
+    --hash=sha256:5d69e0f39060dc72c067f9bb6e8033b6dccdb0bae101d76a7ef0bcc94e898b67
+    # via plotnine
+statsmodels==0.14.6 ; sys_platform != 'emscripten' \
+    --hash=sha256:00781869991f8f02ad3610da6627fd26ebe262210287beb59761982a8fa88cae \
+    --hash=sha256:151b73e29f01fe619dbce7f66d61a356e9d1fe5e906529b78807df9189c37721 \
+    --hash=sha256:3414e40c073d725007a6603a18247ab7af3467e1af4a5e5a24e4c27bc26673b4 \
+    --hash=sha256:4d17873d3e607d398b85126cd4ed7aad89e4e9d89fc744cdab1af3189a996c2a \
+    --hash=sha256:73f305fbf31607b35ce919fae636ab8b80d175328ed38fdc6f354e813b86ee37 \
+    --hash=sha256:a518d3f9889ef920116f9fa56d0338069e110f823926356946dae83bc9e33e19 \
+    --hash=sha256:e443e7077a6e2d3faeea72f5a92c9f12c63722686eb80bb40a0f04e4a7e267ad
+    # via plotnine
 structlog==26.1.0 \
     --hash=sha256:e081a26d6c373e6d201eca24eede26d8ffab07f88f477822e679183428d3d91e \
     --hash=sha256:f63a716cbd1b1291cf7661de7794b455acfa4c43c5bcf1630e6ad5ddc1adb3b7
@@ -1806,7 +1900,9 @@ typing-extensions==4.15.0 \
     #   dagster-shared
     #   fastapi
     #   google-genai
+    #   great-tables
     #   grpcio
+    #   htmltools
     #   huggingface-hub
     #   jupyter-client
     #   openai
@@ -1826,6 +1922,7 @@ tzdata==2026.2 \
     # via
     #   arrow
     #   dagster
+    #   mizani
     #   pandas
 universal-pathlib==0.3.10 \
     --hash=sha256:4487cbc90730a48cfb64f811d99e14b6faed6d738420cd5f93f59f48e6930bfb \
@@ -1893,7 +1990,9 @@ websockets==16.0 \
     --hash=sha256:caab51a72c51973ca21fa8a18bd8165e1a0183f1ac7066a182ff27107b71e1a4 \
     --hash=sha256:daa3b6ff70a9241cf6c7fc9e949d41232d9d7d26fd3522b1ad2b4d62487e9904 \
     --hash=sha256:fd3cb4adb94a2a6e2b7c0d8d05cb94e6f1c81a0cf9dc2694fb65c7e8d94c42e4
-    # via google-genai
+    # via
+    #   google-genai
+    #   nokap
 widgetsnbextension==4.0.15 \
     --hash=sha256:8156704e4346a571d9ce73b84bee86a29906c9abfd7223b7228a28899ccf3366 \
     --hash=sha256:de8610639996f1567952d763a5a41af8af37f2575a41f9852a38f947eb82a3b9
