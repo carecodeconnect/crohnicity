@@ -1,0 +1,68 @@
+{
+  "patient_id": "P012",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 52
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Entyvio",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "HYPERTENSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": "insufficient efficacy",
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (cardiac concerns)",
+      "before_biologic": true
+    },
+    {
+      "name": "Sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction (headaches)",
+      "before_biologic": true
+    },
+    {
+      "name": "Entyvio",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "primary_care_contact",
+    "diagnostic_delay",
+    "acute_flare",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "patient_fear",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken"
+  ],
+  "evidence_notes": "Patient diagnosed late, likely had Crohn's for decades. Tried conventional therapies with limited success and initial resistance to biologics due to heart condition. Insurance battles for Entyvio approval. Experiencing slow but noticeable improvement. Side effect of frequent colds noted. Concerned about future insurance coverage."
+}

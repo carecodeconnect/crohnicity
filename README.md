@@ -70,6 +70,10 @@ data.
 
 ## Extraction Pipeline
 
+> **Architecture diagram.** The full Dagster asset graph and the Dagster
+> ↔ `uv run` relation are drawn in
+> [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md).
+
 - **Single-shot vs. multi-stage extraction.** One big call, or a
   pipeline (e.g., identify-then-extract, or narrative-then-structured)?
   What are the tradeoffs?
@@ -107,8 +111,8 @@ data.
   ‘not mentioned’, not churn).”* Honest limit: truncation is a
   lexical/structural property of the transcript’s end that the narrative
   under-determines, so the instruction alone isn’t enough — the gold
-  audit caught a false positive (P016) and a false negative (P049), and
-  a deterministic tail-of-text rule would do better
+  audit found it unreliable in both directions (over-flagging and missed
+  truncation), and a deterministic tail-of-text rule would do better
   (`docs/TO_REVIEW.md`).
 - **Determinism & reproducibility.** Three levers, in decreasing order
   of leverage. **(1) Structured-output mode** —
@@ -122,14 +126,21 @@ data.
   frozen artefacts with no API call, so every number and plot is
   **exactly reproducible run-to-run** regardless of LLM nondeterminism;
   this is the real guarantee. **(3) Decoding params** — `temperature` is
-  left at the provider default this iteration; pinning it to `0`
-  (greedy) and adding a seed where Gemini honours it is the open
-  determinism step (`docs/TODO.md`), though with a reasoning-capable
-  model bit-exact output isn’t guaranteed anyway, and (1)+(2) already
-  remove the variance that affects the answers. No explicit prompt
-  **caching** yet — the static system prompt + schema are identical
-  across calls, so implicit context caching may apply, and cached-token
-  counts are logged (`docs/TELEMETRY.md`).
+  **pinned to `0`** (greedy) in `config.json` and imported by
+  `extract.py` — extraction here is a **classification** task, so we
+  want *same transcript → same labels*, not sampled variety. This build
+  is the live test case for *why*: a fresh re-run at the provider
+  default (Gemini’s default `temperature` is `1.0`) shifted long-tail
+  outputs (the GP-node count; which biologics got mislabelled
+  `before_biologic`) while the headline answers held — exactly the
+  run-to-run drift `0` removes. Temperature is **logged per run** (with
+  the model) so runs at different parameter levels stay comparable. A
+  seed would add belt-and-braces, but with a reasoning-capable model `0`
+  *minimises* rather than *guarantees* bit-identical output; **(2)** is
+  the hard reproducibility guarantee for the analysis. No explicit
+  prompt **caching** yet — the static system prompt + schema are
+  identical across calls, so implicit context caching may apply, and
+  cached-token counts are logged (`docs/TELEMETRY.md`).
 
 ## Evaluation
 
@@ -152,19 +163,39 @@ I picked (1).
 
 **What it surfaced (provisional).** Gold labels live in
 `interviews_ground_truth_v5.ods`, scored on the `to_review` validation
-split (19 cases with a non-null label). Headline: `biologic_taken` — the
-field Q1 rests on — scores **F1 = 0.95** (precision 0.90 / recall 1.00),
-computed inline under Q1 below, so the “% on a biologic” answer is
-well-supported. Where it’s shaky: **`churn`** is unreliable in both
-directions (a false positive *and* a false negative in the gold audit —
-`docs/TO_REVIEW.md`) because truncation is a lexical/structural signal
-the narrative under-determines; **`treatment_class`** drifts
-(un-normalised free-text categories inflate the Q3 count); and the **GP
-node** (`primary_care_contact`) is under-emitted (9/50), weakening the
-strict Q4 step count. Fix-first order: a deterministic tail-of-text
-churn rule, a treatment/biologic registry to normalise classes, and a
-larger, multi-annotator gold set — today’s is single-annotator over
-19/50, so the metric carries real sampling uncertainty.
+split. Headline: `biologic_taken` — the field Q1 rests on — scores a
+high F1 (precision / recall / F1 computed inline in the Q1 gold-eval
+table below), so the “% on a biologic” answer is well-supported. Where
+it’s shaky: **`churn`** is unreliable in both directions (a false
+positive *and* a false negative in the gold audit — `docs/TO_REVIEW.md`)
+because truncation is a lexical/structural signal the narrative
+under-determines; **`treatment_class`** drifts (un-normalised free-text
+categories inflate the Q3 count); and the **GP node**
+(`primary_care_contact`) is under-emitted (see the Q4 caveat’s live
+count), weakening the strict Q4 step count. Fix-first order: a
+deterministic tail-of-text churn rule, a treatment/biologic registry to
+normalise classes, and a larger, multi-annotator gold set — today’s is
+single-annotator over the `to_review` gold split, so the metric carries
+real sampling uncertainty.
+
+> **A second eval, by accident — the temperature consistency check
+> (option 3).** I picked (1), but the rate-limited re-runs left a
+> natural option-(3) experiment, and it **supports the `temperature = 0`
+> decision** (*Extraction Pipeline → Determinism*). The *same*
+> `P001–P010` batch (identical transcripts + prompt) was extracted three
+> times at Gemini’s default `temperature = 1.0` and twice at the
+> now-pinned `0`, and the result is textbook: at **`1.0` the output
+> drifts** — `total_tokens` of **11,570 / 12,260 / 12,197** across runs
+> (~6% spread; input is fixed, so a moving total means *different
+> generated content* each run) — whereas at **`0` it is byte-identical**
+> (**12,034 = 12,034**), i.e. same input → same output. So determinism
+> here is *demonstrated, not asserted*. Caveats: `total_tokens` is a
+> coarse, **lower-bound** proxy (it only catches drift that changes
+> output *length*, so field-level drift at `1.0` is likely larger), and
+> the temp-0 sample is n=2 from one session. **With more time** I’d run
+> the check deliberately — all 50 patients ×2 at each temperature,
+> diffing the JSON field-by-field — turning this accidental signal into
+> a measured disagreement rate.
 
 ## Analysis
 
@@ -184,6 +215,19 @@ structured output is usable, not to write a consulting deck.
 ### Answers
 
 Computed from the persisted predictions in `data/out/` (`n = 50`).
+
+> **Note — provisional run, clean re-run pending.** These artefacts are
+> a *provisional snapshot*. The final extraction hit Gemini’s free-tier
+> **daily quota** partway through, so the current `data/out/` straddles
+> two decoding settings (an early chunk at the now-pinned
+> `temperature = 0`, the rest from an earlier run at the provider
+> default `1.0`). The pipeline itself ran correctly — this is a rate
+> limit, not a failure. **Once the daily quota resets, a single full
+> re-run regenerates all 50 predictions at `temperature = 0`**
+> (deterministic — see *Extraction Pipeline → Determinism*) and
+> re-renders this report from that consistent set. The numbers below may
+> therefore shift slightly on that final run; the methodology and
+> answers do not.
 
 #### Q1 — % on a biologic
 
@@ -223,72 +267,94 @@ audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
 
 | reason             | patients |
 |:-------------------|---------:|
-| INSURANCE_PROBLEMS |        6 |
-| PATIENT_FEARS      |        3 |
-| (null)             |        2 |
-| DEFERRED           |        1 |
+| INSURANCE_PROBLEMS |        4 |
+| COST               |        3 |
+| DEFERRED           |        2 |
+| PATIENT_FEARS      |        2 |
+| NOT_MENTIONED      |        1 |
 | CONTRAINDICATION   |        1 |
 
 ![Q2 reasons not on a biologic](data/out/plots/q2_reasons.png)
 
+> **`unspecified` (Q2) — null handling.** An `unspecified` row is a
+> biologic **prescribed but not taken** where the model extracted **no
+> `ReasonNotTaken`** — a genuine null, not a stated reason. It’s
+> relabelled from `(null)` for readability and kept **visible as its own
+> category** rather than dropped — consistent with the schema’s stance
+> on nulls (*Pydantic Schema Design → “Three states, not one null”*):
+> absence, negation and truncation are distinct first-class states, and
+> `UNKNOWN` / `NOT_APPLICABLE` exist so a missing value is never
+> silently conflated with a real one. The fix (prompt the model to
+> always set a reason, default `UNKNOWN`) is tracked in `docs/TODO.md`.
+
 #### Q3 — treatments tried before a biologic
 
-    | treatment_class      |   mentions |
-    |:---------------------|-----------:|
-    | conventional_therapy |         26 |
-    | conventional         |         23 |
-    | aminosalicylate      |         22 |
-    | corticosteroid       |         16 |
-    | Immunosuppressant    |         11 |
-    | 5-ASA                |         10 |
-    | Corticosteroid       |          7 |
-    | immunomodulator      |          6 |
-    | immunosuppressant    |          4 |
-    | biologic             |          2 |
-    | Diabetes medication  |          1 |
-    | hormonal therapy     |          1 |
-    | analgesic            |          1 |
-    | hormone replacement  |          1 |
-    | antibiotic           |          1 |
+    | treatment_class   |   mentions |
+    |:------------------|-----------:|
+    | conventional      |         26 |
+    | corticosteroid    |         22 |
+    | 5-asa             |         21 |
+    | 5-ASA             |         18 |
+    | immunomodulator   |         11 |
+    | immunosuppressant |          7 |
+    | Corticosteroid    |          7 |
+    | Immunomodulator   |          6 |
+    | Biologic          |          2 |
+    | NSAID             |          2 |
+    | anti-infective    |          1 |
 
 ![Q3 treatments before a
 biologic](data/out/plots/q3_before_biologic.png)
 
+> **Known extraction error (Q3) — error-handling note.** A `biologic`
+> appearing in “treatments before a biologic” carries
+> `before_biologic = true` on a biologic — which is either a genuine
+> **biologic switch** (an earlier biologic tried before the one
+> ultimately taken) or a **model mislabel** (the *taken* biologic itself
+> flagged `before_biologic`, which can’t be right — a treatment isn’t
+> “before” itself); the per-patient `treatment_records` distinguish the
+> two. So “treatments before a biologic” currently also counts
+> biologics. We **surface this rather than silently drop it**: a clear
+> include/exclude rule for biologics, plus the prompt fix, is tracked in
+> `docs/TODO.md`.
+
 #### Q4 — referral pathway length (steps to a biologic-prescribing specialist)
 
 > **Caveat.** The literal “GP” node (`primary_care_contact`) appears in
-> only 9/50 predicted pathways, so a strict GP→prescriber count isn’t
+> only 7/50 predicted pathways, so a strict GP→prescriber count isn’t
 > representative. We count steps from the journey **start** (or
 > `primary_care_contact` where present) to `biologic_recommended`
-> (present in 50/50) — the point a biologic-prescribing specialist is
+> (present in 48/50) — the point a biologic-prescribing specialist is
 > reached. Under-emission of the GP node is a prompt-fix candidate (see
 > `docs/TODO.md`). Per-case journey graphs:
-> `data/out/referral_pathway_P*.html`.
+> `data/out/html/referral_pathway_P*.html`.
 
 | steps | patients |
 |------:|---------:|
-|    10 |       17 |
-|     9 |        8 |
-|     8 |        8 |
-|     6 |        6 |
-|     7 |        6 |
+|     9 |       19 |
+|    10 |       10 |
+|     7 |        4 |
+|     6 |        4 |
+|     8 |        3 |
+|    13 |        2 |
+|     5 |        2 |
 |    11 |        2 |
-|    12 |        2 |
-|    13 |        1 |
+|    12 |        1 |
+|     4 |        1 |
 
 ![Q4 steps to biologic recommendation](data/out/plots/q4_steps.png)
 
-The **most common** journey length is **10 steps** (the modal value —
+The **most common** journey length is **9 steps** (the modal value —
 highest patient count in the chart), with a **median of ~9** (range
-6–13, n=50).
+4–13, n=48).
 
-Crucially, **21/50 journeys are cyclic** — the patient loops back
+Crucially, **16/50 journeys are cyclic** — the patient loops back
 through relapse / `loss_of_response` / `biologic_switch` (recurrence the
 prompt now captures; the per-case graphs in
-`data/out/referral_pathway_P*.html` render these as loops). So “a
+`data/out/html/referral_pathway_P*.html` render these as loops). So “a
 typical referral pathway” is as much about **recurrence** (repeated
 biologic switching) as about step count — a linear step number alone
-understates the journey for the **42%** of patients whose journey loops.
+understates the journey for the **32%** of patients whose journey loops.
 
 **Churn handling matters here.** Be explicit about:
 
@@ -307,12 +373,29 @@ understates the journey for the **42%** of patients whose journey loops.
 
 The model flagged `churn = true` for only **0/50** patient(s). Manual
 review of the flagged/edge cases (`docs/TO_REVIEW.md`) found churn
-detection unreliable in both directions — a false positive (P016) and a
-false negative (P049) — because truncation is a lexical/structural
-property of the transcript’s *end* that the narrative under-determines.
-**Q1 and Q3 are the most trustworthy** answers (they depend on facts
-stated early); **Q4 is the least** (it depends on the full pathway
-surviving, and on the under-emitted GP node).
+detection unreliable in both directions — both an over-flag and a missed
+truncation — because truncation is a lexical/structural property of the
+transcript’s *end* that the narrative under-determines. **Q1 and Q3 are
+the most trustworthy** answers (they depend on facts stated early); **Q4
+is the least** (it depends on the full pathway surviving, and on the
+under-emitted GP node).
+
+> **Why `churn` reads low — under-detection, not absence.** The gold set
+> flags genuinely truncated transcripts the model misses (gold
+> `churn = 1` but the model returns `False`; this run: **P049**) — a
+> **false negative**. A low count is therefore *not* “no truncated
+> transcripts”: the model **can’t reliably detect truncation** — a
+> lexical/structural end-of-text signal the narrative under-determines,
+> compounded by the prompt’s *“prefer `false` when ambiguous”* bias.
+> This is **independent of `temperature`** (it persists at `0`); pinning
+> `temperature = 0` (see *Extraction Pipeline → Determinism*) makes the
+> count reproducible run-to-run, but the real fix is a deterministic
+> tail-of-text rule (`docs/TODO.md`). The temperature change is about
+> *reproducibility*, not detection: earlier **exploratory/testing** runs
+> used Gemini’s default **`temperature = 1.0`** (sampled — long-tail
+> outputs drifted run-to-run), whereas this **final pipeline pins
+> `temperature = 0`** (greedy, deterministic). Same under-detection
+> either way; only the run-to-run stability differs.
 
 ### Churn — definition & handling
 
@@ -329,7 +412,7 @@ likely churn” example).
 
 **One flag, not two.** Because “churned” and “incomplete journey” are
 the *same* signal under this reading, we collapse them into a single
-`churn` field (ground truth `…_v4.ods` drops `incomplete_journey`).
+`churn` field (the ground truth drops `incomplete_journey`).
 `churn = true` when there’s evidence of **(a)** disengagement from the
 app interaction, or **(b)** a truncated / cut-off / vague narrative.
 Signals: completeness, cut off mid-journey, truncation, vagueness.
@@ -402,17 +485,20 @@ With more time, after the core is complete:
   (e.g. biologic funnel, treatment history, referral pathway) run in
   parallel — better per-field accuracy and inspectable intermediate
   artifacts, at the cost of more calls and orchestration.
+
 - **A telemetry feature for optimisation.** Per-call usage is currently
   logged (tokens, cost, cached tokens — see
   [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I’d surface it
   as a first-class artifact (a structured per-run metrics file + plots)
   to track cost/latency/cache-hit rate and tune the pipeline at scale.
+
 - **Try a larger Gemini model in production.** This version uses
   `gemini-2.5-flash-lite` (cheap, fast for iteration). With more time
   I’d evaluate a more capable model (e.g. `gemini-2.5-flash` / `pro`)
   for extraction quality, weighed against its free-tier **request/token
   rate limits** (the ~20 calls/day cap that drove the chunking design)
   and cost.
+
 - **Deep dive on cyclical journey patterns.** The `referral_pathway`
   initially flattened recurrence (each phase emitted once); the prompt
   now asks the model to repeat steps when phases recur. A proper
@@ -420,6 +506,7 @@ With more time, after the core is complete:
   patients cycle through, repeated relapse / loss-of-response / switch
   loops, time-to-switch — and classify journeys as genuinely cyclic vs
   linear (the recurrence is also recoverable from `treatment_records`).
+
 - **Productionise as a FastAPI inference endpoint (deployment MVP).**
   Wrap `extract()` in a **FastAPI** service (already a declared
   dependency): `POST` an `interview_transcript`, get back a validated
@@ -430,11 +517,147 @@ With more time, after the core is complete:
   it via **CI/CD to a cloud service** for an always-on, auto-deployed
   endpoint.
 
+- **SQL + dbt for transformation layers at scale (once they’re better
+  defined).** The post-extraction aggregations (Q1–Q4, the churn
+  three-way split) are pandas in `src/post_extraction_eda.py` — fine for
+  50 patients and a single analyst, and the right tool while the
+  transformations are still *exploratory* and in flux. **Once the
+  analytics transformation layers are better understood** — at cohort
+  scale, across a team — I’d lift the stabilised ones into **dbt**
+  models: version-controlled, tested, documented SQL over a warehouse,
+  with lineage — modular and collaboratively maintained rather than
+  ad-hoc DataFrame wrangling. It slots into the existing **Dagster**
+  orchestration via `dagster-dbt` (dbt models become assets in the same
+  DAG).
+
+- **Pipeline optimisation: Arrow-backed pandas, then Polars / DuckDB +
+  Parquet.** The EDA currently loads 50 per-patient JSON files into
+  default (NumPy-backed) pandas in memory. A low-effort first win for
+  query times: switch pandas to the **PyArrow dtype backend**
+  (`dtype_backend="pyarrow"`) — faster, lower-memory columnar ops with
+  near-zero code change. Beyond that, benchmark **Polars** (lazy,
+  multi-threaded) and **DuckDB** (in-process analytical SQL straight
+  over the artefacts), persisting predictions as **Parquet** (columnar,
+  compressed) instead of loose JSON — faster aggregations and a format
+  that scales. DuckDB also doubles as the local warehouse for the dbt
+  step above.
+
+- **Lift test coverage on the orchestration + LLM-call paths.** The gate
+  reports coverage (`pytest --cov`): **64%** total — but that headline
+  hides a deliberate shape. The **pure logic is well-covered**: `schema`
+  and `config` at 100%, and `post_extraction_eda` (every analysis number
+  in this README) at 98%. The gaps fall **exactly on the side-effecting
+  I/O boundary** — the code you can’t exercise without mocking an
+  external service: the live `litellm` call in `extract.py` (36%) and
+  the `main.py` / `pipeline.py` entry points (0% — the fire CLI + the
+  Dagster assets, which shell out to Gemini, `quarto` and `mkdocs`). So
+  the untested code is the **plumbing, not the analysis**. With more
+  time I’d **mock the `litellm` call** to exercise the retry /
+  schema-rejection / partial-output branches without hitting the API,
+  test the CLI slicing, and smoke-test the Dagster `Definitions` load —
+  closing the gap where reliability, not correctness of the numbers, is
+  at stake.
+
 ## Where I used AI
 
-TBA
+### Without AI
+
+- At beginning of project, I did not use AI. I read the task
+  instructions ~5 times, started handwriting a plan of action, and did
+  system design and designed the Pydantic schema at a high level -
+  making notes of questions - as I read/re-read the task. I was also
+  thinking about how I would incorporate AI into my dev workflow later.
+
+- I wrote ~6 pages of handwritten notes as I designed “Crohnicity”.
+
+- After deciding to read, review and annotate the `interviews.json`
+  `interview_transcript` dataset, I did annotations by hand in
+  LibreOffice Writer (open source version of Excel) to mimic
+  non-technical domain expert labeling of a “gold” ground truth dataset.
+  I returned to this dataset and manual labeling throughout the process,
+  labeling ~20/50 cases.
+
+- I wrote the code for the beginning notebooks (`00_setup`, half of
+  `01_eda_transform_export`) by hand, before transitioning to Claude
+  Code for the more tricky programmatic updates to my LibreOffice Write
+  `.ods` spreadsheet files (see next section).
+
+- I would always do `git` commands (`add`, `commit`, `pull`, `push`)
+  myself manually via `!` commands in the CC terminal.
+
+- I would run the CLI script commands to execute the tests/pipelines in
+  a separate terminal to make sure CC was not hallucinated
+  execution/output.
+
+- At the end of the process, I ran Dagster commands from the CLI and
+  used the Dagster UI to check if my pipelines were running with
+  success/failure.
+
+- I wrote this “Where I used AI” section without AI, by hand!
+
+### With AI
+
+- After clarifying the project specification and system design and how I
+  was going to work with AI, I started using Claude Code in a terminal
+  in my VS Code. Initially I was going to use SKILLS/\*.md files, but
+  decided this was overkill. So I used “Explanatory mode” which is for
+  software engineers and offers explanations while you code. I exported
+  the CC chat with `/export` into `.txt` files to show the workflow. CC
+  opened windows so I could compare diffs in my VS Code using the Claude
+  Code extension. This was really effective. I was conservative and only
+  allowed CC to make changes after my manual approval.
+
+- I did pretty much all the dev work with Claude Code, starting off with
+  writing all the unit tests, logging outputs, and Pydantic schema
+  validation versions using what I would call a “agentic engineering”
+  perspective. I questioned every decision, was pretty strict, and used
+  my judgement either to approve or override CC. I checked all code and
+  outputs as much as I could in VS Code via diffs or using VS Code as a
+  code viewer/editor.
+
+- For the agentic engineering, I was very test- and data- and log- and
+  doc-driven so that I could inspect the outputs at every stage and
+  compare against expected versions. This worked pretty well and either
+  I or CC caught issues as they emerged in the dev process.
+
+- Most of the docs in `docs/` were generated with CC, so there is a
+  potential for drift with the implementation. However, the Quarto
+  `README.qmd` is programmatic to ensure all the data values are
+  dynamically generated rather than hardcoded.
+
+- I was very much “data science” style in my dev workflow, iterating
+  using the data output, and validating against the tests, as much in a
+  REPL style as possible.
 
 ## Usage
+
+**Dagster, driven by the `dg` CLI, is the main entry point.** It
+orchestrates the whole pipeline end-to-end — extract → EDA / README
+render → referral graphs → docsite — and shows which stage failed in the
+UI. Launch a run two ways — the UI’s *Materialize all*, or headless from
+a second terminal:
+
+``` bash
+uv run dg dev -m pipeline -d src   # UI at http://127.0.0.1:3000 → "Materialize all"
+
+# ...or headless from another terminal (no UI):
+uv run dg launch --assets "*" -m pipeline -d src
+```
+
+> Set `DAGSTER_HOME` in `.env` to persist run history to
+> `.dagster_home/` (see DEV_SETUP); without it Dagster uses a temp dir.
+> The instance config `.dagster_home/dagster.yaml` is committed (it
+> shows the pipeline wiring); Dagster runs **locally only** — it never
+> pushes to GitHub, so publishing refreshed artefacts (data + logs +
+> README) is your separate `git` step.
+
+The processes below are the stages Dagster orchestrates; each also runs
+**standalone** to drive or test one part on its own (Dagster calls the
+same `src/` functions — it doesn’t shell around them). Extraction uses
+the chunked 10×5 batch strategy to fit the Gemini free-tier
+~20-requests/day cap.
+
+### Extraction (`src/main.py`)
 
 Run the extraction pipeline via the `src/main.py` CLI (python-fire).
 **By default it extracts all 50 transcripts in chunks of 10 → 5 API
@@ -468,7 +691,7 @@ Generate the per-case journey graphs + phase/transition tables behind Q4
 (reads the pathways, no API call):
 
 ``` bash
-uv run python src/referral_pathway_analysis.py   # writes data/out/referral_pathway_P*.html
+uv run python src/referral_pathway_analysis.py   # writes data/out/html/referral_pathway_P*.html
 ```
 
 ### Rebuild the answers doc

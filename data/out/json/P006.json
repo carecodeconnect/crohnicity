@@ -1,0 +1,66 @@
+{
+  "patient_id": "P006",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 38
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "DEPRESSION",
+    "SLEEP_APNEA"
+  ],
+  "treatment_records": [
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "developed lung problems",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "stopped working",
+      "before_biologic": false
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "developed antibodies within six months",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "complication",
+    "surgery",
+    "conventional_therapy",
+    "adverse_reaction",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "loss_of_response",
+    "biologic_switch",
+    "biologic_taken",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient has a history of surgical resection due to strictures. Experienced lung problems with methotrexate. Humira and Remicade lost effectiveness. Currently on Stelara, but considering combo therapy with methotrexate. Also dealing with short bowel syndrome and depression."
+}

@@ -1,0 +1,80 @@
+{
+  "patient_id": "P022",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 35
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (diabetes, osteoporosis)",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response (antibodies)",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "acute_flare",
+    "complication",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "biologic_taken",
+    "alternative_therapy",
+    "comorbidity",
+    "planning_next_step",
+    "unresolved"
+  ],
+  "evidence_notes": "Patient describes a rapid onset of severe Crohn's, leading to multiple complications and treatments including biologics. The narrative ends with a reflection on the uncertainty of the future and the difficulty of planning, but not a cut-off."
+}

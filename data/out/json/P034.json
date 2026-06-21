@@ -1,0 +1,72 @@
+{
+  "patient_id": "P034",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 61
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "comorbid_conditions": [
+    "ASTHMA",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Budesonide",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Long-term steroids not an option.",
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "Liver issues.",
+      "before_biologic": true
+    },
+    {
+      "name": "Methotrexate",
+      "treatment_class": "Immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "Unbearable fatigue.",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "patient_fear",
+    "biologic_recommended",
+    "biologic_taken",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Robert is 61, diagnosed with Crohn's five years ago, but likely had it longer. He also has COPD and peripheral neuropathy. Symptoms started in his mid-fifties, initially misdiagnosed as IBS and diverticulitis. He has Crohn's throughout his colon and terminal ileum. Treatments included mesalamine, budesonide (temporarily helpful), azathioprine (liver issues), and methotrexate (unbearable fatigue). He resisted biologics due to COPD but started Remicade a year ago, which has provided noticeable improvement. He is now considering adding an immunomodulator to Remicade. He struggles with diet restrictions for his various conditions and feels guilty about his wife having to be a caregiver. He misses out on activities with his grandchildren. He finds support in a group for older adults with Crohn's."
+}

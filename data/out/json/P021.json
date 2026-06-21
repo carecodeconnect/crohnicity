@@ -1,0 +1,87 @@
+{
+  "patient_id": "P021",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 31
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira, Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ENDOMETRIOSIS",
+    "FIBROMYALGIA"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "allergic reaction",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "adverse_reaction",
+    "biologic_switch",
+    "biologic_taken",
+    "alternative_therapy",
+    "loss_of_response",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient describes a long journey with Crohn's disease, multiple treatments including biologics, and significant impact on her career and personal life. The narrative ends with a reflection on acceptance and small victories, not a cut-off."
+}

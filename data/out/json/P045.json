@@ -1,0 +1,57 @@
+{
+  "patient_id": "P045",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 33
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [
+    "PCOS",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "insurance_step_therapy",
+    "alternative_therapy",
+    "biologic_recommended"
+  ],
+  "evidence_notes": "Patient is experiencing significant symptoms and side effects from current treatment, with insurance requiring further medication trials before considering biologics. The narrative ends with expressions of frustration, fear, and uncertainty about the future, but a stated effort to remain positive."
+}

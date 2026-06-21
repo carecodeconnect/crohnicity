@@ -1,0 +1,68 @@
+{
+  "patient_id": "P040",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 52
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "HYPERTENSION",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Sent blood sugars through roof; required insulin.",
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "Liver enzymes started climbing after two years.",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Developed antibodies.",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "relapse",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "George is 52 and diagnosed with Crohn's seven years ago. He also has type 2 diabetes, hypertension, and recently diagnosed osteoporosis from steroid use. His Crohn's started in his mid-forties, leading to severe inflammation. He was treated with prednisone and azathioprine, which caused high blood sugar (requiring insulin) and liver damage. He then switched to Remicade, which worked for three years before developing antibodies. He is now on Humira, with about 50% improvement. His GI wants to add methotrexate, but his doctor is concerned about his liver. Work as an accountant is challenging due to fatigue-induced brain fog. His wife is supportive but exhausted. They are not planning to retire as planned due to medical costs eating into savings. Osteoporosis is a major concern, limiting exercise options. His diet is contradictory due to diabetes and Crohn's needs. He spends thousands annually on supplements not covered by insurance. Medical costs are around $15,000 yearly. He finds his support group depressing. He is considering a clinical trial for a new drug."
+}

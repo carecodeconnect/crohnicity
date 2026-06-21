@@ -1,0 +1,65 @@
+{
+  "patient_id": "P030",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 29
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "DEPRESSION",
+    "ADHD"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "acute_flare",
+    "complication",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "planning_next_step",
+    "other"
+  ],
+  "evidence_notes": "Patient details a rapid decline from a successful career due to severe Crohn's, impacting his work, personal life, and mental health. He is currently on a biologic and exploring further treatment options. The narrative ends with reflections on survival and hope for improvement, not a cut-off."
+}

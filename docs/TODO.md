@@ -4,6 +4,20 @@ Deferred engineering tasks, kept here so they can be picked up directly in **pla
 later. These are intentionally *not* done yet — see `CLAUDE.md` ("Code style") for why
 enforcement waits until we understand what to test and what to validate.
 
+## Tomorrow — pre-interview (do first, once the daily quota resets)
+
+The day's extraction hit Gemini's free-tier **daily quota** mid-run, so `data/out/` is a *provisional*
+snapshot (an early chunk at `temperature = 0`, the rest from an earlier default-`1.0` run — see the
+provisional-run note in README → *Answers*). Once the quota resets:
+
+- [ ] **Clean `temperature = 0` full re-run.** Materialise the whole Dagster graph (`uv run dg dev -m
+  pipeline -d src` → *Materialize all*) so all 50 predictions regenerate at `temperature = 0` and the
+  README re-renders from one consistent set. **This is the only thing that makes today's provisional
+  snapshot final.**
+- [ ] **EDA plot P-id clarity** (the *EDA plot clarity* items in the final-sweep section below). The
+  Q2 `(null)→unspecified` prompt fix and the Q3 biologic-mislabel fix only **take effect after a fresh
+  extraction run**, so apply them on the same re-run rather than today.
+
 ## Prompt — cover every field (next task)
 
 - [ ] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
@@ -195,6 +209,18 @@ endpoint in the README's Next Steps.
   final asset — it depends on source *docstrings*, not the data, so it carries no upstream data edge
   but rebuilds in the same `dagster dev` run. One orchestrated run then regenerates every code+data
   artifact with per-step status in the UI; the docsite stays dynamic (docstrings re-read each build).
+- [ ] **Dagster run logging -> `logs/`.** The `.py` scripts already log to `logs/extract.log` /
+  `logs/referral_pathway.log`; add a loguru sink (or use Dagster's event log) for the
+  orchestration-level events + the `quarto`/`mkdocs` subprocess output (asset start/success/fail) to
+  a `logs/pipeline.log`, so the whole orchestrated run is auditable in one place. Also **set
+  `DAGSTER_HOME`** so run history persists (temp dir by default), and **log the resolved
+  `config.json`** at load for parity with the auto-logged `.env`.
+- [ ] **Migrate to the `dg` CLI (`dg dev`).** `dagster dev -f src/pipeline.py` emits a
+  `SupersessionWarning` ("use dg dev instead") on 1.13.x — still fully functional (latest **1.13.10**,
+  Jun 2026, per the GitHub releases API), just discouraged. Adopting `dg` means `uv add
+  dagster-dg-cli`, a `[tool.dg.project]` block in `pyproject.toml` (root module), and the dg
+  project/Components layout — a tooling modernization deferred so the MVP stays minimal. Docs:
+  https://docs.dagster.io/guides/labs/dg/configuring-dg.
 - [ ] **Automate the runs once the pipeline works** — orchestrate extraction + the test harness
   via Dagster, and **log each run** (inputs, predictions, accuracy, token usage) for
   reproducibility and later optimisation. (A **sensor/schedule** is deferred — see the static-input
@@ -251,8 +277,9 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
   mentions; the `DESIGN.qmd` draft's `_v3.ods` + `main.py`-as-orchestrator flow; duplicated setup text.
 - [ ] **Every TODO item addressed** (this file) — each one done, or consciously moved to
   README → *Next Steps* as post-MVP.
-- [ ] **Every question answered in `README.qmd`** — all four business questions *and* the schema /
-  pipeline / evaluation dev-questions carry a written answer (no prompt-only sections left).
+- [ ] **Every question answered** — cross-check `docs/TASK_INSTRUCTIONS.md` *and* `README.qmd`: all
+  four business questions *and* the schema / pipeline / evaluation dev-questions carry a written
+  answer (no prompt-only sections left). This is the last gate before CAIO handover.
 - [ ] **Docsite builds complete.** `uv run mkdocs build` covers *all* `src/` modules + tests via
   mkdocstrings — done (`api/src.md` + `api/tests.md` cover all 8 src modules + tests); remaining:
   keep nav labels current (e.g. "Schema (v0.2)" -> v0.4).
@@ -262,6 +289,22 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
   Check whether anything still imports it; if not, **move `splits.py` + `test_splits.py` to
   `sandbox/`** (with the other once-used/adhoc scripts, kept as a dev-documentation record) rather
   than deleting — and drop their `api/src.md` / `api/tests.md` entries so the docsite still builds.
+- [ ] **EDA plot clarity + correctness (diagnosed; fix in final sweep).**
+  - **Q2 `(null)` -> `unspecified`** — relabelled in `q2_reasons`, but it masks a real gap: the model
+    left `reasons_for_biologic_not_taken` null for the 2 prescribed-not-taken cases (**P047, P048**).
+    Prompt fix: always set a `ReasonNotTaken` (default `UNKNOWN`); re-run extraction to take effect.
+  - **Q3 "treatments before a biologic" includes biologics** — the `biologic` bar (2) = **P043** (a
+    genuine switch: Remicade FAILED -> Humira) + **P046** (the *taken* biologic Humira mislabelled
+    `before_biologic=True`). Clarify whether Q3 counts earlier/switched biologics or only non-biologic
+    treatments; fix the plot title/definition + the P046 mislabel (prompt). Also clarify on the plot
+    whether "treatments" includes biologics.
+  - **Q4 `q4_steps.png`** — annotate with **N** (cohort size, n=50) so the population is visible on the plot.
+
+- [ ] **Security check before handover.** Confirm the GitHub repo is **private**
+  (`gh repo view --json visibility`) and the **`.gitignore` is correct** — `.env` (the only secret,
+  `GEMINI_API_KEY`), `.venv/`, `site/`, and the Dagster run-state (`logs/dagster/*` except
+  `dagster.yaml`) are all ignored, and `git ls-files` lists no credentials or unintended files. The
+  synthetic `data/in` / `data/out` are committed *deliberately* — see README → *Data handling & privacy*.
 
 ## Polish
 

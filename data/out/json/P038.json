@@ -1,0 +1,58 @@
+{
+  "patient_id": "P038",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 37
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "NSAIDs",
+      "treatment_class": "NSAID",
+      "outcome": "FAILED",
+      "reason_stopped": "Destroyed kidneys; caused GI symptoms.",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Stopped working.",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "adverse_reaction",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Daniel is 37 and has had Crohn's for ten years. He also has ankylosing spondylitis (AS) and chronic kidney disease (CKD) from NSAID use. His symptoms started in his late twenties with back pain, leading to NSAID use that damaged his kidneys. Two years later, GI symptoms began, leading to diagnoses of both Crohn's and AS. He started Remicade, which worked initially, but then stopped. He switched to Humira, which is less effective (40% improvement), and his nephrologist is concerned about stronger treatments due to his CKD. He experiences pain from AS, frequent bathroom trips from Crohn's, and fatigue from CKD, making work impossible, so he is on disability. His marriage ended due to financial and health stress. He is lonely and isolated. His parents are supportive but elderly, and he feels a role reversal. He is looking into clinical trials but CKD often excludes him. Surgery for Crohn's is an option but recovery with AS would be difficult. He has considered suicide but refrains due to his parents. His doctors are in conflict over treatment. He is currently considering Stelara."
+}

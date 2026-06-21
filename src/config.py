@@ -17,10 +17,15 @@ _CFG = json.loads((ROOT / "config.json").read_text())
 # Model default from config.json; the CROHNICITY_MODEL env var overrides it (e.g. a local Ollama
 # model, ollama_chat/qwen3:8b), and main.py's --model flag overrides per-invocation.
 MODEL: str = os.getenv("CROHNICITY_MODEL", _CFG["model"])
+TEMPERATURE: float = _CFG[
+    "temperature"
+]  # 0 = greedy/deterministic (extraction is classification)
 INTERVIEWS = ROOT / _CFG["interviews"]  # committed source transcripts
 GOLD = ROOT / _CFG["gold"]  # hand-annotated gold set (versioned .ods) for the eval
 PROMPT = ROOT / _CFG["prompt"]  # system prompt, kept as its own reviewable artifact
-OUT_DIR = ROOT / _CFG["out_dir"]  # persisted predictions
+OUT_DIR = ROOT / _CFG["out_dir"]  # base output dir (holds json/, html/, plots/, tests/)
+JSON_DIR = ROOT / _CFG["json_dir"]  # per-patient prediction JSON
+HTML_DIR = ROOT / _CFG["html_dir"]  # per-case referral_pathway graphs
 PLOTS_DIR = ROOT / _CFG["plots_dir"]  # EDA plots embedded in the README
 LOG_DIR = ROOT / _CFG["log_dir"]  # loguru sinks
 CHUNK_SIZE: int = _CFG[

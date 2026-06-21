@@ -1,0 +1,94 @@
+{
+  "patient_id": "P029",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 38
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira, Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER",
+    "MIGRAINE"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (weight gain)",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "hair loss",
+      "before_biologic": false
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "loss of response",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "biologic_taken",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "alternative_therapy",
+    "planning_next_step",
+    "other"
+  ],
+  "evidence_notes": "Patient details a long history of Crohn's disease, other autoimmune conditions, and significant impact on career and personal relationships. She describes a progression through multiple treatments and ongoing challenges. The narrative ends with reflections on acceptance and continuing the fight, not a cut-off."
+}

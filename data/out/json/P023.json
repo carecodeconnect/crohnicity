@@ -1,0 +1,76 @@
+{
+  "patient_id": "P023",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 26
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "PCOS",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (weight gain)",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "pancreatitis",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "nausea, missed work",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_not_taken",
+    "patient_fear",
+    "alternative_therapy",
+    "therapy_failed",
+    "biologic_taken",
+    "other"
+  ],
+  "evidence_notes": "Patient details a frustrating diagnostic delay and subsequent treatment challenges, including a severe adverse reaction to azathioprine. The narrative ends with reflections on finding meaning and continuing to fight, not a cut-off."
+}

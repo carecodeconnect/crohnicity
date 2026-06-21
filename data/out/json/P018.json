@@ -1,0 +1,56 @@
+{
+  "patient_id": "P018",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 58
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "COST",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES"
+  ],
+  "treatment_records": [
+    {
+      "name": "Prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (worsened diabetes, cardiac concerns)",
+      "before_biologic": true
+    },
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "insufficient efficacy",
+      "before_biologic": true
+    },
+    {
+      "name": "Budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "therapy_failed",
+    "biologic_recommended",
+    "insurance_cost_barrier",
+    "biologic_not_taken"
+  ],
+  "evidence_notes": "Diagnosed six months ago. Experienced constipation, diarrhea, weight loss. Prednisone worsened diabetes and cardiac status. Mesalamine ineffective. Currently on budesonide, which is 'okay, not great'. Hesitant about biologics due to cost, Medicare coverage issues, and existing multiple medications. Concerns about risks (infections) and impact on grandkids. Considering next steps."
+}

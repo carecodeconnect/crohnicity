@@ -11,17 +11,17 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import GOLD, OUT_DIR
+from config import GOLD, JSON_DIR
 
 
-def load_records(out_dir: Path = OUT_DIR) -> list[dict]:
+def load_records(out_dir: Path = JSON_DIR) -> list[dict]:
     """Raw prediction dicts (nested ``treatment_records`` / ``referral_pathway`` intact), by id."""
     return [
         json.loads(p.read_text()) for p in sorted(out_dir.glob("P[0-9][0-9][0-9].json"))
     ]
 
 
-def load_predictions(out_dir: Path = OUT_DIR) -> pd.DataFrame:
+def load_predictions(out_dir: Path = JSON_DIR) -> pd.DataFrame:
     """Flat one-row-per-patient frame (nested fields json-normalised)."""
     return pd.json_normalize(load_records(out_dir))
 
@@ -80,7 +80,7 @@ def q2_reasons(df: pd.DataFrame) -> pd.DataFrame:
     not_on = df[~df["biologic_taken"]]
     return (
         not_on["reasons_for_biologic_not_taken"]
-        .fillna("(null)")
+        .fillna("unspecified")
         .value_counts()
         .rename_axis("reason")
         .reset_index(name="patients")
@@ -156,3 +156,12 @@ def churn_three_state(df: pd.DataFrame) -> pd.DataFrame:
             ],
         }
     )
+
+
+def churn_false_negatives(df: pd.DataFrame, gold_path: Path = GOLD) -> list[str]:
+    """Patient IDs the gold marks as churn but the model missed (gold churn==1, model not True) —
+    the false negatives behind the low churn count. Computed at render time so prose stays dynamic."""
+    gold = pd.read_excel(gold_path, engine="odf")
+    flagged = gold.loc[(gold["to_review"] == 1) & (gold["churn"] == 1), "patient_id"]
+    model_churn = dict(zip(df["patient_id"], df["churn"]))
+    return [pid for pid in flagged if model_churn.get(pid) is not True]

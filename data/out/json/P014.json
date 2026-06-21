@@ -1,0 +1,59 @@
+{
+  "patient_id": "P014",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 41
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "OTHER",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "Methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "UNKNOWN",
+      "reason_stopped": "insufficient efficacy for Crohn's",
+      "before_biologic": true
+    },
+    {
+      "name": "Sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction (hives)",
+      "before_biologic": true
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "comorbidity",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken"
+  ],
+  "evidence_notes": "Diagnosed with Crohn's three years ago, already had psoriasis. Initially misdiagnosed. Tried methotrexate (for psoriasis, hoped it would help Crohn's), sulfasalazine (allergic reaction). Moved to Stelara to treat both conditions. Insurance battle to get approval. Experiencing some improvement but not perfect. Struggling with fatigue, depression, and physical demands of job."
+}

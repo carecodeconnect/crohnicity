@@ -69,3 +69,17 @@ def test_churn_three_state_three_rows() -> None:
         "churned / truncated",
     ]
     assert bool((ts["patients"] >= 0).all())
+
+
+def test_churn_false_negatives_flags_gold_churn_the_model_missed() -> None:
+    """The gold churn==1 cases the model did NOT label churn — the false negatives behind the low
+    count. (Powers the dynamic churn note in README.qmd, so it must not regress silently.)"""
+    fn = eda.churn_false_negatives(DF)
+    assert isinstance(fn, list) and all(isinstance(p, str) for p in fn)
+    model_churn = dict(zip(DF["patient_id"], DF["churn"]))
+    assert all(
+        model_churn.get(p) is not True for p in fn
+    )  # by definition: model didn't flag churn
+    assert (
+        "P049" in fn
+    )  # the gold-annotated truncated case the model under-detects (TO_REVIEW)

@@ -1,0 +1,82 @@
+{
+  "patient_id": "P020",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 46
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [],
+  "treatment_records": [
+    {
+      "name": "Prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (rage)",
+      "before_biologic": true
+    },
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "insufficient efficacy",
+      "before_biologic": true
+    },
+    {
+      "name": "Sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction (headaches)",
+      "before_biologic": true
+    },
+    {
+      "name": "Methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction (nausea)",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "therapy_failed",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "biologic_taken",
+    "loss_of_response",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed seven years ago. Symptoms included bloody stools, weight loss. Tried prednisone (anger issues), mesalamine (ineffective), sulfasalazine (headaches), methotrexate (nausea). Eight-month insurance battle for Remicade, worked for 2 years, then failed. Switched to Humira, but now experiencing decreased efficacy. Considering Stelara. Struggles with work schedule, financial strain, social isolation, and physical demands of job."
+}

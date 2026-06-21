@@ -1,0 +1,44 @@
+{
+  "patient_id": "P048",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 56
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "DEFERRED",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "UNKNOWN",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "antibiotics",
+      "treatment_class": "anti-infective",
+      "outcome": "UNKNOWN",
+      "reason_stopped": null,
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "UNKNOWN",
+  "referral_pathway": [
+    "symptom_onset",
+    "acute_flare",
+    "surgery",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "biologic_recommended"
+  ],
+  "evidence_notes": "Patient was recently diagnosed after surgery and is in the early stages of recovery and treatment. The outcome is uncertain as it's too early to assess treatment effectiveness. The narrative ends with a sense of overwhelm and dependence."
+}

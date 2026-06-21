@@ -1,0 +1,77 @@
+{
+  "patient_id": "P011",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 26
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "PCOS"
+  ],
+  "treatment_records": [
+    {
+      "name": "Prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (weight gain)",
+      "before_biologic": true
+    },
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "relapse",
+      "before_biologic": true
+    },
+    {
+      "name": "Methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response (developed antibodies)",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "primary_care_contact",
+    "misdiagnosis",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "relapse",
+    "acute_flare",
+    "complication",
+    "surgery",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "biologic_taken"
+  ],
+  "evidence_notes": "Patient describes ongoing management with Humira, experiencing breakthrough symptoms and future uncertainty. Expresses concerns about pregnancy with Crohn's and PCOS. Mentions therapy for anxiety and medical trauma. Discusses dietary experiments and supplement use. Finds support in an online community. Goal is to manage day-to-day."
+}

@@ -72,6 +72,79 @@ git push --set-upstream origin main
 brew install graphviz
 ```
 
+## Running the pipeline (Dagster)
+
+`src/pipeline.py` is the Dagster orchestration (assets `interviews -> predictions -> {readme,
+referral_graphs}`, plus an independent `docsite`). `dagster dev` needs the **`dagster-webserver`**
+package installed alongside `dagster` (already a dependency). There are **two ways to launch a run**,
+for different situations:
+
+**1. From the UI — canonical for `dagster dev` (interactive dev loop).** The dev server *is* the
+launcher: start it, then materialise from the browser. In the UI: **Assets** tab → **"Materialize
+all"** (or select `predictions` / `readme` / … → Materialize). The server stays running in its
+terminal; you click in the browser.
+
+```bash
+uv run dg dev -m pipeline -d src     # http://127.0.0.1:3000 -> "Materialize all"
+```
+
+**2. Headless from a second terminal (CLI) — scripted / CI, no UI.** Runs in its own process:
+
+```bash
+uv run dg launch --assets "*" -m pipeline -d src
+```
+
+(`-f` scopes to that one file; `-m` / `--package-name` would load a whole module / package.)
+Materialising **all** runs the full pipeline: 50-transcript inference (chunked 10×5 to fit the
+free-tier cap) → EDA / README render → referral graphs → docsite, with per-stage failure visibility.
+
+**dg project config.** The `dg` CLI is a *project layer* over our setup: `[tool.dg]` in
+`pyproject.toml` (`directory_type = "project"` + `[tool.dg.project] code_location_target_module =
+"pipeline"`) tells `dg` where the `Definitions` live — **separate** from the *instance* config
+(`dagster.yaml` in `$DAGSTER_HOME`). Because our modules live in `src/` (not an installed package),
+`dg` takes **`-m pipeline -d src`** (`-m` loads the module, `--working-directory src` lets it import) — run it from the **repo
+root** so `.env` (`DAGSTER_HOME`, `GEMINI_API_KEY`) still loads. Config schema:
+[dg-cli-configuration](https://docs.dagster.io/api/clis/dg-cli/dg-cli-configuration). We use a plain
+`Definitions` object (via `code_location_target_module`), **not** the Components `defs/` folder
+layout — so `dg dev` / `dg launch` / `dg list defs` are the commands; `dg check defs` is
+Components-only and N/A here.
+
+**Why `dg` suits agentic / CLI workflows.** As a composable CLI, `dg` fits coding-agent workflows
+(e.g. Claude Code) well: an agent can run `dg list defs` / `dg check` / `dg launch` and parse the
+output to validate project-level dependencies, paths and code-location structure *before* a run —
+version-controllable and reproducible, not UI-bound. The project config is committed in
+`pyproject.toml`, so the same checks run identically in an agent session or in CI.
+
+**Run vs. asset materialization.** Hierarchical, not alternatives: **materializing an asset**
+executes its function and persists the result (an *AssetMaterialization* event) — the asset-centric
+"produce/refresh this object"; a **run** is the *execution container* (its own run ID, status, logs,
+"Runs" tab). A materialization always happens *inside* a run, so clicking **"Materialize all"**
+launches one run that materializes the selected assets (`interviews -> predictions -> {readme,
+referral_graphs}` + `docsite`). Sources: [Assets](https://docs.dagster.io/guides/build/assets),
+[execution API](https://docs.dagster.io/api/dagster/execution).
+
+**Configuration feeding a run.** Two kinds: **`.env`** (secrets — `GEMINI_API_KEY`; Dagster
+auto-loads it and logs the line you see) and **`config.json`** (model, paths, chunk size; loaded
+*silently* by `src/config.py` when Dagster imports the code, then used during materialization — no
+log line because it's our plain `json.loads`, not a Dagster mechanism). Dagster keeps run history in
+a temp dir by default (wiped on exit). To persist it, set **`DAGSTER_HOME`** to the dedicated,
+git-ignored **`.dagster_home/`** instance home — add this line to your `.env` (machine-specific,
+like `GEMINI_API_KEY`), so the commands above need no env-var prefix:
+
+```bash
+DAGSTER_HOME=/absolute/path/to/crohnicity/.dagster_home
+```
+
+Inside `.dagster_home/`, **`dagster.yaml` is committed** (it's config, not a secret — it shows how
+the instance is wired: telemetry off) while the regenerated sqlite run-storage is git-ignored. The
+flat **`logs/dagster.log`** run log is written by a **loguru sink in `src/pipeline.py`**, *not* by
+`dagster.yaml`: our app logs through **loguru**, but Dagster's yaml `python_logs` handler only
+captures the stdlib `logging` module — so a yaml-defined sink stayed empty. The in-process assets
+(`predictions`, `referral_graphs`) already log via loguru, so an unfiltered loguru sink in
+`pipeline.py` captures the whole materialization in one file, alongside the per-script logs.
+**Dagster runs locally only** — it never pushes to GitHub; publishing the refreshed artefacts
+(data + logs + README) is a separate, manual `git` step.
+
 ### Relocating / renaming the project root
 
 Renaming the project folder (e.g. `chronicity` → `crohnicity`) breaks the venv's and kernel's

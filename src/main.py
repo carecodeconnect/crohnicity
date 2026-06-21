@@ -17,7 +17,7 @@ from pathlib import Path
 import fire
 import litellm
 
-from config import CHUNK_SIZE, INTERVIEWS, MODEL, OUT_DIR
+from config import CHUNK_SIZE, INTERVIEWS, JSON_DIR, MODEL
 from extract import HANDLED, extract_batch
 from schema import Interview, PatientLabels
 
@@ -45,7 +45,7 @@ def main(
     limit: int | None = None,
     offset: int = 0,
     chunk_size: int = CHUNK_SIZE,
-    out_dir: str = str(OUT_DIR),
+    out_dir: str = str(JSON_DIR),
 ) -> str:
     """CLI (fire): extract interviews `[offset : offset+limit]` with `model`, `chunk_size`
     transcripts per call, into `out_dir`.

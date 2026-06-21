@@ -4,7 +4,7 @@ docs_dir: docs
 # Default MkDocs theme on purpose — simplest, no extra dependency. Swap in mkdocs-material later if wanted.
 nav:
   - Home: index.md
-  - Schema (v0.2): SCHEMA.md
+  - Schema (v0.4): SCHEMA.md
   - Implementation TODO: TODO.md
   - Questions (CAIO): QUESTIONS.md
   - Dev Setup: DEV_SETUP.md

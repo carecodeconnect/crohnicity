@@ -1,0 +1,8 @@
+# Dagster instance config — read from $DAGSTER_HOME (= .dagster_home/, the canonical location per
+# https://docs.dagster.io/deployment/oss/dagster-yaml, NOT the repo root). The sqlite run-storage
+# stays in this git-ignored instance home; this config routes Dagster's run/asset logs to a flat,
+# human-readable logs/dagster.log alongside the .py-script loguru logs (the committed audit record).
+telemetry:
+  enabled: false
+# Run logs go to logs/dagster.log via a loguru sink in src/pipeline.py (our app uses loguru, not the
+# stdlib `logging` that Dagster's python_logs handler captures) — see docs/DEV_SETUP.md.

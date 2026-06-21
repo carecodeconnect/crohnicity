@@ -1,0 +1,80 @@
+{
+  "patient_id": "P035",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 30
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Entyvio",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Developed liver issues (PSC and autoimmune hepatitis).",
+      "before_biologic": true
+    },
+    {
+      "name": "Ursodiol",
+      "treatment_class": "Other",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Entyvio",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "relapse",
+    "comorbidity",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Ashley is 30 and diagnosed with Crohn's at 16. She also has primary sclerosing cholangitis (PSC) and autoimmune hepatitis. Her Crohn's started in her teens, leading to missed social events and homeschooling. She was on Remicade at 17, which worked for years. At 22, she developed liver issues (PSC and autoimmune hepatitis). She stopped Remicade and is now on Entyvio for Crohn's, ursodiol for PSC, and prednisone/azathioprine for autoimmune hepatitis. She experiences extreme fatigue and her conditions are not well-controlled. Her liver doctor wants higher immunosuppression, while her GI doctor wants lower. Her boyfriend left due to her health. She is facing potential medical bankruptcy and may need a liver transplant. She finds support groups depressing and her therapist admits to being out of her depth. Diet is challenging with multiple restrictions. She is considering clinical trials."
+}

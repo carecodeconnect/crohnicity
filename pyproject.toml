@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "dagster>=1.13.9",
+    "dagster-dg-cli>=1.13.9",
+    "dagster-webserver>=1.13.9",
     "fastapi>=0.137.1",
     "fire>=0.7.1",
     "google-genai>=2.8.0",
@@ -26,6 +28,7 @@ dependencies = [
     "plotnine>=0.15.7",
     "pydantic>=2.13.4",
     "pytest>=9.1.0",
+    "pytest-cov>=7.1.0",
     "python-dotenv>=1.2.2",
     "pyvis>=0.3.2",
     "ruff>=0.15.17",
@@ -36,6 +39,8 @@ dependencies = [
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+# coverage metric on every gate run (measure, don't gate on a threshold — MVP)
+addopts = "--cov=src --cov-report=term-missing"
 # Only collect tests/ — keeps the jupytext notebook mirrors in notebooks/ (e.g.
 # 03_extraction_test.py, which matches *_test.py) out of test discovery.
 testpaths = ["tests"]
@@ -45,3 +50,13 @@ dev = [
     "mkdocs>=1.6.1",
     "mkdocstrings[python]>=1.0.4",
 ]
+
+# dg CLI project config — tells `dg dev` / `dg launch` where the Definitions live (src/pipeline.py).
+# Separate from the *instance* config (storage + log routing), which is dagster.yaml in
+# $DAGSTER_HOME (.dagster_home/). Schema: https://docs.dagster.io/api/clis/dg-cli/dg-cli-configuration
+[tool.dg]
+directory_type = "project"
+
+[tool.dg.project]
+root_module = "pipeline"
+code_location_target_module = "pipeline"

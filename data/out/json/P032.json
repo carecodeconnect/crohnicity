@@ -1,0 +1,60 @@
+{
+  "patient_id": "P032",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 54
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "HYPERTENSION",
+    "RHEUMATOID_ARTHRITIS"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing",
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "Caused blood sugar to go insane.",
+      "before_biologic": true
+    },
+    {
+      "name": "Sulfasalazine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Headaches are terrible",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "primary_care_contact",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_step_therapy"
+  ],
+  "evidence_notes": "Patient is a 54-year-old male diagnosed with Crohn's last year. He also has diabetes, heart disease, and arthritis. Symptoms started two years ago. He has had inflammation throughout his colon and some in the small bowel. He tried mesalamine and prednisone (which caused blood sugar issues). Currently on sulfasalazine with severe headaches. His GI doctor wants him on biologics, but insurance denied it, requiring him to fail more drugs first. He has to go to the bathroom 15 times a day and had to close his mechanic shop. He is living on savings. He is seeing a therapist but finds it unhelpful. He is considering selling his house to downsize."
+}

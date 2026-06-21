@@ -1,8 +1,9 @@
 """Per-case referral-pathway graphs from the model predictions in data/out/.
 
-Reads each `data/out/P###.json`, takes its `referral_pathway` (a list of canonical `PathwayStep`
-tokens — already consolidated, so no phase-mapping needed), and writes an interactive pyvis graph
-per patient to `data/out/referral_pathway_<pid>.html`. Also prints phase/transition frequencies.
+Reads each `data/out/json/P###.json`, takes its `referral_pathway` (a list of canonical
+`PathwayStep` tokens — already consolidated, so no phase-mapping needed), and writes an interactive
+pyvis graph per patient to `data/out/html/referral_pathway_<pid>.html`. Also prints phase/transition
+frequencies.
 
 Capturing cycles / repetition — why & how:
 - WHY: a referral journey is often *cyclic* — relapse, loss_of_response, repeated
@@ -26,18 +27,24 @@ import pandas as pd
 from loguru import logger
 from pyvis.network import Network
 
-from config import LOG_DIR, OUT_DIR
+from config import HTML_DIR, JSON_DIR, LOG_DIR
 
-OUT = OUT_DIR
 # loguru file sink: persist the run summary + catch per-graph errors during regeneration
-logger.add(LOG_DIR / "referral_pathway.log", level="INFO", rotation="1 MB")
+logger.add(
+    LOG_DIR / "referral_pathway.log",
+    level="INFO",
+    rotation="1 MB",
+    filter=lambda r: (
+        r["name"] == "referral_pathway_analysis"
+    ),  # keep this sink to its own logs
+)
 
 
 def load_pathways() -> dict[str, list[str]]:
     """patient_id -> ordered referral_pathway tokens, from the persisted predictions."""
     return {
         p.stem: json.loads(p.read_text())["referral_pathway"]
-        for p in sorted(OUT.glob("P[0-9][0-9][0-9].json"))
+        for p in sorted(JSON_DIR.glob("P[0-9][0-9][0-9].json"))
     }
 
 
@@ -108,10 +115,11 @@ def main() -> None:
     logger.info("PHASE FREQUENCY\n{}", phase_freq.to_string(index=False))
     logger.info("TRANSITIONS (top 20)\n{}", transitions.head(20).to_string(index=False))
 
+    HTML_DIR.mkdir(parents=True, exist_ok=True)
     written = 0
     for pid, seq in pathways.items():
         try:
-            render(pid, seq, OUT / f"referral_pathway_{pid}.html")
+            render(pid, seq, HTML_DIR / f"referral_pathway_{pid}.html")
             written += 1
         except Exception:
             logger.exception("failed to render graph for {}", pid)
@@ -119,7 +127,7 @@ def main() -> None:
         "wrote {}/{} per-case graphs -> {}/referral_pathway_*.html",
         written,
         len(pathways),
-        OUT,
+        HTML_DIR,
     )
 
 

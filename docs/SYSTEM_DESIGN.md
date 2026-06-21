@@ -1,0 +1,76 @@
+# Crohnicity — system design
+
+
+<!-- Source of truth: edit this .qmd, then `quarto render docs/SYSTEM_DESIGN.qmd` → SYSTEM_DESIGN.md
+     (GFM — GitHub renders the Mermaid block natively, no image step). Linked from the root README. -->
+
+How the pipeline is wired — and specifically the **Dagster ↔ `uv run`
+relation**, which is the one thing worth a diagram. Dagster is the
+*day-of orchestrator*; the `main.py` CLI and the `.sh` gate run the
+**same `src/` functions standalone** (*library-first* — none is nested
+under another). The input is static, so there is **no sensor**.
+
+*Part of [Crohnicity](../README.md) — the root README carries the
+business answers, evaluation and Next Steps.*
+
+## Architecture
+
+``` mermaid
+flowchart TB
+    cfg["config.json → src/config.py<br/>model · temperature=0 · paths · chunk size"]
+
+    subgraph entry["Entry points — all call the same src/ functions (library-first, not nested)"]
+        dgr["Dagster · uv run dg dev -m pipeline -d src<br/>day-of orchestrator; per-asset status in the UI"]
+        cli["CLI · uv run python src/main.py<br/>extraction, standalone"]
+        gate["Gate · bash tests/type_lint_unit_tests.sh<br/>ruff · ruff format · ty · pytest"]
+    end
+
+    subgraph dag["Dagster asset graph (the full run)"]
+        interviews["interviews<br/>load_interviews()"]
+        predictions["predictions<br/>run_chunked() · 10 per call"]
+        referral["referral_graphs<br/>rpa.main()"]
+        rdme["readme<br/>quarto render README.qmd"]
+        docsite["docsite<br/>mkdocs build · independent"]
+        interviews --> predictions --> referral
+        predictions --> rdme
+    end
+
+    indata[("data/in/interviews.json<br/>static · committed · NO sensor")]
+    gemini["LiteLLM → Gemini 2.5 Flash Lite<br/>structured output · enforce_validation"]
+    outjson[("data/out/json/P*.json<br/>validated PatientLabels")]
+    arte[("README.md / .html · data/out/html graphs<br/>data/out/plots · site/")]
+
+    cfg --> dgr
+    cfg --> cli
+    cfg --> gate
+    dgr --> interviews
+    cli -. same src/ funcs .-> predictions
+    indata --> interviews
+    predictions --> gemini
+    predictions --> outjson
+    outjson --> referral
+    outjson --> rdme
+    referral --> arte
+    rdme --> arte
+    docsite --> arte
+```
+
+**Library-first — why both frontends agree.** Each Dagster asset *wraps*
+a `src/` function (`interviews` → `load_interviews`, `predictions` →
+`run_chunked`, `referral_graphs` → `rpa.main`); it does **not** shell
+out to the CLI. So the identical code path runs whether you launch the
+whole graph in Dagster or one part from `uv run python src/main.py`.
+(`readme` and `docsite` *do* subprocess out — but to the external
+`quarto` / `mkdocs` tools, not to our own scripts.)
+
+**Static input → no sensor.** `data/in/interviews.json` is the single
+committed input; the pipeline never re-fetches it, so a run is manual /
+on-demand. A sensor only earns its place once the input becomes
+*dynamic* — e.g. transcripts arriving via the FastAPI endpoint in README
+→ *Next Steps*.
+
+**Determinism & logging.** `temperature = 0` (from `config.json`) plus
+structured-output validation; each run logs to `logs/` — `extract.log`,
+`referral_pathway.log`, and the combined `dagster.log` (written by a
+loguru sink in `pipeline.py`). Predictions are scored against the gold
+`_v5.ods` on the `to_review` validation split (README → *Evaluation*).

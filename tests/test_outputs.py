@@ -8,11 +8,11 @@ and that each `patient_id` matches its filename. Offline (no API call); skips if
 
 import pytest
 
-from config import OUT_DIR
+from config import JSON_DIR
 from schema import PatientLabels
 
 PREDICTIONS = sorted(
-    OUT_DIR.glob("P[0-9][0-9][0-9].json")
+    JSON_DIR.glob("P[0-9][0-9][0-9].json")
 )  # per-patient predictions only
 
 

@@ -15,5 +15,10 @@ wheels/
 # MkDocs build output
 site/
 
+# Dagster instance home (DAGSTER_HOME=.dagster_home) — commit the config, ignore the sqlite run-storage.
+# The human-readable run log lives at logs/dagster.log (committed, like the other logs/*.log).
+.dagster_home/*
+!.dagster_home/dagster.yaml
+
 # LibreOffice lock files
 .~lock.*#

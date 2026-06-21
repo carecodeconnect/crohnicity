@@ -1,0 +1,59 @@
+{
+  "patient_id": "P037",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 34
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "Immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Joint pain and rashes developed, leading to lupus diagnosis.",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "comorbidity",
+    "adverse_reaction",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "relapse",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch",
+    "loss_of_response",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Karen is 34 and diagnosed with Crohn's six years ago, shortly after having her second child. She also has postpartum anxiety and lupus. Her autoimmune issues began after pregnancy. She initially had difficulty recovering from a C-section, followed by severe abdominal pain and diarrhea. After being misdiagnosed by her OB and primary doctor, she was finally diagnosed with Crohn's. She started mesalamine while breastfeeding, then weaned her baby early to start azathioprine, which helped for a year before joint pain and rashes led to a lupus diagnosis. She started Humira two years ago, which helps both conditions moderately (around 60% improvement). She struggles with fatigue, missing out on activities with her children, and her husband's lack of understanding. She works part-time freelance writing due to income needs and health limitations. Financial stress is a concern with insurance tied to her husband's job. She finds support in a group for mothers with chronic illness. She is considering changing biologics as Humira's effectiveness is waning but is hesitant due to the risks during transition."
+}

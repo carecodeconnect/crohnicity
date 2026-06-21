@@ -1,0 +1,48 @@
+{
+  "patient_id": "P017",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 29
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "DEFERRED",
+  "comorbid_conditions": [
+    "ADHD",
+    "ANXIETY_DISORDER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": "insufficient efficacy",
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "immunosuppressant",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "comorbidity",
+    "diagnostic_delay",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "biologic_recommended",
+    "therapy_failed",
+    "biologic_not_taken",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Diagnosed 8 months ago. Symptoms started during COVID. Mild to moderate inflammation. Hesitant doctor approach. Tried mesalamine (helped somewhat). Now on azathioprine, which requires regular monitoring. Doctor mentioned biologics but advised trying other things first. Patient plans to be more assertive about biologics at next appointment. Worried about fatigue, job security, and managing meds with ADHD/anxiety."
+}

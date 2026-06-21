@@ -1,0 +1,90 @@
+{
+  "patient_id": "P003",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 28
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER",
+    "PCOS"
+  ],
+  "treatment_records": [
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "6-MP",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "developed antibodies and it stopped working",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "lost effectiveness",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "complication",
+    "surgery",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "patient_fear",
+    "insurance_denial",
+    "insurance_appeal",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "loss_of_response",
+    "biologic_switch",
+    "biologic_taken"
+  ],
+  "evidence_notes": "Patient has a history of switching biologics due to loss of response. Currently on Stelara, but experiences injection anxiety. Also has osteopenia from steroid use."
+}

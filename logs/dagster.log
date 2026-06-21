@@ -1,0 +1,59 @@
+2026-06-21 17:45:35.072 | INFO     | referral_pathway_analysis:main:109 - 50 pathways - 33 distinct phases - 661 transitions
+2026-06-21 17:45:35.075 | INFO     | referral_pathway_analysis:main:115 - PHASE FREQUENCY
+                 phase  count
+        biologic_taken     52
+         symptom_onset     49
+  biologic_recommended     49
+      crohns_diagnosis     46
+  conventional_therapy     46
+    diagnostic_testing     44
+      adverse_reaction     36
+        therapy_failed     35
+      diagnostic_delay     31
+   specialist_referral     30
+       symptoms_worsen     29
+    planning_next_step     29
+          misdiagnosis     28
+      loss_of_response     23
+       biologic_switch     23
+   alternative_therapy     20
+           comorbidity     19
+      insurance_denial     14
+          self_managed     13
+      insurance_appeal     11
+          complication     11
+               surgery      9
+          patient_fear      9
+               relapse      9
+    insurance_approval      9
+  primary_care_contact      7
+insurance_step_therapy      7
+           acute_flare      7
+                 other      5
+    biologic_not_taken      4
+insurance_cost_barrier      3
+ breakthrough_symptoms      2
+            unresolved      2
+2026-06-21 17:45:35.075 | INFO     | referral_pathway_analysis:main:116 - TRANSITIONS (top 20)
+          from_phase             to_phase  count
+  diagnostic_testing     crohns_diagnosis     43
+    crohns_diagnosis conventional_therapy     43
+ specialist_referral   diagnostic_testing     30
+       symptom_onset         misdiagnosis     25
+conventional_therapy       therapy_failed     24
+biologic_recommended       biologic_taken     22
+     symptoms_worsen  specialist_referral     21
+        misdiagnosis     diagnostic_delay     19
+conventional_therapy     adverse_reaction     18
+      biologic_taken     loss_of_response     16
+    diagnostic_delay      symptoms_worsen     16
+    loss_of_response      biologic_switch     15
+      therapy_failed     adverse_reaction     14
+      therapy_failed biologic_recommended     14
+       symptom_onset         self_managed     13
+    adverse_reaction biologic_recommended     11
+    insurance_denial     insurance_appeal     11
+biologic_recommended     insurance_denial      9
+     biologic_switch       biologic_taken      9
+ alternative_therapy   planning_next_step      9
+2026-06-21 17:45:35.423 | INFO     | referral_pathway_analysis:main:126 - wrote 50/50 per-case graphs -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/referral_pathway_*.html

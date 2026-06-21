@@ -26,7 +26,16 @@ import litellm
 from dotenv import load_dotenv
 from loguru import logger
 
-from config import LOG_DIR, MAX_RETRIES, MAX_TOKENS, MODEL, OUT_DIR, PROMPT
+from config import (
+    JSON_DIR,
+    LOG_DIR,
+    MAX_RETRIES,
+    MAX_TOKENS,
+    MODEL,
+    OUT_DIR,
+    PROMPT,
+    TEMPERATURE,
+)
 from schema import BatchPredictions, Interview, PatientLabels
 
 # API errors we log cleanly and surface for a graceful CLI exit (no traceback dump):
@@ -42,7 +51,12 @@ TESTS_OUT = (
 )  # synthetic/test outputs, not production (OUT_DIR from config)
 
 # loguru file sink: persist each run + failures (stderr stays on by default)
-logger.add(LOG_DIR / "extract.log", level="INFO", rotation="1 MB")
+logger.add(
+    LOG_DIR / "extract.log",
+    level="INFO",
+    rotation="1 MB",
+    filter=lambda r: r["name"] == "extract",  # keep this sink to extract.py's own logs
+)
 
 # Prompt lives in data/prompts/system.txt (PROMPT in config) — a reviewable artifact.
 SYSTEM_PROMPT = PROMPT.read_text().strip()
@@ -66,7 +80,7 @@ def _log_request_config() -> None:
 # Log unexpected failures (traceback) + re-raise; retryable API errors handled below.
 @logger.catch(exclude=HANDLED, reraise=True)
 def extract(
-    transcript: str, patient_id: str, out_dir: Path = OUT_DIR, model: str = MODEL
+    transcript: str, patient_id: str, out_dir: Path = JSON_DIR, model: str = MODEL
 ) -> PatientLabels:
     """Extract one patient's labels from their interview transcript via Gemini (a prediction)."""
     load_dotenv()  # GEMINI_API_KEY -> env; litellm reads it for the gemini/ provider
@@ -77,6 +91,7 @@ def extract(
         response = litellm.completion(
             model=model,
             num_retries=MAX_RETRIES,
+            temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
             # drop params a provider doesn't support (Gemini vs Ollama)
             drop_params=True,
             messages=[
@@ -99,8 +114,10 @@ def extract(
         raise
     # Telemetry: token usage + cost per call, persisted for cost/latency EDA without re-running.
     logger.info(
-        "{} telemetry: prompt_tokens={} completion_tokens={} total_tokens={} cost_usd={}",
+        "{} telemetry: model={} temperature={} prompt_tokens={} completion_tokens={} total_tokens={} cost_usd={}",
         patient_id,
+        model,
+        TEMPERATURE,
         response.usage.prompt_tokens,
         response.usage.completion_tokens,
         response.usage.total_tokens,
@@ -116,7 +133,7 @@ def extract(
     return labels
 
 
-def save(labels: PatientLabels, out_dir: Path = OUT_DIR) -> Path:
+def save(labels: PatientLabels, out_dir: Path = JSON_DIR) -> Path:
     """Write the prediction to ``<out_dir>/<patient_id>.json`` and return the path."""
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"{labels.patient_id}.json"
@@ -133,7 +150,7 @@ BATCH_SUFFIX = (
 
 @logger.catch(exclude=HANDLED, reraise=True)
 def extract_batch(
-    interviews: list[Interview], out_dir: Path = OUT_DIR, model: str = MODEL
+    interviews: list[Interview], out_dir: Path = JSON_DIR, model: str = MODEL
 ) -> list[PatientLabels]:
     """Extract a chunk of interviews in ONE call — fewer requests for the daily cap (see main.py
     `--chunk-size`). Strict: a malformed/short batch fails the whole chunk (minimal; a tolerant
@@ -148,6 +165,7 @@ def extract_batch(
         response = litellm.completion(
             model=model,
             num_retries=MAX_RETRIES,
+            temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
             drop_params=True,
             max_tokens=MAX_TOKENS,  # headroom for ~N records (keep chunk_size <= ~15)
             messages=[
@@ -167,7 +185,9 @@ def extract_batch(
         logger.error("{} for batch {} — gave up after retries", type(e).__name__, ids)
         raise
     logger.info(
-        "batch telemetry: patients={} total_tokens={} cost_usd={}",
+        "batch telemetry: model={} temperature={} patients={} total_tokens={} cost_usd={}",
+        model,
+        TEMPERATURE,
         len(ids),
         response.usage.total_tokens,
         getattr(response, "_hidden_params", {}).get("response_cost"),

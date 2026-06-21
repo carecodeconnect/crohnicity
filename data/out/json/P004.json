@@ -1,0 +1,66 @@
+{
+  "patient_id": "P004",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 55
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Entyvio",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "COST",
+  "comorbid_conditions": [
+    "HYPERTENSION",
+    "HYPERLIPIDEMIA"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "not a long-term solution",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "minimal improvement",
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "gave me terrible headaches",
+      "before_biologic": true
+    },
+    {
+      "name": "budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "complication",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_cost_barrier",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient cannot afford Entyvio due to catastrophic insurance coverage. Exploring clinical trials. Budesonide is being used for management."
+}

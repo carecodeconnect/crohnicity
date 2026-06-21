@@ -1,0 +1,64 @@
+{
+  "patient_id": "P002",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 42
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "COST",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "wreaked havoc on blood sugar control",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "no improvement",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "liver wasn't happy",
+      "before_biologic": true
+    },
+    {
+      "name": "budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "primary_care_contact",
+    "misdiagnosis",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_cost_barrier",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient is currently trying to get financial assistance for Stelara. Insurance classified it as tier 4, meaning high out-of-pocket cost. Budesonide is being used as a temporary measure. Also dealing with anemia and arthritis."
+}

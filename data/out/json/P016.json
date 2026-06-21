@@ -1,0 +1,47 @@
+{
+  "patient_id": "P016",
+  "churn": false,
+  "demographics": {
+    "gender": "male",
+    "age": 44
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": "insufficient efficacy",
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (aggression)",
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "acute_flare",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_denial"
+  ],
+  "evidence_notes": "Diagnosed two years ago. Pushed through symptoms due to job. ER visit led to diagnosis. Tried mesalamine, prednisone (adverse reaction). Recommended biologics but cost and insurance issues are barriers. Relying on diet and wife's support. Concerned about immune suppression risks. Currently unable to work consistently."
+}

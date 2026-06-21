@@ -1,9 +1,12 @@
 {
   "model": "gemini/gemini-2.5-flash-lite",
+  "temperature": 0,
   "interviews": "data/in/interviews.json",
   "gold": "data/in/interviews_ground_truth_v5.ods",
   "prompt": "data/prompts/system.txt",
   "out_dir": "data/out",
+  "json_dir": "data/out/json",
+  "html_dir": "data/out/html",
   "plots_dir": "data/out/plots",
   "log_dir": "logs",
   "chunk_size": 10,

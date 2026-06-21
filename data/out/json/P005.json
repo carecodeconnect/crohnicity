@@ -1,0 +1,72 @@
+{
+  "patient_id": "P005",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 31
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ENDOMETRIOSIS",
+    "MIGRAINE"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "symptoms returned within months",
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": "symptoms returned within months",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "developed pancreatitis",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "infusion center was an hour away, difficult to take time off work",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_step_therapy",
+    "biologic_taken",
+    "breakthrough_symptoms"
+  ],
+  "evidence_notes": "Patient experiences injection anxiety and has had issues with insurance prior authorization for Humira. Developed a rash possibly related to Humira. Endometriosis and Crohn's symptoms seem to interact."
+}

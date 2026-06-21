@@ -1,0 +1,53 @@
+{
+  "patient_id": "P050",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 62
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "CONTRAINDICATION",
+  "comorbid_conditions": [
+    "OTHER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction",
+      "before_biologic": true
+    },
+    {
+      "name": "budesonide",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "FAILED",
+  "referral_pathway": [
+    "symptom_onset",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "comorbidity",
+    "alternative_therapy"
+  ],
+  "evidence_notes": "Patient has multiple comorbidities that limit treatment options and finds current treatment inadequate, leading to a very poor quality of life. The narrative ends with a sense of resignation but a sliver of hope sustained by family."
+}

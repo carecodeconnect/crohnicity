@@ -1,0 +1,81 @@
+{
+  "patient_id": "P041",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 35
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "ENDOMETRIOSIS",
+    "MIGRAINE"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "loss of response",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "continuous birth control",
+      "treatment_class": "hormonal therapy",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": null
+    },
+    {
+      "name": "pain meds",
+      "treatment_class": "analgesic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": null
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "alternative_therapy",
+    "biologic_taken",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient reports ongoing symptoms and desire for further treatment improvement. While managing some aspects of her life, her functional goal is only 75%. The narrative ends with a forward-looking statement about hope and fighting, rather than a definitive outcome."
+}

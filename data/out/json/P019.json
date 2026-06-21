@@ -1,0 +1,42 @@
+{
+  "patient_id": "P019",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 24
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "biologic_recommended",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
+    "biologic_taken",
+    "patient_fear"
+  ],
+  "evidence_notes": "Diagnosed at 24, skipped conventional therapy for Humira due to age and severity. Struggles with self-injection due to anxiety. Boyfriend administers injections. Worried about telling employer and impact on career. Experiences FOMO and fatigue. In therapy for anxiety and Crohn's grief. Living at home to save money on co-pays. Diet is restrictive (low-FODMAP). Humira working okay but experiences breakthrough symptoms. Considers adding another medication."
+}

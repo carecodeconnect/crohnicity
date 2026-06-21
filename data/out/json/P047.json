@@ -1,0 +1,56 @@
+{
+  "patient_id": "P047",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 41
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_MENTIONED",
+  "comorbid_conditions": [
+    "HYPOTHYROIDISM",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "alternative_therapy",
+    "biologic_recommended"
+  ],
+  "evidence_notes": "Patient is experiencing side effects from current treatment and is hiding her condition from her employer. She expresses fear about her job and future. The narrative ends with a sense of ongoing struggle and concealment."
+}

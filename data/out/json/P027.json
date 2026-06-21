@@ -1,0 +1,65 @@
+{
+  "patient_id": "P027",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 32
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Remicade, Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER",
+    "RHEUMATOID_ARTHRITIS"
+  ],
+  "treatment_records": [
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "loss of response",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "comorbidity",
+    "complication",
+    "surgery",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "biologic_taken",
+    "alternative_therapy",
+    "planning_next_step",
+    "other"
+  ],
+  "evidence_notes": "Patient describes a complex situation with multiple autoimmune diseases, including Crohn's, bipolar disorder, and rheumatoid arthritis. She highlights the challenges of managing multiple medications and coordinating care. The narrative ends with reflections on the cyclical nature of illness and the struggle to find hope, not a cut-off."
+}

@@ -1,0 +1,69 @@
+{
+  "patient_id": "P025",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 22
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER",
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (mood swings)",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "nausea, weight loss",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "patient_fear",
+    "alternative_therapy",
+    "therapy_failed",
+    "biologic_recommended",
+    "biologic_taken",
+    "planning_next_step",
+    "other"
+  ],
+  "evidence_notes": "Patient details a very recent diagnosis, compounded by a history of eating disorders and anxiety. The narrative ends with reflections on the difficulty of living with chronic illness and finding hope, not a cut-off."
+}

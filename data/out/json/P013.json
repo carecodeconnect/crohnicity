@@ -1,0 +1,77 @@
+{
+  "patient_id": "P013",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 33
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "OTHER"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": "insufficient efficacy",
+      "before_biologic": true
+    },
+    {
+      "name": "Azathioprine",
+      "treatment_class": "immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction (drug-induced hepatitis)",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "loss of response (possibly due to lupus development)",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Hydroxychloroquine",
+      "treatment_class": "DMARD",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    },
+    {
+      "name": "Methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "comorbidity",
+    "biologic_taken"
+  ],
+  "evidence_notes": "Diagnosed with Crohn's and lupus. Tried conventional therapies with adverse reactions. Moved to biologics early. Remicade worked well initially, then switched to Humira which is intended to treat both conditions. Also on hydroxychloroquine and methotrexate. Concerns about pregnancy and financial strain."
+}

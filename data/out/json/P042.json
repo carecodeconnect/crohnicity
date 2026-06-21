@@ -1,0 +1,72 @@
+{
+  "patient_id": "P042",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 39
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Humira",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "RHEUMATOID_ARTHRITIS",
+    "DEPRESSION"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunosuppressant",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse reaction",
+      "before_biologic": true
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "primary_care_contact",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "alternative_therapy",
+    "biologic_recommended",
+    "biologic_taken",
+    "biologic_switch"
+  ],
+  "evidence_notes": "Patient reports significant improvement with Humira but still experiences daily challenges and worries about future treatment failure. The narrative ends with a statement of continued effort despite difficulties."
+}

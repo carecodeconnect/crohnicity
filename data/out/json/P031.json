@@ -1,0 +1,68 @@
+{
+  "patient_id": "P031",
+  "churn": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 46
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": null,
+  "comorbid_conditions": [
+    "FIBROMYALGIA"
+  ],
+  "treatment_records": [
+    {
+      "name": "Mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "Corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "Biologic",
+      "outcome": "SUCCESS",
+      "reason_stopped": "Stopped due to cancer diagnosis and need for chemotherapy.",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "Biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "relapse",
+    "comorbidity",
+    "acute_flare",
+    "complication",
+    "surgery",
+    "biologic_recommended",
+    "biologic_taken",
+    "adverse_reaction",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient is a 46-year-old female diagnosed with Crohn's 15 years ago. She also has fibromyalgia and is a breast cancer survivor. She has been on Remicade and currently Stelara. Her Crohn's is more aggressive since stopping immunosuppressants for cancer treatment. She experiences partial obstruction, fatigue, and pain. She is on disability due to her conditions. She has a support group for cancer survivors, Crohn's, and fibromyalgia. She is afraid of antidepressants due to drug interactions. Her parents died of cancer and heart disease. She is considering surgery if Stelara fails. She has started a blog about managing multiple chronic illnesses."
+}

@@ -1,0 +1,76 @@
+{
+  "patient_id": "P009",
+  "churn": false,
+  "demographics": {
+    "gender": "female",
+    "age": 36
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Entyvio",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "comorbid_conditions": [
+    "ASTHMA",
+    "RHEUMATOID_ARTHRITIS"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-ASA",
+      "outcome": "PARTIAL",
+      "reason_stopped": "minimal improvement",
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "mood swings were horrible, not sustainable",
+      "before_biologic": true
+    },
+    {
+      "name": "azathioprine",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "liver enzymes spiked",
+      "before_biologic": true
+    },
+    {
+      "name": "Entyvio",
+      "treatment_class": "biologic",
+      "outcome": "PARTIAL",
+      "reason_stopped": "losing effectiveness",
+      "before_biologic": false
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "PARTIAL",
+  "referral_pathway": [
+    "symptom_onset",
+    "self_managed",
+    "diagnostic_delay",
+    "complication",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "alternative_therapy",
+    "biologic_recommended",
+    "patient_fear",
+    "biologic_taken",
+    "comorbidity",
+    "alternative_therapy",
+    "loss_of_response",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient has needle phobia and initially resisted biologics, opting for dietary changes and acupuncture. Developed RA while on Entyvio, now taking methotrexate for RA which may also help Crohn's. Entyvio is losing effectiveness."
+}

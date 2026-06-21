@@ -1,0 +1,58 @@
+{
+  "patient_id": "P024",
+  "churn": false,
+  "demographics": {
+    "gender": "Male",
+    "age": 40
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": false,
+  "biologic_not_mentioned": false,
+  "biologic_type": null,
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "comorbid_conditions": [
+    "TYPE_2_DIABETES",
+    "SLEEP_APNEA"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": "adverse reaction (blood sugar)",
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "conventional",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "before_biologic": true
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "misdiagnosis",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "adverse_reaction",
+    "biologic_recommended",
+    "insurance_step_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient describes a recent diagnosis and the immediate challenges of severe symptoms impacting his work. He is actively trying to get approved for biologics and the narrative ends with hope for approval and effectiveness, not a cut-off."
+}
