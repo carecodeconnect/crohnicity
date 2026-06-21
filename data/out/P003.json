@@ -1,0 +1,93 @@
+{
+  "patient_id": "P003",
+  "churn": true,
+  "incomplete_journey": false,
+  "demographics": {
+    "gender": "Female",
+    "age": 28
+  },
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "biologic_type": "Stelara",
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "comorbid_conditions": [
+    "ANXIETY_DISORDER",
+    "PCOS"
+  ],
+  "treatment_records": [
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "mesalamine",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "6-MP",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "conventional",
+      "outcome": "FAILED",
+      "reason_stopped": "Nothing really worked well",
+      "before_biologic": true
+    },
+    {
+      "name": "Remicade",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "Developed antibodies and it stopped working",
+      "before_biologic": false
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "FAILED",
+      "reason_stopped": "Lost effectiveness",
+      "before_biologic": false
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "before_biologic": false
+    }
+  ],
+  "treatment_outcome": "ONGOING",
+  "referral_pathway": [
+    "symptom_onset",
+    "diagnostic_delay",
+    "symptoms_worsen",
+    "specialist_referral",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "complication",
+    "surgery",
+    "biologic_recommended",
+    "insurance_cost_barrier",
+    "insurance_step_therapy",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
+    "breakthrough_symptoms",
+    "alternative_therapy",
+    "planning_next_step"
+  ],
+  "evidence_notes": "Patient reports injection anxiety with biologics. Mentions financial devastation due to medical expenses and high out-of-pocket costs. Discusses challenges in dating and career due to Crohn's. Expresses fear about pregnancy with Crohn's and discontinuing medication. Reports osteopenia due to steroid use. Mentions mental health impact including anxiety and depression. Tried various diets with no significant difference. Identifies stress as a major trigger. Lost jobs due to sick days."
+}

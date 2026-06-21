@@ -53,6 +53,8 @@ SYSTEM_PROMPT = (
     "doesn't support a confident value. Set patient_id to the value given in the message. "
     "For referral_pathway, list the patient's journey as an ordered sequence of the canonical "
     "PathwayStep values. "
+    "For each treatment_records entry, set before_biologic to true if it was tried before the "
+    "patient started or was offered a biologic, and false otherwise. "
     "Return only valid JSON matching the schema — no prose, no code fences."
 )
 

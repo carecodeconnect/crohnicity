@@ -1,7 +1,7 @@
 {
   "patient_id": "P001",
   "churn": null,
-  "incomplete_journey": false,
+  "incomplete_journey": null,
   "demographics": {
     "gender": "female",
     "age": 34
@@ -11,28 +11,31 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
-    "RHEUMATOID_ARTHRITIS"
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": null
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "no improvement",
+      "before_biologic": true
     },
     {
       "name": "azathioprine",
-      "treatment_class": "conventional",
+      "treatment_class": "thiopurine",
       "outcome": "FAILED",
-      "reason_stopped": "adverse_reaction"
+      "reason_stopped": "nausea and elevated liver enzymes",
+      "before_biologic": true
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null
+      "reason_stopped": null,
+      "before_biologic": false
     }
   ],
   "treatment_outcome": "PARTIAL",
@@ -47,12 +50,12 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "adverse_reaction",
     "biologic_recommended",
-    "patient_fear",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken"
   ],
-  "evidence_notes": "Patient experienced symptoms for six months before being referred to a gastroenterologist. Initially diagnosed with IBS. Treatment history includes mesalamine and azathioprine before starting biologics. Insurance denial and appeals caused a delay in starting biologics. Has been on Humira for five years with mostly remission but occasional flares. Developed psoriasis, potentially related to Humira. Takes supplements due to absorption issues. Concerned about the high cost of medication without insurance."
+  "evidence_notes": "Patient reports developing psoriasis, which the rheumatologist linked to Humira."
 }

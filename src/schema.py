@@ -151,13 +151,17 @@ class Demographics(BaseModel):
 
 
 class TreatmentRecord(BaseModel):
-    """One treatment in the patient's history. The free-text `treatment_records` column parses
-    into a list of these later; kept minimal until the annotation convention firms up."""
+    """One treatment in the patient's history. `before_biologic` marks treatments tried before a
+    biologic was started or considered — the before/after split that answers business Q3 (what is
+    tried before a biologic). Set by the model, not inferred downstream, because the biologic may
+    not appear as a treatment at all (e.g. prescribed-but-not-taken)."""
 
     name: str
     treatment_class: str
     outcome: TreatmentOutcome
     reason_stopped: str | None = None
+    # tried before a biologic was started/considered (the before/after split for Q3)
+    before_biologic: bool | None = None
 
 
 class PatientLabels(BaseModel):
