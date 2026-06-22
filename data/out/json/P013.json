@@ -16,24 +16,24 @@
   ],
   "treatment_records": [
     {
-      "name": "Mesalamine",
+      "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "insufficient efficacy",
+      "reason_stopped": "therapy_failed",
       "before_biologic": true
     },
     {
-      "name": "Azathioprine",
-      "treatment_class": "immunosuppressant",
+      "name": "azathioprine",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction (drug-induced hepatitis)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "loss of response (possibly due to lupus development)",
+      "reason_stopped": "loss_of_response",
       "before_biologic": false
     },
     {
@@ -44,15 +44,15 @@
       "before_biologic": false
     },
     {
-      "name": "Hydroxychloroquine",
-      "treatment_class": "DMARD",
+      "name": "hydroxychloroquine",
+      "treatment_class": "other",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
     },
     {
-      "name": "Methotrexate",
-      "treatment_class": "immunosuppressant",
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": false
@@ -61,17 +61,17 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "comorbidity",
-    "biologic_taken"
+    "biologic_taken",
+    "comorbidity"
   ],
-  "evidence_notes": "Diagnosed with Crohn's and lupus. Tried conventional therapies with adverse reactions. Moved to biologics early. Remicade worked well initially, then switched to Humira which is intended to treat both conditions. Also on hydroxychloroquine and methotrexate. Concerns about pregnancy and financial strain."
+  "evidence_notes": "Patient is treating both Crohn's and Lupus. Remicade worked well for three years but then stopped, possibly triggering Lupus symptoms. Switched to Humira, which theoretically helps both conditions. Also taking hydroxychloroquine and methotrexate. She expresses fear about pregnancy due to both conditions and medication adjustments. Financial impact is significant, and she is learning acceptance while focusing on small goals. The journey is ongoing with a focus on managing multiple autoimmune diseases."
 }

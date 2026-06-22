@@ -17,51 +17,51 @@
   ],
   "treatment_records": [
     {
-      "name": "Prednisone",
+      "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (weight gain, mood swings, sleep issues)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
-      "name": "Mesalamine",
+      "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
       "reason_stopped": "relapse",
       "before_biologic": true
     },
     {
-      "name": "Azathioprine",
-      "treatment_class": "immunosuppressant",
+      "name": "azathioprine",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction (joint pain)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "loss of response (during pregnancy)",
+      "reason_stopped": "loss_of_response",
       "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "loss of response",
+      "reason_stopped": "loss_of_response",
       "before_biologic": false
     },
     {
       "name": "Cimzia",
       "treatment_class": "biologic",
       "outcome": "UNKNOWN",
-      "reason_stopped": "insurance denial",
+      "reason_stopped": "insurance_denial",
       "before_biologic": false
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
@@ -69,22 +69,27 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
+    "primary_care_contact",
     "misdiagnosis",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "therapy_failed",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "comorbidity",
-    "biologic_not_taken",
+    "biologic_taken",
+    "loss_of_response",
+    "biologic_switch",
     "insurance_denial",
-    "insurance_appeal",
+    "acute_flare",
     "insurance_approval",
-    "biologic_taken"
+    "biologic_taken",
+    "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed at 22, dealing with Crohn's for 15 years. Tried conventional therapies with adverse reactions. Moved to biologics. Remicade worked for 4 years, failed during pregnancy. Humira worked for 3 years, failed after divorce. Currently on Stelara, which is 'okay, not great'. Struggling with fatigue, financial strain as a single mom. Considering combination therapy."
+  "evidence_notes": "Patient has Crohn's, chronic migraine, and fibromyalgia. Started with prednisone and mesalamine, then azathioprine which caused joint pain. Moved to biologics: Remicade worked for four years, then failed during pregnancy. Switched to Humira, which worked for three years but then failed. Currently on Stelara, which is 'okay, not great,' and is considering adding methotrexate. She is a single mother, facing significant financial strain and fatigue. The journey is ongoing with a focus on managing multiple chronic conditions and avoiding surgery."
 }

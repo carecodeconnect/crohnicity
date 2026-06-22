@@ -16,24 +16,24 @@
   ],
   "treatment_records": [
     {
-      "name": "Mesalamine",
-      "treatment_class": "5-asa",
-      "outcome": "PARTIAL",
-      "reason_stopped": "insufficient efficacy",
-      "before_biologic": true
-    },
-    {
-      "name": "Prednisone",
+      "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (cardiac concerns)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
-      "name": "Sulfasalazine",
+      "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction (headaches)",
+      "reason_stopped": "therapy_failed",
+      "before_biologic": true
+    },
+    {
+      "name": "sulfasalazine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
@@ -48,21 +48,18 @@
   "referral_pathway": [
     "symptom_onset",
     "self_managed",
-    "symptoms_worsen",
     "primary_care_contact",
-    "diagnostic_delay",
-    "acute_flare",
+    "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "patient_fear",
-    "insurance_denial",
+    "insurance_step_therapy",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken"
   ],
-  "evidence_notes": "Patient diagnosed late, likely had Crohn's for decades. Tried conventional therapies with limited success and initial resistance to biologics due to heart condition. Insurance battles for Entyvio approval. Experiencing slow but noticeable improvement. Side effect of frequent colds noted. Concerned about future insurance coverage."
+  "evidence_notes": "Patient reports slow but noticeable improvement with Entyvio, including better energy and less urgency. He is still careful with his diet and experiences frequent colds as a side effect. He is concerned about future insurance coverage and the strain on his marriage. The journey is ongoing with a focus on managing symptoms and enjoying time with family."
 }

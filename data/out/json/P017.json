@@ -12,20 +12,19 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "DEFERRED",
   "comorbid_conditions": [
-    "ADHD",
-    "ANXIETY_DISORDER"
+    "OTHER"
   ],
   "treatment_records": [
     {
-      "name": "Mesalamine",
+      "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "insufficient efficacy",
+      "reason_stopped": "therapy_failed",
       "before_biologic": true
     },
     {
-      "name": "Azathioprine",
-      "treatment_class": "immunosuppressant",
+      "name": "azathioprine",
+      "treatment_class": "immunomodulator",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "before_biologic": true
@@ -34,15 +33,16 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "self_managed",
     "misdiagnosis",
-    "comorbidity",
     "diagnostic_delay",
+    "specialist_referral",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "biologic_recommended",
-    "therapy_failed",
-    "biologic_not_taken",
+    "patient_fear",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed 8 months ago. Symptoms started during COVID. Mild to moderate inflammation. Hesitant doctor approach. Tried mesalamine (helped somewhat). Now on azathioprine, which requires regular monitoring. Doctor mentioned biologics but advised trying other things first. Patient plans to be more assertive about biologics at next appointment. Worried about fatigue, job security, and managing meds with ADHD/anxiety."
+  "evidence_notes": "Patient diagnosed eight months ago, currently on azathioprine. Her doctor is taking a conservative approach, hesitant to start biologics. She is experiencing fatigue and anxiety, and is concerned about job security and the cost of treatment. She plans to advocate for herself at her next appointment to discuss biologics again. The journey is ongoing with a focus on finding the right treatment and managing symptoms."
 }

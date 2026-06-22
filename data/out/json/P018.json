@@ -16,21 +16,21 @@
   ],
   "treatment_records": [
     {
-      "name": "Prednisone",
+      "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (worsened diabetes, cardiac concerns)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
-      "name": "Mesalamine",
+      "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "insufficient efficacy",
+      "reason_stopped": "therapy_failed",
       "before_biologic": true
     },
     {
-      "name": "Budesonide",
+      "name": "budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
@@ -50,7 +50,7 @@
     "therapy_failed",
     "biologic_recommended",
     "insurance_cost_barrier",
-    "biologic_not_taken"
+    "insurance_step_therapy"
   ],
-  "evidence_notes": "Diagnosed six months ago. Experienced constipation, diarrhea, weight loss. Prednisone worsened diabetes and cardiac status. Mesalamine ineffective. Currently on budesonide, which is 'okay, not great'. Hesitant about biologics due to cost, Medicare coverage issues, and existing multiple medications. Concerns about risks (infections) and impact on grandkids. Considering next steps."
+  "evidence_notes": "Patient diagnosed six months ago, currently on budesonide. He is hesitant to start biologics due to existing multiple medications, potential risks, and cost, especially with Medicare coverage complexities. He is struggling with diet restrictions and the impact on his quality of life, particularly golf. He is considering biologics due to his son's encouragement and desire for better quality of life. The journey is ongoing with a focus on weighing treatment options and managing multiple chronic conditions."
 }

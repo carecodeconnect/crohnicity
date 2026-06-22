@@ -17,28 +17,28 @@
   ],
   "treatment_records": [
     {
-      "name": "Methotrexate",
-      "treatment_class": "immunosuppressant",
-      "outcome": "UNKNOWN",
-      "reason_stopped": "insufficient efficacy for Crohn's",
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "therapy_failed",
       "before_biologic": true
     },
     {
-      "name": "Sulfasalazine",
+      "name": "sulfasalazine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction (hives)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
@@ -50,10 +50,10 @@
     "adverse_reaction",
     "comorbidity",
     "biologic_recommended",
-    "insurance_denial",
+    "insurance_step_therapy",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken"
   ],
-  "evidence_notes": "Diagnosed with Crohn's three years ago, already had psoriasis. Initially misdiagnosed. Tried methotrexate (for psoriasis, hoped it would help Crohn's), sulfasalazine (allergic reaction). Moved to Stelara to treat both conditions. Insurance battle to get approval. Experiencing some improvement but not perfect. Struggling with fatigue, depression, and physical demands of job."
+  "evidence_notes": "Patient has Crohn's, psoriasis, and psoriatic arthritis. Methotrexate for psoriasis did not help Crohn's. Sulfasalazine caused an allergic reaction. Stelara was prescribed to treat both Crohn's and psoriasis, but required an extensive insurance appeal. Stelara is helping somewhat but not perfectly. He is also dealing with depression and fatigue, impacting his ability to work and his social life. The journey is ongoing with a focus on managing multiple conditions and financial concerns."
 }

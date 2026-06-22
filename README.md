@@ -267,8 +267,8 @@ audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
 
 | reason             | patients |
 |:-------------------|---------:|
-| INSURANCE_PROBLEMS |        4 |
-| COST               |        3 |
+| COST               |        4 |
+| INSURANCE_PROBLEMS |        3 |
 | DEFERRED           |        2 |
 | PATIENT_FEARS      |        2 |
 | NOT_MENTIONED      |        1 |
@@ -295,12 +295,12 @@ audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
     | corticosteroid    |         22 |
     | 5-asa             |         21 |
     | 5-ASA             |         18 |
-    | immunomodulator   |         11 |
-    | immunosuppressant |          7 |
+    | immunomodulator   |         17 |
     | Corticosteroid    |          7 |
     | Immunomodulator   |          6 |
     | Biologic          |          2 |
     | NSAID             |          2 |
+    | immunosuppressant |          1 |
     | anti-infective    |          1 |
 
 ![Q3 treatments before a
@@ -321,7 +321,7 @@ biologic](data/out/plots/q3_before_biologic.png)
 #### Q4 — referral pathway length (steps to a biologic-prescribing specialist)
 
 > **Caveat.** The literal “GP” node (`primary_care_contact`) appears in
-> only 7/50 predicted pathways, so a strict GP→prescriber count isn’t
+> only 8/50 predicted pathways, so a strict GP→prescriber count isn’t
 > representative. We count steps from the journey **start** (or
 > `primary_care_contact` where present) to `biologic_recommended`
 > (present in 48/50) — the point a biologic-prescribing specialist is
@@ -332,13 +332,13 @@ biologic](data/out/plots/q3_before_biologic.png)
 | steps | patients |
 |------:|---------:|
 |     9 |       19 |
-|    10 |       10 |
+|    10 |        9 |
+|     8 |        5 |
 |     7 |        4 |
-|     6 |        4 |
-|     8 |        3 |
-|    13 |        2 |
+|    11 |        3 |
+|     6 |        3 |
 |     5 |        2 |
-|    11 |        2 |
+|    13 |        1 |
 |    12 |        1 |
 |     4 |        1 |
 
@@ -368,10 +368,10 @@ GitHub only shows them as source. As a teaser, here is patient **P013**
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["specialist_referral"]
-    n2["diagnostic_testing"]
-    n3["crohns_diagnosis"]
-    n4["conventional_therapy"]
+    n1["diagnostic_testing"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["therapy_failed"]
     n5["adverse_reaction"]
     n6["biologic_recommended"]
     n7["biologic_taken"]
@@ -387,8 +387,8 @@ flowchart LR
     n6 -->n7
     n7 -->n8
     n8 -->n9
-    n9 -->n10
-    n10 -->n7
+    n9 -->n7
+    n7 -->n10
 ```
 
 **Churn handling matters here.** Be explicit about:
@@ -597,6 +597,14 @@ With more time, after the core is complete:
   test the CLI slicing, and smoke-test the Dagster `Definitions` load —
   closing the gap where reliability, not correctness of the numbers, is
   at stake.
+
+- **Explore patient journey narratives as complaints.** The
+  `interview_transcript` patient narratives read like complaints. There
+  is a research literature in Conversation Analysis (CA) on complaints
+  and narrative storytelling. I would see if this social scientific
+  research has insights for identifying patterns in complaints that
+  could upgrade the prompts to enhance classification of the parts of
+  the narratives.
 
 ## Where I used AI
 

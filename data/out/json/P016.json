@@ -10,21 +10,21 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "reasons_for_biologic_not_taken": "COST",
   "comorbid_conditions": [],
   "treatment_records": [
     {
-      "name": "Mesalamine",
+      "name": "mesalamine",
       "treatment_class": "5-asa",
-      "outcome": "PARTIAL",
-      "reason_stopped": "insufficient efficacy",
+      "outcome": "FAILED",
+      "reason_stopped": "therapy_failed",
       "before_biologic": true
     },
     {
-      "name": "Prednisone",
+      "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (aggression)",
+      "reason_stopped": "adverse_reaction",
       "before_biologic": true
     }
   ],
@@ -33,15 +33,14 @@
     "symptom_onset",
     "self_managed",
     "symptoms_worsen",
-    "acute_flare",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
-    "insurance_denial"
+    "insurance_step_therapy",
+    "insurance_cost_barrier"
   ],
-  "evidence_notes": "Diagnosed two years ago. Pushed through symptoms due to job. ER visit led to diagnosis. Tried mesalamine, prednisone (adverse reaction). Recommended biologics but cost and insurance issues are barriers. Relying on diet and wife's support. Concerned about immune suppression risks. Currently unable to work consistently."
+  "evidence_notes": "Patient was diagnosed two years ago and has been struggling with symptoms impacting his work as a construction foreman. He experienced side effects from prednisone and has not yet started biologics due to cost and insurance issues. He is concerned about the risks of immunosuppression given his job. The journey is ongoing with a focus on finding a treatment that is both effective and affordable."
 }

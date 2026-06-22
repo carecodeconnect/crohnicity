@@ -369,19 +369,23 @@ With more time, after the core is complete:
   deliberately uses one prompt; a later iteration would break extraction into per-section prompts
   (e.g. biologic funnel, treatment history, referral pathway) run in parallel — better per-field
   accuracy and inspectable intermediate artifacts, at the cost of more calls and orchestration.
+
 - **A telemetry feature for optimisation.** Per-call usage is currently logged (tokens, cost,
   cached tokens — see [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I'd surface it as a
   first-class artifact (a structured per-run metrics file + plots) to track cost/latency/cache-hit
   rate and tune the pipeline at scale.
+
 - **Try a larger Gemini model in production.** This version uses `gemini-2.5-flash-lite` (cheap,
   fast for iteration). With more time I'd evaluate a more capable model (e.g. `gemini-2.5-flash` /
   `pro`) for extraction quality, weighed against its free-tier **request/token rate limits** (the
   ~20 calls/day cap that drove the chunking design) and cost.
+
 - **Deep dive on cyclical journey patterns.** The `referral_pathway` initially flattened recurrence
   (each phase emitted once); the prompt now asks the model to repeat steps when phases recur. A
   proper follow-up would analyse the *cyclicity* itself — how many biologics patients cycle through,
   repeated relapse / loss-of-response / switch loops, time-to-switch — and classify journeys as
   genuinely cyclic vs linear (the recurrence is also recoverable from `treatment_records`).
+
 - **Productionise as a FastAPI inference endpoint (deployment MVP).** Wrap `extract()` in a
   **FastAPI** service (already a declared dependency): `POST` an `interview_transcript`, get back a
   validated `PatientLabels` JSON generated **dynamically by a cloud-hosted model** — turning the
@@ -417,6 +421,11 @@ With more time, after the core is complete:
   With more time I'd **mock the `litellm` call** to exercise the retry / schema-rejection /
   partial-output branches without hitting the API, test the CLI slicing, and smoke-test the Dagster
   `Definitions` load — closing the gap where reliability, not correctness of the numbers, is at stake.
+
+- **Explore patient journey narratives as complaints.** The `interview_transcript` patient narratives
+  read like complaints. There is a research literature in Conversation Analysis (CA) on complaints and narrative
+  storytelling. I would see if this social scientific research has insights for identifying patterns in
+  complaints that could upgrade the prompts to enhance classification of the parts of the narratives.
 
 ## Where I used AI
 
