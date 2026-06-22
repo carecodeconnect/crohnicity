@@ -28,8 +28,8 @@ better suited to a deterministic tail-of-text rule than the extraction prompt. Q
 2. Log any *suspicious-but-valid* prediction in the table below (a defensible-looking record that
    may misread the transcript — e.g. churn on a complete story, a sparse record).
 3. Open `interviews_ground_truth_v5.ods`, find the patient, and compare the transcript to the model
-   output. Set/keep **`to_review = 1`** to mark it in the validation scope (the split's single
-   source of truth — `src/splits.py`).
+   output. Set/keep **`to_review = 1`** to mark it in the gold-annotation scope (the cases
+   `gold_eval` scores).
 4. **Fix in the gold annotation** (`_v5.ods`), not the model output: the prediction stays as-is (it
    is what the model said); the gold label is what we score it against.
 
@@ -43,6 +43,5 @@ better suited to a deterministic tail-of-text rule than the extraction prompt. Q
 
 **`to_review` flag status in `_v5.ods`** (filter `to_review = 1` to see the review set): **P016 ✓**
 and **P049 ✓** are already flagged — they're in the 20-case validation split. **P019 is `to_review = 0`**
-— set it to `1` in LibreOffice if you want it to surface alongside the others. Note `to_review` is
-*also* the validation/holdout split (`src/splits.py`), so flagging P019 makes that set 21 cases
-(fine — it just adds this edge case to the gold-annotation scope).
+— set it to `1` in LibreOffice if you want it to surface alongside the others. Flagging P019 would
+add this edge case to the gold-annotation scope (21 cases).

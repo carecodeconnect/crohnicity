@@ -21,7 +21,7 @@ of labels for evaluating the extraction pipeline.
 |---|--------|------|----------------|-------|
 | 1 | `patient_id` | `str` | — | Primary key. **Read-only.** |
 | 2 | `interview_transcript` | `str` | — | Full interview text. **Read-only.** |
-| 3 | `to_review` | `bool` (1/0) | `1`/`0` | `1` = case is in the annotation scope; filter on this. Single source of truth for the validation/holdout split (`src/splits.py`). |
+| 3 | `to_review` | `bool` (1/0) | `1`/`0` | `1` = case is in the annotation scope; filter on this. Single source of truth for which cases `gold_eval` scores against the gold. |
 | 4 | `churn` | `bool` (1/0) | `1`/`0` | `1` = interview truncated / patient disengaged before the story resolved (cut off, trails off, vague). **Merges the old `incomplete_journey`** (v4). See README "Churn" / `QUESTIONS.md` #1. |
 | 5 | `gender` | `str` | free text | Self-reported (`female`/`male` as stated) → `Demographics`. |
 | 6 | `age` | `int` | — | Self-reported → `Demographics`. |

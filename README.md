@@ -855,8 +855,7 @@ Dagster run (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
 │   ├── main.py                       #   fire CLI: load → run_chunked → persist
 │   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs; docsite
 │   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
-│   ├── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
-│   └── splits.py                     #   validation-split helper
+│   └── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
 ├── tests/                            # pytest suite + the quality gate
 │   ├── test_*.py
 │   └── type_lint_unit_tests.sh       #   ruff + ruff format + ty + pytest (the gate)

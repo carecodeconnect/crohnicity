@@ -41,7 +41,7 @@ uv run python -m ipykernel install --user --name crohnicity --display-name "Pyth
 
 # run things inside the venv
 uv run pytest                       # all tests
-uv run pytest tests/test_splits.py  # a single test file
+uv run pytest tests/test_post_extraction_eda.py  # a single test file
 uv run ruff check                   # lint
 uv run ruff format                  # format
 uv run ty check                     # type-check

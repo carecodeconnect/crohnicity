@@ -6,8 +6,6 @@ What each unit test asserts, rendered from the test docstrings — rebuilt on ev
 
 ::: test_outputs
 
-::: test_splits
-
 ::: test_post_extraction_eda
 
 ::: test_referral_pathway_analysis

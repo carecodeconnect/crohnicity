@@ -16,5 +16,3 @@ API reference rendered from the docstrings via mkdocstrings — **rebuilt from s
 ::: post_extraction_eda
 
 ::: referral_pathway_analysis
-
-::: splits

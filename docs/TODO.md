@@ -162,7 +162,7 @@ keep the batch going where sensible, but make every failure visible and countabl
 
 ## Pipeline coordinator — `src/main.py`
 
-Once each component is built and tested (schema, `extract`/`save`, splits, referral-pathway
+Once each component is built and tested (schema, `extract`/`save`, referral-pathway
 render, and aggregation into the four answers), add a **minimal `src/main.py`** that wires them
 into one pipeline in the simplest way — load `data/in/interviews.json`, loop `extract` over each
 patient, persist predictions, then aggregate. Keep it a plain script; the **Dagster orchestration
@@ -281,14 +281,7 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
   four business questions *and* the schema / pipeline / evaluation dev-questions carry a written
   answer (no prompt-only sections left). This is the last gate before CAIO handover.
 - [ ] **Docsite builds complete.** `uv run mkdocs build` covers *all* `src/` modules + tests via
-  mkdocstrings — done (`api/src.md` + `api/tests.md` cover all 8 src modules + tests); remaining:
-  keep nav labels current (e.g. "Schema (v0.2)" -> v0.4).
-- [ ] **Review `src/splits.py`'s place in the pipeline.** The validation/holdout split derives from
-  the `to_review` flag, but the eval now reads the gold directly (`gold_eval` filters
-  `to_review == 1` itself) and only 20/50 cases are annotated — so `splits.py` may be redundant now.
-  Check whether anything still imports it; if not, **move `splits.py` + `test_splits.py` to
-  `sandbox/`** (with the other once-used/adhoc scripts, kept as a dev-documentation record) rather
-  than deleting — and drop their `api/src.md` / `api/tests.md` entries so the docsite still builds.
+  mkdocstrings — done (`api/src.md` + `api/tests.md` cover all 7 src modules + tests).
 - [ ] **EDA plot clarity + correctness (diagnosed; fix in final sweep).**
   - **Q2 `(null)` -> `unspecified`** — relabelled in `q2_reasons`, but it masks a real gap: the model
     left `reasons_for_biologic_not_taken` null for the 2 prescribed-not-taken cases (**P047, P048**).
