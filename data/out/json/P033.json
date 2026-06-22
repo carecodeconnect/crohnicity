@@ -12,8 +12,8 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
-    "ANXIETY_DISORDER",
-    "DEPRESSION"
+    "OTHER",
+    "OTHER"
   ],
   "treatment_records": [
     {
@@ -26,13 +26,13 @@
     {
       "name": "Prednisone",
       "treatment_class": "Corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "Triggered first hypomanic episode.",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Triggered hypomanic episode.",
       "before_biologic": true
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "DMARD",
       "outcome": "PARTIAL",
       "reason_stopped": "Caused severe nausea.",
       "before_biologic": true
@@ -41,7 +41,7 @@
       "name": "Humira",
       "treatment_class": "Biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Developed severe eczema, possibly drug-induced.",
+      "reason_stopped": "Developed severe eczema, possibly Humira-induced.",
       "before_biologic": false
     },
     {
@@ -55,20 +55,18 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
-    "relapse",
-    "comorbidity",
+    "therapy_failed",
     "biologic_recommended",
     "biologic_taken",
+    "comorbidity",
     "biologic_switch",
     "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Nina is 26 and was diagnosed with Crohn's at 19. She also has severe eczema and bipolar II disorder. Her Crohn's started in college and progressed, leading to flares, depression, and dropping out. She tried mesalamine, prednisone (which triggered a hypomanic episode), and methotrexate (causing nausea). Humira was a game-changer initially, controlling Crohn's but causing severe eczema. She is now on Stelara, which helps both conditions somewhat. She was diagnosed with bipolar disorder last year and is on mood stabilizers. She struggles with dating and maintaining a facade at work. Her parents are supportive but burnt out. She finds DBT therapy helpful and is considering ketamine therapy. Her diet is limited due to both Crohn's and eczema triggers. Surgery is a possibility if Stelara fails."
+  "evidence_notes": "Diagnosed at 19, seven years of Crohn's. Also has severe eczema and bipolar II. Prednisone triggered first hypomanic episode. Methotrexate caused nausea. Humira helped Crohn's but triggered severe eczema. Now on Stelara, which helps both conditions somewhat. Bipolar diagnosis led to mood stabilizers. Dating and work are challenging due to multiple conditions and need to hide treatments."
 }

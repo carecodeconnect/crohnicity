@@ -13,7 +13,7 @@
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "OTHER",
-    "OTHER"
+    "FIBROMYALGIA"
   ],
   "treatment_records": [
     {
@@ -27,14 +27,14 @@
       "name": "Prednisone",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Weight gain.",
+      "reason_stopped": "Caused significant weight gain.",
       "before_biologic": true
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "Immunomodulator",
-      "outcome": "FAILED",
-      "reason_stopped": "Hair loss.",
+      "treatment_class": "DMARD",
+      "outcome": "PARTIAL",
+      "reason_stopped": "Caused hair loss.",
       "before_biologic": true
     },
     {
@@ -49,17 +49,15 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
-    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
-    "relapse",
-    "comorbidity",
     "biologic_recommended",
     "biologic_taken",
-    "biologic_switch",
+    "comorbidity",
+    "therapy_failed",
     "planning_next_step"
   ],
-  "evidence_notes": "Michelle is 41 and has had Crohn's for eight years. She also has rheumatoid arthritis (RA) and recently diagnosed fibromyalgia. Her Crohn's started in her early thirties after a divorce, initially mistaken for stress. Symptoms included chronic diarrhea, weight loss, and fatigue. She tried mesalamine (minimal help), prednisone (weight gain), and methotrexate (hair loss). Humira was started three years ago, providing about 50% improvement. Her RA diagnosis followed, and she now injects for both conditions. Fibromyalgia was diagnosed after years of widespread pain. Work as a real estate agent is suffering due to fatigue and pain. She is a single mother and her teenage son has to help her. Finances are a major concern, with growing medical debt and a high deductible. She is considering switching to Stelara but worries about time off work for injections. Her parents are on a fixed income and cannot provide much financial help. Dating has been unsuccessful after disclosing her illnesses. She finds support in a group for single parents with chronic illness. She is considering Stelara."
+  "evidence_notes": "Diagnosed eight years ago. Also has rheumatoid arthritis and fibromyalgia. Started mesalamine, then prednisone (weight gain). Methotrexate caused hair loss. Switched to Humira three years ago, helps somewhat (50%). RA and fibromyalgia diagnoses followed. Work suffering, income dropped. Son works part-time to help. Financial pressure. Considering Stelara but worried about time off work for injections. Dating attempts failed after disclosing illnesses."
 }

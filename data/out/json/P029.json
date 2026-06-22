@@ -12,7 +12,7 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
-    "OTHER",
+    "HYPOTHYROIDISM",
     "MIGRAINE"
   ],
   "treatment_records": [
@@ -20,21 +20,21 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "minimal help",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (weight gain)",
+      "reason_stopped": "weight gain, appearance concerns",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "worked for two years, then stopped",
       "before_biologic": true
     },
     {
@@ -48,14 +48,14 @@
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "FAILED",
-      "reason_stopped": "loss of response",
+      "reason_stopped": "effectiveness dropped",
       "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "less effective",
       "before_biologic": false
     },
     {
@@ -66,7 +66,7 @@
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
@@ -85,10 +85,7 @@
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken",
-    "alternative_therapy",
-    "planning_next_step",
-    "other"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient details a long history of Crohn's disease, other autoimmune conditions, and significant impact on career and personal relationships. She describes a progression through multiple treatments and ongoing challenges. The narrative ends with reflections on acceptance and continuing the fight, not a cut-off."
+  "evidence_notes": "Patient has a long history of Crohn's and other conditions, facing career and personal life impacts. Treatment outcome is partial as Stelara is only 'okay' and the patient is considering combination therapy. The narrative ends with a reflection on acceptance and continuing to move forward, not a cut-off."
 }

@@ -20,14 +20,14 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "minimal improvement",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "minimal improvement",
       "before_biologic": true
     },
     {
@@ -41,14 +41,14 @@
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "effectiveness limited",
       "before_biologic": false
     },
     {
       "name": "methotrexate",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "side effects (hair loss)",
       "before_biologic": false
     },
     {
@@ -69,19 +69,17 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "adverse_reaction",
     "biologic_recommended",
     "biologic_taken",
-    "adverse_reaction",
     "biologic_switch",
     "biologic_taken",
-    "alternative_therapy",
-    "loss_of_response",
-    "biologic_recommended",
+    "biologic_switch",
+    "biologic_taken",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken",
-    "planning_next_step"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient describes a long journey with Crohn's disease, multiple treatments including biologics, and significant impact on her career and personal life. The narrative ends with a reflection on acceptance and small victories, not a cut-off."
+  "evidence_notes": "Patient describes a long journey with multiple biologics and significant impact on career and personal life. Treatment outcome is partial as Stelara is only 'okay' and other conditions are worsening. The narrative ends with a reflection on acceptance and small victories, not a cut-off."
 }

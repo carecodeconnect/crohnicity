@@ -20,14 +20,14 @@
       "name": "NSAIDs",
       "treatment_class": "NSAID",
       "outcome": "FAILED",
-      "reason_stopped": "Likely made condition worse.",
+      "reason_stopped": "Likely worsened Crohn's symptoms.",
       "before_biologic": true
     },
     {
       "name": "Stelara",
       "treatment_class": "Biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "Insurance denied renewal.",
+      "reason_stopped": "Insurance denied renewal, leading to gap and flare.",
       "before_biologic": false
     }
   ],
@@ -40,14 +40,11 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
-    "adverse_reaction",
-    "relapse",
-    "comorbidity",
-    "insurance_denial",
     "biologic_recommended",
+    "insurance_denial",
     "biologic_taken",
-    "biologic_switch",
+    "loss_of_response",
     "planning_next_step"
   ],
-  "evidence_notes": "William is 48 and diagnosed with Crohn's three years ago. He also has severe psoriasis and psoriatic arthritis. His GI issues were initially thought to be related to arthritis medications. He tried various NSAIDs, which may have worsened his condition. After a colonoscopy revealed extensive Crohn's, he started Stelara, which helped both Crohn's and psoriasis by about 50%. However, insurance denied renewal after a year, leading to flares during the gap. He is now trying to regain baseline. His construction business is suffering due to fatigue and arthritis. His wife's insurance is covering him. He is concerned about finances and retirement. Diet is challenging due to conflicting needs of his conditions. He experiences depression but avoids antidepressants due to drug interactions. He finds support in a group for men with chronic illness who have lost physical capacity. He is considering adding methotrexate to Stelara."
+  "evidence_notes": "Diagnosed three years ago. Also has severe psoriasis and psoriatic arthritis. Spent two years trying NSAIDs, which likely worsened symptoms. Colonoscopy revealed extensive Crohn's. Started Stelara, which helped both conditions about 50%. Insurance denied renewal after a year, leading to flares during gap. Now trying to regain baseline. Physical work is becoming impossible. Business margins are thin. Wife's insurance is a lifeline. Considering selling assets. Diet is impossible due to conflicting needs of conditions. Depression setting in."
 }

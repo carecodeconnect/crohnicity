@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "RHEUMATOID_ARTHRITIS",
     "DEPRESSION"
@@ -18,30 +18,30 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "insufficient efficacy",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "short course",
       "before_biologic": true
     },
     {
       "name": "sulfasalazine",
-      "treatment_class": "5-asa",
+      "treatment_class": "DMARD",
       "outcome": "FAILED",
       "reason_stopped": "adverse reaction",
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "immunosuppressant",
+      "treatment_class": "DMARD",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction",
+      "reason_stopped": "side effects",
       "before_biologic": true
     },
     {
@@ -56,17 +56,17 @@
   "referral_pathway": [
     "symptom_onset",
     "self_managed",
-    "primary_care_contact",
     "symptoms_worsen",
+    "primary_care_contact",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
     "alternative_therapy",
+    "therapy_failed",
     "biologic_recommended",
-    "biologic_taken",
-    "biologic_switch"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient reports significant improvement with Humira but still experiences daily challenges and worries about future treatment failure. The narrative ends with a statement of continued effort despite difficulties."
+  "evidence_notes": "Kevin, 39, male, diagnosed with Crohn's 5 years ago. Also has psoriatic arthritis and depression. Symptoms started gradually, worsened over time. Treated with mesalamine, prednisone, sulfasalazine (allergic reaction), methotrexate (nausea). Currently on Humira, which helps both Crohn's and psoriatic arthritis with ~70% improvement. Marriage is strained due to health issues. Difficulty with young children. Work is remote, which is a blessing and curse. Financial concerns about medical costs and college funds. Support group for dads with chronic illness is helpful. Worried about biologics failing in the future."
 }

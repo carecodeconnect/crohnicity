@@ -20,14 +20,14 @@
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (mood swings)",
+      "reason_stopped": "mood swings",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "minimal help",
       "before_biologic": true
     },
     {
@@ -55,15 +55,10 @@
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
-    "patient_fear",
-    "alternative_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "biologic_taken",
-    "planning_next_step",
-    "other"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient details a very recent diagnosis, compounded by a history of eating disorders and anxiety. The narrative ends with reflections on the difficulty of living with chronic illness and finding hope, not a cut-off."
+  "evidence_notes": "Patient is young with a recent diagnosis, struggling with multiple conditions and treatment side effects. Treatment outcome is ongoing as Humira has only been taken for two months. The narrative ends with a reflection on the difficulty of chronic illness and continuing to try, not a cut-off."
 }

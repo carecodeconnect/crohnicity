@@ -25,15 +25,15 @@
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "immunosuppressant",
-      "outcome": "FAILED",
+      "treatment_class": "DMARD",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
     }
@@ -41,17 +41,16 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
-    "specialist_referral",
+    "primary_care_contact",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "insurance_step_therapy",
     "alternative_therapy",
-    "biologic_recommended"
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient is experiencing significant symptoms and side effects from current treatment, with insurance requiring further medication trials before considering biologics. The narrative ends with expressions of frustration, fear, and uncertainty about the future, but a stated effort to remain positive."
+  "evidence_notes": "Rosa, 33, female, diagnosed with Crohn's 4 months ago, symptoms for 2 years. Also has PCOS and insulin resistance. Initial symptoms blamed on weight, worsened despite weight loss. Treated with budesonide and mesalamine with little improvement. Doctor mentioned biologics, but insurance requires failing more medications. Currently trying methotrexate, experiencing severe nausea. Works as elementary school teacher, struggles with bathroom urgency during class. Scared to disclose condition to employer. Boyfriend supportive but strained relationship due to canceled plans. Postponing wedding due to fear of flaring. Financial strain, living with parents. Support groups inaccessible. Worried about future complications like surgery."
 }

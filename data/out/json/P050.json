@@ -18,16 +18,16 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "5-ASA",
       "outcome": "FAILED",
-      "reason_stopped": null,
+      "reason_stopped": "insufficient efficacy",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction",
+      "reason_stopped": "contraindicated",
       "before_biologic": true
     },
     {
@@ -42,12 +42,15 @@
   "referral_pathway": [
     "symptom_onset",
     "symptoms_worsen",
+    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
-    "comorbidity",
-    "alternative_therapy"
+    "adverse_reaction",
+    "alternative_therapy",
+    "biologic_recommended",
+    "patient_fear"
   ],
-  "evidence_notes": "Patient has multiple comorbidities that limit treatment options and finds current treatment inadequate, leading to a very poor quality of life. The narrative ends with a sense of resignation but a sliver of hope sustained by family."
+  "evidence_notes": "Victor, 62, male, diagnosed with Crohn's 8 months ago. Also has COPD and arthritis. Symptoms lasted months, significant weight loss. Initially treated with mesalamine (ineffective). Prednisone contraindicated due to COPD. Now on budesonide with minimal improvement (~20%). GI wants to try biologics, but pulmonologist deems it too risky due to COPD and infection risk. Feels stuck with inadequate treatment. Quality of life is very poor. Wife passed away, children are distant. Financial concerns about medical costs. Considers stopping treatment but motivated by grandchildren. Hopes for new treatments."
 }

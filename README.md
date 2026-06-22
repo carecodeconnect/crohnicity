@@ -269,9 +269,9 @@ audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
 |:-------------------|---------:|
 | COST               |        4 |
 | INSURANCE_PROBLEMS |        3 |
-| DEFERRED           |        2 |
 | PATIENT_FEARS      |        2 |
-| NOT_MENTIONED      |        1 |
+| unspecified        |        2 |
+| DEFERRED           |        1 |
 | CONTRAINDICATION   |        1 |
 
 ![Q2 reasons not on a biologic](data/out/plots/q2_reasons.png)
@@ -291,17 +291,19 @@ audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
 
     | treatment_class   |   mentions |
     |:------------------|-----------:|
+    | 5-ASA             |         26 |
     | conventional      |         26 |
     | corticosteroid    |         22 |
-    | 5-asa             |         21 |
-    | 5-ASA             |         18 |
     | immunomodulator   |         17 |
+    | 5-asa             |         11 |
     | Corticosteroid    |          7 |
-    | Immunomodulator   |          6 |
+    | DMARD             |          6 |
+    | Immunosuppressant |          4 |
     | Biologic          |          2 |
     | NSAID             |          2 |
-    | immunosuppressant |          1 |
-    | anti-infective    |          1 |
+    | surgery           |          1 |
+    | biologic          |          1 |
+    | antibiotic        |          1 |
 
 ![Q3 treatments before a
 biologic](data/out/plots/q3_before_biologic.png)
@@ -321,39 +323,37 @@ biologic](data/out/plots/q3_before_biologic.png)
 #### Q4 — referral pathway length (steps to a biologic-prescribing specialist)
 
 > **Caveat.** The literal “GP” node (`primary_care_contact`) appears in
-> only 8/50 predicted pathways, so a strict GP→prescriber count isn’t
+> only 10/50 predicted pathways, so a strict GP→prescriber count isn’t
 > representative. We count steps from the journey **start** (or
 > `primary_care_contact` where present) to `biologic_recommended`
-> (present in 48/50) — the point a biologic-prescribing specialist is
+> (present in 44/50) — the point a biologic-prescribing specialist is
 > reached. Under-emission of the GP node is a prompt-fix candidate (see
 > `docs/TODO.md`). The per-case interactive journey graphs are linked
 > below.
 
 | steps | patients |
 |------:|---------:|
-|     9 |       19 |
-|    10 |        9 |
+|     9 |       12 |
+|     7 |        7 |
+|     6 |        7 |
+|    10 |        6 |
 |     8 |        5 |
-|     7 |        4 |
-|    11 |        3 |
-|     6 |        3 |
-|     5 |        2 |
-|    13 |        1 |
-|    12 |        1 |
-|     4 |        1 |
+|     5 |        3 |
+|    11 |        2 |
+|     4 |        2 |
 
 ![Q4 steps to biologic recommendation](data/out/plots/q4_steps.png)
 
 The **most common** journey length is **9 steps** (the modal value —
-highest patient count in the chart), with a **median of ~9** (range
-4–13, n=48).
+highest patient count in the chart), with a **median of ~8** (range
+4–11, n=44).
 
-Crucially, **16/50 journeys are cyclic** — the patient loops back
+Crucially, **17/50 journeys are cyclic** — the patient loops back
 through relapse / `loss_of_response` / `biologic_switch` (recurrence the
 prompt now captures; the per-case graphs render these as loops — see the
 deep-dive below). So “a typical referral pathway” is as much about
 **recurrence** (repeated biologic switching) as about step count — a
-linear step number alone understates the journey for the **32%** of
+linear step number alone understates the journey for the **34%** of
 patients whose journey loops.
 
 **Deep dive — the individual journeys.** Two views of the same data: a
@@ -361,34 +361,28 @@ GitHub-viewable static gallery of all 50 pathways as Mermaid diagrams in
 [docs/referral_pathways.md](docs/referral_pathways.md), and the
 **interactive** pyvis graphs in [`data/out/html/`](data/out/html/) (open
 `index.html`) — these render **live in a browser from a local clone**;
-GitHub only shows them as source. As a teaser, here is patient **P013**
+GitHub only shows them as source. As a teaser, here is patient **P037**
 — a *cyclic* journey (a phase recurs, so it renders as a loop):
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["diagnostic_testing"]
-    n2["crohns_diagnosis"]
-    n3["conventional_therapy"]
-    n4["therapy_failed"]
-    n5["adverse_reaction"]
-    n6["biologic_recommended"]
-    n7["biologic_taken"]
-    n8["loss_of_response"]
-    n9["biologic_switch"]
-    n10["comorbidity"]
+    n1["comorbidity"]
+    n2["conventional_therapy"]
+    n3["therapy_failed"]
+    n4["biologic_recommended"]
+    n5["biologic_taken"]
+    n6["loss_of_response"]
+    n7["planning_next_step"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n6
+    n5 -->n1
+    n1 -->n6
     n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n7
-    n7 -->n10
 ```
 
 **Churn handling matters here.** Be explicit about:

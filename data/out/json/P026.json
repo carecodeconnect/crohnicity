@@ -8,7 +8,7 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Humira",
+  "biologic_type": "Remicade",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
@@ -20,14 +20,14 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "minimal improvement",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (bone density concern)",
+      "reason_stopped": "tapering difficult, bone density concerns",
       "before_biologic": true
     },
     {
@@ -47,25 +47,14 @@
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "FAILED",
-      "reason_stopped": "loss of response",
-      "before_biologic": false
-    },
-    {
-      "name": "Humira",
-      "treatment_class": "biologic",
-      "outcome": "ONGOING",
-      "reason_stopped": null,
+      "outcome": "PARTIAL",
+      "reason_stopped": "effectiveness dropped",
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_delay",
-    "symptoms_worsen",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
@@ -74,9 +63,7 @@
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
-    "biologic_switch",
-    "biologic_taken",
-    "planning_next_step"
+    "biologic_switch"
   ],
-  "evidence_notes": "Patient has a long history of Crohn's and other health issues. He details a progression through multiple treatments, including biologics, and expresses concerns about future options and career impact. The narrative concludes with reflections on waiting for the next appointment and treatment, not a cut-off."
+  "evidence_notes": "Patient has a long history of Crohn's and other conditions, with multiple failed conventional therapies and a biologic that is now failing. Treatment outcome is partial as Remicade is failing and the patient is facing difficult choices about future treatments. The narrative ends with a reflection on the ongoing struggle and healthcare system, not a cut-off."
 }

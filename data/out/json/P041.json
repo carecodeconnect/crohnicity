@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "ENDOMETRIOSIS",
     "MIGRAINE"
@@ -20,14 +20,14 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "side effects/long term use",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "insufficient efficacy",
       "before_biologic": true
     },
     {
@@ -43,26 +43,11 @@
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
-    },
-    {
-      "name": "continuous birth control",
-      "treatment_class": "hormonal therapy",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
-      "before_biologic": null
-    },
-    {
-      "name": "pain meds",
-      "treatment_class": "analgesic",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
-      "before_biologic": null
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
@@ -70,12 +55,12 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
-    "alternative_therapy",
+    "biologic_switch",
     "biologic_taken",
+    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient reports ongoing symptoms and desire for further treatment improvement. While managing some aspects of her life, her functional goal is only 75%. The narrative ends with a forward-looking statement about hope and fighting, rather than a definitive outcome."
+  "evidence_notes": "Patient is 35, female, diagnosed with Crohn's at 28. Also has endometriosis and chronic migraines. Initially treated with prednisone and mesalamine. Then Remicade for 4 years, which stopped working. Currently on Stelara, reporting ~60% improvement. Endometriosis pain is severe and impacts treatment choices due to need for surgery and immunosuppression. Also dealing with opioid side effects impacting Crohn's. Considering combination therapy (Stelara + methotrexate). Left investment banking for a more flexible role due to health. Facing challenges with dating and family expectations regarding children due to chronic illness. Insurance battles are constant. Considering clinical trials."
 }

@@ -12,7 +12,7 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": "PATIENT_FEARS",
   "comorbid_conditions": [
-    "ASTHMA",
+    "OTHER",
     "OTHER"
   ],
   "treatment_records": [
@@ -27,21 +27,21 @@
       "name": "Budesonide",
       "treatment_class": "Corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Long-term steroids not an option.",
+      "reason_stopped": "Long-term steroids not an option due to age and other conditions.",
       "before_biologic": true
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "Immunosuppressant",
       "outcome": "FAILED",
-      "reason_stopped": "Liver issues.",
+      "reason_stopped": "Liver did not tolerate it.",
       "before_biologic": true
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "Immunomodulator",
+      "treatment_class": "DMARD",
       "outcome": "FAILED",
-      "reason_stopped": "Unbearable fatigue.",
+      "reason_stopped": "Caused unbearable fatigue.",
       "before_biologic": true
     },
     {
@@ -57,7 +57,6 @@
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
@@ -66,7 +65,8 @@
     "patient_fear",
     "biologic_recommended",
     "biologic_taken",
+    "comorbidity",
     "planning_next_step"
   ],
-  "evidence_notes": "Robert is 61, diagnosed with Crohn's five years ago, but likely had it longer. He also has COPD and peripheral neuropathy. Symptoms started in his mid-fifties, initially misdiagnosed as IBS and diverticulitis. He has Crohn's throughout his colon and terminal ileum. Treatments included mesalamine, budesonide (temporarily helpful), azathioprine (liver issues), and methotrexate (unbearable fatigue). He resisted biologics due to COPD but started Remicade a year ago, which has provided noticeable improvement. He is now considering adding an immunomodulator to Remicade. He struggles with diet restrictions for his various conditions and feels guilty about his wife having to be a caregiver. He misses out on activities with his grandchildren. He finds support in a group for older adults with Crohn's."
+  "evidence_notes": "Diagnosed five years ago, likely had it longer. Also has COPD and peripheral neuropathy. Started treatment at 56. Mesalamine, budesonide, azathioprine (liver issues), methotrexate (fatigue). Resisted biologics due to COPD but agreed due to poor quality of life. Started Remicade a year ago, noticeable improvement. Neuropathy started six months ago, cause unknown. Diet restricted for multiple conditions. Wife is caregiver. Financial strain due to medical costs."
 }

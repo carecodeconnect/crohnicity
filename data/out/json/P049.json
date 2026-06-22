@@ -20,25 +20,27 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": null,
+      "reason_stopped": "side effects",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
-      "outcome": "PARTIAL",
+      "treatment_class": "5-ASA",
+      "outcome": "UNKNOWN",
       "reason_stopped": null,
       "before_biologic": true
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "UNKNOWN",
   "referral_pathway": [
-    "diagnostic_testing",
+    "symptom_onset",
     "surgery",
     "crohns_diagnosis",
     "conventional_therapy",
-    "biologic_recommended",
-    "patient_fear"
+    "adverse_reaction",
+    "alternative_therapy",
+    "patient_fear",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient is newly diagnosed with Crohn's and is highly anxious about treatment options, potential side effects, and the impact on her life and relationships. The narrative ends with expressed fear and uncertainty, particularly concerning the triggering of past health issues."
+  "evidence_notes": "Tammy, 28, female, diagnosed with Crohn's last month during appendectomy. Also recovering from eating disorder and has anxiety. Diagnosis is triggering due to history of restricting food. Started prednisone in hospital (caused mania), now on mesalamine. Too early to tell if effective. GI wants aggressive treatment due to age and disease extent. Biologics mentioned, but patient fears side effects (cancer, infections). Boyfriend supportive but overwhelmed, marriage and children plans on hold. Parents are worried, seeing parallels to eating disorder recovery. Chronic illness adds to existing mental health challenges."
 }

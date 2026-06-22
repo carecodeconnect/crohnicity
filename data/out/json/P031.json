@@ -33,7 +33,7 @@
       "name": "Remicade",
       "treatment_class": "Biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Stopped due to cancer diagnosis and need for chemotherapy.",
+      "reason_stopped": "Cancer diagnosis and treatment required stopping immunosuppressants.",
       "before_biologic": false
     },
     {
@@ -48,21 +48,18 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
-    "diagnostic_delay",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "relapse",
     "comorbidity",
-    "acute_flare",
-    "complication",
-    "surgery",
     "biologic_recommended",
     "biologic_taken",
-    "adverse_reaction",
+    "loss_of_response",
+    "biologic_switch",
     "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient is a 46-year-old female diagnosed with Crohn's 15 years ago. She also has fibromyalgia and is a breast cancer survivor. She has been on Remicade and currently Stelara. Her Crohn's is more aggressive since stopping immunosuppressants for cancer treatment. She experiences partial obstruction, fatigue, and pain. She is on disability due to her conditions. She has a support group for cancer survivors, Crohn's, and fibromyalgia. She is afraid of antidepressants due to drug interactions. Her parents died of cancer and heart disease. She is considering surgery if Stelara fails. She has started a blog about managing multiple chronic illnesses."
+  "evidence_notes": "Patient has Crohn's, fibromyalgia, and is a breast cancer survivor. Started biologics 7 years ago with Remicade, which worked for 3 years. Stopped Remicade due to cancer diagnosis and treatment. Started Stelara after cancer treatment, which is working somewhat but not achieving remission. Patient expresses significant emotional and physical toll from managing multiple conditions and treatment side effects."
 }

@@ -10,18 +10,25 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "OTHER"
   ],
   "treatment_records": [
     {
+      "name": "surgery",
+      "treatment_class": "surgery",
+      "outcome": "FAILED",
+      "reason_stopped": "disease recurrence",
+      "before_biologic": true
+    },
+    {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "FAILED",
       "reason_stopped": "loss of response",
-      "before_biologic": false
+      "before_biologic": true
     },
     {
       "name": "Humira",
@@ -32,37 +39,33 @@
     },
     {
       "name": "methotrexate",
-      "treatment_class": "immunosuppressant",
+      "treatment_class": "DMARD",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
-    },
-    {
-      "name": "Synthroid",
-      "treatment_class": "hormone replacement",
-      "outcome": "ONGOING",
-      "reason_stopped": null,
-      "before_biologic": null
     }
   ],
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "self_managed",
-    "diagnostic_delay",
     "symptoms_worsen",
+    "diagnostic_delay",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "surgery",
     "relapse",
+    "conventional_therapy",
+    "therapy_failed",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
+    "biologic_taken",
     "comorbidity",
     "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient is considering a biologic switch due to loss of response and is managing multiple chronic conditions. The narrative ends with a statement of continued effort and hope for improvement, acknowledging the limitations of current management."
+  "evidence_notes": "Sandra, 44, female, diagnosed with Crohn's 12 years ago. Also has Hashimoto's thyroiditis and osteoarthritis. Initial symptoms mistaken for runner's stomach. Had surgery at 33 (resection), disease returned. Treated with Remicade (worked 5 years, then lost response), then Humira (moderate help, ~60%), added methotrexate (improvement to ~75%). Hashimoto's diagnosis led to Synthroid. Spine issues diagnosed as osteoarthritis. Marriage strained, husband acts as caregiver. Daughter (8) worried. Work as marketing director is high stress. Considering Stelara next as Humira losing effectiveness. Scared of transition. Financial strain, debt growing. Support group disbanded. Isolation is an issue. Considering another surgery."
 }

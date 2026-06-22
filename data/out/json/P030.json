@@ -20,21 +20,21 @@
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "bloated, colleagues noticed",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "body couldn't keep up",
       "before_biologic": true
     },
     {
       "name": "azathioprine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "body couldn't keep up",
       "before_biologic": true
     },
     {
@@ -48,18 +48,13 @@
   "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
     "symptoms_worsen",
-    "acute_flare",
-    "complication",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "biologic_taken",
-    "planning_next_step",
-    "other"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient details a rapid decline from a successful career due to severe Crohn's, impacting his work, personal life, and mental health. He is currently on a biologic and exploring further treatment options. The narrative ends with reflections on survival and hope for improvement, not a cut-off."
+  "evidence_notes": "Patient experienced a severe Crohn's onset that led to the loss of his startup and significant mental health challenges. Treatment outcome is partial as Humira is only 40% effective and the patient is struggling with employment and daily functioning. The narrative ends with a reflection on survival and hope for improvement, not a cut-off."
 }

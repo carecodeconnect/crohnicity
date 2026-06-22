@@ -20,21 +20,21 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "not enough",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (blood sugar)",
+      "reason_stopped": "blood sugar issues",
       "before_biologic": true
     },
     {
       "name": "sulfasalazine",
       "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "outcome": "ONGOING",
+      "reason_stopped": "headaches",
       "before_biologic": true
     }
   ],
@@ -48,11 +48,11 @@
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
+    "therapy_failed",
     "biologic_recommended",
-    "insurance_step_therapy",
-    "planning_next_step"
+    "insurance_denial",
+    "insurance_step_therapy"
   ],
-  "evidence_notes": "Patient describes a recent diagnosis and the immediate challenges of severe symptoms impacting his work. He is actively trying to get approved for biologics and the narrative ends with hope for approval and effectiveness, not a cut-off."
+  "evidence_notes": "Patient has a recent diagnosis and is struggling with conventional therapies and insurance hurdles for biologics. Treatment outcome is ongoing as the patient is still trying to get on biologics. The narrative ends with a statement of hope and determination, not a cut-off."
 }

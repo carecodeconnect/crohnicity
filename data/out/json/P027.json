@@ -12,7 +12,7 @@
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
-    "ANXIETY_DISORDER",
+    "DEPRESSION",
     "RHEUMATOID_ARTHRITIS"
   ],
   "treatment_records": [
@@ -20,14 +20,14 @@
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "loss of response",
+      "reason_stopped": "effectiveness dropped",
       "before_biologic": false
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "does not help well",
       "before_biologic": false
     },
     {
@@ -45,21 +45,18 @@
       "before_biologic": false
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "comorbidity",
-    "complication",
     "surgery",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
     "biologic_taken",
-    "alternative_therapy",
-    "planning_next_step",
-    "other"
+    "comorbidity"
   ],
-  "evidence_notes": "Patient describes a complex situation with multiple autoimmune diseases, including Crohn's, bipolar disorder, and rheumatoid arthritis. She highlights the challenges of managing multiple medications and coordinating care. The narrative ends with reflections on the cyclical nature of illness and the struggle to find hope, not a cut-off."
+  "evidence_notes": "Patient has multiple autoimmune conditions and struggles with medication management and mental health. Treatment outcome is partial as Humira is not working well for either condition and the patient faces difficult choices regarding surgery. The narrative ends with a reflection on the chaotic nature of chronic illness and continuing to fight, not a cut-off."
 }

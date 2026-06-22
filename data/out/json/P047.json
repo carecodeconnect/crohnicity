@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_MENTIONED",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "DEPRESSION"
@@ -20,19 +20,19 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "side effects",
       "before_biologic": true
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
+      "treatment_class": "5-ASA",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": true
     },
     {
       "name": "methotrexate",
-      "treatment_class": "immunosuppressant",
+      "treatment_class": "DMARD",
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "before_biologic": false
@@ -50,7 +50,8 @@
     "conventional_therapy",
     "adverse_reaction",
     "alternative_therapy",
-    "biologic_recommended"
+    "therapy_failed",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient is experiencing side effects from current treatment and is hiding her condition from her employer. She expresses fear about her job and future. The narrative ends with a sense of ongoing struggle and concealment."
+  "evidence_notes": "Donna, 41, female, diagnosed with Crohn's 5 months ago after years of misdiagnosis (IBS, stress, hormones). Also hypothyroid and depressed. Found Crohn's in small intestine. Treated with prednisone (caused 30lb weight gain) and mesalamine. Now trying methotrexate with ~30% symptom improvement, but experiencing hair loss and nausea. Doctor suggests more time. Worried about losing job due to hiding symptoms. Husband's support is wavering due to weight gain and illness. Teenagers are unaware of severity."
 }

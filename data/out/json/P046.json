@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": null,
   "comorbid_conditions": [
     "OTHER",
     "OTHER"
@@ -25,9 +25,9 @@
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-asa",
-      "outcome": "UNKNOWN",
-      "reason_stopped": null,
+      "treatment_class": "5-ASA",
+      "outcome": "FAILED",
+      "reason_stopped": "insufficient efficacy",
       "before_biologic": true
     },
     {
@@ -47,10 +47,11 @@
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "complication",
+    "adverse_reaction",
+    "therapy_failed",
+    "biologic_taken",
     "comorbidity",
-    "biologic_recommended",
-    "biologic_taken"
+    "complication"
   ],
-  "evidence_notes": "Patient's treatment is limited by comorbidities and is only partially effective. He is facing job loss and financial strain, with the narrative ending on a note of continued struggle and reliance on support."
+  "evidence_notes": "Ben, 49, male, diagnosed with Crohn's 18 months ago, likely had it longer. Also pre-diabetic and chronic back pain from work injury. Symptoms initially dismissed as job-related. Severe bleeding led to diagnosis of severe disease with multiple strictures. Prednisone worsened blood sugar. Mesalamine ineffective. Currently on Humira with ~50% improvement. Company placed him on desk duty due to missed work. Wife working double shifts. Financial strain, sold assets to cover medical bills. Union insurance covers some costs but 20% of biologics is still thousands."
 }

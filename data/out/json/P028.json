@@ -19,14 +19,14 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "kidney issues",
       "before_biologic": true
     },
     {
       "name": "budesonide",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "not long-term solution",
       "before_biologic": true
     },
     {
@@ -52,9 +52,7 @@
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken",
-    "planning_next_step",
-    "unresolved"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient describes a journey complicated by chronic kidney disease, impacting treatment options for Crohn's. He details the challenges of conflicting specialist advice, business impact, and financial strain. The narrative ends with a reflection on the uncertainty of chronic illness and the need to plan for the worst, not a cut-off."
+  "evidence_notes": "Patient has Crohn's and chronic kidney disease, facing challenges with medication choices due to specialist disagreements and insurance denials. Treatment outcome is ongoing as Entyvio has only been started recently. The narrative ends with a reflection on uncertainty and continuing to push forward, not a cut-off."
 }

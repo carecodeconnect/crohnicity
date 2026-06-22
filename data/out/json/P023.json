@@ -20,14 +20,14 @@
       "name": "mesalamine",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "minimal help",
       "before_biologic": true
     },
     {
       "name": "prednisone",
       "treatment_class": "conventional",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse reaction (weight gain)",
+      "reason_stopped": "gained weight, side effects",
       "before_biologic": true
     },
     {
@@ -41,7 +41,7 @@
       "name": "methotrexate",
       "treatment_class": "conventional",
       "outcome": "FAILED",
-      "reason_stopped": "nausea, missed work",
+      "reason_stopped": "nausea unbearable",
       "before_biologic": true
     },
     {
@@ -65,12 +65,11 @@
     "adverse_reaction",
     "therapy_failed",
     "biologic_recommended",
-    "biologic_not_taken",
-    "patient_fear",
-    "alternative_therapy",
-    "therapy_failed",
+    "insurance_denial",
+    "insurance_appeal",
+    "insurance_approval",
     "biologic_taken",
-    "other"
+    "therapy_failed"
   ],
-  "evidence_notes": "Patient details a frustrating diagnostic delay and subsequent treatment challenges, including a severe adverse reaction to azathioprine. The narrative ends with reflections on finding meaning and continuing to fight, not a cut-off."
+  "evidence_notes": "Patient describes a delayed diagnosis and significant challenges with conventional therapies due to side effects. Treatment outcome is partial as Humira is only 40% effective and the patient fears switching. The narrative ends with a reflection on finding meaning and continuing to try, not a cut-off."
 }
