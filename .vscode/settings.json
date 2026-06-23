@@ -1,0 +1,12 @@
+{
+  // Use this repo's uv-managed virtualenv (.venv) for the Python extension + Jupyter kernel.
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  // Root the Jupyter kernel at the active file's folder so src/ flat imports
+  // (from config import ..., from extract import ...) resolve in the Interactive Window,
+  // mirroring `uv run python src/main.py` (which puts src/ on sys.path[0]).
+  "jupyter.notebookFileRoot": "${fileDirname}",
+  // Run the current line / selection in the Interactive Window (editor area), not a terminal.
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  // One Interactive Window per file.
+  "jupyter.interactiveWindow.creationMode": "perFile"
+}
