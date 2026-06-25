@@ -31,5 +31,10 @@ LOG_DIR = ROOT / _CFG["log_dir"]  # loguru sinks
 CHUNK_SIZE: int = _CFG[
     "chunk_size"
 ]  # transcripts per Gemini call (free-tier RPD workaround)
-MAX_RETRIES: int = _CFG["max_retries"]  # litellm retries transient 429/503 with backoff
+# Quota-aware retry: litellm's own retries are OFF (a failed free-tier request costs the same daily
+# quota as a successful one). We retry ONLY 503 (transient overload), sparingly; never 429.
+RETRY_503_MAX: int = _CFG["retry_503_max"]  # extra retries on a 503 ServiceUnavailable
+RETRY_503_DELAY_S: int = _CFG[
+    "retry_503_delay_s"
+]  # seconds to wait between 503 retries
 MAX_TOKENS: int = _CFG["max_tokens"]  # batch-call completion headroom

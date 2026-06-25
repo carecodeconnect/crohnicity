@@ -142,6 +142,18 @@ class PathwayStep(str, Enum):
     OTHER = "other"
 
 
+class BiologicTiming(str, Enum):
+    """Where a treatment sits relative to the patient's FIRST biologic — the before/after split
+    that answers Q3. Replaces an overloaded `bool | None`: the old `null` had to mean both "no
+    biologic exists to anchor the split" and "ordering unclear", so it splits into the explicit
+    `NO_BIOLOGIC` and `UNKNOWN`."""
+
+    BEFORE = "BEFORE"  # before the first biologic (conventional / step-up)
+    LATER = "LATER"  # the biologic itself, a switch, or anything after it
+    NO_BIOLOGIC = "NO_BIOLOGIC"  # patient never had a biologic — no before/after anchor
+    UNKNOWN = "UNKNOWN"  # a biologic exists but this treatment's ordering is unclear
+
+
 class Demographics(BaseModel):
     """Self-reported gender/age, grouped so we can later test for demographic differences in
     pathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model."""
@@ -151,17 +163,18 @@ class Demographics(BaseModel):
 
 
 class TreatmentRecord(BaseModel):
-    """One treatment in the patient's history. `before_biologic` marks treatments tried before a
-    biologic was started or considered — the before/after split that answers business Q3 (what is
-    tried before a biologic). Set by the model, not inferred downstream, because the biologic may
-    not appear as a treatment at all (e.g. prescribed-but-not-taken)."""
+    """One treatment in the patient's history. `biologic_timing` places it relative to the
+    patient's first biologic — the before/after split that answers business Q3 (what is tried
+    before a biologic). Set by the model, not inferred downstream, because the biologic may not
+    appear as a treatment at all (e.g. prescribed-but-not-taken)."""
 
     name: str
     treatment_class: str
     outcome: TreatmentOutcome
     reason_stopped: str | None = None
-    # tried before a biologic was started/considered (the before/after split for Q3)
-    before_biologic: bool | None = None
+    # placement relative to the first biologic (the before/after split for Q3); defaults to
+    # UNKNOWN so a single omitted value can't fail a whole strict batch under the daily quota
+    biologic_timing: BiologicTiming = BiologicTiming.UNKNOWN
 
 
 class PatientLabels(BaseModel):

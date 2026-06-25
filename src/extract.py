@@ -20,7 +20,10 @@ Pydantic emits for the nested models, and whether the LiteLLM path matches the O
 """
 
 import json
+import time
+from collections.abc import Callable
 from pathlib import Path
+from typing import TypeVar
 
 import litellm
 from dotenv import load_dotenv
@@ -29,14 +32,17 @@ from loguru import logger
 from config import (
     JSON_DIR,
     LOG_DIR,
-    MAX_RETRIES,
     MAX_TOKENS,
     MODEL,
     OUT_DIR,
     PROMPT,
+    RETRY_503_DELAY_S,
+    RETRY_503_MAX,
     TEMPERATURE,
 )
 from schema import BatchPredictions, Interview, PatientLabels
+
+T = TypeVar("T")
 
 # API errors we log cleanly and surface for a graceful CLI exit (no traceback dump):
 # 429 (rate limit), 503 (busy), connection / model-not-found, and schema mismatch.
@@ -77,6 +83,29 @@ def _log_request_config() -> None:
         _request_config_logged = True
 
 
+def _with_503_retry(call: Callable[[], T]) -> T:
+    """Run a Gemini call with quota-aware retry. litellm's own retries are OFF (``num_retries=0`` at
+    the call site) so one failure costs ONE request, not three — on the free-tier daily cap a failed
+    request is as expensive as a successful one. ONLY 503 (``ServiceUnavailableError``, transient
+    overload) is retried, sparingly: up to ``RETRY_503_MAX`` times with a long ``RETRY_503_DELAY_S``
+    gap. Rate limits (429) and every other error are NOT retried — they fail fast so the daily quota
+    isn't spent on attempts that can't succeed."""
+    for attempt in range(RETRY_503_MAX + 1):
+        try:
+            return call()
+        except litellm.ServiceUnavailableError:
+            if attempt == RETRY_503_MAX:
+                raise
+            logger.warning(
+                "503 ServiceUnavailable (attempt {}/{}) — sleeping {}s before retry",
+                attempt + 1,
+                RETRY_503_MAX + 1,
+                RETRY_503_DELAY_S,
+            )
+            time.sleep(RETRY_503_DELAY_S)
+    raise AssertionError("unreachable")  # loop always returns or raises
+
+
 # Log unexpected failures (traceback) + re-raise; retryable API errors handled below.
 @logger.catch(exclude=HANDLED, reraise=True)
 def extract(
@@ -88,21 +117,23 @@ def extract(
     user_message = f"patient_id: {patient_id}\n\n{transcript}"
     logger.info("{} input: {}", patient_id, user_message)  # logged before the call
     try:
-        response = litellm.completion(
-            model=model,
-            num_retries=MAX_RETRIES,
-            temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
-            # drop params a provider doesn't support (Gemini vs Ollama)
-            drop_params=True,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_message},
-            ],
-            response_format={
-                "type": "json_object",
-                "response_schema": RESPONSE_SCHEMA,
-                "enforce_validation": True,
-            },
+        response = _with_503_retry(
+            lambda: litellm.completion(
+                model=model,
+                num_retries=0,  # we own retries: 503 only, sparingly (see _with_503_retry)
+                temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
+                # drop params a provider doesn't support (Gemini vs Ollama)
+                drop_params=True,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_message},
+                ],
+                response_format={
+                    "type": "json_object",
+                    "response_schema": RESPONSE_SCHEMA,
+                    "enforce_validation": True,
+                },
+            )
         )
     except HANDLED as e:
         # expected API/schema error (litellm already retried) — on a schema rejection, log the
@@ -162,21 +193,23 @@ def extract_batch(
     )
     logger.info("batch input ({} patients): {}", len(ids), ids)
     try:
-        response = litellm.completion(
-            model=model,
-            num_retries=MAX_RETRIES,
-            temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
-            drop_params=True,
-            max_tokens=MAX_TOKENS,  # headroom for ~N records (keep chunk_size <= ~15)
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT + BATCH_SUFFIX},
-                {"role": "user", "content": user_message},
-            ],
-            response_format={
-                "type": "json_object",
-                "response_schema": BatchPredictions.model_json_schema(),
-                "enforce_validation": True,
-            },
+        response = _with_503_retry(
+            lambda: litellm.completion(
+                model=model,
+                num_retries=0,  # we own retries: 503 only, sparingly (see _with_503_retry)
+                temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
+                drop_params=True,
+                max_tokens=MAX_TOKENS,  # headroom for ~N records (keep chunk_size <= ~15)
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT + BATCH_SUFFIX},
+                    {"role": "user", "content": user_message},
+                ],
+                response_format={
+                    "type": "json_object",
+                    "response_schema": BatchPredictions.model_json_schema(),
+                    "enforce_validation": True,
+                },
+            )
         )
     except HANDLED as e:
         raw_err = getattr(e, "raw_response", None)

@@ -1,4 +1,4 @@
-# Ground-truth annotation schema (v0.4)
+# Ground-truth annotation schema (v0.5)
 
 Columns in the ground-truth spreadsheet that stakeholders fill in to create the **gold set**
 of labels for evaluating the extraction pipeline.
@@ -32,7 +32,7 @@ of labels for evaluating the extraction pipeline.
 | 11 | `reasons_for_biologic_prescribed` | `enum` | see vocab | Why a biologic *was* the chosen path. |
 | 12 | `reasons_for_biologic_not_taken` | `enum` | see vocab | Renamed from `reasons_for_biologic_denied`. Why a prescribed biologic wasn't taken / wasn't reached. |
 | 13 | `comorbid_conditions` | `list[enum]` | see vocab | Independent coexisting diagnoses (not Crohn's sequelae). Comma-separated. |
-| 14 | `treatment_records` | `list[TreatmentRecord]` (free text) | see convention | All treatments, in order. Each carries `before_biologic` (the before/after split for Q3). |
+| 14 | `treatment_records` | `list[TreatmentRecord]` (free text) | see convention | All treatments, in order. Each carries `biologic_timing` (the before/after split for Q3). |
 | 15 | `treatment_outcome` | `enum` | see vocab | Overall patient-level outcome; `AMBIGUOUS`/`ONGOING` allowed (confirmed). |
 | 16 | `referral_pathway` | `list[str]` (free text) | see convention | Canonical-event journey chain. |
 | 17 | `evidence_notes` | `str` | free text | **DEFERRED** — kept as a column, not yet populated; also the destination for any prose mis-entered into other fields. |
@@ -134,6 +134,12 @@ class ComorbidCondition(str, Enum):  # independent coexisting diagnoses; extend 
     SLEEP_APNEA = "SLEEP_APNEA"
     OTHER = "OTHER"
 
+class BiologicTiming(str, Enum):     # placement of a treatment vs. the first biologic (Q3 split)
+    BEFORE = "BEFORE"                 # tried before the first biologic (conventional / step-up)
+    LATER = "LATER"                  # the biologic itself, a switch, or anything after it
+    NO_BIOLOGIC = "NO_BIOLOGIC"      # patient never had a biologic — no before/after anchor
+    UNKNOWN = "UNKNOWN"              # a biologic exists but this treatment's ordering is unclear
+
 class Demographics(BaseModel):
     gender: str | None = None        # self-reported
     age: int | None = None           # self-reported
@@ -143,6 +149,7 @@ class TreatmentRecord(BaseModel):
     treatment_class: str
     outcome: TreatmentOutcome
     reason_stopped: str | None = None
+    biologic_timing: BiologicTiming = BiologicTiming.UNKNOWN   # before/after split for Q3
 
 class PatientLabels(BaseModel):
     patient_id: str
@@ -198,6 +205,12 @@ SUCCESS/FAILED call).
 
 ## Changelog
 
+- **v0.5** — **`TreatmentRecord.before_biologic` (`bool | None`) replaced by `biologic_timing`
+  (`BiologicTiming` enum: `BEFORE` / `LATER` / `NO_BIOLOGIC` / `UNKNOWN`).** *Why:* the old `null`
+  was overloaded — it meant both "no biologic exists to anchor the split" and "ordering unclear";
+  the enum makes each state explicit and is enum-validated at the model boundary like the other
+  controlled vocabularies. Q3 now counts `biologic_timing == "BEFORE"` (same set as the old
+  `before_biologic == true`). Takes effect on the next fresh extraction run.
 - **v0.4** — **`incomplete_journey` merged into `churn` and dropped** (working file `_v4.ods`).
   *Why:* reading the "interview" as the patient's interaction with the Mama Health app, `churn`
   (app disengagement) and `incomplete_journey` (truncated transcript) are the **same signal**, so

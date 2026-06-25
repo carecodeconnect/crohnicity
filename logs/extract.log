@@ -17156,3 +17156,17 @@ biologic_recommended     insurance_denial     10
 2026-06-22 08:05:01.811 | INFO     | extract:extract_batch:199 - extracted P048 -> /Users/shoutt/projects/mama_health/crohnicity/data/out/json/P048.json
 2026-06-22 08:05:01.811 | INFO     | extract:extract_batch:199 - extracted P049 -> /Users/shoutt/projects/mama_health/crohnicity/data/out/json/P049.json
 2026-06-22 08:05:01.812 | INFO     | extract:extract_batch:199 - extracted P050 -> /Users/shoutt/projects/mama_health/crohnicity/data/out/json/P050.json
+2026-06-25 15:05:52.303 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:05:53.972 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-25 15:06:09.232 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:06:21.876 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-25 15:07:00.057 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:07:02.111 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-25 15:08:03.731 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:08:06.048 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-25 15:09:07.599 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:09:42.814 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-25 15:10:44.288 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:10:46.456 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-25 15:11:47.989 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-25 15:11:49.434 | ERROR    | extract:extract_batch:185 - RateLimitError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries

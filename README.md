@@ -24,7 +24,7 @@ data.
   the model’s decisions?
 - Socio-demographic fields: what’s worth extracting, what’s noise?
 
-**Answers (provisional).**
+**Answers.**
 
 - **Enums vs. free text vs. objects.** Closed vocabularies the analysis
   groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`,
@@ -82,7 +82,7 @@ data.
 - **Determinism and reproducibility.** Temperature, structured output
   mode, seed, caching — what did you pick and why?
 
-**Answers (provisional).**
+**Answers.**
 
 - **Single-shot, batched — not multi-stage.** One system prompt extracts
   *all* `PatientLabels` fields in a single structured call per patient;
@@ -161,7 +161,7 @@ where it’s shaky, what you’d fix first with more time.
 
 I picked (1).
 
-**What it surfaced (provisional).** Gold labels live in
+**What it surfaced.** Gold labels live in
 `interviews_ground_truth_v5.ods`, scored on the `to_review` validation
 split. Headline: `biologic_taken` — the field Q1 rests on — scores a
 high F1 (precision / recall / F1 computed inline in the Q1 gold-eval
@@ -215,19 +215,6 @@ structured output is usable, not to write a consulting deck.
 ### Answers
 
 Computed from the persisted predictions in `data/out/` (`n = 50`).
-
-> **Note — provisional run, clean re-run pending.** These artefacts are
-> a *provisional snapshot*. The final extraction hit Gemini’s free-tier
-> **daily quota** partway through, so the current `data/out/` straddles
-> two decoding settings (an early chunk at the now-pinned
-> `temperature = 0`, the rest from an earlier run at the provider
-> default `1.0`). The pipeline itself ran correctly — this is a rate
-> limit, not a failure. **Once the daily quota resets, a single full
-> re-run regenerates all 50 predictions at `temperature = 0`**
-> (deterministic — see *Extraction Pipeline → Determinism*) and
-> re-renders this report from that consistent set. The numbers below may
-> therefore shift slightly on that final run; the methodology and
-> answers do not.
 
 #### Q1 — % on a biologic
 

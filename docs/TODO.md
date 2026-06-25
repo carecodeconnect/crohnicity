@@ -4,24 +4,23 @@ Deferred engineering tasks, kept here so they can be picked up directly in **pla
 later. These are intentionally *not* done yet — see `CLAUDE.md` ("Code style") for why
 enforcement waits until we understand what to test and what to validate.
 
-## Tomorrow — pre-interview (do first, once the daily quota resets)
+## Extraction run — status
 
-The day's extraction hit Gemini's free-tier **daily quota** mid-run, so `data/out/` is a *provisional*
-snapshot (an early chunk at `temperature = 0`, the rest from an earlier default-`1.0` run — see the
-provisional-run note in README → *Answers*). Once the quota resets:
+`data/out/` is the **final `temperature = 0` snapshot**: all 50 predictions regenerated in one clean
+run and the README re-renders from that consistent set (the provisional-run note in README → *Answers*
+has been removed).
 
-- [ ] **Clean `temperature = 0` full re-run.** Materialise the whole Dagster graph (`uv run dg dev -m
-  pipeline -d src` → *Materialize all*) so all 50 predictions regenerate at `temperature = 0` and the
-  README re-renders from one consistent set. **This is the only thing that makes today's provisional
-  snapshot final.**
+- [x] **Clean `temperature = 0` full re-run.** All 50 predictions regenerated at `temperature = 0`
+  (deterministic) from one run; `README.md` re-rendered from the consistent set.
 - [ ] **EDA plot P-id clarity** (the *EDA plot clarity* items in the final-sweep section below). The
-  Q2 `(null)→unspecified` prompt fix and the Q3 biologic-mislabel fix only **take effect after a fresh
-  extraction run**, so apply them on the same re-run rather than today.
+  Q2 `(null)→unspecified` and Q3 biologic-mislabel **prompt fixes are now in
+  `data/prompts/system.txt`** but post-date the clean re-run above, so `data/out/` does not yet
+  reflect them — they take effect only on the next fresh extraction run.
 
 ## Prompt — cover every field (next task)
 
 - [ ] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
-  *every* field in `PatientLabels` — not just `churn`, `before_biologic`, `referral_pathway` — so
+  *every* field in `PatientLabels` — not just `churn`, `biologic_timing`, `referral_pathway` — so
   each label (biologic funnel, reasons, comorbidities, treatment outcomes, demographics) is
   populated deliberately rather than left to the model's defaults. Single prompt for this version;
   the concurrent multi-prompt split is a post-completion idea (README → Next Steps).
@@ -288,7 +287,7 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
     Prompt fix: always set a `ReasonNotTaken` (default `UNKNOWN`); re-run extraction to take effect.
   - **Q3 "treatments before a biologic" includes biologics** — the `biologic` bar (2) = **P043** (a
     genuine switch: Remicade FAILED -> Humira) + **P046** (the *taken* biologic Humira mislabelled
-    `before_biologic=True`). Clarify whether Q3 counts earlier/switched biologics or only non-biologic
+    `biologic_timing=BEFORE`). Clarify whether Q3 counts earlier/switched biologics or only non-biologic
     treatments; fix the plot title/definition + the P046 mislabel (prompt). Also clarify on the plot
     whether "treatments" includes biologics.
   - **Q4 `q4_steps.png`** — annotate with **N** (cohort size, n=50) so the population is visible on the plot.

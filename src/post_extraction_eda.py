@@ -89,12 +89,12 @@ def q2_reasons(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def q3_before_biologic(records: list[dict]) -> pd.DataFrame:
-    """Q3 — treatment classes tried before a biologic (``before_biologic == true``)."""
+    """Q3 — treatment classes tried before a biologic (``biologic_timing == "BEFORE"``)."""
     before = [
         (t.get("treatment_class") or t.get("name"))
         for r in records
         for t in r["treatment_records"]
-        if t.get("before_biologic")
+        if t.get("biologic_timing") == "BEFORE"
     ]
     return (
         pd.Series(before)

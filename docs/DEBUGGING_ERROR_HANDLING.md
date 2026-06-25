@@ -30,8 +30,9 @@ What it captures, and why it's handy:
 
 | Error | When | Handling | Where |
 |-------|------|----------|-------|
-| `RETRYABLE` = `RateLimitError` (**429**) + `ServiceUnavailableError` (**503**) | rate-limit / quota or model busy | `litellm.completion(num_retries=2)` backs off + retries; on giving up, a concise `ERROR` line (no stack dump — `excluded` from `@logger.catch`), then re-raised | `src/extract.py` |
-| `RETRYABLE` reaching the CLI | retries exhausted mid-run | `main()` catches it and **exits gracefully** — a clean one-liner with the rate-limits URL, exit 1, no traceback (fail-fast) | `src/main.py` |
+| `ServiceUnavailableError` (**503**) | model busy / transient overload | `_with_503_retry` retries **sparingly** — `RETRY_503_MAX` (2) attempts, `RETRY_503_DELAY_S` (20s) apart — then a concise `ERROR` line (no stack dump — `excluded` from `@logger.catch`) and re-raise. litellm's own retries are OFF (`num_retries=0`). | `src/extract.py` |
+| `RateLimitError` (**429**) | rate-limit / daily quota | **NOT retried — fails fast.** On the free tier a failed request costs the same daily quota as a successful one, so retrying a quota error just burns more of it. Concise `ERROR` line, then re-raised. | `src/extract.py` |
+| 429 (or exhausted 503) reaching the CLI | quota hit, or 503 retries used up | `main()` catches it and **exits gracefully** — a clean one-liner with the rate-limits URL, exit 1, no traceback (fail-fast) | `src/main.py` |
 
 ## Planned (see [`TODO.md`](TODO.md) → Robustness)
 

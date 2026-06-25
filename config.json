@@ -10,6 +10,7 @@
   "plots_dir": "data/out/plots",
   "log_dir": "logs",
   "chunk_size": 10,
-  "max_retries": 2,
+  "retry_503_max": 2,
+  "retry_503_delay_s": 20,
   "max_tokens": 8192
 }
