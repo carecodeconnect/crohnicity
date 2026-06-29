@@ -74,4 +74,4 @@ on-demand. A sensor only earns its place once the input becomes
 structured-output validation; each run logs to `logs/` — `extract.log`,
 `referral_pathway.log`, and the combined `dagster.log` (written by a
 loguru sink in `pipeline.py`). Predictions are scored against the gold
-`_v5.ods` on the `to_review` validation split (README → *Evaluation*).
+`_v6.ods` on the `to_review` reviewed set (README → *Evaluation*).

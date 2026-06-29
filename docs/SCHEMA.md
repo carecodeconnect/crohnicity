@@ -8,10 +8,10 @@ of labels for evaluating the extraction pipeline.
 > spreadsheet dropdowns. Open business questions live in `docs/QUESTIONS.md`; the pathway
 > vocabulary needs domain-expert sign-off (`docs/TODO.md`).
 
-- **Working file:** `data/in/interviews_ground_truth_v5.ods`, built from the annotated
-  `interviews_ground_truth.ods` → `_v2` → `_v3` → `_v4` → `_v5` by `sandbox/build_ground_truth_v*.py` (see
+- **Working file:** `data/in/interviews_ground_truth_v6.ods`, built from the annotated
+  `interviews_ground_truth.ods` → `_v2` → `_v3` → `_v4` → `_v5` → `_v6` by `sandbox/build_ground_truth_v*.py` (see
   "How the working file is generated").
-- **Rows:** 50 patients (`P001`–`P050`); 20 reviewed so far (`to_review == 1`).
+- **Rows:** 50 patients (`P001`–`P050`); 21 reviewed so far (`to_review == 1`).
 - **Source columns** (`patient_id`, `interview_transcript`) come from `interviews.json` — **do not edit**.
 - **Note:** booleans persist in the `.ods` as `1`/`0` (incl. `to_review`, now standardised), blanks as empty.
 

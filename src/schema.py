@@ -1,12 +1,12 @@
 """Pydantic schema for one patient's labels.
 
 The same shape serves both provenances: the human-annotated *gold* set in
-`data/in/interviews_ground_truth_v4.ods`, and a model *prediction* returned by `src/extract.py`
+`data/in/interviews_ground_truth_v6.ods`, and a model *prediction* returned by `src/extract.py`
 (an inference, not ground truth). Mirrors the columns and controlled vocabularies in
 `docs/SCHEMA.md`; field names match the spreadsheet columns 1:1.
 
 `interview_transcript` is the model's *input* — its own `Interview` model below; `to_review`
-(a human-set validation/holdout flag, see `src/splits.py`) is not modelled.
+(a flag marking which transcripts a human annotator has reviewed) is not modelled.
 
 The rationale for each name/type is in `docs/SCHEMA.md`; the docstrings below summarise it.
 """
@@ -183,10 +183,10 @@ class PatientLabels(BaseModel):
 
     When produced by `extract.py` these are the model's **predictions** (inference, not ground
     truth); evaluation compares them field-by-field against the gold values in
-    `data/in/interviews_ground_truth_v4.ods` for the 20-of-50 validation cases (the `to_review`
-    split, see `src/splits.py`).
+    `data/in/interviews_ground_truth_v6.ods` for the 21-of-50 cases a human annotator has
+    reviewed (`to_review == 1`).
 
-    Field names match the v4 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
+    Field names match the v5 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
     the ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction
     still validates.
     """

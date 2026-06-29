@@ -57,7 +57,9 @@ Write up what it told you in a few lines: what the pipeline is solid on, where i
 
 I picked (1).
 
-**What it surfaced.** Gold labels live in `interviews_ground_truth_v5.ods`, scored on the `to_review` validation split. Headline: `biologic_taken` — the field Q1 rests on — scores a high F1 (precision / recall / F1 computed inline in the Q1 gold-eval table below), so the "% on a biologic" answer is well-supported. Where it's shaky: **`churn`** is unreliable in both directions (a false positive *and* a false negative in the gold audit — `docs/TO_REVIEW.md`) because truncation is a lexical/structural signal the narrative under-determines; **`treatment_class`** drifts (un-normalised free-text categories inflate the Q3 count); and the **GP node** (`primary_care_contact`) is under-emitted (see the Q4 caveat's live count), weakening the strict Q4 step count. Fix-first order: a deterministic tail-of-text churn rule, a treatment/biologic registry to normalise classes, and a larger, multi-annotator gold set — today's is single-annotator over the `to_review` gold split, so the metric carries real sampling uncertainty.
+**What it surfaced.** Gold labels live in `{python} GOLD_FILE`, scored on the human-reviewed gold set (`to_review == 1`). Headline: `biologic_taken` — the field Q1 rests on — scores a high F1 (precision / recall / F1 computed inline in the Q1 gold-eval table below), so the "% on a biologic" answer is well-supported. Where it's shaky: **`churn`** is unreliable in both directions (a false positive *and* a false negative in the gold audit — `docs/TO_REVIEW.md`) because truncation is a lexical/structural signal the narrative under-determines; **`treatment_class`** drifts (un-normalised free-text categories inflate the Q3 count); and the **GP node** (`primary_care_contact`) is under-emitted (see the Q4 caveat's live count), weakening the strict Q4 step count. Fix-first order: a deterministic tail-of-text churn rule, a treatment/biologic registry to normalise classes, and a larger, multi-annotator gold set — today's is single-annotator over the `to_review` gold set, so the metric carries real sampling uncertainty.
+
+**Edge case — biologic over-detection (P047).** P047's transcript names *no* biologic (conventional therapy only — prednisone, mesalamine, methotrexate), yet the model returned `biologic_prescribed=True` with a fabricated `DOCTOR_CHOICE` reason — a hallucination inferred from disease severity, because the biologic-funnel booleans had no prompt guidance. Two fixes landed: P047 is now a reviewed gold case (`biologic_not_mentioned=1`, `biologic_prescribed=0`), and `system.txt` now instructs the model never to *infer* `biologic_prescribed` and to set `biologic_not_mentioned` when no biologic is named. Tellingly, this error sat in the then-unreviewed cases — invisible to the gold metric until P047 was reviewed.
 
 > **A second eval, by accident — the temperature consistency check (option 3).** I picked (1), but
 > the rate-limited re-runs left a natural option-(3) experiment, and it **supports the
@@ -100,10 +102,11 @@ from plotnine import (
 
 sys.path.insert(0, "src")
 import post_extraction_eda as eda
-from config import PLOTS_DIR
+from config import GOLD, PLOTS_DIR
 
 PLOTS = PLOTS_DIR
 PLOTS.mkdir(parents=True, exist_ok=True)
+GOLD_FILE = GOLD.name  # gold .ods filename from config — never hard-code the version
 
 records = eda.load_records()
 df = eda.load_predictions()
@@ -141,7 +144,7 @@ print(md_table(q1))
 `{python} round(100 * on / N)`% of patients (`{python} on`/`{python} N`) appear to be **on a biologic** (`biologic_taken == true`).
 
 *Evaluation — mini golden set.* `biologic_taken` (the field Q1 rests on) scored against the
-hand-annotated gold in `_v5.ods` (the `to_review` cases), as precision / recall / F1:
+hand-annotated gold in `{python} GOLD_FILE` (the `to_review` cases), as precision / recall / F1:
 
 ```{python}
 # | label: q1-eval
@@ -169,7 +172,7 @@ On the `{python} n_gold`-case golden set, `biologic_taken` scores **F1 = `{pytho
 (precision `{python} round(prec, 2)`, recall `{python} round(rec, 2)`; TP/FP/FN/TN =
 `{python} f"{tp}/{fp}/{fn}/{tn}"`) — so the Q1 headline is well-supported by the gold.
 
-*Limitation.* This is measured only on the hand-annotated gold (`to_review`) split —
+*Limitation.* This is measured only on the hand-annotated gold (`to_review`) set —
 **`{python} n_gold` of `{python} N`** patients (those with a non-null `biologic_taken`) — so the
 metric carries real **sampling uncertainty** (a few flips would move it noticeably), and the gold
 is a **single-annotator judgement** with its own error. A trustworthy at-scale accuracy estimate
@@ -295,6 +298,8 @@ print(eda.pathway_mermaid(records, ex_pid))
 - How you separated "biologic not mentioned" from "biologic discussed and rejected" from "patient churned before reaching that point."
 - Which of the four answers are most and least trustworthy given the churn distribution, and why.
 
+**Three data-states, by patient count** — how many patients show each way the biologic signal can present: *absence* (biologic never mentioned), *negation* (prescribed but not taken), and *truncation* (the interview churned before resolving). These are **independent counts, not a partition** of the cohort. Here *absence* is `0` because the model marks **every** patient `biologic_prescribed` (so none are "never mentioned"), and *truncation* is `0` because the model under-detects churn (see the false-negative note below).
+
 ```{python}
 # | label: churn
 # | output: asis
@@ -306,7 +311,7 @@ print(md_table(three_state))
 
 The model flagged `churn = true` for only **`{python} int((df["churn"] == True).sum())`/`{python} N`** patient(s). Manual review of the flagged/edge cases (`docs/TO_REVIEW.md`) found churn detection unreliable in both directions — both an over-flag and a missed truncation — because truncation is a lexical/structural property of the transcript's *end* that the narrative under-determines. **Q1 and Q3 are the most trustworthy** answers (they depend on facts stated early); **Q4 is the least** (it depends on the full pathway surviving, and on the under-emitted GP node).
 
-> **Why `churn` reads low — under-detection, not absence.** The gold set flags genuinely truncated transcripts the model misses (gold `churn = 1` but the model returns `False`; this run: **`{python} churn_fn_str`**) — a **false negative**. A low count is therefore *not* "no truncated transcripts": the model **can't reliably detect truncation** — a lexical/structural end-of-text signal the narrative under-determines, compounded by the prompt's *"prefer `false` when ambiguous"* bias. This is **independent of `temperature`** (it persists at `0`); pinning `temperature = 0` (see *Extraction Pipeline → Determinism*) makes the count reproducible run-to-run, but the real fix is a deterministic tail-of-text rule (`docs/TODO.md`). The temperature change is about *reproducibility*, not detection: earlier **exploratory/testing** runs used Gemini's default **`temperature = 1.0`** (sampled — long-tail outputs drifted run-to-run), whereas this **final pipeline pins `temperature = 0`** (greedy, deterministic). Same under-detection either way; only the run-to-run stability differs.
+> **Why `churn` reads low — under-detection, not absence.** The gold set flags genuinely truncated transcripts the model misses (gold `churn = 1` but the model returns `False`; this run: **`{python} churn_fn_str`**) — a **false negative**. A low count is therefore *not* "no truncated transcripts": the model **can't reliably detect truncation** — a lexical/structural end-of-text signal the narrative under-determines, compounded by the prompt's conservative bias toward `false`. This is **independent of `temperature`** (it persists at `0`); pinning `temperature = 0` (see *Extraction Pipeline → Determinism*) makes the count reproducible run-to-run, but the real fix is a deterministic tail-of-text rule (`docs/TODO.md`). The temperature change is about *reproducibility*, not detection: earlier **exploratory/testing** runs used Gemini's default **`temperature = 1.0`** (sampled — long-tail outputs drifted run-to-run), whereas this **final pipeline pins `temperature = 0`** (greedy, deterministic). Same under-detection either way; only the run-to-run stability differs.
 
 ### Churn — definition & handling
 
@@ -323,6 +328,19 @@ reading, we collapse them into a single `churn` field (the ground truth drops
 `incomplete_journey`). `churn = true` when there's evidence of **(a)** disengagement from the app
 interaction, or **(b)** a truncated / cut-off / vague narrative. Signals: completeness, cut off
 mid-journey, truncation, vagueness.
+
+**Deciding churn from a trailing `"..."`.** A trailing `"..."` is ambiguous — it can be an
+intentional emotional sign-off *or* a real cut-off — and we have no behavioural signal (e.g. a
+last-login timestamp) to disambiguate, so we decide from the text alone: **churn only when the
+transcript breaks off mid-word / mid-thought**, not when it closes on a coherent phrase. We do
+**not** use whether `"..."` recurs elsewhere (an earlier heuristic we dropped).
+
+- **Mid-thought break → churn:** P049 `"…Different but same. Chronic..."` — ends on an incomplete
+  fragment ("Chronic" with no following noun), so the interview was genuinely cut off.
+- **Coherent emotional close → NOT churn:** P016 `"…better than this..."`, P036 `"…Don't want to
+  know..."`, P045 `"…but it's hard..."`, P046 `"…how people manage..."`, P047 `"…Not worry about
+  mom..."`, P048 `"…I'm only 56..."` — the patient *typed* the ellipsis, a deliberate sign-off, not
+  a disconnection.
 
 **Why this matters for the answers.** `churn` is the *truncation* state that, with
 `biologic_not_mentioned` (absence) and a discussed-but-not-taken biologic (negation), gives the
@@ -426,7 +444,7 @@ With more time, after the core is complete:
 
 - I wrote ~6 pages of handwritten notes as I designed "Crohnicity".
 
-- After deciding to read, review and annotate the `interviews.json` `interview_transcript` dataset, I did annotations by hand in LibreOffice Writer (open source version of Excel) to mimic non-technical domain expert labeling of a "gold" ground truth dataset. I returned to this dataset and manual labeling throughout the process, labeling ~20/50 cases.
+- After deciding to read, review and annotate the `interviews.json` `interview_transcript` dataset, I did annotations by hand in LibreOffice Writer (open source version of Excel) to mimic non-technical domain expert labeling of a "gold" ground truth dataset. I returned to this dataset and manual labeling throughout the process, labeling ~21/50 cases.
 
 - I wrote the code for the beginning notebooks (`00_setup`, half of `01_eda_transform_export`) by hand, before transitioning to Claude Code for the more tricky programmatic updates to my LibreOffice Write `.ods` spreadsheet files (see next section).
 
@@ -461,7 +479,7 @@ uv run dg dev -m pipeline -d src   # UI at http://127.0.0.1:3000 → "Materializ
 uv run dg launch --assets "*" -m pipeline -d src
 ```
 
-> Set `DAGSTER_HOME` in `.env` to persist run history to `.dagster_home/` (see DEV_SETUP); without it Dagster uses a temp dir. The instance config `.dagster_home/dagster.yaml` is committed (it shows the pipeline wiring); Dagster runs **locally only** — it never pushes to GitHub, so publishing refreshed artefacts (data + logs + README) is your separate `git` step.
+> `DAGSTER_HOME` is set in `.env` to `.dagster_home/` (see DEV_SETUP), so Dagster persists run history there — **not** a temp dir (a temp dir is only the fallback if the var is unset). The instance config `.dagster_home/dagster.yaml` is committed (it shows the pipeline wiring); the sqlite run-state is git-ignored. Dagster runs **locally only** — it never pushes to GitHub, so publishing refreshed artefacts (data + logs + README) is your separate `git` step.
 
 The processes below are the stages Dagster orchestrates; each also runs **standalone** to drive or test one part on its own (Dagster calls the same `src/` functions — it doesn't shell around them). Extraction uses the chunked 10×5 batch strategy to fit the Gemini free-tier ~20-requests/day cap.
 

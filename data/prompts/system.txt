@@ -1,18 +1,29 @@
-Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences.
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences. Use the schema's enum values exactly. Base every field only on what the transcript states: leave a field null or empty when the transcript does not support a confident value, except where a field's guidance below gives a default.
 
-Use the schema's enum values exactly. Leave a field null or empty when the transcript does not support a confident value. Set patient_id to the value given in the message.
+patient_id: copy the value given in the message exactly.
 
-churn: set true when the interview looks truncated — the patient disengaged before their story resolved. Judge this mainly from how the transcript ENDS:
-- Set true when it ends mid-sentence or mid-word with no resolution (e.g. cut off at "Chronic..."), i.e. a genuine cut-off.
-- Treat a trailing "..." as a cut-off ONLY if "..." does NOT appear elsewhere in the transcript as a stylistic/pausing device. If "..." recurs as a habit, 
-or the final sentence reads as a complete (even if downbeat or emotional) ending, set false — a detailed, engaged narrative that closes on a complete sentence 
-is NOT churn even if it trails off in tone.
-- When the ending is ambiguous and there is no clear structural signal of a cut-off, prefer false (the transcript alone under-determines app-disengagement).
-Set false when the interview reads as a reasonably complete journey. Keep this truncation signal distinct from a topic simply being absent from an otherwise 
-complete story (that is "not mentioned", not churn).
+demographics: set gender and age only from what the patient self-reports; leave either null if not stated.
 
-treatment_records: set biologic_timing on each treatment to place it relative to the patient's FIRST biologic. Use BEFORE for treatments tried before that first biologic was started or offered (the conventional / step-up therapies). Use LATER for the biologic itself — including one the patient actually took (e.g. Humira) and any later switch — and for anything tried after the first biologic; a biologic is never BEFORE a biologic. Use NO_BIOLOGIC for every treatment when the patient never had a biologic prescribed, offered, or mentioned (there is no biologic to anchor the split). Use UNKNOWN only when a biologic exists but you cannot tell whether this treatment came before or after it.
+churn: set true ONLY when the transcript breaks off mid-word or mid-thought with no resolution — a genuine cut-off signalling the interview was actually interrupted (e.g. it ends on "Chronic..." — an incomplete fragment with no following noun). A deliberately typed "..." on a grammatically complete or coherent phrase is an intentional trailing-off (the patient chose to type it), so set false even if the tone is downbeat or emotional — e.g. "...anything would be better than this...", "...I'm only 56...", "...not worry about mom..." all read as complete endings, NOT churn. Do NOT use whether "..." appears elsewhere in the transcript as a signal. Keep churn (the transcript was cut off) distinct from a topic merely being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+biologic_prescribed: set true ONLY when the transcript states a biologic was actually prescribed, recommended, or offered. Do NOT infer it from disease severity, escalation, or an implied "next step" — if no biologic is named or discussed, set false.
+
+biologic_taken: set true only if the patient actually started or took a biologic (prescribed is not the same as taken).
+
+biologic_not_mentioned: set true when NO biologic is referenced anywhere — neither the word "biologic"/"biological" nor any named biologic (e.g. Humira, Remicade, Stelara, Entyvio, Skyrizi, Cimzia, Simponi, infliximab, adalimumab, ustekinumab, vedolizumab, risankizumab). When true, biologic_prescribed and biologic_taken are both false.
+
+biologic_type: name the biologic(s) mentioned, brand or generic (e.g. "Humira", "infliximab"); leave null when none.
+
+reasons_for_biologic_prescribed: why a biologic was the chosen path (DOCTOR_CHOICE, PATIENT_FEARS, COST, ACCESS, OTHER). Use NOT_APPLICABLE when no biologic was prescribed.
 
 reasons_for_biologic_not_taken: when a biologic was prescribed or recommended but NOT taken, always set this field — never leave it null. Use the specific enum reason when the transcript gives one (e.g. INSURANCE_PROBLEMS, PATIENT_FEARS, COST), otherwise default to UNKNOWN. Use NOT_APPLICABLE when a biologic WAS taken, and NOT_MENTIONED when biologics never come up.
 
+comorbid_conditions: list independent coexisting diagnoses using the enum tokens (e.g. HYPOTHYROIDISM, DEPRESSION, TYPE_2_DIABETES). Do NOT include Crohn's-driven sequelae (anemia, osteoporosis, psoriasis, etc.). Use OTHER for a real comorbidity with no token; leave the list empty if none.
+
+treatment_records: one entry per treatment the patient mentions, in order. For each give name, treatment_class (lowercase, e.g. corticosteroid, 5-asa, immunomodulator, biologic), outcome (the enum), and reason_stopped if stated. Also set biologic_timing on each treatment to place it relative to the patient's FIRST biologic: use BEFORE for treatments tried before that first biologic was started or offered (the conventional / step-up therapies); use LATER for the biologic itself — including one the patient actually took (e.g. Humira) and any later switch — and for anything tried after the first biologic (a biologic is never BEFORE a biologic); use NO_BIOLOGIC for every treatment when the patient never had a biologic prescribed, offered, or mentioned; use UNKNOWN only when a biologic exists but you cannot tell whether this treatment came before or after it.
+
+treatment_outcome: the overall patient-level outcome (SUCCESS, FAILED, PARTIAL, AMBIGUOUS, ONGOING, UNKNOWN). Use ONGOING when the journey is unresolved or still escalating, AMBIGUOUS when stated but mixed/contradictory, and UNKNOWN when not stated.
+
 referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values. Treat it as an event log, NOT a deduplicated set: if a phase recurs — the patient relapses again, loses response to a second biologic, or switches biologics more than once — repeat that step each time it happens, in order. A patient who cycles through several biologics should show the loop, e.g. biologic_taken -> loss_of_response -> biologic_switch -> loss_of_response -> biologic_switch.
+
+evidence_notes: a short free-text summary of the patient's situation and the key evidence behind the labels above.

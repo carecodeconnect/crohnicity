@@ -48,7 +48,7 @@ def q1_share(df: pd.DataFrame) -> pd.DataFrame:
 def gold_eval(
     df: pd.DataFrame, gold_path: Path = GOLD, field: str = "biologic_taken"
 ) -> dict[str, float]:
-    """Precision / recall / F1 / accuracy of ``field`` against the gold ``to_review`` split."""
+    """Precision / recall / F1 / accuracy of ``field`` against the human-reviewed gold (``to_review``) cases."""
     gold = pd.read_excel(gold_path, engine="odf")
     gold = gold.loc[gold["to_review"] == 1, ["patient_id", field]].dropna()
     ev = gold.merge(
@@ -91,7 +91,7 @@ def q2_reasons(df: pd.DataFrame) -> pd.DataFrame:
 def q3_before_biologic(records: list[dict]) -> pd.DataFrame:
     """Q3 — treatment classes tried before a biologic (``biologic_timing == "BEFORE"``)."""
     before = [
-        (t.get("treatment_class") or t.get("name"))
+        (t.get("treatment_class") or t.get("name")).lower()
         for r in records
         for t in r["treatment_records"]
         if t.get("biologic_timing") == "BEFORE"

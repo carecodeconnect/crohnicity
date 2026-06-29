@@ -1,6 +1,6 @@
 """Unit tests for src/post_extraction_eda.py — the post-extraction EDA functions.
 
-Deterministic: they read the persisted predictions in data/out/ and the gold _v5.ods (no API call),
+Deterministic: they read the persisted predictions in data/out/ and the gold _v6.ods (no API call),
 so the same artefacts the README.qmd renders from are the ones under test.
 """
 
@@ -24,10 +24,10 @@ def test_q1_share_sums_to_cohort() -> None:
 
 
 def test_gold_eval_matches_documented_metrics() -> None:
-    """The 19-case to_review gold split documented in the README (TP/FP/FN/TN = 9/1/0/9)."""
+    """The 20-case to_review gold set documented in the README (TP/FP/FN/TN = 9/1/0/10)."""
     ev = eda.gold_eval(DF)
-    assert ev["n"] == 19
-    assert (ev["tp"], ev["fp"], ev["fn"], ev["tn"]) == (9, 1, 0, 9)
+    assert ev["n"] == 20
+    assert (ev["tp"], ev["fp"], ev["fn"], ev["tn"]) == (9, 1, 0, 10)
     assert math.isclose(ev["precision"], 0.9)
     assert ev["recall"] == 1.0
 

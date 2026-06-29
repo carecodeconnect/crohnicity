@@ -17170,3 +17170,15 @@ biologic_recommended     insurance_denial     10
 2026-06-25 15:10:46.456 | ERROR    | extract:extract_batch:185 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
 2026-06-25 15:11:47.989 | INFO     | extract:extract_batch:163 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
 2026-06-25 15:11:49.434 | ERROR    | extract:extract_batch:185 - RateLimitError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-29 08:43:08.771 | INFO     | extract:extract_batch:194 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-29 08:43:10.407 | WARNING  | extract:_with_503_retry:99 - 503 ServiceUnavailable (attempt 1/3) — sleeping 20s before retry
+2026-06-29 08:43:33.705 | WARNING  | extract:_with_503_retry:99 - 503 ServiceUnavailable (attempt 2/3) — sleeping 20s before retry
+2026-06-29 08:44:02.985 | ERROR    | extract:extract_batch:218 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-29 09:15:07.415 | INFO     | extract:extract_batch:194 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-29 09:15:12.130 | WARNING  | extract:_with_503_retry:99 - 503 ServiceUnavailable (attempt 1/3) — sleeping 20s before retry
+2026-06-29 09:15:36.665 | WARNING  | extract:_with_503_retry:99 - 503 ServiceUnavailable (attempt 2/3) — sleeping 20s before retry
+2026-06-29 09:16:01.427 | ERROR    | extract:extract_batch:218 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries
+2026-06-29 09:45:44.195 | INFO     | extract:extract_batch:194 - batch input (10 patients): ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010']
+2026-06-29 09:45:55.058 | WARNING  | extract:_with_503_retry:99 - 503 ServiceUnavailable (attempt 1/3) — sleeping 20s before retry
+2026-06-29 09:46:38.017 | WARNING  | extract:_with_503_retry:99 - 503 ServiceUnavailable (attempt 2/3) — sleeping 20s before retry
+2026-06-29 09:47:00.288 | ERROR    | extract:extract_batch:218 - ServiceUnavailableError for batch ['P001', 'P002', 'P003', 'P004', 'P005', 'P006', 'P007', 'P008', 'P009', 'P010'] — gave up after retries

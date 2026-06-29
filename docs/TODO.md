@@ -60,7 +60,7 @@ extract the logic into proper Python modules.
 ## Post-extraction EDA — extract `README.qmd` chunks into `src/post_extraction_eda.py`
 
 The post-extraction EDA is a distinct **phase**: it runs *after* the inference loop and reads only
-the persisted artefacts in `data/out/` (the validated predictions, plus `_v5.ods` for the gold
+the persisted artefacts in `data/out/` (the validated predictions, plus `_v6.ods` for the gold
 eval) — no Gemini calls. Its logic currently lives inline in the `README.qmd` `{python}` cells, so
 it can't be reused anywhere else or unit-tested.
 
@@ -77,10 +77,10 @@ it can't be reused anywhere else or unit-tested.
 - [ ] **Plot the eval metrics.** Add a **precision / recall / F1** (and accuracy) bar plot beside the
   Q1 gold-eval table in `README.qmd`, driven by `gold_eval(df)` — same plotnine treatment as the
   Q2–Q4 charts — so the eval is visual, not just a table.
-- [ ] **Visualise gold coverage + its uncertainty.** A plot showing only **20/50** patients are
-  manually gold-scored (the `to_review` split; 19 with a non-null `biologic_taken`) vs the **~30/50**
+- [ ] **Visualise gold coverage + its uncertainty.** A plot showing only **21/50** patients are
+  manually gold-scored (the `to_review` reviewed set; 20 with a non-null `biologic_taken`) vs the **~29/50**
   with **unknown** ground truth, plus a **confidence interval** on the implied at-scale accuracy
-  (e.g. a Wilson / binomial CI, or bootstrap, on the 19-case metrics) — so the README's *sampling
+  (e.g. a Wilson / binomial CI, or bootstrap, on the 20-case metrics) — so the README's *sampling
   uncertainty* caveat is **quantified and shown**, not merely asserted.
 
 ## Tests — once we have a mental model of what to test
@@ -252,7 +252,7 @@ scaling EDA**.
   not nested); static `data/in/interviews.json` input → no sensor; the gate surfaced as asset checks.
   **Do this last**, once Dagster actually runs, so the diagram matches the built workflow — then
   **link it from `README.qmd`** (there is no link today). While here, fix the draft's stale bits:
-  title `Chronicity` → `Crohnicity`, `_v3.ods` → `_v5.ods`, and the `main.py`-as-orchestrator flow →
+  title `Chronicity` → `Crohnicity`, `_v3.ods` → `_v6.ods`, and the `main.py`-as-orchestrator flow →
   the Dagster asset graph. Render with `quarto render docs/SYSTEM_DESIGN.qmd`.
 
 ## Packaging — Docker
@@ -268,7 +268,7 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
 
 - [ ] **Centralise config in a `config.json`.** Every setting used by *any* script
   (`.py`/`.qmd`/`.sh`) reads from one file: model-name defaults, the gold dataset path + version
-  (`_v5.ods`), the source `data/in/interviews.json` path, the `data/out/` location, chunk size, etc.
+  (`_v6.ods`), the source `data/in/interviews.json` path, the `data/out/` location, chunk size, etc.
   No hard-coded paths/params scattered across `extract.py` / `main.py` / `post_extraction_eda.py` /
   `referral_pathway_analysis.py` / `README.qmd` — a single source of truth that all files load.
 - [ ] **Kill redundancy + fix drift.** Redundant code/docs and drifted definitions/docstrings —
