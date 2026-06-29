@@ -11,6 +11,6 @@ alongside the hand-written design docs, so the code's actual contract can be che
 - **API reference** — every `src/` module, and the `tests/` (what each unit test asserts).
 - **Schema · TODO · Questions · Dev Setup** — the hand-written plan and notes to check the code against.
 
-Preview locally with `uv run mkdocs serve` (http://127.0.0.1:8000); build the static site with
+Preview locally with `uv run mkdocs serve -a localhost:8000` (http://localhost:8000; port: config.json → docsite_port); build the static site with
 `uv run mkdocs build`. The project overview, business answers, and pipeline write-up are in the
 repo's top-level `README.md`.

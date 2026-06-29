@@ -1,4 +1,4 @@
-# Ground-truth annotation schema (v0.5)
+# Ground-truth annotation schema (v0.8)
 
 Columns in the ground-truth spreadsheet that stakeholders fill in to create the **gold set**
 of labels for evaluating the extraction pipeline.
@@ -8,8 +8,8 @@ of labels for evaluating the extraction pipeline.
 > spreadsheet dropdowns. Open business questions live in `docs/QUESTIONS.md`; the pathway
 > vocabulary needs domain-expert sign-off (`docs/TODO.md`).
 
-- **Working file:** `data/in/interviews_ground_truth_v6.ods`, built from the annotated
-  `interviews_ground_truth.ods` → `_v2` → `_v3` → `_v4` → `_v5` → `_v6` by `sandbox/build_ground_truth_v*.py` (see
+- **Working file:** `data/in/interviews_ground_truth_v7.ods`, built from the annotated
+  `interviews_ground_truth.ods` → `_v2` → `_v3` → `_v4` → `_v5` → `_v6` → `_v7` by `sandbox/build_ground_truth_v*.py` (see
   "How the working file is generated").
 - **Rows:** 50 patients (`P001`–`P050`); 21 reviewed so far (`to_review == 1`).
 - **Source columns** (`patient_id`, `interview_transcript`) come from `interviews.json` — **do not edit**.
@@ -30,7 +30,7 @@ of labels for evaluating the extraction pipeline.
 | 9 | `biologic_not_mentioned` | `bool` (1/0) | `1`/`0` | `1` when biologics never come up at all. |
 | 10 | `biologic_type` | `str` | free text | Named biologic(s), e.g. `Humira`, `infliximab`. |
 | 11 | `reasons_for_biologic_prescribed` | `enum` | see vocab | Why a biologic *was* the chosen path. |
-| 12 | `reasons_for_biologic_not_taken` | `enum` | see vocab | Renamed from `reasons_for_biologic_denied`. Why a prescribed biologic wasn't taken / wasn't reached. |
+| 12 | `reasons_for_biologic_not_taken` | `list[enum]` | see vocab | Renamed from `reasons_for_biologic_denied`. Why a prescribed biologic wasn't taken / wasn't reached. **Multiple allowed** (primary first) — patients often have several (e.g. cost + fear). |
 | 13 | `comorbid_conditions` | `list[enum]` | see vocab | Independent coexisting diagnoses (not Crohn's sequelae). Comma-separated. |
 | 14 | `treatment_records` | `list[TreatmentRecord]` (free text) | see convention | All treatments, in order. Each carries `biologic_timing` (the before/after split for Q3). |
 | 15 | `treatment_outcome` | `enum` | see vocab | Overall patient-level outcome; `AMBIGUOUS`/`ONGOING` allowed (confirmed). |
@@ -40,10 +40,10 @@ of labels for evaluating the extraction pipeline.
 ## Controlled vocabularies
 
 - **Booleans** (`to_review`, `churn`, `biologic_prescribed`, `biologic_taken`, `biologic_not_mentioned`): `1` / `0` (stored numeric in the `.ods`).
-- **`reasons_for_biologic_prescribed`**: `DOCTOR_CHOICE`, `PATIENT_FEARS`, `COST`, `ACCESS`, `NOT_APPLICABLE`, `OTHER`
-- **`reasons_for_biologic_not_taken`**: `NOT_MENTIONED`, `EXPLICIT_DENIAL`, `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`, `CONTRAINDICATION`, `DEFERRED`, `JOURNEY_CUT_OFF`, `UNKNOWN`, `NOT_APPLICABLE`, `OTHER`
+- **`reasons_for_biologic_prescribed`** (single — the *initiation* signal): `DOCTOR_CHOICE`, `PATIENT_REQUEST`, `NOT_APPLICABLE`, `OTHER`. Trimmed: `COST`/`PATIENT_FEARS`/`ACCESS` removed (those are reasons a biologic is **not taken**, not reasons it was prescribed; `ACCESS` had zero transcript support — covered by `COST` + `INSURANCE_PROBLEMS`).
+- **`reasons_for_biologic_not_taken`** (list — **multiple allowed**, primary first; **never empty**): `NOT_MENTIONED`, `EXPLICIT_DENIAL`, `INSURANCE_PROBLEMS`, `COST`, `PATIENT_FEARS`, `CONTRAINDICATION`, `DEFERRED`, `UNKNOWN`, `BIOLOGIC_TAKEN`, `NOT_APPLICABLE`, `OTHER`
   - *`CONTRAINDICATION` = medically can't be given (e.g. COPD risk); `DEFERRED` = appropriate but postponed (awaiting surgery recovery / timing).*
-  - *`NOT_APPLICABLE` (in both reasons enums) = the field genuinely doesn't apply (no biologic prescribed, or it was taken) — distinct from a blank cell, which means "not yet annotated".*
+  - *Non-reason states keep the list explicit (**never empty**, so it's never confused with a missing value): `BIOLOGIC_TAKEN` = a biologic was taken; `NOT_APPLICABLE` = none was ever prescribed/offered; `NOT_MENTIONED` = biologics never come up; `UNKNOWN` = prescribed-but-not-taken, no reason. (`ReasonPrescribed.NOT_APPLICABLE` likewise = no biologic prescribed.) A blank cell still means "not yet annotated".*
   - *(`PATIENT_FEARS` belongs here — fear of needles/side-effects is a reason a biologic isn't taken, not prescribed. `INSURANCE_PROBLEMS` = denial/auth/tier; `COST` = affordability even when covered.)*
 - **`treatment_outcome`** (and `TreatmentRecord.outcome`): `SUCCESS`, `FAILED`, `PARTIAL`, `AMBIGUOUS`, `ONGOING`, `UNKNOWN`
   - *(`AMBIGUOUS` = stated but mixed/contradictory; `ONGOING` = unresolved/still escalating; `UNKNOWN` = not stated.)*
@@ -96,11 +96,9 @@ class TreatmentOutcome(str, Enum):
     ONGOING = "ONGOING"       # unresolved / still escalating
     UNKNOWN = "UNKNOWN"       # not stated
 
-class ReasonPrescribed(str, Enum):
+class ReasonPrescribed(str, Enum):   # initiation signal (single)
     DOCTOR_CHOICE = "DOCTOR_CHOICE"
-    PATIENT_FEARS = "PATIENT_FEARS"
-    COST = "COST"
-    ACCESS = "ACCESS"
+    PATIENT_REQUEST = "PATIENT_REQUEST"
     NOT_APPLICABLE = "NOT_APPLICABLE"
     OTHER = "OTHER"
 
@@ -112,8 +110,8 @@ class ReasonNotTaken(str, Enum):     # renamed from ReasonDenied; expanded
     PATIENT_FEARS = "PATIENT_FEARS"
     CONTRAINDICATION = "CONTRAINDICATION"
     DEFERRED = "DEFERRED"
-    JOURNEY_CUT_OFF = "JOURNEY_CUT_OFF"
     UNKNOWN = "UNKNOWN"
+    BIOLOGIC_TAKEN = "BIOLOGIC_TAKEN"
     NOT_APPLICABLE = "NOT_APPLICABLE"
     OTHER = "OTHER"
 
@@ -161,7 +159,7 @@ class PatientLabels(BaseModel):
     biologic_not_mentioned: bool
     biologic_type: str | None = None
     reasons_for_biologic_prescribed: ReasonPrescribed | None = None
-    reasons_for_biologic_not_taken: ReasonNotTaken | None = None
+    reasons_for_biologic_not_taken: list[ReasonNotTaken] = []   # multiple allowed, primary first
     comorbid_conditions: list[ComorbidCondition] = []
     treatment_records: list[TreatmentRecord] = []
     treatment_outcome: TreatmentOutcome
@@ -205,6 +203,25 @@ SUCCESS/FAILED call).
 
 ## Changelog
 
+- **v0.8** — **`BIOLOGIC_TAKEN` added to `ReasonNotTaken`; the list is now never empty.** The model
+  was returning `[]` for patients *on* a biologic, which is indistinguishable from a missing value
+  (can't tell "taken, N/A" from "not taken, no reason found"). An explicit `[BIOLOGIC_TAKEN]` —
+  alongside `[NOT_MENTIONED]` / `[NOT_APPLICABLE]` / `[UNKNOWN]` — keeps the field trackable.
+  `NOT_APPLICABLE` now means specifically "no biologic ever prescribed/offered" (the "taken"
+  meaning moved to `BIOLOGIC_TAKEN`).
+- **v0.7** — **Reason enums realigned to the business spec (`TASK_INSTRUCTIONS.md` Q2), evidence
+  from all 50 transcripts.** `ReasonPrescribed` trimmed to the *initiation* signal
+  `{DOCTOR_CHOICE, PATIENT_REQUEST, NOT_APPLICABLE, OTHER}` — `COST`/`PATIENT_FEARS`/`ACCESS`
+  removed (they're reasons a biologic is *not taken*, not reasons prescribed; `ACCESS` had **zero**
+  transcript support — every "can't get it" is `COST` or `INSURANCE_PROBLEMS`). **`reasons_for_biologic_not_taken`
+  is now a list** (`list[ReasonNotTaken]`, primary first) because patients often have several
+  reasons (e.g. cost + fear). Gold off-vocab (`NOT PRESCRIBED` / `NOT MENTIONED` / `BIOLOGIC WAS
+  TAKEN`) normalised to `NOT_APPLICABLE` / `NOT_MENTIONED` in the `_v6` rebuild.
+- **v0.6** — **`JOURNEY_CUT_OFF` dropped from `ReasonNotTaken`.** *Why:* "not taken because the
+  journey was cut off" is the same truncation signal `churn` already carries, so it duplicated
+  `churn` (cf. the v0.4 `incomplete_journey` → `churn` merge). A cut-off case is now `churn = 1`
+  with `reasons_for_biologic_not_taken = UNKNOWN`. Working file bumped to `_v6.ods` — P047 completed
+  as a reviewed gold case.
 - **v0.5** — **`TreatmentRecord.before_biologic` (`bool | None`) replaced by `biologic_timing`
   (`BiologicTiming` enum: `BEFORE` / `LATER` / `NO_BIOLOGIC` / `UNKNOWN`).** *Why:* the old `null`
   was overloaded — it meant both "no biologic exists to anchor the split" and "ordering unclear";

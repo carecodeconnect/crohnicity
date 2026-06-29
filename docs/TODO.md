@@ -17,6 +17,15 @@ has been removed).
   `data/prompts/system.txt`** but post-date the clean re-run above, so `data/out/` does not yet
   reflect them — they take effect only on the next fresh extraction run.
 
+## Next step — resolve the P019 `to_review` inconsistency
+
+P019 is `to_review = 0` yet carries a gold `biologic_taken = 1`, and `docs/TO_REVIEW.md` discusses it
+as reviewed — an internal inconsistency. **Decide whether P019 should be `to_review = 1`.** If set, it
+enters `gold_eval`: the reviewed set goes **21 → 22** and the eval **n goes 20 → 21** (P019's
+`biologic_taken` is non-null and the model predicts `True`), which shifts the documented metrics and
+the `test_gold_eval_matches_documented_metrics` assertion (verified via the gold/eval audit). Flagged
+here, not changed silently.
+
 ## Prompt — cover every field (next task)
 
 - [ ] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
@@ -60,7 +69,7 @@ extract the logic into proper Python modules.
 ## Post-extraction EDA — extract `README.qmd` chunks into `src/post_extraction_eda.py`
 
 The post-extraction EDA is a distinct **phase**: it runs *after* the inference loop and reads only
-the persisted artefacts in `data/out/` (the validated predictions, plus `_v6.ods` for the gold
+the persisted artefacts in `data/out/` (the validated predictions, plus `_v7.ods` for the gold
 eval) — no Gemini calls. Its logic currently lives inline in the `README.qmd` `{python}` cells, so
 it can't be reused anywhere else or unit-tested.
 
@@ -147,9 +156,10 @@ keep the batch going where sensible, but make every failure visible and countabl
 - [ ] **Referral-pathway canonical points + journey types.** Build a controlled vocabulary of
   canonical journey events (e.g. `symptom_onset`, `misdiagnosis`, `specialist_referral`,
   `biologic_taken`, `insurance_denial`, `loss_of_response`) and higher-level journey-type
-  categories to classify the circular/contradictory pathways. Cross-cutting pattern-finding
-  across journeys will need LLM assistance; then link journey types to the other column
-  values. This is its own work project — see the `referral_pathway` notes in `docs/SCHEMA.md`.
+  categories to classify the circular/contradictory pathways — **clustering each case by its
+  sequence of `PathwayStep` tokens** (those step components are the clustering features).
+  Cross-cutting pattern-finding across journeys will need LLM assistance; then link the resulting
+  journey types to the other column values. This is its own work project — see the `referral_pathway` notes in `docs/SCHEMA.md`.
   - **Big post-MVP task.** A *minimal* `referral_pathway` prompt is in the MVP; the **refinement** is the major next step *after* it.
     The `PathwayStep` enum in `src/schema.py` is a minimal draft only (enough to render the
     example diagrams); refining the step vocabulary, the consolidation rules, and journey-type
@@ -252,7 +262,7 @@ scaling EDA**.
   not nested); static `data/in/interviews.json` input → no sensor; the gate surfaced as asset checks.
   **Do this last**, once Dagster actually runs, so the diagram matches the built workflow — then
   **link it from `README.qmd`** (there is no link today). While here, fix the draft's stale bits:
-  title `Chronicity` → `Crohnicity`, `_v3.ods` → `_v6.ods`, and the `main.py`-as-orchestrator flow →
+  title `Chronicity` → `Crohnicity`, `_v3.ods` → `_v7.ods`, and the `main.py`-as-orchestrator flow →
   the Dagster asset graph. Render with `quarto render docs/SYSTEM_DESIGN.qmd`.
 
 ## Packaging — Docker
@@ -268,12 +278,13 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
 
 - [ ] **Centralise config in a `config.json`.** Every setting used by *any* script
   (`.py`/`.qmd`/`.sh`) reads from one file: model-name defaults, the gold dataset path + version
-  (`_v6.ods`), the source `data/in/interviews.json` path, the `data/out/` location, chunk size, etc.
+  (`_v7.ods`), the source `data/in/interviews.json` path, the `data/out/` location, chunk size, etc.
   No hard-coded paths/params scattered across `extract.py` / `main.py` / `post_extraction_eda.py` /
   `referral_pathway_analysis.py` / `README.qmd` — a single source of truth that all files load.
-- [ ] **Kill redundancy + fix drift.** Redundant code/docs and drifted definitions/docstrings —
-  e.g. the mkdocs nav says "Schema (v0.2)" while `SCHEMA.md` is v0.4; stale `_v3.ods`/`_v4.ods`
-  mentions; the `DESIGN.qmd` draft's `_v3.ods` + `main.py`-as-orchestrator flow; duplicated setup text.
+- [ ] **Kill redundancy + fix drift.** Version drift **resolved** — the schema version lives once in
+  `SCHEMA.md`, the mkdocs nav + README dropped the duplicate, and the app version is sourced from
+  `pyproject.toml` via `config.APP_VERSION`; `_v3`/`_v4` mentions bumped to `_v7`; `DESIGN.qmd` →
+  `SYSTEM_DESIGN.qmd`. Remaining: scan for any duplicated setup text / drifted docstrings before the final build.
 - [ ] **Every TODO item addressed** (this file) — each one done, or consciously moved to
   README → *Next Steps* as post-MVP.
 - [ ] **Every question answered** — cross-check `docs/TASK_INSTRUCTIONS.md` *and* `README.qmd`: all

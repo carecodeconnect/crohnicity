@@ -8,9 +8,9 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Stelara",
+  "biologic_type": "Humira, Remicade, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [],
   "comorbid_conditions": [
     "DEPRESSION",
     "SLEEP_APNEA"
@@ -20,32 +20,32 @@
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "developed lung problems",
-      "before_biologic": true
+      "reason_stopped": "lung problems",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "FAILED",
       "reason_stopped": "stopped working",
-      "before_biologic": false
+      "biologic_timing": "LATER"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "FAILED",
-      "reason_stopped": "developed antibodies within six months",
-      "before_biologic": false
+      "reason_stopped": "developed antibodies",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
@@ -54,13 +54,15 @@
     "surgery",
     "conventional_therapy",
     "adverse_reaction",
+    "biologic_recommended",
+    "insurance_step_therapy",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
+    "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
-    "planning_next_step"
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient has a history of surgical resection due to strictures. Experienced lung problems with methotrexate. Humira and Remicade lost effectiveness. Currently on Stelara, but considering combo therapy with methotrexate. Also dealing with short bowel syndrome and depression."
+  "evidence_notes": "Tom, 38, diagnosed with Crohn's 10 years ago, initially misdiagnosed as UC. Had surgery for strictures, losing 30cm of small intestine. Tried methotrexate (lung problems), Humira (worked for 3 years, then failed), Remicade (developed antibodies). Currently on Stelara for 2 years. Experiences fatigue, depression, sleep apnea, and short bowel syndrome requiring supplements and infusions. Considering combo therapy with methotrexate. High medical debt. Worried about long-term effects of medications and quality of life."
 }

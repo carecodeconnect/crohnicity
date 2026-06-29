@@ -17,6 +17,17 @@ jupyter: crohnicity
 
 ***Crohnicity*** = **Crohn's** + **chronicity** — the disease and its time dimension. Crohn's is a chronic, lifelong condition, and the Mama Health AI companion records each patient's treatment journey **longitudinally over time**, so the temporal axis is central to the data.
 
+```{python}
+# | echo: false
+# | output: asis
+import sys
+
+sys.path.insert(0, "src")
+from config import APP_VERSION  # version SSOT: pyproject.toml
+
+print(f"*Pipeline version `{APP_VERSION}` — single source of truth: `pyproject.toml`.*")
+```
+
 ## Pydantic Schema Design
 
 - Which fields should be **enums** vs. **free text** vs. **structured objects** (e.g., a list of treatment records with name, class, outcome, reason_stopped)?
@@ -26,8 +37,9 @@ jupyter: crohnicity
 
 **Answers.**
 
-- **Enums vs. free text vs. objects.** Closed vocabularies the analysis groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`, `ReasonNotTaken`, `ComorbidCondition`, `PathwayStep` — so `value_counts`/joins get stable categories and membership is checked at the model boundary (`enforce_validation`). Open, high-cardinality, not-yet-canonical fields stay **free text**: `biologic_type`, `TreatmentRecord.name`/`treatment_class` (a branded-drug + treatment-class registry is future work — `docs/TODO.md`). Repeated, multi-attribute things are **structured objects/lists**: `treatment_records` (a list of `TreatmentRecord`, each carrying `biologic_timing`, the field that answers Q3), `demographics`, and `referral_pathway` (`list[PathwayStep]`). The visible cost of the free-text choice shows up in the **Q3 table** — `conventional_therapy`/`conventional` and case variants are one class left un-normalised.
-- **Three states, not one null.** "Not mentioned" (absence), "explicitly denied" (negation) and "cut off" (truncation) are kept as *separate* signals rather than collapsed into a null: absence → `biologic_not_mentioned` + null/empty fields + `NOT_MENTIONED`; negation → the `biologic_prescribed` vs. `biologic_taken` pair + a specific `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…); truncation → `churn` + `JOURNEY_CUT_OFF`. A `NOT_APPLICABLE` member marks "genuinely doesn't apply" so it isn't confused with a blank "not yet annotated" cell. This is the split the churn table under Q4 operationalises.
+- **Enums vs. free text vs. objects.** Closed vocabularies the analysis groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`, `ReasonNotTaken`, `ComorbidCondition`, `PathwayStep` — so `value_counts`/joins get stable categories and membership is checked at the model boundary (`enforce_validation`) — **Gemini literally cannot return a value outside each enum, regardless of what the prompt lists** (the schema is sent as `response_schema` and the reply is validated, raising `JSONSchemaValidationError` on a mismatch). Open, high-cardinality, not-yet-canonical fields stay **free text**: `biologic_type`, `TreatmentRecord.name`/`treatment_class` (a branded-drug + treatment-class registry is future work — `docs/TODO.md`). Repeated, multi-attribute things are **structured objects/lists**: `treatment_records` (a list of `TreatmentRecord`, each carrying `biologic_timing`, the field that answers Q3), `demographics`, and `referral_pathway` (`list[PathwayStep]`). The visible cost of the free-text choice shows up in the **Q3 table** — `conventional_therapy`/`conventional` and case variants are one class left un-normalised.
+- **Three states, not one null.** "Not mentioned" (absence), "explicitly denied" (negation) and "cut off" (truncation) are kept as *separate* signals rather than collapsed into a null: absence → `biologic_not_mentioned` + null/empty fields + `NOT_MENTIONED`; negation → the `biologic_prescribed` vs. `biologic_taken` pair + one or more `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…; multi-select); truncation → `churn` (a cut-off journey is the same truncation signal `churn` already carries, so there is no separate `JOURNEY_CUT_OFF` reason — it was folded into `churn`, like `incomplete_journey` before it). Explicit non-reason values (`BIOLOGIC_TAKEN` when a biologic was taken, `NOT_APPLICABLE` when none was ever prescribed) keep `reasons_for_biologic_not_taken` **never empty**, so "doesn't apply" is never confused with a missing value or a blank "not yet annotated" cell. This is the split the churn table under Q4 operationalises.
+- **Reason enums — aligned to the spec, departing only where the evidence demanded.** The spec's Q2 reasons (*doctor choice / patient fears / cost / access*) shaped these enums, but reviewing all 50 transcripts drove two deliberate calls (evidenced in [`docs/SCHEMA.md`](docs/SCHEMA.md) v0.7): **(1)** we keep `INSURANCE_PROBLEMS` rather than the spec's bare *"access"* — every real barrier in the data is payer-gating (step-therapy / prior-auth / tier), not drug *availability*, and `ACCESS` had **zero** transcript support (covered by `COST` + `INSURANCE_PROBLEMS`); **(2)** `reasons_for_biologic_not_taken` is **multi-select** (a list), because patients routinely have several reasons at once (e.g. cost + fear). Relatedly, `ReasonPrescribed` was trimmed to the initiation signal (`DOCTOR_CHOICE` / `PATIENT_REQUEST`), since cost / fears / access are reasons a biologic is *not taken*, not reasons it was prescribed.
 - **Evidence / auditability.** The model **does populate `evidence_notes`** — a free-text rationale per patient (all 50 predictions carry one, e.g. *"cycled through Remicade, Humira due to loss of response; currently on Stelara; injection anxiety"*). What's **deferred is the manual side**: the gold annotation keeps `evidence_notes` as an unfilled column (`docs/SCHEMA.md`), and structured **per-field** evidence — a snippet/turn-ref *per field* rather than one blob — is stretch task 2 (it costs tokens + prompt complexity). The broader audit trail is the **logged raw model output** (`logs/extract.log` keeps the system prompt, schema, input and pre-validation response per call) plus the **gold-set comparison** (`docs/TO_REVIEW.md`).
 - **Socio-demographics.** Deliberately minimal — `Demographics{gender, age}`, self-reported, grouped so a later "do pathways/outcomes differ by demographic" cut is possible; everything else is noise for these four questions.
 
@@ -42,7 +54,7 @@ jupyter: crohnicity
 **Answers.**
 
 - **Single-shot, batched — not multi-stage.** One system prompt extracts *all* `PatientLabels` fields in a single structured call per patient; transcripts are then **batched** (10 per request) only to fit Gemini's free-tier ~20-requests/day cap — batching ≠ staging, it's still one pass over every field, just several patients per call. Single-shot minimises calls (decisive under the rate cap), keeps the code simple, and lets the model set inter-dependent fields (`biologic_prescribed`/`biologic_taken`, `churn`, `referral_pathway`) with the whole story in view. The cost: every field competes for attention in one prompt, so the hard fields suffer — the EDA shows `churn` unreliable and the GP node under-emitted. A multi-stage split (per-section prompts run concurrently, with inspectable intermediates) is the #1 item in *Next Steps* below; it trades more calls + orchestration for better per-field accuracy.
-- **Uncertainty: absence vs. negation vs. truncation.** The prompt separates them by construction, onto the three schema mechanisms above. A global rule — *"Leave a field null or empty when the transcript does not support a confident value"* — covers **absence**. **Negation** rides on the prescribed-vs-taken booleans + the `ReasonNotTaken` enum. **Truncation** gets the most explicit instruction: judge `churn` from how the transcript *ends*, treat a trailing "…" as a cut-off *only* if "…" isn't a recurring stylistic device, prefer `false` when ambiguous, and — critically — *"keep this truncation signal distinct from a topic simply being absent … (that is 'not mentioned', not churn)."* Honest limit: truncation is a lexical/structural property of the transcript's end that the narrative under-determines, so the instruction alone isn't enough — the gold audit found it unreliable in both directions (over-flagging and missed truncation), and a deterministic tail-of-text rule would do better (`docs/TO_REVIEW.md`).
+- **Uncertainty: absence vs. negation vs. truncation.** The prompt separates them by construction, onto the three schema mechanisms above. A global rule — *"Leave a field null or empty when the transcript does not support a confident value"* — covers **absence**. **Negation** rides on the prescribed-vs-taken booleans + the `ReasonNotTaken` enum. **Truncation** gets the most explicit instruction: judge `churn` from how the transcript *ends* — churn **only** when it breaks off mid-word / mid-thought (e.g. ends on "Chronic…"), while a deliberately-typed "…" on a coherent phrase is an intentional sign-off, **not** churn (no recurrence heuristic) — and — critically — *"keep this truncation signal distinct from a topic simply being absent … (that is 'not mentioned', not churn)."* Honest limit: truncation is a lexical/structural property of the transcript's end that the narrative under-determines, so the instruction alone isn't enough — the gold audit found it unreliable in both directions (over-flagging and missed truncation), and a deterministic tail-of-text rule would do better (`docs/TO_REVIEW.md`).
 - **Determinism & reproducibility.** Three levers, in decreasing order of leverage. **(1) Structured-output mode** — `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`: a Pydantic-derived schema constrains the *shape* and enum membership, and LiteLLM validates the reply (raising `JSONSchemaValidationError` on a mismatch), so format/parse variance is removed and downstream pandas never meets an off-vocabulary value. **(2) Persisted predictions** — each chunk writes one validated JSON per patient to `data/out/`, and the whole analysis (this README) reads *only* those frozen artefacts with no API call, so every number and plot is **exactly reproducible run-to-run** regardless of LLM nondeterminism; this is the real guarantee. **(3) Decoding params** — `temperature` is **pinned to `0`** (greedy) in `config.json` and imported by `extract.py` — extraction here is a **classification** task, so we want *same transcript → same labels*, not sampled variety. This build is the live test case for *why*: a fresh re-run at the provider default (Gemini's default `temperature` is `1.0`) shifted long-tail outputs (the GP-node count; which biologics got mislabelled on `biologic_timing`) while the headline answers held — exactly the run-to-run drift `0` removes. Temperature is **logged per run** (with the model) so runs at different parameter levels stay comparable. A seed would add belt-and-braces, but with a reasoning-capable model `0` *minimises* rather than *guarantees* bit-identical output; **(2)** is the hard reproducibility guarantee for the analysis. No explicit prompt **caching** yet — the static system prompt + schema are identical across calls, so implicit context caching may apply, and cached-token counts are logged (`docs/TELEMETRY.md`).
 
 ## Evaluation
@@ -187,15 +199,15 @@ q2 = eda.q2_reasons(df)
 # order the bars by count (largest at top after coord_flip)
 q2["reason"] = pd.Categorical(q2["reason"], categories=list(q2["reason"])[::-1], ordered=True)
 (
-    ggplot(q2, aes("reason", "patients"))
+    ggplot(q2, aes("reason", "mentions"))
     + geom_col()
     + coord_flip()
     + theme_grey()
     + labs(
-        title="Q2 — reasons not on a biologic",
+        title="Q2 — reasons not on a biologic (a patient may have several)",
         x="",
-        y="patients",
-        caption="'unspecified' = biologic prescribed but not taken, no reason extracted (a null); see README null handling",
+        y="reason-mentions",
+        caption="reasons_for_biologic_not_taken is multi-select, so mentions can exceed patients; 'unspecified' = none extracted",
     )
 ).save(PLOTS / "q2_reasons.png", width=7, height=3.5, dpi=150, verbose=False)
 print(md_table(q2))
@@ -206,7 +218,7 @@ print(md_table(q2))
 print(md_img("data/out/plots/q2_reasons.png", "Q2 reasons not on a biologic"))
 ```
 
-> **`unspecified` (Q2) — null handling.** An `unspecified` row is a biologic **prescribed but not taken** where the model extracted **no `ReasonNotTaken`** — a genuine null, not a stated reason. It's relabelled from `(null)` for readability and kept **visible as its own category** rather than dropped — consistent with the schema's stance on nulls (*Pydantic Schema Design → "Three states, not one null"*): absence, negation and truncation are distinct first-class states, and `UNKNOWN` / `NOT_APPLICABLE` exist so a missing value is never silently conflated with a real one. The fix (prompt the model to always set a reason, default `UNKNOWN`) is tracked in `docs/TODO.md`.
+> **`unspecified` (Q2) — null handling.** An `unspecified` row is a biologic **prescribed but not taken** with an **empty `reasons_for_biologic_not_taken`** list (`[]`) — no reason extracted, not a stated one. It's kept **visible as its own category** rather than dropped — consistent with the schema's stance on nulls (*Pydantic Schema Design → "Three states, not one null"*): absence, negation and truncation are distinct first-class states, and `UNKNOWN` / `NOT_APPLICABLE` exist so a missing value is never silently conflated with a real one. `system.txt` now requires a **never-empty** list (`[UNKNOWN]` for prescribed-but-not-taken with no stated reason, `[BIOLOGIC_TAKEN]` when a biologic was taken), so `unspecified` should disappear on the next extraction run.
 
 #### Q3 — treatments tried before a biologic
 
@@ -375,9 +387,11 @@ The brief offers five optional stretches but asks for *a tight core over a bloat
 With more time, after the core is complete:
 
 - **Split the single system prompt into multiple focused prompts run concurrently.** This version
-  deliberately uses one prompt; a later iteration would break extraction into per-section prompts
-  (e.g. biologic funnel, treatment history, referral pathway) run in parallel — better per-field
-  accuracy and inspectable intermediate artifacts, at the cost of more calls and orchestration.
+  deliberately uses one prompt; a later iteration would split it **by task** into focused prompts
+  run in parallel — **(1)** biologic funnel (prescribed/taken/type/reasons), **(2)** treatment
+  history (records + `biologic_timing` + outcome), **(3)** referral pathway, **(4)** context
+  (churn, demographics, comorbidities) — then merge into one `PatientLabels`. Better per-field
+  accuracy and inspectable intermediates, at the cost of more calls and orchestration.
 
 - **A telemetry feature for optimisation.** Per-call usage is currently logged (tokens, cost,
   cached tokens — see [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I'd surface it as a
@@ -473,7 +487,7 @@ With more time, after the core is complete:
 **Dagster, driven by the `dg` CLI, is the main entry point.** It orchestrates the whole pipeline end-to-end — extract → EDA / README render → referral graphs → docsite — and shows which stage failed in the UI. Launch a run two ways — the UI's *Materialize all*, or headless from a second terminal:
 
 ```bash
-uv run dg dev -m pipeline -d src   # UI at http://127.0.0.1:3000 → "Materialize all"
+uv run dg dev -m pipeline -d src -p 3050   # UI at http://127.0.0.1:3050 → "Materialize all" (port: config.json → dagster_port)
 
 # ...or headless from another terminal (no UI):
 uv run dg launch --assets "*" -m pipeline -d src
@@ -558,7 +572,7 @@ RUN_RENDER_TEST=1 uv run pytest tests/test_render.py   # gated end-to-end render
 Preview the mkdocstrings API site locally — it regenerates from the docstrings on every build:
 
 ```bash
-uv run mkdocs serve   # live preview at http://127.0.0.1:8000
+uv run mkdocs serve -a localhost:8000   # live preview at http://localhost:8000 (port: config.json → docsite_port)
 uv run mkdocs build   # render the static site to site/ (gitignored)
 ```
 
@@ -587,7 +601,7 @@ Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in [`docs/`](
 *Design & decisions*
 
 - [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) — architecture diagram: the Dagster asset graph + the library-first CLI/gate relation.
-- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema (v0.4) and the Pydantic-model rationale.
+- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema and the Pydantic-model rationale.
 - [QUESTIONS.md](docs/QUESTIONS.md) — outstanding questions for the CAIO (assumptions needing a domain decision).
 - [HYPOTHESES.md](docs/HYPOTHESES.md) — early hypotheses about the data and the disease journey.
 
@@ -609,7 +623,7 @@ Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in [`docs/`](
 `docs/` plus an auto-generated `src/` API reference render as a small site via [MkDocs](https://www.mkdocs.org/) + mkdocstrings:
 
 ```bash
-uv run mkdocs serve     # live preview at http://127.0.0.1:8000 (hot-reloads on edit)
+uv run mkdocs serve -a localhost:8000     # live preview at http://localhost:8000 (hot-reloads; port: config.json → docsite_port)
 uv run mkdocs build     # render the static site to site/ (git-ignored)
 ```
 

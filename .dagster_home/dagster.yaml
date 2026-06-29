@@ -2,6 +2,9 @@
 # https://docs.dagster.io/deployment/oss/dagster-yaml, NOT the repo root). The sqlite run-storage
 # stays in this git-ignored instance home; this config routes Dagster's run/asset logs to a flat,
 # human-readable logs/dagster.log alongside the .py-script loguru logs (the committed audit record).
+# Telemetry OFF: Dagster's default is to send anonymized usage events to Dagster Labs. We opt out —
+# this pipeline handles patient narratives (synthetic now, real in production), so it shouldn't phone
+# home, and disabling it keeps runs self-contained / offline.
 telemetry:
   enabled: false
 # Run logs go to logs/dagster.log via a loguru sink in src/pipeline.py (our app uses loguru, not the

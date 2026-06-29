@@ -9,9 +9,9 @@
 Static **Mermaid** renderings of every patient’s `referral_pathway` —
 viewable on GitHub without cloning. For the **interactive** versions
 (hover / drag / zoom), open
-[`../data/out/html/index.html`](../data/out/html/index.html) from a
+`data/out/html/index.html` from a
 local checkout (they render live in a browser; GitHub shows them as
-source). Back to the [README](../README.md).
+source). Back to the [README](https://github.com/carecodeconnect/crohnicity/blob/main/README.md).
 
 A revisited phase is one node the journey loops back to; an edge’s `xN`
 label is its traversal count. *Cyclic* journeys (a phase recurs) are

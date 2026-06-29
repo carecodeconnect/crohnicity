@@ -1,7 +1,7 @@
 """Pydantic schema for one patient's labels.
 
 The same shape serves both provenances: the human-annotated *gold* set in
-`data/in/interviews_ground_truth_v6.ods`, and a model *prediction* returned by `src/extract.py`
+`data/in/interviews_ground_truth_v7.ods`, and a model *prediction* returned by `src/extract.py`
 (an inference, not ground truth). Mirrors the columns and controlled vocabularies in
 `docs/SCHEMA.md`; field names match the spreadsheet columns 1:1.
 
@@ -36,12 +36,14 @@ class TreatmentOutcome(str, Enum):
 
 
 class ReasonPrescribed(str, Enum):
-    """Why a biologic *was* the chosen path."""
+    """Who/what drove choosing the biologic path — the initiation signal. Trimmed to what the
+    transcripts support: almost always DOCTOR_CHOICE, rarely PATIENT_REQUEST. Cost / access /
+    patient-fears are reasons a biologic is NOT taken (see ReasonNotTaken), not reasons it was
+    prescribed; ACCESS in particular had zero transcript support (covered by COST +
+    INSURANCE_PROBLEMS), so they were removed."""
 
-    DOCTOR_CHOICE = "DOCTOR_CHOICE"
-    PATIENT_FEARS = "PATIENT_FEARS"
-    COST = "COST"
-    ACCESS = "ACCESS"
+    DOCTOR_CHOICE = "DOCTOR_CHOICE"  # doctor recommended / chose it (the dominant case)
+    PATIENT_REQUEST = "PATIENT_REQUEST"  # patient asked for / advocated for it (rare)
     NOT_APPLICABLE = "NOT_APPLICABLE"  # no biologic prescribed -> field doesn't apply
     OTHER = "OTHER"
 
@@ -51,8 +53,12 @@ class ReasonNotTaken(str, Enum):
 
     `PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);
     `CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).
-    `NOT_APPLICABLE` distinguishes "doesn't apply" (biologic was taken) from a blank "not yet
-    annotated" cell.
+
+    The list is **never empty** — an empty list is indistinguishable from a missing value, losing
+    the "we don't know" vs "doesn't apply" distinction. Use exactly `[BIOLOGIC_TAKEN]` when a
+    biologic was taken, `[NOT_MENTIONED]` when biologics never come up, `[NOT_APPLICABLE]` when none
+    was ever prescribed/offered, and `[UNKNOWN]` when one was prescribed but not taken with no
+    reason stated.
     """
 
     NOT_MENTIONED = "NOT_MENTIONED"
@@ -62,9 +68,9 @@ class ReasonNotTaken(str, Enum):
     PATIENT_FEARS = "PATIENT_FEARS"  # fear of needles / side-effects
     CONTRAINDICATION = "CONTRAINDICATION"  # medically can't be given (e.g. COPD)
     DEFERRED = "DEFERRED"  # appropriate but postponed (e.g. awaiting surgery recovery)
-    JOURNEY_CUT_OFF = "JOURNEY_CUT_OFF"  # transcript ends before the journey resolves
-    UNKNOWN = "UNKNOWN"
-    NOT_APPLICABLE = "NOT_APPLICABLE"  # biologic was taken -> field doesn't apply
+    UNKNOWN = "UNKNOWN"  # prescribed/recommended but not taken, no reason stated
+    BIOLOGIC_TAKEN = "BIOLOGIC_TAKEN"  # a biologic was taken -> no "not taken" reason
+    NOT_APPLICABLE = "NOT_APPLICABLE"  # no biologic was ever prescribed or offered
     OTHER = "OTHER"
 
 
@@ -135,6 +141,7 @@ class PathwayStep(str, Enum):
     LOSS_OF_RESPONSE = "loss_of_response"
     # outcome / status
     REMISSION = "remission"
+    # symptoms recur while still on a working treatment (e.g. end-of-dose), short of loss_of_response
     BREAKTHROUGH_SYMPTOMS = "breakthrough_symptoms"
     ALTERNATIVE_THERAPY = "alternative_therapy"
     PLANNING_NEXT_STEP = "planning_next_step"
@@ -183,7 +190,7 @@ class PatientLabels(BaseModel):
 
     When produced by `extract.py` these are the model's **predictions** (inference, not ground
     truth); evaluation compares them field-by-field against the gold values in
-    `data/in/interviews_ground_truth_v6.ods` for the 21-of-50 cases a human annotator has
+    `data/in/interviews_ground_truth_v7.ods` for the 21-of-50 cases a human annotator has
     reviewed (`to_review == 1`).
 
     Field names match the v5 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are
@@ -207,7 +214,8 @@ class PatientLabels(BaseModel):
     biologic_type: str | None = None
 
     reasons_for_biologic_prescribed: ReasonPrescribed | None = None
-    reasons_for_biologic_not_taken: ReasonNotTaken | None = None
+    # a patient can have several reasons (e.g. cost + fear) — list them, primary first
+    reasons_for_biologic_not_taken: list[ReasonNotTaken] = []
 
     comorbid_conditions: list[ComorbidCondition] = []
     treatment_records: list[TreatmentRecord] = []
@@ -218,7 +226,8 @@ class PatientLabels(BaseModel):
     # clustering into journey TYPES comes later (docs/SCHEMA.md).
     referral_pathway: list[PathwayStep] = []
 
-    evidence_notes: str | None = None  # deferred — citing per-field sources is costly
+    # free-text rationale per patient — the model populates it; per-field evidence is deferred
+    evidence_notes: str | None = None
 
 
 class BatchPredictions(BaseModel):

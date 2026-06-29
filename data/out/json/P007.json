@@ -10,7 +10,7 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [],
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "FIBROMYALGIA"
@@ -19,41 +19,40 @@
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "mood swings, insomnia, not sustainable",
-      "before_biologic": true
+      "outcome": "FAILED",
+      "reason_stopped": "severe side effects",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "not holding things",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Entyvio",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
-    "specialist_referral",
-    "diagnostic_testing",
-    "crohns_diagnosis",
+    "comorbidity",
     "conventional_therapy",
     "adverse_reaction",
+    "therapy_failed",
     "biologic_recommended",
-    "insurance_step_therapy",
+    "insurance_approval",
     "biologic_taken",
     "breakthrough_symptoms",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient is on Entyvio and stable-ish, but still experiences breakthrough symptoms. Considering adding an immunomodulator. Also dealing with divorce, financial strain, and osteoporosis."
+  "evidence_notes": "Jennifer, 45, diagnosed with Crohn's 3 years ago after decades of misdiagnosis. Also hypothyroid and fibromyalgia. Started prednisone and azathioprine, but prednisone had severe side effects. Azathioprine alone was insufficient. Entyvio recommended due to age and disease extent, covered by insurance. Stable-ish for 18 months with breakthrough symptoms during stress. Going through divorce, financial strain. Managing work, kids, and illness. Developing osteoporosis. Juggling multiple specialists. Concerned about long-term prognosis and medication effectiveness. Considering adding an immunomodulator."
 }

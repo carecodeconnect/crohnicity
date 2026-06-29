@@ -1,7 +1,7 @@
 [project]
 name = "crohnicity"
 version = "0.1.0"
-description = "Add your description here"
+description = "LLM extraction pipeline turning Crohn's patient interview transcripts into structured, evaluated records (Mama Health take-home)."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

@@ -77,14 +77,17 @@ def gold_eval(
 
 
 def q2_reasons(df: pd.DataFrame) -> pd.DataFrame:
-    """Q2 — reasons not on a biologic, counted over patients not on one."""
-    not_on = df[~df["biologic_taken"]]
+    """Q2 — reasons not on a biologic. ``reasons_for_biologic_not_taken`` is a LIST (a patient can
+    have several), so this counts reason-*mentions*, not patients — the total can exceed the
+    not-on-biologic count; an empty/absent list counts as ``unspecified``."""
+    mentions: list[str] = []
+    for lst in df.loc[~df["biologic_taken"], "reasons_for_biologic_not_taken"]:
+        mentions.extend(lst if isinstance(lst, list) and lst else ["unspecified"])
     return (
-        not_on["reasons_for_biologic_not_taken"]
-        .fillna("unspecified")
+        pd.Series(mentions)
         .value_counts()
         .rename_axis("reason")
-        .reset_index(name="patients")
+        .reset_index(name="mentions")
     )
 
 

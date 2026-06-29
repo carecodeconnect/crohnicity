@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "reasons_for_biologic_not_taken": [
+    "PATIENT_FEARS"
+  ],
   "comorbid_conditions": [
     "ASTHMA",
     "RHEUMATOID_ARTHRITIS"
@@ -18,59 +20,58 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "minimal improvement",
-      "before_biologic": true
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "mood swings were horrible, not sustainable",
-      "before_biologic": true
+      "reason_stopped": "mood swings",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
       "reason_stopped": "liver enzymes spiked",
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Entyvio",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
-      "reason_stopped": "losing effectiveness",
-      "before_biologic": false
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
-      "outcome": "PARTIAL",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
+    "misdiagnosis",
     "diagnostic_delay",
-    "complication",
-    "specialist_referral",
-    "diagnostic_testing",
-    "crohns_diagnosis",
+    "symptoms_worsen",
+    "acute_flare",
     "conventional_therapy",
+    "therapy_failed",
     "adverse_reaction",
-    "alternative_therapy",
     "biologic_recommended",
     "patient_fear",
+    "alternative_therapy",
     "biologic_taken",
+    "loss_of_response",
     "comorbidity",
     "alternative_therapy",
-    "loss_of_response",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient has needle phobia and initially resisted biologics, opting for dietary changes and acupuncture. Developed RA while on Entyvio, now taking methotrexate for RA which may also help Crohn's. Entyvio is losing effectiveness."
+  "evidence_notes": "Rachel, 36, diagnosed with Crohn's at 33. Also has asthma and rheumatoid arthritis. Symptoms started in twenties but dismissed as stress. Hospitalization led to diagnosis. Tried mesalamine (minimal improvement), prednisone (mood swings), and azathioprine (liver enzymes spiked). Resisted biologics due to needle phobia. Tried dietary modifications, supplements, and acupuncture with marginal improvement. Hospitalization convinced her to try Entyvio infusions, which worked for a year. Now experiencing joint pain, diagnosed with RA. Juggling methotrexate for RA, which may help Crohn's. Side effects include hair thinning, mouth sores, nausea. Career impacted by sick days. Considering career change. Insurance through spouse. Fertility concerns due to medications. Parents don't understand. Fatigue is a major issue. Entyvio losing effectiveness, considering Stelara."
 }

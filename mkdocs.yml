@@ -5,11 +5,19 @@ docs_dir: docs
 # gallery's Mermaid diagrams in the docsite. Swap in mkdocs-material later if wanted.
 nav:
   - Home: index.md
-  - Schema (v0.4): SCHEMA.md
-  - Implementation TODO: TODO.md
-  - Questions (CAIO): QUESTIONS.md
-  - Dev Setup: DEV_SETUP.md
+  - Schema: SCHEMA.md
+  - System design: SYSTEM_DESIGN.md
   - Referral pathways: referral_pathways.md
+  - Dev Setup: DEV_SETUP.md
+  - Implementation TODO: TODO.md
+  - Notes:
+      - Questions (CAIO): QUESTIONS.md
+      - Task instructions: TASK_INSTRUCTIONS.md
+      - Hypotheses: HYPOTHESES.md
+      - Resources: RESOURCES.md
+      - Telemetry: TELEMETRY.md
+      - Error handling: DEBUGGING_ERROR_HANDLING.md
+      - Gold review: TO_REVIEW.md
   - API reference:
       - Source (src/): api/src.md
       - Tests (tests/): api/tests.md

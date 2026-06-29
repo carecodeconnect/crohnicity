@@ -10,51 +10,52 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [],
   "comorbid_conditions": [
-    "TYPE_2_DIABETES"
+    "TYPE_2_DIABETES",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": "sent blood sugars through roof",
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "wasn't really helping",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
       "reason_stopped": "Crohn's flared",
-      "before_biologic": false
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
+    "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
@@ -64,9 +65,10 @@
     "therapy_failed",
     "comorbidity",
     "biologic_recommended",
-    "insurance_step_therapy",
+    "insurance_denial",
+    "insurance_appeal",
     "biologic_taken",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient is on Humira, but experiencing side effects like frequent infections (shingles). Worried about job security and financial strain. Considering Stelara as next option if Humira fails."
+  "evidence_notes": "Mark, 48, diagnosed with Crohn's 5 years ago. Also type 2 diabetic and has Crohn's-related arthritis. Symptoms of diarrhea for 3 months led to diagnosis. Started prednisone, azathioprine, and mesalamine. Prednisone worsened diabetes, requiring insulin. Azathioprine and mesalamine maintained remission for a year. Developed severe joint pain (enteropathic arthritis). Switched to methotrexate for both conditions, but Crohn's flared. Approved for Humira after insurance appeals, with $400 monthly co-pay offset by manufacturer assistance. On Humira for 2 years, manageable but not great. Experiences frequent infections (shingles). Fatigue and joint pain limit work and exercise. Financial stress from medical bills, mortgage, and kids' college. Diet is restricted due to diabetes and Crohn's. Considering Stelara if Humira fails."
 }

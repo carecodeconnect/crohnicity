@@ -5,8 +5,9 @@ Prerequisite — copy the prior version first so _v6 starts as an exact clone of
 This script then READS and WRITES _v6.ods, leaving _v5.ods untouched as the prior version. (As
 with every prior version, the frozen header is re-applied by hand: View > Freeze Rows.)
 
-Single change (all other annotations preserved): complete the previously-empty
-annotation columns for **P047** so it becomes a fully-reviewed gold case. P047 is the edge case
+Two changes (all other annotations preserved): (1) complete the previously-empty annotation
+columns for **P047** so it becomes a fully-reviewed gold case; (2) normalise hand-typed off-vocab
+reason values to the schema's controlled vocabulary (REASON_NORMALISE). P047 is the edge case
 where the model over-detected `biologic_prescribed=True` on a transcript that mentions no biologic
 at all (Donna — prednisone/mesalamine/methotrexate only); the human review set `to_review=1`,
 `biologic_not_mentioned=1`, `biologic_prescribed=0`, and `churn=0` (the transcript ends on a
@@ -69,6 +70,22 @@ P047_FILL = {
 
 df = pd.read_excel(src_ods, engine="odf")
 df = df[V6_ORDER]
+
+# Normalise hand-typed off-vocab reason values to the schema's controlled vocabulary
+# (the gold used shorthand like "NOT PRESCRIBED"; the enums use NOT_APPLICABLE / NOT_MENTIONED).
+REASON_NORMALISE = {
+    "reasons_for_biologic_prescribed": {
+        "NOT PRESCRIBED": "NOT_APPLICABLE",
+        "NOT MENTIONED": "NOT_APPLICABLE",
+    },
+    "reasons_for_biologic_not_taken": {
+        "NOT PRESCRIBED": "NOT_APPLICABLE",
+        "NOT MENTIONED": "NOT_MENTIONED",
+        "BIOLOGIC WAS TAKEN": "NOT_APPLICABLE",
+    },
+}
+for _col, _map in REASON_NORMALISE.items():
+    df[_col] = df[_col].replace(_map)
 
 mask = df["patient_id"] == "P047"
 assert mask.sum() == 1, "expected exactly one P047 row"

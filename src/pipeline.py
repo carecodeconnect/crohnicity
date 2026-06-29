@@ -1,7 +1,7 @@
 """Dagster orchestration — the day-of entry point that runs the whole pipeline end-to-end and
 shows which stage failed in the UI.
 
-    uv run dg dev -m pipeline -d src     # UI at http://127.0.0.1:3000, then "Materialize all"
+    uv run dg dev -m pipeline -d src -p 3050     # UI at http://127.0.0.1:3050 (port: config.json -> dagster_port)
 
 Data flow: ``interviews -> predictions -> {readme, referral_graphs}``; ``docsite`` is independent
 (it documents the *source* docstrings, not the data). Extraction is **chunked** (``CHUNK_SIZE``

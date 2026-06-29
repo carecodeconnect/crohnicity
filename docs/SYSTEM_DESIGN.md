@@ -10,7 +10,7 @@ relation**, which is the one thing worth a diagram. Dagster is the
 **same `src/` functions standalone** (*library-first* — none is nested
 under another). The input is static, so there is **no sensor**.
 
-*Part of [Crohnicity](../README.md) — the root README carries the
+*Part of [Crohnicity](https://github.com/carecodeconnect/crohnicity/blob/main/README.md) — the root README carries the
 business answers, evaluation and Next Steps.*
 
 ## Architecture
@@ -21,7 +21,7 @@ flowchart TB
     cfg["config.json → src/config.py<br/>model · temperature=0 · paths · chunk size"]
 
     subgraph entry["Entry points — all call the same src/ functions (library-first, not nested)"]
-        dgr["Dagster · uv run dg dev -m pipeline -d src<br/>day-of orchestrator; per-asset status in the UI"]
+        dgr["Dagster · uv run dg dev -m pipeline -d src -p 3050<br/>day-of orchestrator; per-asset status in the UI"]
         cli["CLI · uv run python src/main.py<br/>extraction, standalone"]
         gate["Gate · bash tests/type_lint_unit_tests.sh<br/>ruff · ruff format · ty · pytest"]
     end
@@ -74,4 +74,4 @@ on-demand. A sensor only earns its place once the input becomes
 structured-output validation; each run logs to `logs/` — `extract.log`,
 `referral_pathway.log`, and the combined `dagster.log` (written by a
 loguru sink in `pipeline.py`). Predictions are scored against the gold
-`_v6.ods` on the `to_review` reviewed set (README → *Evaluation*).
+`_v7.ods` on the `to_review` reviewed set (README → *Evaluation*).

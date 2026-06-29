@@ -34,8 +34,9 @@ def test_gold_eval_matches_documented_metrics() -> None:
 
 def test_q2_reasons_counts_patients_not_on_biologic() -> None:
     q2 = eda.q2_reasons(DF)
-    assert list(q2.columns) == ["reason", "patients"]
-    assert int(q2["patients"].sum()) == int((~DF["biologic_taken"]).sum())
+    assert list(q2.columns) == ["reason", "mentions"]
+    # reasons are multi-select now, so mentions >= one per not-on-biologic patient
+    assert int(q2["mentions"].sum()) >= int((~DF["biologic_taken"]).sum())
 
 
 def test_q3_before_biologic_nonempty() -> None:

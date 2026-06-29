@@ -8,9 +8,9 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [],
   "comorbid_conditions": [
     "ENDOMETRIOSIS",
     "MIGRAINE"
@@ -18,55 +18,53 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "symptoms returned within months",
-      "before_biologic": true
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "symptoms returned within months",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "developed pancreatitis",
-      "before_biologic": true
+      "reason_stopped": "pancreatitis",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
-      "reason_stopped": "infusion center was an hour away, difficult to take time off work",
-      "before_biologic": false
+      "outcome": "ONGOING",
+      "reason_stopped": "infusion center inconvenient",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
-    "specialist_referral",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
     "biologic_recommended",
-    "insurance_step_therapy",
     "biologic_taken",
-    "breakthrough_symptoms"
+    "biologic_switch",
+    "biologic_taken"
   ],
-  "evidence_notes": "Patient experiences injection anxiety and has had issues with insurance prior authorization for Humira. Developed a rash possibly related to Humira. Endometriosis and Crohn's symptoms seem to interact."
+  "evidence_notes": "Lisa, 31, diagnosed with Crohn's 5 years ago. Also has endometriosis and migraines. Symptoms initially dismissed. Started mesalamine and brief prednisone, then azathioprine which caused pancreatitis. Moved to biologics: Remicade (inconvenient infusions), then Humira (home injections). Stable on Humira for 2 years, but experiences mini-flares, injection anxiety, and possible Humira-induced psoriasis. Frequent upper respiratory infections. Insurance requires annual prior authorization for Humira. Managing both endometriosis and Crohn's is exhausting. Diet is restricted. Fatigue impacts work and social life. Concerned about fertility and pregnancy."
 }

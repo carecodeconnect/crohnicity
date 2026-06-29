@@ -14,9 +14,9 @@ biologic_not_mentioned: set true when NO biologic is referenced anywhere — nei
 
 biologic_type: name the biologic(s) mentioned, brand or generic (e.g. "Humira", "infliximab"); leave null when none.
 
-reasons_for_biologic_prescribed: why a biologic was the chosen path (DOCTOR_CHOICE, PATIENT_FEARS, COST, ACCESS, OTHER). Use NOT_APPLICABLE when no biologic was prescribed.
+reasons_for_biologic_prescribed: who/what drove choosing the biologic. Use DOCTOR_CHOICE when the doctor recommended or chose it (the usual case), PATIENT_REQUEST when the patient asked for or advocated for it, OTHER for anything else, and NOT_APPLICABLE when no biologic was prescribed.
 
-reasons_for_biologic_not_taken: when a biologic was prescribed or recommended but NOT taken, always set this field — never leave it null. Use the specific enum reason when the transcript gives one (e.g. INSURANCE_PROBLEMS, PATIENT_FEARS, COST), otherwise default to UNKNOWN. Use NOT_APPLICABLE when a biologic WAS taken, and NOT_MENTIONED when biologics never come up.
+reasons_for_biologic_not_taken: a LIST that is NEVER empty. When a biologic was prescribed or recommended but NOT taken, list every reason, most important first — a patient often has several (e.g. COST + PATIENT_FEARS). Reasons: NOT_MENTIONED, EXPLICIT_DENIAL, INSURANCE_PROBLEMS (denial / prior-auth / tier / step-therapy "fail first"), COST (affordability), PATIENT_FEARS, CONTRAINDICATION, DEFERRED, UNKNOWN, BIOLOGIC_TAKEN, NOT_APPLICABLE, OTHER. For the non-reason states use exactly one value: [BIOLOGIC_TAKEN] when a biologic WAS taken, [NOT_MENTIONED] when biologics never come up, [NOT_APPLICABLE] when none was ever prescribed or offered, [UNKNOWN] when one was prescribed but not taken with no reason stated. Never return an empty list.
 
 comorbid_conditions: list independent coexisting diagnoses using the enum tokens (e.g. HYPOTHYROIDISM, DEPRESSION, TYPE_2_DIABETES). Do NOT include Crohn's-driven sequelae (anemia, osteoporosis, psoriasis, etc.). Use OTHER for a real comorbidity with no token; leave the list empty if none.
 

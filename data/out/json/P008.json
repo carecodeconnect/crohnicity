@@ -8,9 +8,9 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [],
   "comorbid_conditions": [
     "ADHD",
     "ANXIETY_DISORDER"
@@ -20,51 +20,52 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "made ADHD medication less effective, couldn't focus on finals",
-      "before_biologic": true
+      "reason_stopped": "made ADHD medication less effective",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "wasn't enough",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "nauseous from injections, then pills not enough",
-      "before_biologic": true
+      "reason_stopped": "nauseous from injections",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "6-MP",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "developed pancreatitis",
-      "before_biologic": true
+      "reason_stopped": "pancreatitis",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "FAILED",
       "reason_stopped": "lost effectiveness",
-      "before_biologic": false
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
-      "reason_stopped": "starting to notice decreased effectiveness",
-      "before_biologic": false
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
+    "diagnostic_delay",
+    "acute_flare",
     "complication",
-    "surgery",
     "conventional_therapy",
     "adverse_reaction",
     "therapy_failed",
@@ -77,5 +78,5 @@
     "loss_of_response",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient has switched biologics due to loss of effectiveness and is concerned about starting new ones. Currently on Humira, but noticing decreased effectiveness. Also dealing with kidney stones, possibly medication-related."
+  "evidence_notes": "David, 29, diagnosed with Crohn's at 21. Also has ADHD and anxiety. Experienced fatigue and pain in college, leading to ER visit and diagnosis. Tried prednisone (affected ADHD meds), mesalamine, methotrexate (weekly injections caused nausea), and 6-MP (pancreatitis). Started Remicade, but lost effectiveness. Switched to Humira 4 years ago, which was life-changing for convenience. Now noticing decreased effectiveness. Considering Stelara or Entyvio. ADHD meds and Crohn's symptoms require careful balance. High annual out-of-pocket costs. Lives with parents. Concerned about passing Crohn's to children. Diagnosed with kidney stones, possibly medication-related."
 }

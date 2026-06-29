@@ -9,10 +9,15 @@ the caller's working directory.
 
 import json
 import os
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 _CFG = json.loads((ROOT / "config.json").read_text())
+# App version — single source of truth is pyproject.toml [project] version.
+APP_VERSION: str = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"][
+    "version"
+]
 
 # Model default from config.json; the CROHNICITY_MODEL env var overrides it (e.g. a local Ollama
 # model, ollama_chat/qwen3:8b), and main.py's --model flag overrides per-invocation.
@@ -28,6 +33,12 @@ JSON_DIR = ROOT / _CFG["json_dir"]  # per-patient prediction JSON
 HTML_DIR = ROOT / _CFG["html_dir"]  # per-case referral_pathway graphs
 PLOTS_DIR = ROOT / _CFG["plots_dir"]  # EDA plots embedded in the README
 LOG_DIR = ROOT / _CFG["log_dir"]  # loguru sinks
+DAGSTER_PORT: int = _CFG[
+    "dagster_port"
+]  # Dagster dev UI port (passed to `dg dev -p`; see DEV_SETUP)
+DOCSITE_PORT: int = _CFG[
+    "docsite_port"
+]  # MkDocs preview port (passed to `mkdocs serve -a`; see DEV_SETUP)
 CHUNK_SIZE: int = _CFG[
     "chunk_size"
 ]  # transcripts per Gemini call (free-tier RPD workaround)

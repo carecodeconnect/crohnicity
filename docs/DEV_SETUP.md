@@ -85,7 +85,7 @@ all"** (or select `predictions` / `readme` / … → Materialize). The server st
 terminal; you click in the browser.
 
 ```bash
-uv run dg dev -m pipeline -d src     # http://127.0.0.1:3000 -> "Materialize all"
+uv run dg dev -m pipeline -d src -p 3050     # http://127.0.0.1:3050 -> "Materialize all" (port: config.json -> dagster_port)
 ```
 
 **2. Headless from a second terminal (CLI) — scripted / CI, no UI.** Runs in its own process:

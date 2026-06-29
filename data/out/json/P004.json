@@ -10,10 +10,12 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "COST",
+  "reasons_for_biologic_not_taken": [
+    "COST"
+  ],
   "comorbid_conditions": [
     "HYPERTENSION",
-    "HYPERLIPIDEMIA"
+    "OTHER"
   ],
   "treatment_records": [
     {
@@ -21,36 +23,36 @@
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": "not a long-term solution",
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "minimal improvement",
-      "before_biologic": true
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "sulfasalazine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "gave me terrible headaches",
-      "before_biologic": true
+      "reason_stopped": "terrible headaches",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "BEFORE"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
     "symptoms_worsen",
-    "complication",
+    "comorbidity",
+    "acute_flare",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
@@ -59,8 +61,7 @@
     "adverse_reaction",
     "biologic_recommended",
     "insurance_cost_barrier",
-    "alternative_therapy",
-    "planning_next_step"
+    "alternative_therapy"
   ],
-  "evidence_notes": "Patient cannot afford Entyvio due to catastrophic insurance coverage. Exploring clinical trials. Budesonide is being used for management."
+  "evidence_notes": "Robert, 55, diagnosed with Crohn's six months ago, likely had it for years. Also has hypertension and high cholesterol. Collapsed from dehydration and pain, leading to diagnosis. Extensive colon involvement. Started prednisone, then mesalamine (minimal improvement), then sulfasalazine (headaches). Entyvio recommended, but insurance is catastrophic coverage only, making infusions unaffordable ($5,000 each). Currently managing with diet changes and budesonide. Fatigue impacts work. Considering clinical trials. Dealing with depression and worsening joint pain. Worried about colon cancer risk."
 }
