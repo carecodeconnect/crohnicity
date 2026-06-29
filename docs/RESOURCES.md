@@ -38,10 +38,12 @@ kept distinct:
   is the JSON we validate into `PatientLabels`. **Schema validation acts on this.**
 - `response.model_dump_json()` — JSON of the *whole `ModelResponse` wrapper* (id, choices,
   `usage`, caching, etc.), **not** our schema. Useful for **error handling / cost + token
-  optimisation later** — worth a test then, not needed for the MVP.
+  optimisation** — the token/cost fields are documented in [`TELEMETRY.md`](TELEMETRY.md).
 
-Doc contradiction noted in `00_setup.ipynb`: the `reasoning_content` / `thinking_blocks` docs are
-inconsistent (`thinking_blocks` looks Anthropic-only) — verify if we ever use reasoning output.
+**Reasoning output:** we **disable** model reasoning for extraction (`reasoning_effort="disable"` →
+`thinkingBudget=0`, in [`src/extract.py`](../src/extract.py); rationale in README → *Determinism*),
+so `reasoning_content` / `thinking_blocks` aren't used here. (Their docs were also inconsistent —
+`thinking_blocks` looks Anthropic-only — noted in `00_setup.ipynb`.)
 
 ---
 

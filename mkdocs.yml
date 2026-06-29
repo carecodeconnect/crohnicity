@@ -1,6 +1,13 @@
 site_name: Crohnicity
 docs_dir: docs
 
+# Several docs intentionally link to repo-root single-source-of-truth files (config.json, src/,
+# CLAUDE.md, README, CHANGELOG) that live OUTSIDE docs_dir — they resolve when browsing the repo on
+# GitHub (the primary view) but aren't part of this API site, so don't flag them as broken.
+validation:
+  links:
+    not_found: ignore
+
 # Default MkDocs theme (simplest); the one added plugin is mermaid2, to render the referral-pathway
 # gallery's Mermaid diagrams in the docsite. Swap in mkdocs-material later if wanted.
 nav:

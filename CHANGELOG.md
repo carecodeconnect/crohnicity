@@ -37,6 +37,11 @@ Notable changes to the Crohnicity **pipeline**, for vetting across runs.
 ### Reproducibility / docs
 - Centralised current values in `config.json` / `pyproject.toml`; the README renders them dynamically
   (version · model · gold) and docs **link to the SSOT** rather than restating literals.
+- **`docs/TELEMETRY.md` brought current**: model references point to the `config.json` SSOT (no stale
+  `-lite` as "current"; the measured-diagnostics table is framed as `-lite` iteration history),
+  reasoning is documented as disabled (no thinking/reasoning tokens to account for), and the
+  ModelResponse/RAW-RESPONSE reading guidance now matches the actual `telemetry: ...` line in
+  `extract.py` (`model temperature prompt/completion/total tokens cost_usd`).
 
 ### Quality (this run)
 - **churn detection improved** with `-flash` + reasoning off: it now flags the previously-missed

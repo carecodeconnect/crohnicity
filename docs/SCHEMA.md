@@ -8,6 +8,12 @@ of labels for evaluating the extraction pipeline.
 > spreadsheet dropdowns. Open business questions live in `docs/QUESTIONS.md`; the pathway
 > vocabulary needs domain-expert sign-off (`docs/TODO.md`).
 
+- **Two version numbers, on purpose:** the **schema version** (`v0.8` — this doc's changelog below)
+  tracks the *vocabulary/fields* (live source: [`src/schema.py`](../src/schema.py)); the **gold-file
+  version** (`_v7` — [`config.json`](../config.json) `gold`) tracks the *data file* (rebuilt by
+  `sandbox/build_ground_truth_v*.py`). They are independent counters whose latest entries
+  **correspond** — the `v0.8` change (`BIOLOGIC_TAKEN`) is what produced `_v7.ods` — but the numbers
+  differ because each artefact has been revised a different number of times.
 - **Working file:** `data/in/interviews_ground_truth_v7.ods`, built from the annotated
   `interviews_ground_truth.ods` → `_v2` → `_v3` → `_v4` → `_v5` → `_v6` → `_v7` by `sandbox/build_ground_truth_v*.py` (see
   "How the working file is generated").
@@ -80,92 +86,14 @@ steps, `complication`, `surgery`, `comorbidity`, `patient_fear`.
   ```
 - **`comorbid_conditions`** — comma-separated canonical tokens, e.g. `TYPE_2_DIABETES, RHEUMATOID_ARTHRITIS`.
 
-## Toward a Pydantic schema
+## The Pydantic schema
 
-Target model (not implemented yet — recorded so annotation maps cleanly onto code):
-
-```python
-from enum import Enum
-from pydantic import BaseModel
-
-class TreatmentOutcome(str, Enum):
-    SUCCESS = "SUCCESS"
-    FAILED = "FAILED"
-    PARTIAL = "PARTIAL"
-    AMBIGUOUS = "AMBIGUOUS"   # stated but mixed / contradictory
-    ONGOING = "ONGOING"       # unresolved / still escalating
-    UNKNOWN = "UNKNOWN"       # not stated
-
-class ReasonPrescribed(str, Enum):   # initiation signal (single)
-    DOCTOR_CHOICE = "DOCTOR_CHOICE"
-    PATIENT_REQUEST = "PATIENT_REQUEST"
-    NOT_APPLICABLE = "NOT_APPLICABLE"
-    OTHER = "OTHER"
-
-class ReasonNotTaken(str, Enum):     # renamed from ReasonDenied; expanded
-    NOT_MENTIONED = "NOT_MENTIONED"
-    EXPLICIT_DENIAL = "EXPLICIT_DENIAL"
-    INSURANCE_PROBLEMS = "INSURANCE_PROBLEMS"
-    COST = "COST"
-    PATIENT_FEARS = "PATIENT_FEARS"
-    CONTRAINDICATION = "CONTRAINDICATION"
-    DEFERRED = "DEFERRED"
-    UNKNOWN = "UNKNOWN"
-    BIOLOGIC_TAKEN = "BIOLOGIC_TAKEN"
-    NOT_APPLICABLE = "NOT_APPLICABLE"
-    OTHER = "OTHER"
-
-class ComorbidCondition(str, Enum):  # independent coexisting diagnoses; extend as found
-    TYPE_2_DIABETES = "TYPE_2_DIABETES"
-    HYPERTENSION = "HYPERTENSION"
-    HYPERLIPIDEMIA = "HYPERLIPIDEMIA"
-    ANXIETY_DISORDER = "ANXIETY_DISORDER"
-    DEPRESSION = "DEPRESSION"
-    PCOS = "PCOS"
-    ENDOMETRIOSIS = "ENDOMETRIOSIS"
-    MIGRAINE = "MIGRAINE"
-    HYPOTHYROIDISM = "HYPOTHYROIDISM"
-    FIBROMYALGIA = "FIBROMYALGIA"
-    ASTHMA = "ASTHMA"
-    RHEUMATOID_ARTHRITIS = "RHEUMATOID_ARTHRITIS"
-    ADHD = "ADHD"
-    SLEEP_APNEA = "SLEEP_APNEA"
-    OTHER = "OTHER"
-
-class BiologicTiming(str, Enum):     # placement of a treatment vs. the first biologic (Q3 split)
-    BEFORE = "BEFORE"                 # tried before the first biologic (conventional / step-up)
-    LATER = "LATER"                  # the biologic itself, a switch, or anything after it
-    NO_BIOLOGIC = "NO_BIOLOGIC"      # patient never had a biologic — no before/after anchor
-    UNKNOWN = "UNKNOWN"              # a biologic exists but this treatment's ordering is unclear
-
-class Demographics(BaseModel):
-    gender: str | None = None        # self-reported
-    age: int | None = None           # self-reported
-
-class TreatmentRecord(BaseModel):
-    name: str
-    treatment_class: str
-    outcome: TreatmentOutcome
-    reason_stopped: str | None = None
-    biologic_timing: BiologicTiming = BiologicTiming.UNKNOWN   # before/after split for Q3
-
-class PatientLabels(BaseModel):
-    patient_id: str
-    to_review: bool = False
-    demographics: Demographics = Demographics()   # flat gender/age columns map in here
-    churn: bool | None = None             # truncation/disengagement; merges incomplete_journey (v4)
-    biologic_prescribed: bool
-    biologic_taken: bool
-    biologic_not_mentioned: bool
-    biologic_type: str | None = None
-    reasons_for_biologic_prescribed: ReasonPrescribed | None = None
-    reasons_for_biologic_not_taken: list[ReasonNotTaken] = []   # multiple allowed, primary first
-    comorbid_conditions: list[ComorbidCondition] = []
-    treatment_records: list[TreatmentRecord] = []
-    treatment_outcome: TreatmentOutcome
-    referral_pathway: list[str] = []
-    evidence_notes: str | None = None
-```
+The schema is **defined once** in [`src/schema.py`](../src/schema.py) — the single source of truth,
+enum-validated at the model boundary (`enforce_validation`). It is **not duplicated here** (DRY):
+read it there, or browse the rendered API reference (`uv run mkdocs serve` → *Source (src/)*) for
+each model's field docstrings. The `*Enum` classes there (`TreatmentOutcome`, `ReasonPrescribed`,
+`ReasonNotTaken`, `ComorbidCondition`, `BiologicTiming`) are the controlled vocabularies to mirror
+as spreadsheet dropdowns; the rationale for each change is in the Changelog below.
 
 ## How the working file is generated
 

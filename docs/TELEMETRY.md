@@ -8,23 +8,41 @@ read it. Captured here as findings for when we build the metrics capture + plots
 ## What's available, per call
 
 Token usage (prompt / completion / total), **cached** tokens, **cost** (USD), latency, plus
-`finish_reason`, `model_version`, `service_tier`, `response_id`.
+`finish_reason`, `model_version`, `service_tier`, `response_id`. **Reasoning is disabled** for this
+pipeline (`reasoning_effort="disable"` → `thinkingBudget=0` in [`extract.py`](../src/extract.py)), so
+there are **no thinking/reasoning tokens to account for** — `completion_tokens` is the JSON output
+only, not output + hidden thinking.
+
+The model and decoding params (model string, `temperature`) are the SSOT in
+[`config.json`](../config.json), not restated here.
+
+## What `extract()` actually logs (`telemetry: ...` in `logs/extract.log`)
+
+Per call, `extract.py` logs exactly these fields (keep any EDA capture in sync with this line):
+
+```
+model temperature prompt_tokens completion_tokens total_tokens cost_usd
+```
+
+`extract_batch()` logs the same minus the per-record split (`patients total_tokens cost_usd`). These
+are the fields to parse for cost/latency EDA without re-running.
 
 ## Source 1 — the LiteLLM `ModelResponse` (preferred: structured, in-process)
 
-`extract()`'s `response = litellm.completion(...)` returns a `ModelResponse`; read it directly
+`extract()`'s `response = litellm.completion(...)` returns a `ModelResponse`; the telemetry line
+above is read straight off it. The full object exposes more than `extract()` logs — read it directly
 rather than parsing logs:
 
 ```python
 u = response.usage                          # litellm.types.utils.Usage
-u.prompt_tokens, u.completion_tokens, u.total_tokens
-u.prompt_tokens_details.cached_tokens       # context-cache hits
+u.prompt_tokens, u.completion_tokens, u.total_tokens   # logged in the telemetry line
+u.prompt_tokens_details.cached_tokens       # context-cache hits (not logged)
 u.cache_read_input_tokens
-response.model                              # the model string (set in config.json)
-response.choices[0].finish_reason           # "stop"
+response.model                              # the model string (SSOT: config.json) — logged
+response.choices[0].finish_reason           # "stop" (not logged)
 
 import litellm
-litellm.completion_cost(response)           # USD; or response._hidden_params["response_cost"]
+litellm.completion_cost(response)           # USD; or response._hidden_params["response_cost"] (-> cost_usd)
 ```
 
 `response.model_dump_json()` / `.json()` dumps the whole wrapper — explored in
@@ -43,13 +61,14 @@ including `usageMetadata`:
   "cachedContentTokenCount": 92,
   "serviceTier": "standard"
 },
-"modelVersion": "gemini-2.5-flash-lite",
+"modelVersion": "<the model from config.json>",
 "responseId": "z0M1asv4K4OfvdIPmY2fkA4"
 ```
 
 followed by a `response_cost: 0.00015302` line. Same numbers as Source 1, but with Gemini's field
 names and embedded in verbose text. Use only if the debug stream is already being kept; otherwise
-prefer Source 1.
+prefer Source 1. With reasoning disabled (`thinkingBudget=0`) there's **no `thoughtsTokenCount`** —
+`candidatesTokenCount` is the JSON output alone.
 
 ## Field mapping (Gemini-native ↔ LiteLLM)
 
@@ -65,11 +84,15 @@ debug log's request/response timestamps).
 
 ## Measured diagnostics — iteration runs (`gemini-2.5-flash-lite`), this dataset
 
-> Historical: these numbers were measured during iteration on the then-configured model. The current
-> model is the SSOT in [`config.json`](../config.json); per-call telemetry for the live run is in
-> `logs/extract.log`.
+> **Historical / iteration history.** These numbers were measured during early iteration on
+> `gemini-2.5-flash-lite` — *not* the current model. The live model and decoding params are the SSOT
+> in [`config.json`](../config.json) (the run since moved to `gemini-2.5-flash` with reasoning
+> disabled). Treat the table below as order-of-magnitude shape, not the figures for the current run;
+> for the live run read the per-call `telemetry: ...` lines in `logs/extract.log` (the field list is
+> above). Reasoning is now disabled in the live run, so the live `completion_tokens` is JSON output
+> only (no thinking tokens) regardless of these historical figures.
 
-From the live single-patient runs (logged in `logs/litellm_debug.log`; `extract.py` also logs a
+From those early single-patient runs (logged in `logs/litellm_debug.log`; `extract.py` also logs a
 per-call `telemetry: ...` line to `logs/extract.log`):
 
 | Metric | Per single-patient call |
@@ -91,8 +114,9 @@ per-call `telemetry: ...` line to `logs/extract.log`):
 **Takeaways for optimisation/diagnosis:**
 
 - Cost/tokens are *not* the constraint — **request count (20/day) is**. Optimise for fewer requests
-  (chunking N patients/call), not fewer tokens. A 10-patient chunk ≈ 4.9K tokens, well within TPM,
-  output ~4K < the ~8K default cap → **10×5 = 5 requests** fits the daily cap.
+  (chunking N patients/call — `chunk_size` in [`config.json`](../config.json)), not fewer tokens. A
+  10-patient chunk ≈ 4.9K tokens, well within TPM, output well under the `max_tokens` cap (config
+  SSOT) → **10×5 = 5 requests** fits the daily cap.
 - The system prompt is **context-cached** (~90 tokens cached/call) — keeping it stable across calls
   preserves the cache hit.
 - **Local Ollama**: `response.usage` still populates (litellm normalises it), but `cost_usd` is

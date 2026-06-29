@@ -14,8 +14,9 @@ has been removed).
   (deterministic) from one run; `README.md` re-rendered from the consistent set.
 - [ ] **EDA plot P-id clarity** (the *EDA plot clarity* items in the final-sweep section below). The
   Q2 `(null)→unspecified` and Q3 biologic-mislabel **prompt fixes are now in
-  `data/prompts/system.txt`** but post-date the clean re-run above, so `data/out/` does not yet
-  reflect them — they take effect only on the next fresh extraction run.
+  `data/prompts/system.txt`** and `data/out/` **was regenerated and reflects them** (P047 =
+  `['NOT_APPLICABLE']`, P048 = `['DEFERRED']`, P046 no longer mislabelled). What stays open here is the
+  *plot-presentation* polish (titles / N annotation) tracked in the final-sweep section below.
 
 ## Next step — resolve the P019 `to_review` inconsistency
 
@@ -28,7 +29,7 @@ here, not changed silently.
 
 ## Prompt — cover every field (next task)
 
-- [ ] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
+- [x] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
   *every* field in `PatientLabels` — not just `churn`, `biologic_timing`, `referral_pathway` — so
   each label (biologic funnel, reasons, comorbidities, treatment outcomes, demographics) is
   populated deliberately rather than left to the model's defaults. Single prompt for this version;
@@ -38,19 +39,20 @@ here, not changed silently.
   reviewer auditable intermediates, as opposed to the *opaque* internal thinking now disabled
   (`reasoning_effort="disable"` → `thinkingBudget=0`). Turn off opaque thinking now, add explicit
   staged CoT later — complementary, not contradictory.
-- [ ] **Revisit `system.txt` in light of the post-extraction EDA** — fold in prompt adjustments the
-  EDA surfaces (e.g. churn detection accuracy, enum-coverage gaps like Q2's `DOCTOR_CHOICE`/`ACCESS`,
-  under-populated or over-defaulted fields). The churn guidance was already refined from the
-  `TO_REVIEW.md` audit (P016/P019/P049); the EDA's reported distributions may surface more, and any
-  change requires a fresh extraction run to take effect (current `data/out/` predates it).
+- [x] **Revisit `system.txt` in light of the post-extraction EDA** — folded in the prompt adjustments the
+  EDA surfaced (e.g. churn detection, enum-coverage gaps like Q2's `DOCTOR_CHOICE`/`ACCESS`,
+  under-populated or over-defaulted fields, the P047 biologic over-detection and the P047/P048
+  `reasons_for_biologic_not_taken` gap). The churn guidance was refined from the `TO_REVIEW.md` audit
+  (P016/P019/P049), and `data/out/` was regenerated so the predictions reflect the updated prompt.
 
 ## Chunked extraction — batched calls (free-tier RPD workaround)
 
 - [x] `--chunk-size N` on `src/main.py` sends N transcripts per Gemini call via `extract_batch()` +
   a `BatchPredictions` wrapper, so 50 patients fit the **20-requests/day** free-tier cap (10×5 = 5
   calls). Per-call telemetry (`total_tokens`, `cost`) is logged to `logs/extract.log` so token
-  usage + calls/day are monitorable by grepping the log. **Strict** parse (a malformed chunk fails
-  wholly) — minimal; a tolerant per-record parse is future hardening (see Robustness). Reuses the
+  usage + calls/day are monitorable by grepping the log. A malformed chunk no longer fails the run:
+  `run_chunked` **skips + logs** the bad chunk (counts the skipped patients) and continues; a
+  tolerant *per-record* salvage within a chunk is future hardening (see Robustness). Reuses the
   existing loguru logging; no new infrastructure.
 
 ## Quality gates — manual check script (no pre-commit)
@@ -59,7 +61,7 @@ We deliberately **don't** use pre-commit hooks — overkill for this project. En
 manual gate run on every code update (see `CLAUDE.md` → Code style).
 
 - [x] `tests/type_lint_unit_tests.sh` — runs `ruff check`, `ruff format --check`, `ty check`, and `pytest`
-  (scoped to `src`/`tests`); run via `bash tests/type_lint_unit_tests.sh`.
+  (scoped to `src`/`tests`); run via `bash tests/type_lint_unit_tests.sh`. Green: 19 passed.
 - [ ] (Optional) mirror the same checks in CI so the reviewer sees a green build.
 
 ## Refactor — notebooks → `src/` modules
@@ -67,9 +69,10 @@ manual gate run on every code update (see `CLAUDE.md` → Code style).
 Notebooks (`notebooks/`) are for prototyping only. Once the pipeline shape is settled,
 extract the logic into proper Python modules.
 
-- [ ] Move prototyped logic out of the notebooks into modules under `src/` (currently empty).
-- [ ] Keep notebooks as thin exploration/drivers that import from `src/`, not as the source of truth.
-- [ ] Mirror the module layout with `pytest` unit tests under `tests/` (currently empty) — this is the prerequisite for the Tests section below.
+- [x] Move prototyped logic out of the notebooks into modules under `src/` (7 modules: `config`,
+  `schema`, `extract`, `main`, `pipeline`, `post_extraction_eda`, `referral_pathway_analysis`).
+- [x] Keep notebooks as thin exploration/drivers that import from `src/`, not as the source of truth.
+- [x] Mirror the module layout with `pytest` unit tests under `tests/` — this is the prerequisite for the Tests section below.
 
 ## Post-extraction EDA — extract `README.qmd` chunks into `src/post_extraction_eda.py`
 
@@ -78,16 +81,16 @@ the persisted artefacts in `data/out/` (the validated predictions, plus `_v7.ods
 eval) — no Gemini calls. Its logic currently lives inline in the `README.qmd` `{python}` cells, so
 it can't be reused anywhere else or unit-tested.
 
-- [ ] **Move each `README.qmd` code cell into a reusable function** in `src/post_extraction_eda.py`
-  — e.g. `load_predictions(out_dir) -> DataFrame`, `q1_biologic_share(df)`, `q1_gold_eval(df, gold)`,
+- [x] **Move each `README.qmd` code cell into a reusable function** in `src/post_extraction_eda.py`
+  — e.g. `load_predictions(out_dir) -> DataFrame`, `q1_share(df)`, `gold_eval(df, gold)`,
   `q2_reasons(df)`, `q3_before_biologic(records)`, `q4_steps(records)`, `churn_three_state(df)`.
   Pure functions over the `data/out/` artefacts — **reusable anywhere** (notebooks, the QMD, tests,
   a future Dagster asset).
-- [ ] **The QMD cells then just import and call** these functions, so `README.qmd` holds only
+- [x] **The QMD cells then just import and call** these functions, so `README.qmd` holds only
   presentation (tables/plots/prose) and `src/` holds the computation — the same notebooks→`src/`
   split (above) applied to the report.
-- [ ] **Cover the functions with `pytest`** (now importable + deterministic over fixed artefacts) and
-  bring them under the `tests/type_lint_unit_tests.sh` gate.
+- [x] **Cover the functions with `pytest`** (now importable + deterministic over fixed artefacts) and
+  bring them under the `tests/type_lint_unit_tests.sh` gate (`tests/test_post_extraction_eda.py`).
 - [ ] **Plot the eval metrics.** Add a **precision / recall / F1** (and accuracy) bar plot beside the
   Q1 gold-eval table in `README.qmd`, driven by `gold_eval(df)` — same plotnine treatment as the
   Q2–Q4 charts — so the eval is visual, not just a table.
@@ -99,8 +102,8 @@ it can't be reused anywhere else or unit-tested.
 
 ## Tests — once we have a mental model of what to test
 
-- [ ] Add `pytest` tests under `tests/` (currently empty).
-- [ ] Identify the units worth testing once the pipeline shape is clear, e.g.:
+- [x] Add `pytest` tests under `tests/` (6 test files; gate green at 19 passed).
+- [x] Identify the units worth testing once the pipeline shape is clear, e.g.:
   - parsing the annotation columns from `interviews_ground_truth.xlsx` into the
     Pydantic model (see `docs/SCHEMA.md`),
   - extraction output conforming to the schema,
@@ -110,15 +113,15 @@ it can't be reused anywhere else or unit-tested.
 
 Pin down where each kind of validation belongs, document the decision, and back it with tests:
 
-- [ ] **LiteLLM prompt-call boundary** — constrain model output with
+- [x] **LiteLLM prompt-call boundary** — constrain model output with
   `response_format={"type": "json_object"}`, the Gemini `response_schema` hook, and
-  optional `enforce_validation: true`.
-- [ ] **Pydantic** — validate the parsed structured output against the model sketched
-  in `docs/SCHEMA.md`.
+  `enforce_validation: true` (`src/extract.py`).
+- [x] **Pydantic** — validate the parsed structured output against the model sketched
+  in `docs/SCHEMA.md` (`PatientLabels.model_validate_json` in `src/extract.py`).
 - [ ] **pandas** — tabular sanity checks (nulls, duplicates, enum membership) before and
   after aggregating into the business answers.
-- [ ] Write tests targeting whichever boundary we choose, so the gate is real rather than
-  aspirational.
+- [x] Write tests targeting whichever boundary we choose, so the gate is real rather than
+  aspirational (`tests/test_extract.py`).
 
 ## Robustness — error handling + null semantics (NEXT, once the JSON loop runs)
 
@@ -135,20 +138,21 @@ keep the batch going where sensible, but make every failure visible and countabl
   - **Rate limits / transient API errors** (back off + retry; e.g. `litellm` `num_retries`).
   - **Partial outputs** (required fields missing).
   - **Empty responses** (no content / empty `choices`).
-- [ ] **Null semantics** — represent nulls in a Pydantic/pandas-compatible way that distinguishes
+- [x] **Null semantics** — represent nulls in a Pydantic/pandas-compatible way that distinguishes
   genuinely **missing** (not stated -> `None`/NA) from **empty** (`[]`, `""`) and from **"doesn't
   apply"** (the `NOT_APPLICABLE` enum members), so a later pandas analysis can tell "we don't know"
   apart from "known to be none".
-- [ ] **Per-record failure capture** — one bad patient must not abort the run; report how many and
-  which records failed and why (counts + reasons logged, not hidden).
+- [x] **Per-record failure capture** — done at the **chunk** grain: a failed chunk is skipped + the
+  skipped patient ids counted and logged, so one bad chunk can't abort the run (`run_chunked` in
+  `src/main.py`). Per-*record* salvage *within* a chunk is still future hardening (see below).
 
 ## Determinism — pin decoding params
 
-- [ ] **Pin `temperature=0`** (greedy) on the `litellm.completion` calls in `src/extract.py`, and pass
-  a `seed` where Gemini honours it, to minimise extraction sampling variance. Today only structured-
-  output mode + the persisted `data/out/` artefacts guarantee reproducibility (see README → Extraction
-  Pipeline → Determinism); this is the remaining decoding-side lever. A change requires a fresh run to
-  take effect (current `data/out/` predates it).
+- [x] **Pin `temperature=0`** (greedy) on the `litellm.completion` calls in `src/extract.py` (`TEMPERATURE`
+  from `config.json`), to minimise extraction sampling variance, and the clean re-run regenerated
+  `data/out/` at that setting. Structured-output mode + the persisted `data/out/` artefacts are the
+  hard reproducibility guarantee (see README → Extraction Pipeline → Determinism); a `seed` would add
+  belt-and-braces but isn't wired (with reasoning disabled, `0` already minimises drift).
 
 ## Reference data — canonical lookup lists
 
@@ -211,30 +215,27 @@ endpoint in the README's Next Steps.
   (`interviews` → `predictions`). Expand to distinct assets/ops at **each stage — data ingestion →
   transformation → model call → schema validation** — so a failure is pinpointed at *any* point,
   ideally per-patient (the UI shows which transcript failed where, not just the whole batch).
-- [ ] Wire the pipeline with **Dagster** (declared but not yet used). Run
-  `src/referral_pathway_analysis.py` as the **final step** of the workflow — after extraction
-  and aggregation — so the phase/transition table and the interactive journey graph are
-  regenerated from the latest pathways on every run. (Note: the script currently uses a
-  hardcoded `PATHWAYS` dict; wiring it into Dagster means switching it to read the
-  `referral_pathway` column from the ground-truth/extracted data.)
-- [ ] **Doc/report artifacts as final assets (decided — orchestrate them).** Make the **README
-  render** (`quarto render README.qmd`) and the **referral graphs** downstream assets of
-  `predictions` (they read `data/out/`), and the **docsite** (`mkdocs build`) an **independent**
-  final asset — it depends on source *docstrings*, not the data, so it carries no upstream data edge
-  but rebuilds in the same `dagster dev` run. One orchestrated run then regenerates every code+data
-  artifact with per-step status in the UI; the docsite stays dynamic (docstrings re-read each build).
-- [ ] **Dagster run logging -> `logs/`.** The `.py` scripts already log to `logs/extract.log` /
-  `logs/referral_pathway.log`; add a loguru sink (or use Dagster's event log) for the
-  orchestration-level events + the `quarto`/`mkdocs` subprocess output (asset start/success/fail) to
-  a `logs/pipeline.log`, so the whole orchestrated run is auditable in one place. Also **set
-  `DAGSTER_HOME`** so run history persists (temp dir by default), and **log the resolved
-  `config.json`** at load for parity with the auto-logged `.env`.
-- [ ] **Migrate to the `dg` CLI (`dg dev`).** `dagster dev -f src/pipeline.py` emits a
-  `SupersessionWarning` ("use dg dev instead") on 1.13.x — still fully functional (latest **1.13.10**,
-  Jun 2026, per the GitHub releases API), just discouraged. Adopting `dg` means `uv add
-  dagster-dg-cli`, a `[tool.dg.project]` block in `pyproject.toml` (root module), and the dg
-  project/Components layout — a tooling modernization deferred so the MVP stays minimal. Docs:
-  https://docs.dagster.io/guides/labs/dg/configuring-dg.
+- [x] Wire the pipeline with **Dagster**. `src/pipeline.py` runs the graph
+  `interviews -> predictions -> {referral_graphs, readme, referral_pathways_md -> docsite}`, with
+  `referral_pathway_analysis` (the `referral_graphs` asset) downstream of `predictions` so the
+  phase/transition table and the interactive journey graphs are regenerated from the latest pathways
+  on every run. The script now reads the `referral_pathway` lists from the persisted predictions
+  (`data/out/json/P*.json`) — the hardcoded `PATHWAYS` dict is gone.
+- [x] **Doc/report artifacts as final assets (orchestrated).** The **README render**
+  (`quarto render README.qmd`), the **referral graphs**, and **`referral_pathways_md`**
+  (`quarto render docs/referral_pathways.qmd`) are downstream assets of `predictions` (they read
+  `data/out/`). The **docsite** (`mkdocs build`) **depends on `referral_pathways_md`** — *not* an
+  independent asset — because the journey gallery (`docs/referral_pathways.md`) is rendered from the
+  predictions and must be fresh before mkdocs copies it; the rest of the site documents source
+  *docstrings*. One orchestrated run then regenerates every code+data artifact with per-step status
+  in the UI.
+- [x] **Dagster run logging -> `logs/`.** An unfiltered loguru sink in `src/pipeline.py` captures the
+  whole orchestrated run (the in-process extract/referral assets log via loguru) to `logs/dagster.log`,
+  so the run is auditable in one place. **`DAGSTER_HOME`** is set (in `.env`, pointing at the
+  git-ignored `.dagster_home/` with a committed `dagster.yaml`) so run history persists.
+- [x] **Migrate to the `dg` CLI (`dg dev`).** Done: `dagster-dg-cli` is a dependency, a
+  `[tool.dg.project]` block in `pyproject.toml` points at the `src` root module, and the entry point
+  is now `uv run dg dev -m pipeline -d src -p 3050` (no more `dagster dev -f` `SupersessionWarning`).
 - [ ] **Automate the runs once the pipeline works** — orchestrate extraction + the test harness
   via Dagster, and **log each run** (inputs, predictions, accuracy, token usage) for
   reproducibility and later optimisation. (A **sensor/schedule** is deferred — see the static-input
@@ -254,21 +255,18 @@ scaling EDA**.
 
 ## Reporting — Quarto → GFM
 
-- [ ] **`README.qmd` business answers.** The pipeline should **dynamically generate the plots and
-  tables** answering the four PharmaCorp questions and embed them — with the per-case
-  `referral_pathway` diagrams — in a **`README.qmd`** rendered to **GitHub-flavoured markdown** via
-  `quarto render` (CLI). Gives a static, version-controlled answers doc that refreshes from the
-  latest predictions.
-- [ ] **System-design diagram — the FINAL large build task.** Rename `docs/DESIGN.qmd` →
-  **`docs/SYSTEM_DESIGN.qmd`** and turn its draft into the **simplest possible** Quarto **Mermaid**
-  chart of the real workflow, whose job is to clarify the **Dagster / `uv run` relation**:
-  `dagster dev -f src/pipeline.py` is the orchestrating entry point, while `uv run python
-  src/main.py` (CLI) and the `.sh` gate run the *same* `src/` functions **standalone** (library-first,
-  not nested); static `data/in/interviews.json` input → no sensor; the gate surfaced as asset checks.
-  **Do this last**, once Dagster actually runs, so the diagram matches the built workflow — then
-  **link it from `README.qmd`** (there is no link today). While here, fix the draft's stale bits:
-  title `Chronicity` → `Crohnicity`, `_v3.ods` → `_v7.ods`, and the `main.py`-as-orchestrator flow →
-  the Dagster asset graph. Render with `quarto render docs/SYSTEM_DESIGN.qmd`.
+- [x] **`README.qmd` business answers.** `README.qmd` **dynamically generates the plots and tables**
+  answering the four PharmaCorp questions (Q1–Q4) — with the per-case `referral_pathway` diagrams —
+  by importing `src/post_extraction_eda.py`, and renders to **GitHub-flavoured markdown** (`README.md`,
+  Q1 = 74% / 37-of-50) via `quarto render`. A static, version-controlled answers doc that refreshes
+  from the latest predictions.
+- [x] **System-design diagram.** `docs/DESIGN.qmd` was renamed to **`docs/SYSTEM_DESIGN.qmd`** (rendered
+  to `docs/SYSTEM_DESIGN.md`) — a Quarto **Mermaid** chart of the real workflow clarifying the
+  **Dagster / `uv run` relation**: `uv run dg dev -m pipeline -d src` is the orchestrating entry point,
+  while `uv run python src/main.py` (CLI) and the `.sh` gate run the *same* `src/` functions
+  **standalone** (library-first, not nested); static `data/in/interviews.json` input → no sensor. It is
+  **linked from `README.qmd`** (multiple places), and the draft's stale bits (title, `_v7.ods`, the
+  Dagster asset graph) are fixed.
 
 ## Packaging — Docker
 
@@ -281,11 +279,11 @@ scaling EDA**.
 
 The last pass before finalising, **after** the pipeline runs end-to-end. Do **all** of:
 
-- [ ] **Centralise config in a `config.json`.** Every setting used by *any* script
-  (`.py`/`.qmd`/`.sh`) reads from one file: model-name defaults, the gold dataset path + version
-  (`_v7.ods`), the source `data/in/interviews.json` path, the `data/out/` location, chunk size, etc.
-  No hard-coded paths/params scattered across `extract.py` / `main.py` / `post_extraction_eda.py` /
-  `referral_pathway_analysis.py` / `README.qmd` — a single source of truth that all files load.
+- [x] **Centralise config in a `config.json`.** Every setting is loaded via `src/config.py` from one
+  `config.json` (model default, gold path/version `_v7.ods`, the `interviews.json` path, `data/out/`
+  locations, `chunk_size`, retry, ports, `max_tokens`, `temperature`), imported across `extract.py` /
+  `main.py` / `pipeline.py` / `post_extraction_eda.py` / `referral_pathway_analysis.py` / `README.qmd`.
+  The app version is sourced from `pyproject.toml` via `config.APP_VERSION`. A single source of truth.
 - [ ] **Kill redundancy + fix drift.** Version drift **resolved** — the schema version lives once in
   `SCHEMA.md`, the mkdocs nav + README dropped the duplicate, and the app version is sourced from
   `pyproject.toml` via `config.APP_VERSION`; `_v3`/`_v4` mentions bumped to `_v7`; `DESIGN.qmd` →
@@ -295,17 +293,17 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
 - [ ] **Every question answered** — cross-check `docs/TASK_INSTRUCTIONS.md` *and* `README.qmd`: all
   four business questions *and* the schema / pipeline / evaluation dev-questions carry a written
   answer (no prompt-only sections left). This is the last gate before CAIO handover.
-- [ ] **Docsite builds complete.** `uv run mkdocs build` covers *all* `src/` modules + tests via
-  mkdocstrings — done (`api/src.md` + `api/tests.md` cover all 7 src modules + tests).
+- [x] **Docsite builds complete.** `uv run mkdocs build` covers *all* `src/` modules + tests via
+  mkdocstrings — `api/src.md` covers all 7 src modules (config, schema, extract, main, pipeline,
+  post_extraction_eda, referral_pathway_analysis) and `api/tests.md` covers the tests.
 - [ ] **EDA plot clarity + correctness (diagnosed; fix in final sweep).**
-  - **Q2 `(null)` -> `unspecified`** — relabelled in `q2_reasons`, but it masks a real gap: the model
-    left `reasons_for_biologic_not_taken` null for the 2 prescribed-not-taken cases (**P047, P048**).
-    Prompt fix: always set a `ReasonNotTaken` (default `UNKNOWN`); re-run extraction to take effect.
-  - **Q3 "treatments before a biologic" includes biologics** — the `biologic` bar (2) = **P043** (a
-    genuine switch: Remicade FAILED -> Humira) + **P046** (the *taken* biologic Humira mislabelled
-    `biologic_timing=BEFORE`). Clarify whether Q3 counts earlier/switched biologics or only non-biologic
-    treatments; fix the plot title/definition + the P046 mislabel (prompt). Also clarify on the plot
-    whether "treatments" includes biologics.
+  - **Q2 `(null)` -> `unspecified`** — relabelled in `q2_reasons`; the underlying prompt gap is now
+    **fixed in `data/out/`** (the prompt requires a `ReasonNotTaken`): P047 = `['NOT_APPLICABLE']`,
+    P048 = `['DEFERRED']` in the regenerated predictions. Remaining: the plot-presentation polish.
+  - **Q3 "treatments before a biologic" includes biologics** — the P046 mislabel is **fixed in
+    `data/out/`** (P046 is now `biologic_taken=True`, `['BIOLOGIC_TAKEN']`, no longer `BEFORE`). Still
+    open is the plot title/definition: clarify whether Q3 counts earlier/switched biologics (e.g. P043's
+    genuine Remicade->Humira switch) or only non-biologic treatments, and annotate the plot accordingly.
   - **Q4 `q4_steps.png`** — annotate with **N** (cohort size, n=50) so the population is visible on the plot.
 
 - [ ] **Security check before handover.** Confirm the GitHub repo is **private**
@@ -316,7 +314,7 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
 
 ## Polish
 
-- [ ] **Duplicate title in the pathway graphs / MkDocs** — the per-case graph heading renders
-  twice (e.g. `Referral pathway: P005` / `Referral pathway: P005`), likely the pyvis `heading`
-  argument doubling up. De-duplicate in `src/referral_pathway_analysis.py` (`render`) and check
-  the docs page.
+- [x] **Duplicate title in the pathway graphs / MkDocs** — fixed: `render` in
+  `src/referral_pathway_analysis.py` collapses the doubled pyvis `heading` to a single page-level
+  `<h1>` (`html.rsplit(dup, 1)` when the count exceeds one); verified one heading per rendered
+  `data/out/html/referral_pathway_*.html`.
