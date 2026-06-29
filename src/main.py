@@ -18,7 +18,7 @@ import fire
 import litellm
 
 from config import CHUNK_SIZE, INTERVIEWS, JSON_DIR, MODEL
-from extract import HANDLED, extract_batch
+from extract import HANDLED, extract_batch, give_up_reason
 from schema import Interview, PatientLabels
 
 IN_PATH = INTERVIEWS  # committed input transcripts (config.INTERVIEWS)
@@ -60,13 +60,10 @@ def main(
     try:
         results = run_chunked(records, model, Path(out_dir), chunk_size)
     except HANDLED as e:
+        # The stop-vs-retry decision is encoded in give_up_reason(), not left to manual log-watching.
         if isinstance(e, litellm.RateLimitError):
-            sys.exit(f"Rate limit / quota hit for '{model}' — see {RATE_LIMIT_DOCS}")
-        if isinstance(e, litellm.APIConnectionError):
-            sys.exit(f"Could not reach '{model}' — check the name / `ollama serve`.")
-        if isinstance(e, litellm.JSONSchemaValidationError):
-            sys.exit(f"'{model}' didn't match the schema — try a more capable model.")
-        sys.exit(f"'{model}' failed: {type(e).__name__} — see logs/.")
+            sys.exit(f"'{model}': {give_up_reason(e)} (see {RATE_LIMIT_DOCS})")
+        sys.exit(f"'{model}': {give_up_reason(e)}")
     span = f"{records[0].patient_id}..{records[-1].patient_id}" if records else "—"
     return f"extracted {len(results)}/{len(records)} ({span}) -> {out_dir}"
 

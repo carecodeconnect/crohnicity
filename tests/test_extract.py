@@ -8,10 +8,11 @@ it? Running it against Gemini shows the real behaviour (see `docs/RESOURCES.md`)
 
 import os
 
+import litellm
 import pytest
 from dotenv import load_dotenv
 
-from extract import TESTS_OUT, extract, save
+from extract import TESTS_OUT, extract, give_up_reason, save
 from schema import BatchPredictions, PatientLabels
 
 load_dotenv()  # so a key in .env is available for the live test
@@ -92,3 +93,15 @@ def test_extract_end_to_end():
     assert isinstance(result, PatientLabels)
     assert result.patient_id == "P000"
     assert result.biologic_taken is True
+
+
+def test_give_up_reason_429_says_stop():
+    """Offline: the stop-vs-retry decision is encoded, not manual — a 429 (rate/daily quota) STOPs."""
+    msg = give_up_reason(litellm.RateLimitError("rate", "gemini/x", "gemini"))
+    assert "429" in msg and "STOP" in msg
+
+
+def test_give_up_reason_503_says_wait_and_retry():
+    """Offline: a 503 (transient overload) is recoverable — the message points to waiting + re-run."""
+    msg = give_up_reason(litellm.ServiceUnavailableError("busy", "gemini/x", "gemini"))
+    assert "503" in msg and "re-run" in msg

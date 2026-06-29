@@ -106,6 +106,21 @@ def _with_503_retry(call: Callable[[], T]) -> T:
     raise AssertionError("unreachable")  # loop always returns or raises
 
 
+def give_up_reason(e: Exception) -> str:
+    """The action to take for a terminal API/schema error — the 429-stop vs 503-retry decision lives
+    here in code, not in the operator's head: 429 = STOP (the quota won't clear by retrying); 503 =
+    transient overload, wait and re-run."""
+    if isinstance(e, litellm.RateLimitError):
+        return "429 rate/daily quota — NOT retried; STOP, re-running won't help until the quota resets"
+    if isinstance(e, litellm.ServiceUnavailableError):
+        return f"503 transient overload — retried {RETRY_503_MAX}x then gave up; wait and re-run later"
+    if isinstance(e, litellm.APIConnectionError):
+        return "connection error — check the model name / `ollama serve` / network"
+    if isinstance(e, litellm.JSONSchemaValidationError):
+        return "schema mismatch — try a more capable model"
+    return f"{type(e).__name__} — see logs/"
+
+
 # Log unexpected failures (traceback) + re-raise; retryable API errors handled below.
 @logger.catch(exclude=HANDLED, reraise=True)
 def extract(
@@ -141,7 +156,7 @@ def extract(
         raw = getattr(e, "raw_response", None)
         if raw:
             logger.error("{} rejected raw response: {}", patient_id, raw)
-        logger.error("{} for {} — gave up after retries", type(e).__name__, patient_id)
+        logger.error("{}: {}", patient_id, give_up_reason(e))
         raise
     # Telemetry: token usage + cost per call, persisted for cost/latency EDA without re-running.
     logger.info(
@@ -215,7 +230,7 @@ def extract_batch(
         raw_err = getattr(e, "raw_response", None)
         if raw_err:
             logger.error("batch {} rejected raw response: {}", ids, raw_err)
-        logger.error("{} for batch {} — gave up after retries", type(e).__name__, ids)
+        logger.error("batch {}: {}", ids, give_up_reason(e))
         raise
     logger.info(
         "batch telemetry: model={} temperature={} patients={} total_tokens={} cost_usd={}",

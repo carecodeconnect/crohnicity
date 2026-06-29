@@ -114,7 +114,7 @@ from plotnine import (
 
 sys.path.insert(0, "src")
 import post_extraction_eda as eda
-from config import GOLD, PLOTS_DIR
+from config import GOLD, PLOTS_DIR, RETRY_503_DELAY_S, RETRY_503_MAX
 
 PLOTS = PLOTS_DIR
 PLOTS.mkdir(parents=True, exist_ok=True)
@@ -511,8 +511,7 @@ but a daily quota needs *opposite* policies — retry 503, never 429 — which a
 express; litellm's per-exception `RetryPolicy` is Router-only, not on `litellm.completion()`, so we
 switch the blanket retry off and own a tiny loop, `_with_503_retry`.) A **429** (rate-limit / daily quota) **fails fast** — no retry, since retrying
 a spent quota only burns more of it — while a **503** (transient model overload) is retried
-**sparingly** (`retry_503_max=2`, `retry_503_delay_s=20`, in `config.json`). On a 429 or exhausted
-503s, `main.py` exits gracefully with the rate-limits URL (no traceback). Full table:
+**sparingly** (up to `{python} RETRY_503_MAX` retries, `{python} RETRY_503_DELAY_S`s apart — set in `config.json`), then gives up. The **stop-vs-retry decision is in the code** (`give_up_reason`), not left to manual log-watching: the failure message states the action — **429 → stop** (the quota won't clear by retrying; wait for the reset), **503 → wait and re-run**. Full table:
 [`docs/DEBUGGING_ERROR_HANDLING.md`](docs/DEBUGGING_ERROR_HANDLING.md).
 
 ```bash
