@@ -9,8 +9,10 @@
   "biologic_taken": false,
   "biologic_not_mentioned": false,
   "biologic_type": null,
-  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_prescribed": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": [
+    "NOT_APPLICABLE"
+  ],
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "DEPRESSION"
@@ -20,38 +22,33 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "side effects",
-      "before_biologic": true
+      "reason_stopped": "gained 30 pounds",
+      "biologic_timing": "NO_BIOLOGIC"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
+      "treatment_class": "5-asa",
+      "outcome": "UNKNOWN",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "NO_BIOLOGIC"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "DMARD",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "NO_BIOLOGIC"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
-    "symptoms_worsen",
-    "specialist_referral",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
-    "alternative_therapy",
-    "therapy_failed",
-    "planning_next_step"
+    "conventional_therapy"
   ],
-  "evidence_notes": "Donna, 41, female, diagnosed with Crohn's 5 months ago after years of misdiagnosis (IBS, stress, hormones). Also hypothyroid and depressed. Found Crohn's in small intestine. Treated with prednisone (caused 30lb weight gain) and mesalamine. Now trying methotrexate with ~30% symptom improvement, but experiencing hair loss and nausea. Doctor suggests more time. Worried about losing job due to hiding symptoms. Husband's support is wavering due to weight gain and illness. Teenagers are unaware of severity."
+  "evidence_notes": "Donna, 41, female, diagnosed with Crohn's five months ago after years of misdiagnosis. Also hypothyroid and battling depression. Started on prednisone (helped but gained 30 pounds) and mesalamine. Now trying methotrexate, which causes hair loss and nausea, but provides 30% improvement."
 }

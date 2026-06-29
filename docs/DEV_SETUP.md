@@ -23,7 +23,7 @@ I got an API key for Google API Studio:
 I followed the instructions to export the API key as an environment variable here:
 
 - [Using Gemini API Keys](https://ai.google.dev/gemini-api/docs/api-key#macos---zsh)
-- **Rate limits** — the free tier caps Gemini 2.5 Flash Lite at **~20 requests/day** (under the 50
+- **Rate limits** — the free tier caps the Gemini model ([`config.json`](../config.json)) at **~20 requests/day** (under the 50
   transcripts, so a full run needs a paid tier or spreading across days):
   [limits & tiers](https://ai.google.dev/gemini-api/docs/rate-limits) ·
   [current usage](https://ai.dev/rate-limit)

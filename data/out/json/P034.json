@@ -10,63 +10,65 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "OTHER",
-    "OTHER"
+    "HYPERTENSION"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Budesonide",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Long-term steroids not an option due to age and other conditions.",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "Liver did not tolerate it.",
-      "before_biologic": true
+      "reason_stopped": "liver didn't like it",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "DMARD",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "Caused unbearable fatigue.",
-      "before_biologic": true
+      "reason_stopped": "fatigue was unbearable",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
+    "conventional_therapy",
+    "conventional_therapy",
     "adverse_reaction",
-    "patient_fear",
-    "biologic_recommended",
+    "conventional_therapy",
+    "adverse_reaction",
     "biologic_taken",
     "comorbidity",
-    "planning_next_step"
+    "unresolved"
   ],
-  "evidence_notes": "Diagnosed five years ago, likely had it longer. Also has COPD and peripheral neuropathy. Started treatment at 56. Mesalamine, budesonide, azathioprine (liver issues), methotrexate (fatigue). Resisted biologics due to COPD but agreed due to poor quality of life. Started Remicade a year ago, noticeable improvement. Neuropathy started six months ago, cause unknown. Diet restricted for multiple conditions. Wife is caregiver. Financial strain due to medical costs."
+  "evidence_notes": "Robert, 61, was diagnosed with Crohn's five years ago, but likely had it longer. He also has COPD and peripheral neuropathy. He experienced misdiagnosis for years before his Crohn's diagnosis at 56. He started with mesalamine, then budesonide, and then azathioprine, which caused liver issues. Methotrexate caused unbearable fatigue. He initially resisted biologics due to lung disease but started Remicade a year ago, which has shown noticeable improvement. He is dealing with neuropathy, restricted diet, and the impact of his illness on his retirement and family. He is discussing adding an immunomodulator to Remicade."
 }

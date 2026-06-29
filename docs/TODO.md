@@ -32,7 +32,12 @@ here, not changed silently.
   *every* field in `PatientLabels` — not just `churn`, `biologic_timing`, `referral_pathway` — so
   each label (biologic funnel, reasons, comorbidities, treatment outcomes, demographics) is
   populated deliberately rather than left to the model's defaults. Single prompt for this version;
-  the concurrent multi-prompt split is a post-completion idea (README → Next Steps).
+  the concurrent multi-prompt split is a post-completion idea (README → Next Steps) — and the place
+  where *explicit, inspectable* chain-of-thought earns its keep: it fixes the single-shot
+  attention-competition behind shaky `churn`/`referral_pathway`/`biologic_timing` **and** gives a
+  reviewer auditable intermediates, as opposed to the *opaque* internal thinking now disabled
+  (`reasoning_effort="disable"` → `thinkingBudget=0`). Turn off opaque thinking now, add explicit
+  staged CoT later — complementary, not contradictory.
 - [ ] **Revisit `system.txt` in light of the post-extraction EDA** — fold in prompt adjustments the
   EDA surfaces (e.g. churn detection accuracy, enum-coverage gaps like Q2's `DOCTOR_CHOICE`/`ACCESS`,
   under-populated or over-defaulted fields). The churn guidance was already refined from the

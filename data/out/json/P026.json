@@ -8,62 +8,77 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade",
+  "biologic_type": "Remicade, Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "OTHER",
     "OTHER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "minimal improvement",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
+    },
+    {
+      "name": "PPIs",
+      "treatment_class": "other",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
-      "treatment_class": "conventional",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "tapering difficult, bone density concerns",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
       "reason_stopped": "elevated liver enzymes",
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "feeling drunk, unable to work",
-      "before_biologic": true
+      "reason_stopped": "made me feel drunk",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "effectiveness dropped",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_testing",
     "crohns_diagnosis",
+    "comorbidity",
+    "conventional_therapy",
+    "conventional_therapy",
+    "therapy_failed",
     "conventional_therapy",
     "adverse_reaction",
-    "therapy_failed",
+    "conventional_therapy",
+    "adverse_reaction",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
-    "biologic_switch"
+    "biologic_switch",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient has a long history of Crohn's and other conditions, with multiple failed conventional therapies and a biologic that is now failing. Treatment outcome is partial as Remicade is failing and the patient is facing difficult choices about future treatments. The narrative ends with a reflection on the ongoing struggle and healthcare system, not a cut-off."
+  "evidence_notes": "Alan, 50, was diagnosed with Crohn's eight years ago. He also has Barrett's esophagus and chronic back pain. He started with mesalamine for Crohn's and PPIs for Barrett's, with minimal improvement. He used prednisone for flares four times, finding it harder to taper each time. He tried azathioprine, but it elevated his liver enzymes. Methotrexate made him feel drunk, so he stopped. He started Remicade three years ago, which worked well for two years, then its effectiveness dropped. He increased the frequency, which helped temporarily, but it's now failing again. His doctor wants to switch to Humira. His overall outcome is ongoing as he is experiencing loss of response to Remicade and considering a switch to another biologic."
 }

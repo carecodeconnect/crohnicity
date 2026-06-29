@@ -14,7 +14,8 @@
     "COST"
   ],
   "comorbid_conditions": [
-    "TYPE_2_DIABETES"
+    "TYPE_2_DIABETES",
+    "OTHER"
   ],
   "treatment_records": [
     {
@@ -49,17 +50,25 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "comorbidity",
+    "primary_care_contact",
+    "misdiagnosis",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "adverse_reaction",
+    "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
     "adverse_reaction",
     "biologic_recommended",
     "insurance_cost_barrier",
-    "alternative_therapy"
+    "biologic_not_taken",
+    "conventional_therapy",
+    "planning_next_step",
+    "comorbidity",
+    "unresolved"
   ],
-  "evidence_notes": "Michael, 42, diagnosed with Crohn's 3 years ago, with pre-existing type 2 diabetes. Initially thought to be diabetic gastroparesis. Tried prednisone (worsened diabetes), mesalamine (no improvement), and methotrexate (liver issues). Stelara was recommended but insurance denied due to high cost ($800/month). Currently on budesonide. Financial assistance is being sought. Also dealing with anemia and arthritis related to Crohn's. High out-of-pocket costs for Stelara are a major barrier."
+  "evidence_notes": "Michael, 42, has Crohn's and type 2 diabetes. His initial symptoms were thought to be diabetic gastroparesis. After a GI referral and diagnostic tests, he was diagnosed with Crohn's. He tried prednisone, mesalamine, and methotrexate, all of which failed or caused adverse effects. His doctor recommended Stelara, but insurance cost was a barrier. He is currently on budesonide and seeking financial assistance for Stelara. He also has anemia and arthritis related to Crohn's. His overall outcome is ongoing as he is still seeking effective treatment."
 }

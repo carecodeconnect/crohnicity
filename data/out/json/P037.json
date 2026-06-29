@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "ANXIETY_DISORDER",
     "OTHER"
@@ -18,37 +20,38 @@
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Not enough.",
-      "before_biologic": true
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunosuppressant",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "Joint pain and rashes developed, leading to lupus diagnosis.",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "comorbidity",
+    "misdiagnosis",
+    "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
-    "biologic_recommended",
-    "biologic_taken",
+    "conventional_therapy",
     "comorbidity",
+    "biologic_taken",
     "loss_of_response",
-    "planning_next_step"
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Diagnosed six years ago after second child. Also has postpartum anxiety and lupus. Started mesalamine while breastfeeding, then azathioprine. Joint pain and rashes led to lupus diagnosis. Started Humira two years ago, helps both conditions moderately (60%). Difficulty managing motherhood, marriage strained due to husband's lack of understanding. Works part-time freelance. Financial stress. Considering changing biologics as Humira losing effectiveness."
+  "evidence_notes": "Karen, 34, was diagnosed with Crohn's six years ago after her second child. She also has postpartum anxiety and lupus. She started with mesalamine while breastfeeding, then added azathioprine. Two years ago, she started Humira, which helps both conditions moderately. She is struggling with managing two autoimmune diseases, two young children, and maintaining her marriage. She is considering changing biologics as Humira is losing effectiveness and plans to bring her husband to her next appointment."
 }

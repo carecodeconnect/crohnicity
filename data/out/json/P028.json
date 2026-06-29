@@ -10,49 +10,52 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "OTHER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": "kidney issues",
-      "before_biologic": true
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": "kidney function started declining",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "budesonide",
-      "treatment_class": "conventional",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "not long-term solution",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Entyvio",
       "treatment_class": "biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
-    "symptoms_worsen",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "comorbidity",
     "adverse_reaction",
-    "therapy_failed",
+    "conventional_therapy",
+    "conventional_therapy",
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken"
+    "biologic_taken",
+    "unresolved"
   ],
-  "evidence_notes": "Patient has Crohn's and chronic kidney disease, facing challenges with medication choices due to specialist disagreements and insurance denials. Treatment outcome is ongoing as Entyvio has only been started recently. The narrative ends with a reflection on uncertainty and continuing to push forward, not a cut-off."
+  "evidence_notes": "Thomas, 43, has had Crohn's for about six years and also deals with chronic kidney disease. He started with mesalamine, which helped initially, but he had to stop due to declining kidney function. He tried dietary management with some improvement. He then took budesonide, which helped somewhat but was not a long-term solution. His GI wants biologics, but his nephrologist is concerned about immune suppression. After much disagreement between specialists and three insurance denials, he was finally approved for Entyvio three months ago. It's too early to tell if it's working. His overall outcome is ongoing as he is navigating complex treatment decisions due to multiple comorbidities and is in the early stages of biologic therapy."
 }

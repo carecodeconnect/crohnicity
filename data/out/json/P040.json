@@ -8,9 +8,11 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
     "HYPERTENSION",
@@ -19,49 +21,47 @@
   "treatment_records": [
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Caused significant blood sugar issues.",
-      "before_biologic": true
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "reason_stopped": "sent blood sugars through roof",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunosuppressant",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Liver enzymes climbed after two years.",
-      "before_biologic": true
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "liver enzymes started climbing",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Developed antibodies.",
-      "before_biologic": false
+      "reason_stopped": "developed antibodies",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
-    "therapy_failed",
-    "biologic_recommended",
-    "insurance_appeal",
+    "conventional_therapy",
+    "adverse_reaction",
     "biologic_taken",
+    "insurance_denial",
     "loss_of_response",
     "biologic_switch",
-    "comorbidity",
-    "planning_next_step"
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Diagnosed seven years ago. Also has type 2 diabetes, hypertension, and osteoporosis from steroid use. Started prednisone and azathioprine combo; prednisone caused blood sugar issues requiring insulin. Azathioprine helped for two years then liver enzymes climbed. Switched to Remicade, worked for three years but developed antibodies. Currently on Humira, 50% improvement. GI wants to add methotrexate but concerned about liver. Work as accountant is difficult due to brain fog. Wife supportive but exhausted. Medical costs high. Considering clinical trials."
+  "evidence_notes": "George, 52, was diagnosed with Crohn's seven years ago. He also has type 2 diabetes, hypertension, and recently osteoporosis. He started with prednisone and azathioprine, but prednisone caused blood sugar issues, and azathioprine caused liver enzyme problems. He then switched to Remicade, which worked well for three years before he developed antibodies. He is currently on Humira, which is only 50% effective. His GI wants to add methotrexate, but he is concerned about his liver. He is struggling with work, finances, and the impact of his illnesses on his family. He is considering a clinical trial."
 }

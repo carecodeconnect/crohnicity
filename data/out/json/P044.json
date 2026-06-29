@@ -10,48 +10,54 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "reasons_for_biologic_not_taken": [
+    "PATIENT_FEARS"
+  ],
   "comorbid_conditions": [
     "ADHD",
     "ANXIETY_DISORDER"
   ],
   "treatment_records": [
     {
-      "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
+      "name": "mesalamine suppositories",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
+    },
+    {
+      "name": "mesalamine oral",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "side effects",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
-      "treatment_class": "immunosuppressant",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "BEFORE"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
     "symptoms_worsen",
-    "primary_care_contact",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "adverse_reaction",
-    "alternative_therapy",
-    "therapy_failed",
+    "conventional_therapy",
+    "conventional_therapy",
     "biologic_recommended",
-    "patient_fear"
+    "patient_fear",
+    "planning_next_step"
   ],
-  "evidence_notes": "Peter, 27, male, diagnosed with Crohn's two years ago, possibly longer. Also has ADHD and anxiety. Symptoms initially attributed to ADHD meds and poor diet. Worsened after graduation. Treated with mesalamine suppositories/oral and prednisone (caused anxiety/panic attack). Started azathioprine six months ago with ~40% improvement. Doctor wants to try biologics but patient is terrified due to anxiety, needle phobia, and fear of getting sick/missing work. Parents unsupportive. Girlfriend left due to 'too much work'. Struggles with work requirements (site visits, portapotties). Considering leaving profession due to health. Therapy is slow. Worried about long-term prognosis."
+  "evidence_notes": "Peter, 27, male, diagnosed with Crohn's two years ago. Also has ADHD and anxiety. Started on mesalamine suppositories and oral, then prednisone. Currently on azathioprine (40% effective). Doctor wants to try biologics, but Peter is terrified due to being immunocompromised and fear of needles."
 }

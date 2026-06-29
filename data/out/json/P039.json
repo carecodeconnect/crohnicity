@@ -8,56 +8,59 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "OTHER",
+    "RHEUMATOID_ARTHRITIS",
     "FIBROMYALGIA"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "Caused significant weight gain.",
-      "before_biologic": true
+      "reason_stopped": "weight gain horrible",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Methotrexate",
-      "treatment_class": "DMARD",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Caused hair loss.",
-      "before_biologic": true
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "hair fell out",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "conventional_therapy",
     "adverse_reaction",
-    "biologic_recommended",
+    "conventional_therapy",
+    "adverse_reaction",
     "biologic_taken",
     "comorbidity",
-    "therapy_failed",
-    "planning_next_step"
+    "comorbidity",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Diagnosed eight years ago. Also has rheumatoid arthritis and fibromyalgia. Started mesalamine, then prednisone (weight gain). Methotrexate caused hair loss. Switched to Humira three years ago, helps somewhat (50%). RA and fibromyalgia diagnoses followed. Work suffering, income dropped. Son works part-time to help. Financial pressure. Considering Stelara but worried about time off work for injections. Dating attempts failed after disclosing illnesses."
+  "evidence_notes": "Michelle, 41, has had Crohn's for eight years. She also has rheumatoid arthritis (RA) and fibromyalgia. She started with mesalamine, then prednisone for flares, which caused weight gain. Methotrexate caused hair loss. Three years ago, she switched to Humira, which helps somewhat. She was then diagnosed with RA and later fibromyalgia. She is a single mom struggling with work, finances, and the impact of her illnesses on her family. She is considering switching to Stelara."
 }

@@ -8,11 +8,13 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Humira",
+  "biologic_type": "Remicade, Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "DEPRESSION",
+    "OTHER",
     "RHEUMATOID_ARTHRITIS"
   ],
   "treatment_records": [
@@ -20,43 +22,42 @@
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "effectiveness dropped",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "does not help well",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
-      "before_biologic": false
-    },
-    {
-      "name": "prednisone",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
-      "before_biologic": false
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "hair falling out",
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "comorbidity",
+    "symptoms_worsen",
+    "diagnostic_testing",
+    "crohns_diagnosis",
+    "complication",
     "surgery",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
+    "comorbidity",
     "biologic_switch",
     "biologic_taken",
-    "comorbidity"
+    "conventional_therapy",
+    "adverse_reaction",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient has multiple autoimmune conditions and struggles with medication management and mental health. Treatment outcome is partial as Humira is not working well for either condition and the patient faces difficult choices regarding surgery. The narrative ends with a reflection on the chaotic nature of chronic illness and continuing to fight, not a cut-off."
+  "evidence_notes": "Vanessa, 32, was diagnosed with Crohn's four years ago. She also has bipolar disorder and rheumatoid arthritis. She had two fistulas and underwent surgery. She started Remicade immediately after surgery, which worked for about 18 months. Then she developed rheumatoid arthritis. She switched from Remicade to Humira, which helped neither condition well. She added methotrexate, which caused hair loss. She is now discussing Stelara or surgery. Her overall outcome is ongoing as she is managing multiple complex conditions, experiencing loss of response to biologics, and considering further treatment escalation."
 }

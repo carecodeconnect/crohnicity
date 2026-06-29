@@ -10,10 +10,10 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": [],
-  "comorbid_conditions": [
-    "PCOS"
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
   ],
+  "comorbid_conditions": [],
   "treatment_records": [
     {
       "name": "mesalamine",
@@ -26,7 +26,7 @@
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "made me feel worse",
+      "reason_stopped": "severe nausea and elevated liver enzymes",
       "biologic_timing": "BEFORE"
     },
     {
@@ -37,9 +37,10 @@
       "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
+    "primary_care_contact",
     "misdiagnosis",
     "symptoms_worsen",
     "specialist_referral",
@@ -47,10 +48,17 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
+    "adverse_reaction",
     "biologic_recommended",
+    "patient_fear",
     "insurance_denial",
     "insurance_appeal",
-    "biologic_taken"
+    "insurance_approval",
+    "biologic_taken",
+    "remission",
+    "breakthrough_symptoms",
+    "complication"
   ],
-  "evidence_notes": "Sarah, 34, diagnosed with Crohn's at 26. Initially misdiagnosed with IBS. Tried mesalamine and azathioprine with limited success. Prescribed Humira due to moderate to severe disease. Insurance denial required multiple appeals. Has been on Humira for 5 years with self-injections every two weeks. Experiences occasional flares, injection site reactions, and developed psoriasis possibly related to Humira. Manages Crohn's with vitamin D and B12 supplements. Sees GI every 3 months. High out-of-pocket cost without insurance."
+  "evidence_notes": "Sarah, 34, has had Crohn's for 8 years. Initially misdiagnosed with IBS, she was later diagnosed with Crohn's after a colonoscopy. She tried mesalamine and azathioprine, both of which failed. Her doctor recommended Humira or Remicade. After insurance issues, she started Humira and has been on it for 5 years, achieving remission with occasional flares. She developed psoriasis, possibly related to Humira. She takes vitamin D and B12 supplements. Her overall outcome is partial success due to occasional flares and psoriasis."
 }

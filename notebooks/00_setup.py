@@ -35,14 +35,14 @@ from pathlib import Path
 #
 # Google GenAI Python SDK
 #
-# `gemini-3.5-flash` got this error on first try: 
+# `gemini-3.5-flash` got this error on first try:
 #
 # ```
-# ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 
+# ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message':
 # 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
 # ```
 #
-# So I tried a smaller/cheaper previous model for testing: 
+# So I tried a smaller/cheaper previous model for testing:
 #
 # [Gemini 2.5 Flash Lite](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite?_gl=1*b87crc*_up*MQ..*_ga*MjAyMjcxMjk5MC4xNzgxNzA2ODEy*_ga_P1DBVKWT6V*czE3ODE3MDY4MTEkbzEkZzAkdDE3ODE3MDcxNzEkajYwJGwwJGgxMzYxOTQ0ODQy)
 #
@@ -50,16 +50,15 @@ from pathlib import Path
 
 # %%
 load_dotenv()  # reads variables from a .env file and sets them in os.environ
-GEMINI_API_KEY = os.environ['GEMINI_API_KEY']
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
-#print(GEMINI_API_KEY)
+# print(GEMINI_API_KEY)
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 google_response = client.models.generate_content(
-     model="gemini-2.5-flash-lite", 
-     contents="Explain Crohn's Disease in a few words"
- )
+    model="gemini-2.5-flash-lite", contents="Explain Crohn's Disease in a few words"
+)
 
 
 # %%
@@ -84,8 +83,8 @@ print(google_response.text)
 #
 # ```python
 # completion(
-#     model="gemini/gemini-1.5-pro", 
-#     messages=messages, 
+#     model="gemini/gemini-1.5-pro",
+#     messages=messages,
 #     response_format={"type": "json_object"} # 👈 KEY CHANGE
 # )
 # ```
@@ -103,8 +102,8 @@ print(google_response.text)
 # %%
 
 litellm_response = litellm.completion(
-    model="gemini/gemini-2.5-flash-lite", # note the parameter is gemini/model
-    messages=[{"role": "user", "content": "Explain Crohn's Disease in a few words"}]
+    model="gemini/gemini-2.5-flash-lite",  # note the parameter is gemini/model
+    messages=[{"role": "user", "content": "Explain Crohn's Disease in a few words"}],
 )
 
 # %%

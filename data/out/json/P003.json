@@ -8,9 +8,11 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Humira, Stelara",
+  "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": [],
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "ANXIETY_DISORDER",
     "PCOS"
@@ -69,20 +71,27 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
+    "crohns_diagnosis",
     "complication",
     "surgery",
     "conventional_therapy",
     "therapy_failed",
-    "biologic_recommended",
+    "conventional_therapy",
+    "therapy_failed",
+    "conventional_therapy",
+    "therapy_failed",
+    "conventional_therapy",
+    "therapy_failed",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken"
+    "patient_fear",
+    "insurance_denial",
+    "insurance_approval",
+    "unresolved"
   ],
-  "evidence_notes": "Emma, 28, diagnosed with Crohn's at 16. Has anxiety disorder and PCOS. History of surgery for fistula. Tried sulfasalazine, mesalamine, 6-MP, and methotrexate with limited success. Started Remicade at 19, lost effectiveness after 3 years. Switched to Humira, worked for 2 years, then lost effectiveness. Currently on Stelara every 8 weeks. Experiences injection anxiety, insurance battles for pre-authorization, fatigue, joint pain, and skin problems. High annual out-of-pocket costs. Lives with parents due to financial strain. Concerned about fertility and pregnancy. Developed osteopenia from steroid use."
+  "evidence_notes": "Emma, 28, was diagnosed with Crohn's at 16. She has a history of multiple conventional therapies failing, including sulfasalazine, mesalamine, 6-MP, and methotrexate. She started Remicade, which worked for three years before she developed antibodies. She then switched to Humira, which worked for two years before losing effectiveness. She is currently on Stelara. She experiences injection anxiety, fatigue, joint pain, skin problems, and osteopenia. She also has anxiety disorder and PCOS. Her overall outcome is ongoing as she is managing her current treatment and its challenges."
 }

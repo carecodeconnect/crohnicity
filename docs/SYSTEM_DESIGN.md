@@ -10,8 +10,10 @@ relation**, which is the one thing worth a diagram. Dagster is the
 **same `src/` functions standalone** (*library-first* — none is nested
 under another). The input is static, so there is **no sensor**.
 
-*Part of [Crohnicity](https://github.com/carecodeconnect/crohnicity/blob/main/README.md) — the root README carries the
-business answers, evaluation and Next Steps.*
+*Part of
+[Crohnicity](https://github.com/carecodeconnect/crohnicity/blob/main/README.md)
+— the root README carries the business answers, evaluation and Next
+Steps.*
 
 ## Architecture
 
@@ -31,13 +33,15 @@ flowchart TB
         predictions["predictions<br/>run_chunked() · 10 per call"]
         referral["referral_graphs<br/>rpa.main()"]
         rdme["readme<br/>quarto render README.qmd"]
-        docsite["docsite<br/>mkdocs build · independent"]
+        rpmd["referral_pathways_md<br/>quarto render docs/referral_pathways.qmd"]
+        docsite["docsite<br/>mkdocs build"]
         interviews --> predictions --> referral
         predictions --> rdme
+        predictions --> rpmd --> docsite
     end
 
     indata[("data/in/interviews.json<br/>static · committed · NO sensor")]
-    gemini["LiteLLM → Gemini 2.5 Flash Lite<br/>structured output · enforce_validation"]
+    gemini["LiteLLM → Gemini · model from config.json<br/>structured output · enforce_validation · reasoning off"]
     outjson[("data/out/json/P*.json<br/>validated PatientLabels")]
     arte[("README.md / .html · data/out/html graphs<br/>data/out/plots · site/")]
 
@@ -51,6 +55,7 @@ flowchart TB
     predictions --> outjson
     outjson --> referral
     outjson --> rdme
+    outjson --> rpmd
     referral --> arte
     rdme --> arte
     docsite --> arte
@@ -61,8 +66,10 @@ a `src/` function (`interviews` → `load_interviews`, `predictions` →
 `run_chunked`, `referral_graphs` → `rpa.main`); it does **not** shell
 out to the CLI. So the identical code path runs whether you launch the
 whole graph in Dagster or one part from `uv run python src/main.py`.
-(`readme` and `docsite` *do* subprocess out — but to the external
-`quarto` / `mkdocs` tools, not to our own scripts.)
+(`readme`, `referral_pathways_md` and `docsite` *do* subprocess out —
+but to the external `quarto` / `mkdocs` tools, not to our own scripts.
+`docsite` depends on `referral_pathways_md` so the journey gallery is
+rendered from the latest predictions before the site is built.)
 
 **Static input → no sensor.** `data/in/interviews.json` is the single
 committed input; the pipeline never re-fetches it, so a run is manual /

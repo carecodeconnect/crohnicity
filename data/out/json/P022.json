@@ -8,59 +8,88 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Remicade, Humira",
+  "biologic_type": "Remicade, Humira, Stelara, Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
-    "HYPERTENSION",
-    "HYPERLIPIDEMIA",
-    "ASTHMA",
-    "RHEUMATOID_ARTHRITIS",
-    "SLEEP_APNEA"
+    "OTHER"
   ],
   "treatment_records": [
     {
-      "name": "prednisone",
-      "treatment_class": "conventional",
+      "name": "IV steroids",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "tapered",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "helped minimally",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": "developed antibodies",
-      "before_biologic": false
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "calcium",
+      "treatment_class": "supplement",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "vitamin D",
+      "treatment_class": "supplement",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "bisphosphonates",
+      "treatment_class": "other",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "acute_flare",
     "diagnostic_testing",
     "crohns_diagnosis",
+    "conventional_therapy",
+    "comorbidity",
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
@@ -71,7 +100,9 @@
     "loss_of_response",
     "biologic_switch",
     "biologic_taken",
-    "comorbidity"
+    "comorbidity",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient describes a severe Crohn's onset, multiple comorbidities, and significant impact on life. Treatment outcome is partial as Humira/methotrexate combination is only 60% effective and osteoporosis is a new concern. The narrative ends with a reflection on acceptance and continuing to fight, not a cut-off."
+  "evidence_notes": "James, 35, was diagnosed with severe Crohn's two years ago. He also has medication-induced diabetes and osteoporosis. He was hospitalized and started on IV steroids, which led to steroid-induced diabetes. He then took high-dose prednisone, followed by azathioprine, which helped minimally. His GI pushed for biologics, and he started Remicade after a four-month insurance battle. Remicade worked for a year, then he developed antibodies. He switched to Humira, which was 60% effective, and added methotrexate, which caused nausea and hair thinning. He is now on calcium, vitamin D, and bisphosphonates for osteoporosis. He is considering Stelara or Entyvio next. His overall outcome is ongoing as he is still managing his conditions and considering future treatments."
 }

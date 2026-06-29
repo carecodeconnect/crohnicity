@@ -8,49 +8,55 @@
   "biologic_prescribed": true,
   "biologic_taken": false,
   "biologic_not_mentioned": false,
-  "biologic_type": null,
+  "biologic_type": "biologics",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "COST",
+  "reasons_for_biologic_not_taken": [
+    "PATIENT_FEARS",
+    "INSURANCE_PROBLEMS"
+  ],
   "comorbid_conditions": [
-    "TYPE_2_DIABETES"
+    "TYPE_2_DIABETES",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "outcome": "FAILED",
+      "reason_stopped": "blood sugars went crazy, cardiologist wasn't happy",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "therapy_failed",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
-    "symptoms_worsen",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
     "biologic_recommended",
+    "patient_fear",
     "insurance_cost_barrier",
-    "insurance_step_therapy"
+    "biologic_not_taken",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient diagnosed six months ago, currently on budesonide. He is hesitant to start biologics due to existing multiple medications, potential risks, and cost, especially with Medicare coverage complexities. He is struggling with diet restrictions and the impact on his quality of life, particularly golf. He is considering biologics due to his son's encouragement and desire for better quality of life. The journey is ongoing with a focus on weighing treatment options and managing multiple chronic conditions."
+  "evidence_notes": "Richard, 58, male, diagnosed with Crohn's six months ago. Also has type 2 diabetes and had a minor heart attack. Started with prednisone (stopped due to blood sugar issues and cardiologist concerns). Tried mesalamine (didn't do much). Now on budesonide. His GI doctor wants to try biologics, but he is hesitant due to being on many other medications, concerns about immune suppression, and the cost/Medicare coverage complexities."
 }

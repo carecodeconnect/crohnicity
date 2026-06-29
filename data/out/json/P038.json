@@ -8,49 +8,50 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "OTHER",
     "OTHER"
   ],
   "treatment_records": [
     {
       "name": "NSAIDs",
-      "treatment_class": "NSAID",
+      "treatment_class": "nsaid",
       "outcome": "FAILED",
-      "reason_stopped": "Caused chronic kidney disease.",
-      "before_biologic": true
+      "reason_stopped": "destroyed my kidneys",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Stopped working.",
-      "before_biologic": true
+      "reason_stopped": "stopped working",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "FAILED",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
-    "conventional_therapy",
-    "adverse_reaction",
-    "biologic_recommended",
+    "comorbidity",
+    "crohns_diagnosis",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "comorbidity",
-    "planning_next_step"
+    "loss_of_response",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Diagnosed ten years ago. Also has ankylosing spondylitis and chronic kidney disease from NSAID use. Started Remicade for both conditions, worked initially. Switched to Humira, less effective (40%). Nephrologist concerned about stronger meds due to kidney disease. Specialists disagree on treatment. Work impossible, on disability. Lost house, divorced. Dating impossible. Loneliness crushing. Considering clinical trials but kidney disease is exclusion criteria. Surgery is an option but recovery with AS would be difficult. Contemplating ending life but parents' well-being prevents it."
+  "evidence_notes": "Daniel, 37, has had Crohn's for ten years. He also has ankylosing spondylitis (AS) and chronic kidney disease. He was initially misdiagnosed and took NSAIDs for AS, which damaged his kidneys. He was diagnosed with both Crohn's and AS and started Remicade, which initially worked. When Remicade stopped working, he switched to Humira, which was less effective. He is now on disability, divorced, and living alone. He is struggling with conflicting advice from specialists and the impact of his illnesses on his life. He is considering surgery for Crohn's and is being offered Stelara."
 }

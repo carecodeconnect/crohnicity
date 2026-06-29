@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "ANXIETY_DISORDER",
     "OTHER"
@@ -18,47 +20,54 @@
   "treatment_records": [
     {
       "name": "prednisone",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
       "reason_stopped": "mood swings",
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "minimal help",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": "nausea, weight loss",
-      "before_biologic": true
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_delay",
     "symptoms_worsen",
-    "specialist_referral",
+    "misdiagnosis",
+    "acute_flare",
     "diagnostic_testing",
+    "specialist_referral",
     "crohns_diagnosis",
+    "conventional_therapy",
+    "adverse_reaction",
+    "conventional_therapy",
+    "therapy_failed",
+    "alternative_therapy",
+    "symptoms_worsen",
     "conventional_therapy",
     "adverse_reaction",
     "therapy_failed",
     "biologic_recommended",
-    "biologic_taken"
+    "biologic_taken",
+    "unresolved"
   ],
-  "evidence_notes": "Patient is young with a recent diagnosis, struggling with multiple conditions and treatment side effects. Treatment outcome is ongoing as Humira has only been taken for two months. The narrative ends with a reflection on the difficulty of chronic illness and continuing to try, not a cut-off."
+  "evidence_notes": "Sophie, 22, was diagnosed with Crohn's six months ago during her senior year of college. She also has severe anxiety and a history of an eating disorder. She started with prednisone and mesalamine. Prednisone caused mood swings, so she tapered quickly. Mesalamine helped little. Her GI wanted to start methotrexate, but she negotiated trying diet changes first, which made her worse. She then started methotrexate, which caused terrible nausea and weight loss. Methotrexate was not enough, so she started Humira two months ago, but it's too early to tell if it's working. She has needle phobia from her ED treatment history. Her overall outcome is ongoing as she is still in the early stages of biologic treatment and managing multiple complex conditions."
 }

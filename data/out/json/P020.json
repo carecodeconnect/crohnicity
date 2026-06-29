@@ -8,75 +8,84 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
-  "comorbid_conditions": [],
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
+  "comorbid_conditions": [
+    "HYPERTENSION"
+  ],
   "treatment_records": [
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "outcome": "FAILED",
+      "reason_stopped": "made me rage",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "therapy_failed",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "sulfasalazine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "reason_stopped": "killer headaches",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "reason_stopped": "so nauseous I couldn't work",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "PARTIAL",
-      "reason_stopped": "loss_of_response",
-      "before_biologic": false
+      "outcome": "FAILED",
+      "reason_stopped": "effectiveness dropped",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
+    "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
+    "adverse_reaction",
+    "conventional_therapy",
+    "adverse_reaction",
     "biologic_recommended",
-    "insurance_step_therapy",
+    "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
     "loss_of_response",
-    "planning_next_step"
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient diagnosed seven years ago, currently on Humira after Remicade failed. He struggles with the physical demands of his construction job, missing work, and financial strain. He dislikes needles and relies on his wife for injections. He is concerned about insurance battles for Stelara and the impact of his illness on his family and social life. The journey is ongoing with a focus on managing symptoms, work, and financial challenges."
+  "evidence_notes": "Gary, 46, male, diagnosed with Crohn's seven years ago. Also has high blood pressure and drinks too much. Started with prednisone (stopped due to rage), then mesalamine (didn't do much), then sulfasalazine (headaches), then methotrexate (nauseous). After eight months of appeals, approved for Remicade, which worked for two years, then effectiveness dropped. Switched to Humira, which is now starting to not work as well. His doctor mentioned Stelara next. He is struggling with the physical demands of his job, financial issues, and the constant battle with insurance."
 }

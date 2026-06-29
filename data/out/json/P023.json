@@ -3,14 +3,16 @@
   "churn": false,
   "demographics": {
     "gender": "Female",
-    "age": 26
+    "age": 27
   },
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "PCOS",
     "DEPRESSION"
@@ -18,58 +20,60 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "minimal help",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
-      "treatment_class": "conventional",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "gained weight, side effects",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "pancreatitis",
-      "before_biologic": true
+      "reason_stopped": "developed pancreatitis",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "FAILED",
       "reason_stopped": "nausea unbearable",
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
+    "misdiagnosis",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "conventional_therapy",
     "adverse_reaction",
-    "therapy_failed",
     "biologic_recommended",
-    "insurance_denial",
-    "insurance_appeal",
+    "insurance_step_therapy",
+    "conventional_therapy",
+    "adverse_reaction",
+    "biologic_recommended",
     "insurance_approval",
     "biologic_taken",
-    "therapy_failed"
+    "unresolved"
   ],
-  "evidence_notes": "Patient describes a delayed diagnosis and significant challenges with conventional therapies due to side effects. Treatment outcome is partial as Humira is only 40% effective and the patient fears switching. The narrative ends with a reflection on finding meaning and continuing to try, not a cut-off."
+  "evidence_notes": "Monica, 27, was diagnosed with Crohn's last year, but had symptoms for three years prior. She also has PCOS and depression. She started with mesalamine, which provided minimal help. She then took prednisone for a flare, which caused weight gain. She tried azathioprine, but developed pancreatitis and was hospitalized. After this, her doctor recommended biologics, but insurance required her to fail more drugs. She tried methotrexate, but the nausea was unbearable. Finally, she was approved for Humira, which is helping some (40% better), but she is scared to switch. Her overall outcome is ongoing as she is still managing her conditions and considering future treatment options."
 }

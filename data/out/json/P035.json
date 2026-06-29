@@ -8,64 +8,76 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Entyvio",
+  "biologic_type": "Remicade, Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "OTHER",
     "OTHER"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Developed liver issues (PSC, autoimmune hepatitis).",
-      "before_biologic": true
+      "reason_stopped": "liver enzymes went crazy",
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "Ursodiol",
+      "treatment_class": "other",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "Prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "Azathioprine",
-      "treatment_class": "Immunosuppressant",
-      "outcome": "PARTIAL",
-      "reason_stopped": "Used for autoimmune hepatitis, not Crohn's.",
-      "before_biologic": true
+      "treatment_class": "immunomodulator",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "Entyvio",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
-    "biologic_recommended",
+    "conventional_therapy",
     "biologic_taken",
-    "adverse_reaction",
     "comorbidity",
     "biologic_switch",
+    "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed at 16. Also has PSC and autoimmune hepatitis. Started Remicade at 17, worked for several years. Stopped all meds at 22 due to liver issues, leading to PSC and autoimmune hepatitis diagnosis. Now on Entyvio for Crohn's (liver-safe), Ursodiol for PSC, and prednisone/azathioprine for autoimmune hepatitis. No single treatment works perfectly. Fatigue is unbearable. Boyfriend left. Facing potential liver transplant. Insurance and financial concerns."
+  "evidence_notes": "Ashley, 30, was diagnosed with Crohn's at 16. She also has primary sclerosing cholangitis (PSC) and autoimmune hepatitis. She started with mesalamine and prednisone. At 17, she started Remicade, which worked for several years. At 22, she was diagnosed with PSC and autoimmune hepatitis. She is now on Ursodiol for PSC, prednisone and azathioprine for autoimmune hepatitis, and Entyvio for Crohn's. She is experiencing unbearable fatigue, recently broke up with her boyfriend, and is facing financial and insurance challenges. She is looking into clinical trials and discussing transplant timeline."
 }

@@ -1,6 +1,6 @@
 {
   "patient_id": "P036",
-  "churn": false,
+  "churn": true,
   "demographics": {
     "gender": "Male",
     "age": 48
@@ -10,41 +10,39 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "OTHER",
-    "OTHER"
+    "RHEUMATOID_ARTHRITIS"
   ],
   "treatment_records": [
     {
       "name": "NSAIDs",
-      "treatment_class": "NSAID",
+      "treatment_class": "nsaid",
       "outcome": "FAILED",
-      "reason_stopped": "Likely worsened Crohn's symptoms.",
-      "before_biologic": true
+      "reason_stopped": "made everything worse",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "Insurance denied renewal, leading to gap and flare.",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
-    "diagnostic_delay",
-    "diagnostic_testing",
     "crohns_diagnosis",
-    "conventional_therapy",
-    "therapy_failed",
-    "biologic_recommended",
-    "insurance_denial",
     "biologic_taken",
-    "loss_of_response",
+    "insurance_denial",
+    "relapse",
+    "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "Diagnosed three years ago. Also has severe psoriasis and psoriatic arthritis. Spent two years trying NSAIDs, which likely worsened symptoms. Colonoscopy revealed extensive Crohn's. Started Stelara, which helped both conditions about 50%. Insurance denied renewal after a year, leading to flares during gap. Now trying to regain baseline. Physical work is becoming impossible. Business margins are thin. Wife's insurance is a lifeline. Considering selling assets. Diet is impossible due to conflicting needs of conditions. Depression setting in."
+  "evidence_notes": "William, 48, was diagnosed with Crohn's three years ago. He also has severe psoriasis and psoriatic arthritis. He spent two years trying different NSAIDs before his Crohn's diagnosis. He had already failed two biologics for psoriasis. He started Stelara, which helped both conditions somewhat. However, his insurance denied renewal, leading to a flare. He is struggling with physical work, financial issues, and depression. He is considering adding methotrexate to Stelara or switching biologics again."
 }

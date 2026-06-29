@@ -8,69 +8,73 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "PCOS"
+    "PCOS",
+    "ANXIETY_DISORDER",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "reason_stopped": "side effects (weight gain)",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "relapse",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "relapse",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "loss_of_response",
-      "before_biologic": false
+      "reason_stopped": "developed antibodies",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
     "primary_care_contact",
+    "misdiagnosis",
+    "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
     "adverse_reaction",
-    "relapse",
+    "conventional_therapy",
+    "therapy_failed",
     "acute_flare",
-    "complication",
     "surgery",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken"
+    "comorbidity",
+    "unresolved"
   ],
-  "evidence_notes": "Patient reports feeling like herself again after starting Remicade, but developed antibodies after 18 months and switched to Humira. Humira is manageable and she has built a life around it. She expresses uncertainty about the future, questioning if Humira will continue to work and if she can have a normal life. She is focused on taking it one day at a time and setting small goals."
+  "evidence_notes": "Jessica, 26, female, diagnosed with Crohn's at 19. Also has PCOS and severe anxiety. Started with prednisone and mesalamine, then methotrexate. After surgery, started Remicade, then switched to Humira due to antibodies. She is currently on Humira and managing her condition, but has ongoing anxiety and financial burdens. She is worried about the future and pregnancy."
 }

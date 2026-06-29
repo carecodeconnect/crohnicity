@@ -1,6 +1,6 @@
 {
   "patient_id": "P045",
-  "churn": false,
+  "churn": true,
   "demographics": {
     "gender": "Female",
     "age": 33
@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "reasons_for_biologic_not_taken": [
+    "INSURANCE_PROBLEMS"
+  ],
   "comorbid_conditions": [
     "PCOS",
     "OTHER"
@@ -21,36 +23,33 @@
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "DMARD",
-      "outcome": "PARTIAL",
+      "treatment_class": "immunomodulator",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "BEFORE"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
-    "symptoms_worsen",
-    "primary_care_contact",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
+    "conventional_therapy",
+    "biologic_recommended",
     "insurance_step_therapy",
-    "alternative_therapy",
-    "planning_next_step"
+    "conventional_therapy"
   ],
-  "evidence_notes": "Rosa, 33, female, diagnosed with Crohn's 4 months ago, symptoms for 2 years. Also has PCOS and insulin resistance. Initial symptoms blamed on weight, worsened despite weight loss. Treated with budesonide and mesalamine with little improvement. Doctor mentioned biologics, but insurance requires failing more medications. Currently trying methotrexate, experiencing severe nausea. Works as elementary school teacher, struggles with bathroom urgency during class. Scared to disclose condition to employer. Boyfriend supportive but strained relationship due to canceled plans. Postponing wedding due to fear of flaring. Financial strain, living with parents. Support groups inaccessible. Worried about future complications like surgery."
+  "evidence_notes": "Rosa, 33, female, diagnosed with Crohn's four months ago. Also has PCOS and insulin resistance. Started on budesonide and mesalamine. Doctor mentioned biologics might be next step but insurance wants her to fail more medications first. Currently trying methotrexate, which causes terrible nausea."
 }

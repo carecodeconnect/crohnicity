@@ -10,76 +10,82 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade, Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "ENDOMETRIOSIS",
-    "FIBROMYALGIA"
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "minimal improvement",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "minimal improvement",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "FAILED",
+      "outcome": "PARTIAL",
       "reason_stopped": "allergic reaction",
-      "before_biologic": false
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "effectiveness limited",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
-      "reason_stopped": "side effects (hair loss)",
-      "before_biologic": false
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
+      "reason_stopped": "hair loss",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
-    "symptoms_worsen",
+    "misdiagnosis",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
-    "adverse_reaction",
+    "conventional_therapy",
+    "therapy_failed",
     "biologic_recommended",
     "biologic_taken",
+    "adverse_reaction",
     "biologic_switch",
     "biologic_taken",
+    "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken"
+    "biologic_taken",
+    "unresolved",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient describes a long journey with multiple biologics and significant impact on career and personal life. Treatment outcome is partial as Stelara is only 'okay' and other conditions are worsening. The narrative ends with a reflection on acceptance and small victories, not a cut-off."
+  "evidence_notes": "Rachel, 31, was diagnosed with Crohn's five years ago. She also has endometriosis and chronic fatigue syndrome. She started with mesalamine, then azathioprine, with minimal improvement. She then moved to Remicade, which worked for a year before an allergic reaction. She switched to Humira, which was only 50% effective, and added methotrexate, which caused hair loss. She then started Stelara, which was initially denied by insurance but eventually approved and she has been on it for 18 months, finding it \"okay, not great.\" She is considering combination therapy with Stelara and methotrexate, or surgery. Her overall outcome is ongoing as she is still seeking a better solution."
 }

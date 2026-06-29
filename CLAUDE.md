@@ -11,7 +11,7 @@ Pipeline code lives in `src/`, with matching `pytest` tests in `tests/`. `notebo
 ## Stack
 
 - **Python 3.14** (pinned in `.python-version`), managed with **uv** (lockfile is `uv.lock`).
-- **LiteLLM** is the LLM gateway; **Gemini 2.5 Flash Lite** (`gemini/gemini-2.5-flash-lite`) is the working model. Authentication is via `GEMINI_API_KEY` loaded from `.env` with `python-dotenv`.
+- **LiteLLM** is the LLM gateway to **Gemini**; the working model is the single source of truth in `config.json` (`config.MODEL`, which also resolves the `CROHNICITY_MODEL` env override) — don't hard-code a model name in docs. Authentication is via `GEMINI_API_KEY` loaded from `.env` with `python-dotenv`. *(Model/reasoning changes are recorded in `CHANGELOG.md`.)*
 - **Pydantic** for schemas, **pandas** for tabular work, **Dagster** and **FastAPI** are declared dependencies but not yet wired.
 - Lint/type/test toolchain is deliberately Rust-based: **ruff**, **ty**, **pytest**. Prefer these over Black/mypy.
 
@@ -58,6 +58,7 @@ uv run mkdocs build                 # render the static site to site/
 ## Architecture notes
 
 - **LLM access pattern**: go through `litellm.completion(model="gemini/...", ...)`, not the raw `google-genai` SDK. The SDK is only present because it was used in the notebook to sanity-check the API key before LiteLLM was wired in. LiteLLM gives us `response_format={"type": "json_object"}` and a `response_schema` hook for Gemini (with optional `enforce_validation: true`) — prefer that over hand-parsing model output.
-- **Reproducibility**: `gemini-2.5-flash-lite` supports reasoning (`litellm.supports_reasoning(...)` returns True) and caching/TTL. If you add prompt caching or thinking-mode toggles, document them where they're set — they affect token accounting and run-to-run determinism.
+- **Reproducibility**: extraction is a classification task, so **reasoning is disabled** (`reasoning_effort="disable"` → `thinkingBudget=0`, in `extract.py`) alongside `temperature=0` — thinking is off to avoid run-to-run variance and output-budget truncation (see README → Determinism). Document any further caching/thinking toggles where they're set — they affect token accounting and determinism.
 - **Data layout**: `data/in/` is committed input (`interviews.json`), `data/out/` is for generated artefacts, `data/prompts/` for prompt templates. Keep generated outputs out of `data/in/`.
+- **Single source of truth for values.** Current values — model, paths, gold/app versions, ports, decoding params — live in `config.json` / `pyproject.toml`. **In any doc, don't restate a literal; link to its SSOT file** (and in a `.qmd`, render it dynamically, e.g. `` `{python} MODEL` ``). Record *changes* over time in `CHANGELOG.md` (pipeline) / `docs/SCHEMA.md` (schema) — naming old→new values there is correct, because that's history, not a live pointer.
 - **Notebooks**: jupytext-paired (`ipynb,py:percent`). **Edit notebook code in the `.py`** (the editing source of truth → clean diffs) and run `jupytext --sync`; **never hand-edit the `.ipynb`** — that's the human's running/viewing copy, where outputs live. `notebooks/` is excluded from the gate. Full workflow: `docs/DEV_SETUP.md`.

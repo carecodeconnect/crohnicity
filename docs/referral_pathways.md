@@ -9,51 +9,15 @@
 Static **Mermaid** renderings of every patient’s `referral_pathway` —
 viewable on GitHub without cloning. For the **interactive** versions
 (hover / drag / zoom), open
-`data/out/html/index.html` from a
+[`../data/out/html/index.html`](../data/out/html/index.html) from a
 local checkout (they render live in a browser; GitHub shows them as
-source). Back to the [README](https://github.com/carecodeconnect/crohnicity/blob/main/README.md).
+source). Back to the [README](../README.md).
 
 A revisited phase is one node the journey loops back to; an edge’s `xN`
 label is its traversal count. *Cyclic* journeys (a phase recurs) are
 flagged below.
 
-### P001
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["self_managed"]
-    n2["primary_care_contact"]
-    n3["misdiagnosis"]
-    n4["symptoms_worsen"]
-    n5["specialist_referral"]
-    n6["diagnostic_testing"]
-    n7["crohns_diagnosis"]
-    n8["conventional_therapy"]
-    n9["therapy_failed"]
-    n10["adverse_reaction"]
-    n11["biologic_recommended"]
-    n12["insurance_denial"]
-    n13["insurance_appeal"]
-    n14["biologic_taken"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
-```
-
-### P002
+### P001 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
@@ -69,8 +33,14 @@ flowchart LR
     n8["therapy_failed"]
     n9["adverse_reaction"]
     n10["biologic_recommended"]
-    n11["insurance_cost_barrier"]
-    n12["planning_next_step"]
+    n11["patient_fear"]
+    n12["insurance_denial"]
+    n13["insurance_appeal"]
+    n14["insurance_approval"]
+    n15["biologic_taken"]
+    n16["remission"]
+    n17["breakthrough_symptoms"]
+    n18["complication"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -79,10 +49,58 @@ flowchart LR
     n5 -->n6
     n6 -->n7
     n7 -->n8
-    n8 -->n9
+    n8 -->n7
+    n7 -->n9
     n9 -->n10
     n10 -->n11
     n11 -->n12
+    n12 -->n13
+    n13 -->n14
+    n14 -->n15
+    n15 -->n16
+    n16 -->n17
+    n17 -->n18
+```
+
+### P002 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["primary_care_contact"]
+    n2["misdiagnosis"]
+    n3["symptoms_worsen"]
+    n4["specialist_referral"]
+    n5["diagnostic_testing"]
+    n6["crohns_diagnosis"]
+    n7["conventional_therapy"]
+    n8["adverse_reaction"]
+    n9["therapy_failed"]
+    n10["biologic_recommended"]
+    n11["insurance_cost_barrier"]
+    n12["biologic_not_taken"]
+    n13["planning_next_step"]
+    n14["comorbidity"]
+    n15["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n5
+    n5 -->n6
+    n6 -->n7
+    n7 -->|x2| n8
+    n8 -->n7
+    n7 -->n9
+    n9 -->n7
+    n8 -->n10
+    n10 -->n11
+    n11 -->n12
+    n12 -->n7
+    n7 -->n13
+    n13 -->n14
+    n14 -->n15
 ```
 
 ### P003 — cyclic (loops)
@@ -91,78 +109,44 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
+    n1["diagnostic_delay"]
+    n2["crohns_diagnosis"]
     n3["complication"]
     n4["surgery"]
     n5["conventional_therapy"]
     n6["therapy_failed"]
-    n7["biologic_recommended"]
-    n8["patient_fear"]
-    n9["insurance_denial"]
-    n10["insurance_appeal"]
-    n11["biologic_taken"]
-    n12["loss_of_response"]
-    n13["biologic_switch"]
+    n7["biologic_taken"]
+    n8["loss_of_response"]
+    n9["biologic_switch"]
+    n10["patient_fear"]
+    n11["insurance_denial"]
+    n12["insurance_approval"]
+    n13["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n6
+    n5 -->|x4| n6
+    n6 -->|x3| n5
     n6 -->n7
     n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->|x2| n13
-    n13 -->n12
-    n13 -->n11
-```
-
-### P004
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["self_managed"]
-    n2["symptoms_worsen"]
-    n3["complication"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["adverse_reaction"]
-    n10["biologic_recommended"]
-    n11["insurance_cost_barrier"]
-    n12["alternative_therapy"]
-    n13["planning_next_step"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
+    n8 -->|x2| n9
+    n9 -->n8
     n9 -->n10
     n10 -->n11
     n11 -->n12
     n12 -->n13
 ```
 
-### P005
+### P004 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
+    n1["diagnostic_delay"]
+    n2["acute_flare"]
     n3["specialist_referral"]
     n4["diagnostic_testing"]
     n5["crohns_diagnosis"]
@@ -170,21 +154,55 @@ flowchart LR
     n7["therapy_failed"]
     n8["adverse_reaction"]
     n9["biologic_recommended"]
-    n10["insurance_step_therapy"]
-    n11["biologic_taken"]
-    n12["breakthrough_symptoms"]
+    n10["insurance_cost_barrier"]
+    n11["biologic_not_taken"]
+    n12["planning_next_step"]
+    n13["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
+    n6 -->n6
+    n6 -->n7
+    n7 -->n6
+    n6 -->n8
+    n8 -->n9
+    n9 -->n10
+    n10 -->n11
+    n11 -->n6
+    n6 -->n12
+    n12 -->n13
+```
+
+### P005 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["diagnostic_delay"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["therapy_failed"]
+    n5["adverse_reaction"]
+    n6["biologic_taken"]
+    n7["biologic_switch"]
+    n8["remission"]
+    n9["breakthrough_symptoms"]
+    n10["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n3
+    n3 -->n5
+    n5 -->n6
     n6 -->n7
     n7 -->n8
     n8 -->n9
     n9 -->n10
-    n10 -->n11
-    n11 -->n12
 ```
 
 ### P006 — cyclic (loops)
@@ -195,47 +213,16 @@ flowchart LR
     n0["symptom_onset"]
     n1["misdiagnosis"]
     n2["diagnostic_delay"]
-    n3["complication"]
-    n4["surgery"]
-    n5["conventional_therapy"]
-    n6["adverse_reaction"]
-    n7["biologic_taken"]
-    n8["loss_of_response"]
-    n9["biologic_switch"]
-    n10["planning_next_step"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->|x2| n9
-    n9 -->n8
-    n9 -->n7
-    n7 -->n10
-```
-
-### P007
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["adverse_reaction"]
-    n9["biologic_recommended"]
+    n3["crohns_diagnosis"]
+    n4["complication"]
+    n5["surgery"]
+    n6["conventional_therapy"]
+    n7["adverse_reaction"]
+    n8["biologic_taken"]
+    n9["loss_of_response"]
     n10["insurance_step_therapy"]
-    n11["biologic_taken"]
-    n12["breakthrough_symptoms"]
-    n13["planning_next_step"]
+    n11["biologic_switch"]
+    n12["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -247,8 +234,46 @@ flowchart LR
     n8 -->n9
     n9 -->n10
     n10 -->n11
+    n11 -->n9
+    n9 -->n11
+    n11 -->n12
+```
+
+### P007 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["diagnostic_delay"]
+    n2["symptoms_worsen"]
+    n3["diagnostic_testing"]
+    n4["crohns_diagnosis"]
+    n5["conventional_therapy"]
+    n6["adverse_reaction"]
+    n7["therapy_failed"]
+    n8["biologic_recommended"]
+    n9["biologic_taken"]
+    n10["remission"]
+    n11["breakthrough_symptoms"]
+    n12["complication"]
+    n13["planning_next_step"]
+    n14["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n5
+    n5 -->n6
+    n6 -->n5
+    n5 -->n7
+    n7 -->n8
+    n8 -->n9
+    n9 -->n10
+    n10 -->n11
     n11 -->n12
     n12 -->n13
+    n13 -->n14
 ```
 
 ### P008 — cyclic (loops)
@@ -257,31 +282,38 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["complication"]
-    n3["surgery"]
-    n4["conventional_therapy"]
-    n5["adverse_reaction"]
-    n6["therapy_failed"]
-    n7["biologic_recommended"]
-    n8["insurance_step_therapy"]
+    n1["diagnostic_delay"]
+    n2["acute_flare"]
+    n3["diagnostic_testing"]
+    n4["crohns_diagnosis"]
+    n5["conventional_therapy"]
+    n6["adverse_reaction"]
+    n7["therapy_failed"]
+    n8["biologic_recommended"]
     n9["biologic_taken"]
     n10["loss_of_response"]
     n11["biologic_switch"]
     n12["planning_next_step"]
+    n13["complication"]
+    n14["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
+    n5 -->|x2| n5
+    n5 -->|x2| n6
+    n6 -->n5
+    n5 -->n7
+    n7 -->n5
+    n6 -->n8
     n8 -->n9
-    n9 -->|x2| n10
+    n9 -->n10
     n10 -->n11
-    n11 -->n9
+    n11 -->n10
     n10 -->n12
+    n12 -->n13
+    n13 -->n14
 ```
 
 ### P009 — cyclic (loops)
@@ -290,21 +322,25 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
-    n2["diagnostic_delay"]
-    n3["complication"]
-    n4["specialist_referral"]
+    n1["diagnostic_delay"]
+    n2["misdiagnosis"]
+    n3["symptoms_worsen"]
+    n4["acute_flare"]
     n5["diagnostic_testing"]
     n6["crohns_diagnosis"]
     n7["conventional_therapy"]
-    n8["adverse_reaction"]
-    n9["alternative_therapy"]
+    n8["therapy_failed"]
+    n9["adverse_reaction"]
     n10["biologic_recommended"]
     n11["patient_fear"]
-    n12["biologic_taken"]
-    n13["comorbidity"]
-    n14["loss_of_response"]
-    n15["planning_next_step"]
+    n12["alternative_therapy"]
+    n13["biologic_taken"]
+    n14["remission"]
+    n15["breakthrough_symptoms"]
+    n16["comorbidity"]
+    n17["loss_of_response"]
+    n18["planning_next_step"]
+    n19["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -313,48 +349,63 @@ flowchart LR
     n5 -->n6
     n6 -->n7
     n7 -->n8
-    n8 -->n9
+    n8 -->n7
+    n7 -->|x3| n9
+    n9 -->n7
     n9 -->n10
     n10 -->n11
     n11 -->n12
     n12 -->n13
-    n13 -->n9
-    n9 -->n14
+    n13 -->n14
     n14 -->n15
+    n15 -->n16
+    n16 -->n7
+    n9 -->n17
+    n17 -->n18
+    n18 -->n19
 ```
 
-### P010
+### P010 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
+    n1["diagnostic_delay"]
     n2["symptoms_worsen"]
-    n3["specialist_referral"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["adverse_reaction"]
-    n8["therapy_failed"]
+    n3["diagnostic_testing"]
+    n4["crohns_diagnosis"]
+    n5["conventional_therapy"]
+    n6["adverse_reaction"]
+    n7["remission"]
+    n8["breakthrough_symptoms"]
     n9["comorbidity"]
-    n10["biologic_recommended"]
-    n11["insurance_step_therapy"]
-    n12["biologic_taken"]
-    n13["planning_next_step"]
+    n10["therapy_failed"]
+    n11["biologic_recommended"]
+    n12["insurance_denial"]
+    n13["insurance_appeal"]
+    n14["insurance_approval"]
+    n15["biologic_taken"]
+    n16["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
+    n6 -->n5
+    n5 -->n7
     n7 -->n8
     n8 -->n9
-    n9 -->n10
+    n9 -->n5
+    n5 -->|x2| n10
+    n10 -->n5
     n10 -->n11
     n11 -->n12
     n12 -->n13
+    n13 -->n14
+    n14 -->n15
+    n15 -->n16
 ```
 
 ### P011 — cyclic (loops)
@@ -370,16 +421,15 @@ flowchart LR
     n5["diagnostic_testing"]
     n6["crohns_diagnosis"]
     n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["adverse_reaction"]
-    n10["relapse"]
-    n11["acute_flare"]
-    n12["complication"]
-    n13["surgery"]
-    n14["biologic_recommended"]
-    n15["biologic_taken"]
-    n16["biologic_switch"]
-    n17["loss_of_response"]
+    n8["adverse_reaction"]
+    n9["therapy_failed"]
+    n10["acute_flare"]
+    n11["surgery"]
+    n12["biologic_taken"]
+    n13["loss_of_response"]
+    n14["biologic_switch"]
+    n15["comorbidity"]
+    n16["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -388,7 +438,8 @@ flowchart LR
     n5 -->n6
     n6 -->n7
     n7 -->n8
-    n8 -->n9
+    n8 -->n7
+    n7 -->n9
     n9 -->n10
     n10 -->n11
     n11 -->n12
@@ -396,39 +447,37 @@ flowchart LR
     n13 -->n14
     n14 -->n15
     n15 -->n16
-    n16 -->n17
-    n17 -->n15
 ```
 
-### P012
+### P012 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
+    n1["diagnostic_delay"]
     n2["symptoms_worsen"]
-    n3["primary_care_contact"]
-    n4["diagnostic_delay"]
-    n5["acute_flare"]
-    n6["specialist_referral"]
-    n7["diagnostic_testing"]
-    n8["crohns_diagnosis"]
-    n9["conventional_therapy"]
-    n10["therapy_failed"]
-    n11["biologic_recommended"]
-    n12["patient_fear"]
-    n13["insurance_denial"]
-    n14["insurance_appeal"]
-    n15["insurance_approval"]
-    n16["biologic_taken"]
+    n3["specialist_referral"]
+    n4["diagnostic_testing"]
+    n5["crohns_diagnosis"]
+    n6["conventional_therapy"]
+    n7["adverse_reaction"]
+    n8["biologic_recommended"]
+    n9["patient_fear"]
+    n10["biologic_not_taken"]
+    n11["biologic_taken"]
+    n12["insurance_denial"]
+    n13["insurance_appeal"]
+    n14["insurance_approval"]
+    n15["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
+    n6 -->|x2| n7
+    n7 -->n6
     n7 -->n8
     n8 -->n9
     n9 -->n10
@@ -437,7 +486,6 @@ flowchart LR
     n12 -->n13
     n13 -->n14
     n14 -->n15
-    n15 -->n16
 ```
 
 ### P013 — cyclic (loops)
@@ -446,30 +494,28 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["specialist_referral"]
-    n2["diagnostic_testing"]
-    n3["crohns_diagnosis"]
-    n4["conventional_therapy"]
+    n1["diagnostic_testing"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["therapy_failed"]
     n5["adverse_reaction"]
-    n6["biologic_recommended"]
-    n7["biologic_taken"]
-    n8["loss_of_response"]
-    n9["biologic_switch"]
-    n10["comorbidity"]
+    n6["biologic_taken"]
+    n7["comorbidity"]
+    n8["biologic_switch"]
+    n9["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
-    n4 -->n5
+    n4 -->n3
+    n3 -->n5
     n5 -->n6
     n6 -->n7
     n7 -->n8
     n8 -->n9
-    n9 -->n10
-    n10 -->n7
 ```
 
-### P014
+### P014 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
@@ -482,19 +528,20 @@ flowchart LR
     n5["conventional_therapy"]
     n6["therapy_failed"]
     n7["adverse_reaction"]
-    n8["comorbidity"]
-    n9["biologic_recommended"]
-    n10["insurance_denial"]
-    n11["insurance_appeal"]
-    n12["insurance_approval"]
-    n13["biologic_taken"]
+    n8["biologic_taken"]
+    n9["insurance_denial"]
+    n10["insurance_appeal"]
+    n11["insurance_approval"]
+    n12["comorbidity"]
+    n13["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
+    n6 -->n5
+    n5 -->n7
     n7 -->n8
     n8 -->n9
     n9 -->n10
@@ -509,21 +556,21 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["specialist_referral"]
-    n3["diagnostic_testing"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["adverse_reaction"]
-    n7["biologic_recommended"]
-    n8["biologic_taken"]
-    n9["loss_of_response"]
-    n10["biologic_switch"]
-    n11["comorbidity"]
-    n12["biologic_not_taken"]
+    n1["diagnostic_delay"]
+    n2["primary_care_contact"]
+    n3["misdiagnosis"]
+    n4["symptoms_worsen"]
+    n5["specialist_referral"]
+    n6["diagnostic_testing"]
+    n7["crohns_diagnosis"]
+    n8["conventional_therapy"]
+    n9["adverse_reaction"]
+    n10["biologic_taken"]
+    n11["loss_of_response"]
+    n12["biologic_switch"]
     n13["insurance_denial"]
-    n14["insurance_appeal"]
-    n15["insurance_approval"]
+    n14["acute_flare"]
+    n15["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -532,6 +579,48 @@ flowchart LR
     n5 -->n6
     n6 -->n7
     n7 -->n8
+    n8 -->|x2| n9
+    n9 -->n8
+    n9 -->n10
+    n10 -->n11
+    n11 -->|x2| n12
+    n12 -->n11
+    n12 -->n13
+    n13 -->n14
+    n14 -->n10
+    n10 -->n15
+```
+
+### P016 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["diagnostic_delay"]
+    n2["symptoms_worsen"]
+    n3["specialist_referral"]
+    n4["diagnostic_testing"]
+    n5["crohns_diagnosis"]
+    n6["conventional_therapy"]
+    n7["therapy_failed"]
+    n8["adverse_reaction"]
+    n9["biologic_recommended"]
+    n10["insurance_denial"]
+    n11["insurance_step_therapy"]
+    n12["insurance_cost_barrier"]
+    n13["patient_fear"]
+    n14["biologic_not_taken"]
+    n15["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n5
+    n5 -->n6
+    n6 -->n7
+    n7 -->n6
+    n6 -->n8
     n8 -->n9
     n9 -->n10
     n10 -->n11
@@ -539,88 +628,58 @@ flowchart LR
     n12 -->n13
     n13 -->n14
     n14 -->n15
-    n15 -->n8
 ```
 
-### P016
+### P017 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
-    n2["symptoms_worsen"]
-    n3["acute_flare"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["adverse_reaction"]
-    n10["biologic_recommended"]
-    n11["insurance_denial"]
+    n1["diagnostic_delay"]
+    n2["diagnostic_testing"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["biologic_recommended"]
+    n6["biologic_not_taken"]
+    n7["planning_next_step"]
+    n8["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
+    n4 -->n4
     n4 -->n5
     n5 -->n6
     n6 -->n7
     n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
 ```
 
-### P017
+### P018 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["comorbidity"]
-    n3["diagnostic_delay"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
+    n1["diagnostic_testing"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["adverse_reaction"]
+    n5["therapy_failed"]
     n6["biologic_recommended"]
-    n7["therapy_failed"]
-    n8["biologic_not_taken"]
-    n9["planning_next_step"]
+    n7["patient_fear"]
+    n8["insurance_cost_barrier"]
+    n9["biologic_not_taken"]
+    n10["planning_next_step"]
+    n11["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-```
-
-### P018
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["self_managed"]
-    n2["symptoms_worsen"]
-    n3["specialist_referral"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["adverse_reaction"]
-    n8["therapy_failed"]
-    n9["biologic_recommended"]
-    n10["insurance_cost_barrier"]
-    n11["biologic_not_taken"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
+    n4 -->n3
+    n3 -->n5
+    n5 -->n3
+    n3 -->n6
     n6 -->n7
     n7 -->n8
     n8 -->n9
@@ -634,17 +693,20 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
+    n1["diagnostic_delay"]
     n2["symptoms_worsen"]
     n3["specialist_referral"]
     n4["diagnostic_testing"]
     n5["crohns_diagnosis"]
     n6["biologic_recommended"]
-    n7["insurance_denial"]
-    n8["insurance_appeal"]
-    n9["insurance_approval"]
-    n10["biologic_taken"]
+    n7["biologic_taken"]
+    n8["insurance_denial"]
+    n9["insurance_appeal"]
+    n10["insurance_approval"]
     n11["patient_fear"]
+    n12["breakthrough_symptoms"]
+    n13["planning_next_step"]
+    n14["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -656,6 +718,9 @@ flowchart LR
     n8 -->n9
     n9 -->n10
     n10 -->n11
+    n11 -->n12
+    n12 -->n13
+    n13 -->n14
 ```
 
 ### P020 — cyclic (loops)
@@ -664,7 +729,7 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
+    n1["diagnostic_delay"]
     n2["symptoms_worsen"]
     n3["specialist_referral"]
     n4["diagnostic_testing"]
@@ -680,23 +745,27 @@ flowchart LR
     n14["loss_of_response"]
     n15["biologic_switch"]
     n16["planning_next_step"]
+    n17["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
+    n6 -->|x3| n7
+    n7 -->|x2| n6
+    n6 -->n8
+    n8 -->n6
+    n7 -->n9
     n9 -->n10
     n10 -->n11
     n11 -->n12
     n12 -->n13
-    n13 -->|x2| n14
+    n13 -->n14
     n14 -->n15
-    n15 -->n13
+    n15 -->n14
     n14 -->n16
+    n16 -->n17
 ```
 
 ### P021 — cyclic (loops)
@@ -706,7 +775,7 @@ flowchart LR
 flowchart LR
     n0["symptom_onset"]
     n1["diagnostic_delay"]
-    n2["symptoms_worsen"]
+    n2["misdiagnosis"]
     n3["specialist_referral"]
     n4["diagnostic_testing"]
     n5["crohns_diagnosis"]
@@ -716,11 +785,11 @@ flowchart LR
     n9["biologic_taken"]
     n10["adverse_reaction"]
     n11["biologic_switch"]
-    n12["alternative_therapy"]
-    n13["loss_of_response"]
-    n14["insurance_denial"]
-    n15["insurance_appeal"]
-    n16["insurance_approval"]
+    n12["loss_of_response"]
+    n13["insurance_denial"]
+    n14["insurance_appeal"]
+    n15["insurance_approval"]
+    n16["unresolved"]
     n17["planning_next_step"]
     n0 -->n1
     n1 -->n2
@@ -728,20 +797,21 @@ flowchart LR
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
+    n6 -->|x2| n7
+    n7 -->n6
     n7 -->n8
     n8 -->n9
     n9 -->n10
     n10 -->n11
     n11 -->n9
     n9 -->n12
-    n12 -->n13
-    n13 -->n8
-    n8 -->n14
+    n12 -->n11
+    n11 -->n13
+    n13 -->n14
     n14 -->n15
-    n15 -->n16
-    n16 -->n9
-    n9 -->n17
+    n15 -->n9
+    n9 -->n16
+    n16 -->n17
 ```
 
 ### P022 — cyclic (loops)
@@ -750,31 +820,28 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["diagnostic_delay"]
-    n2["symptoms_worsen"]
-    n3["acute_flare"]
-    n4["complication"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["biologic_recommended"]
-    n10["insurance_denial"]
-    n11["insurance_appeal"]
-    n12["insurance_approval"]
-    n13["biologic_taken"]
-    n14["loss_of_response"]
-    n15["biologic_switch"]
-    n16["alternative_therapy"]
-    n17["comorbidity"]
-    n18["planning_next_step"]
-    n19["unresolved"]
+    n1["acute_flare"]
+    n2["diagnostic_testing"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["comorbidity"]
+    n6["therapy_failed"]
+    n7["biologic_recommended"]
+    n8["insurance_denial"]
+    n9["insurance_appeal"]
+    n10["insurance_approval"]
+    n11["biologic_taken"]
+    n12["loss_of_response"]
+    n13["biologic_switch"]
+    n14["planning_next_step"]
+    n15["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n6
+    n5 -->n4
+    n4 -->n6
     n6 -->n7
     n7 -->n8
     n8 -->n9
@@ -782,13 +849,10 @@ flowchart LR
     n10 -->n11
     n11 -->n12
     n12 -->n13
-    n13 -->n14
+    n13 -->n11
+    n11 -->n5
+    n5 -->n14
     n14 -->n15
-    n15 -->n13
-    n13 -->n16
-    n16 -->n17
-    n17 -->n18
-    n18 -->n19
 ```
 
 ### P023 — cyclic (loops)
@@ -797,21 +861,19 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
+    n1["diagnostic_delay"]
+    n2["misdiagnosis"]
     n3["symptoms_worsen"]
     n4["specialist_referral"]
     n5["diagnostic_testing"]
     n6["crohns_diagnosis"]
     n7["conventional_therapy"]
     n8["adverse_reaction"]
-    n9["therapy_failed"]
-    n10["biologic_recommended"]
-    n11["biologic_not_taken"]
-    n12["patient_fear"]
-    n13["alternative_therapy"]
-    n14["biologic_taken"]
-    n15["other"]
+    n9["biologic_recommended"]
+    n10["insurance_step_therapy"]
+    n11["insurance_approval"]
+    n12["biologic_taken"]
+    n13["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -819,34 +881,33 @@ flowchart LR
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
-    n8 -->n9
+    n7 -->n7
+    n7 -->|x2| n8
+    n8 -->|x2| n9
     n9 -->n10
-    n10 -->n11
+    n10 -->n7
+    n9 -->n11
     n11 -->n12
     n12 -->n13
-    n13 -->n9
-    n9 -->n14
-    n14 -->n15
 ```
 
-### P024
+### P024 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
+    n1["diagnostic_delay"]
+    n2["misdiagnosis"]
+    n3["specialist_referral"]
+    n4["diagnostic_testing"]
+    n5["crohns_diagnosis"]
+    n6["conventional_therapy"]
+    n7["comorbidity"]
     n8["therapy_failed"]
-    n9["adverse_reaction"]
-    n10["biologic_recommended"]
-    n11["insurance_step_therapy"]
+    n9["biologic_recommended"]
+    n10["insurance_step_therapy"]
+    n11["adverse_reaction"]
     n12["planning_next_step"]
     n0 -->n1
     n1 -->n2
@@ -855,10 +916,12 @@ flowchart LR
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
+    n7 -->n6
+    n6 -->n8
     n8 -->n9
     n9 -->n10
-    n10 -->n11
+    n10 -->n6
+    n6 -->n11
     n11 -->n12
 ```
 
@@ -868,21 +931,19 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
+    n1["symptoms_worsen"]
+    n2["misdiagnosis"]
+    n3["acute_flare"]
+    n4["diagnostic_testing"]
+    n5["specialist_referral"]
     n6["crohns_diagnosis"]
     n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["adverse_reaction"]
-    n10["patient_fear"]
-    n11["alternative_therapy"]
-    n12["biologic_recommended"]
-    n13["biologic_taken"]
-    n14["planning_next_step"]
-    n15["other"]
+    n8["adverse_reaction"]
+    n9["therapy_failed"]
+    n10["alternative_therapy"]
+    n11["biologic_recommended"]
+    n12["biologic_taken"]
+    n13["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -890,15 +951,16 @@ flowchart LR
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
-    n8 -->n9
+    n7 -->|x2| n8
+    n8 -->n7
+    n7 -->n9
     n9 -->n10
-    n10 -->n11
-    n11 -->n8
-    n8 -->n12
+    n10 -->n1
+    n1 -->n7
+    n8 -->n9
+    n9 -->n11
+    n11 -->n12
     n12 -->n13
-    n13 -->n14
-    n14 -->n15
 ```
 
 ### P026 — cyclic (loops)
@@ -907,35 +969,33 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["adverse_reaction"]
-    n9["therapy_failed"]
-    n10["biologic_recommended"]
-    n11["biologic_taken"]
-    n12["loss_of_response"]
-    n13["biologic_switch"]
-    n14["planning_next_step"]
+    n1["diagnostic_testing"]
+    n2["crohns_diagnosis"]
+    n3["comorbidity"]
+    n4["conventional_therapy"]
+    n5["therapy_failed"]
+    n6["adverse_reaction"]
+    n7["biologic_recommended"]
+    n8["biologic_taken"]
+    n9["loss_of_response"]
+    n10["biologic_switch"]
+    n11["planning_next_step"]
+    n12["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
+    n4 -->n4
     n4 -->n5
-    n5 -->n6
+    n5 -->n4
+    n4 -->|x2| n6
+    n6 -->n4
     n6 -->n7
     n7 -->n8
     n8 -->n9
     n9 -->n10
     n10 -->n11
     n11 -->n12
-    n12 -->n13
-    n13 -->n11
-    n11 -->n14
 ```
 
 ### P027 — cyclic (loops)
@@ -944,52 +1004,20 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["comorbidity"]
-    n3["complication"]
-    n4["surgery"]
-    n5["biologic_recommended"]
-    n6["biologic_taken"]
-    n7["loss_of_response"]
-    n8["biologic_switch"]
-    n9["alternative_therapy"]
-    n10["planning_next_step"]
-    n11["other"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n6
-    n6 -->n9
-    n9 -->n10
-    n10 -->n11
-```
-
-### P028
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["diagnostic_delay"]
-    n2["symptoms_worsen"]
-    n3["specialist_referral"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["adverse_reaction"]
-    n8["therapy_failed"]
-    n9["biologic_recommended"]
-    n10["insurance_denial"]
-    n11["insurance_appeal"]
-    n12["insurance_approval"]
-    n13["biologic_taken"]
-    n14["planning_next_step"]
-    n15["unresolved"]
+    n1["symptoms_worsen"]
+    n2["diagnostic_testing"]
+    n3["crohns_diagnosis"]
+    n4["complication"]
+    n5["surgery"]
+    n6["biologic_recommended"]
+    n7["biologic_taken"]
+    n8["loss_of_response"]
+    n9["comorbidity"]
+    n10["biologic_switch"]
+    n11["conventional_therapy"]
+    n12["adverse_reaction"]
+    n13["planning_next_step"]
+    n14["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -1000,11 +1028,45 @@ flowchart LR
     n7 -->n8
     n8 -->n9
     n9 -->n10
-    n10 -->n11
+    n10 -->n7
+    n7 -->n11
     n11 -->n12
     n12 -->n13
     n13 -->n14
-    n14 -->n15
+```
+
+### P028 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["diagnostic_delay"]
+    n2["diagnostic_testing"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["comorbidity"]
+    n6["adverse_reaction"]
+    n7["biologic_recommended"]
+    n8["insurance_denial"]
+    n9["insurance_appeal"]
+    n10["insurance_approval"]
+    n11["biologic_taken"]
+    n12["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n5
+    n5 -->n6
+    n6 -->n4
+    n4 -->n4
+    n4 -->n7
+    n7 -->n8
+    n8 -->n9
+    n9 -->n10
+    n10 -->n11
+    n11 -->n12
 ```
 
 ### P029 — cyclic (loops)
@@ -1014,66 +1076,92 @@ flowchart LR
 flowchart LR
     n0["symptom_onset"]
     n1["diagnostic_delay"]
-    n2["symptoms_worsen"]
-    n3["specialist_referral"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["adverse_reaction"]
-    n8["therapy_failed"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["loss_of_response"]
-    n12["biologic_switch"]
-    n13["insurance_denial"]
-    n14["insurance_appeal"]
-    n15["insurance_approval"]
-    n16["alternative_therapy"]
-    n17["planning_next_step"]
-    n18["other"]
+    n2["diagnostic_testing"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["loss_of_response"]
+    n6["adverse_reaction"]
+    n7["biologic_recommended"]
+    n8["biologic_taken"]
+    n9["biologic_switch"]
+    n10["comorbidity"]
+    n11["insurance_denial"]
+    n12["insurance_appeal"]
+    n13["insurance_approval"]
+    n14["planning_next_step"]
+    n15["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->|x2| n4
+    n4 -->n5
+    n5 -->n4
+    n4 -->n6
+    n6 -->n7
+    n7 -->n8
+    n8 -->n5
+    n5 -->n9
+    n9 -->n8
+    n8 -->n10
+    n10 -->n9
+    n9 -->n11
+    n11 -->n12
+    n12 -->n13
+    n13 -->n8
+    n8 -->n14
+    n14 -->n15
+```
+
+### P030 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["symptoms_worsen"]
+    n2["acute_flare"]
+    n3["diagnostic_testing"]
+    n4["crohns_diagnosis"]
+    n5["conventional_therapy"]
+    n6["therapy_failed"]
+    n7["biologic_recommended"]
+    n8["biologic_taken"]
+    n9["planning_next_step"]
+    n10["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
+    n5 -->|x2| n5
     n5 -->n6
     n6 -->n7
     n7 -->n8
     n8 -->n9
     n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n10
-    n10 -->n13
-    n13 -->n14
-    n14 -->n15
-    n15 -->n10
-    n10 -->n16
-    n16 -->n17
-    n17 -->n18
 ```
 
-### P030
+### P031 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
     n1["diagnostic_delay"]
-    n2["symptoms_worsen"]
-    n3["acute_flare"]
-    n4["complication"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["planning_next_step"]
-    n12["other"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["comorbidity"]
+    n5["biologic_taken"]
+    n6["loss_of_response"]
+    n7["complication"]
+    n8["biologic_switch"]
+    n9["unresolved"]
+    n10["planning_next_step"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
+    n3 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
@@ -1081,11 +1169,58 @@ flowchart LR
     n7 -->n8
     n8 -->n9
     n9 -->n10
-    n10 -->n11
-    n11 -->n12
 ```
 
-### P031
+### P032 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["diagnostic_delay"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["therapy_failed"]
+    n5["adverse_reaction"]
+    n6["biologic_recommended"]
+    n7["insurance_denial"]
+    n8["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n4
+    n4 -->n5
+    n5 -->n3
+    n3 -->n6
+    n6 -->n7
+    n7 -->n8
+```
+
+### P033 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["crohns_diagnosis"]
+    n2["conventional_therapy"]
+    n3["adverse_reaction"]
+    n4["biologic_taken"]
+    n5["biologic_switch"]
+    n6["comorbidity"]
+    n7["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n2
+    n2 -->n4
+    n4 -->n3
+    n3 -->n5
+    n5 -->n6
+    n6 -->n7
+```
+
+### P034 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
@@ -1093,174 +1228,45 @@ flowchart LR
     n0["symptom_onset"]
     n1["misdiagnosis"]
     n2["diagnostic_delay"]
-    n3["diagnostic_testing"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["therapy_failed"]
-    n7["relapse"]
-    n8["comorbidity"]
-    n9["acute_flare"]
-    n10["complication"]
-    n11["surgery"]
-    n12["biologic_recommended"]
-    n13["biologic_taken"]
-    n14["adverse_reaction"]
-    n15["alternative_therapy"]
-    n16["planning_next_step"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["adverse_reaction"]
+    n6["biologic_taken"]
+    n7["comorbidity"]
+    n8["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
-    n4 -->n5
+    n4 -->|x2| n4
+    n4 -->|x2| n5
+    n5 -->n4
     n5 -->n6
     n6 -->n7
     n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
-    n14 -->n15
-    n15 -->n16
 ```
 
-### P032
+### P035 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
-    n2["primary_care_contact"]
-    n3["diagnostic_delay"]
-    n4["symptoms_worsen"]
-    n5["specialist_referral"]
-    n6["diagnostic_testing"]
-    n7["crohns_diagnosis"]
-    n8["conventional_therapy"]
-    n9["therapy_failed"]
-    n10["adverse_reaction"]
-    n11["biologic_recommended"]
-    n12["insurance_denial"]
-    n13["insurance_step_therapy"]
+    n1["crohns_diagnosis"]
+    n2["conventional_therapy"]
+    n3["biologic_taken"]
+    n4["comorbidity"]
+    n5["biologic_switch"]
+    n6["unresolved"]
+    n7["planning_next_step"]
     n0 -->n1
     n1 -->n2
+    n2 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-```
-
-### P033
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["diagnostic_testing"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["therapy_failed"]
-    n7["adverse_reaction"]
-    n8["relapse"]
-    n9["comorbidity"]
-    n10["biologic_recommended"]
-    n11["biologic_taken"]
-    n12["biologic_switch"]
-    n13["alternative_therapy"]
-    n14["planning_next_step"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
-```
-
-### P034
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["specialist_referral"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["therapy_failed"]
-    n8["adverse_reaction"]
-    n9["patient_fear"]
-    n10["biologic_recommended"]
-    n11["biologic_taken"]
-    n12["planning_next_step"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-```
-
-### P035
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["diagnostic_testing"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["adverse_reaction"]
-    n7["relapse"]
-    n8["comorbidity"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["biologic_switch"]
-    n12["loss_of_response"]
-    n13["alternative_therapy"]
-    n14["planning_next_step"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
 ```
 
 ### P036
@@ -1270,19 +1276,12 @@ flowchart LR
 flowchart LR
     n0["symptom_onset"]
     n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["diagnostic_testing"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["therapy_failed"]
-    n7["adverse_reaction"]
-    n8["relapse"]
-    n9["comorbidity"]
-    n10["insurance_denial"]
-    n11["biologic_recommended"]
-    n12["biologic_taken"]
-    n13["biologic_switch"]
-    n14["planning_next_step"]
+    n2["crohns_diagnosis"]
+    n3["biologic_taken"]
+    n4["insurance_denial"]
+    n5["relapse"]
+    n6["unresolved"]
+    n7["planning_next_step"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -1290,82 +1289,34 @@ flowchart LR
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
 ```
 
-### P037
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["comorbidity"]
-    n2["adverse_reaction"]
-    n3["diagnostic_delay"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["therapy_failed"]
-    n8["relapse"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["biologic_switch"]
-    n12["loss_of_response"]
-    n13["planning_next_step"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-```
-
-### P038
+### P037 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
     n1["misdiagnosis"]
-    n2["adverse_reaction"]
-    n3["diagnostic_delay"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["comorbidity"]
-    n7["biologic_recommended"]
-    n8["biologic_taken"]
-    n9["loss_of_response"]
-    n10["biologic_switch"]
-    n11["alternative_therapy"]
-    n12["planning_next_step"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["comorbidity"]
+    n5["biologic_taken"]
+    n6["loss_of_response"]
+    n7["planning_next_step"]
+    n8["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
+    n3 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
     n6 -->n7
     n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
 ```
 
-### P039
+### P038 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
@@ -1373,16 +1324,13 @@ flowchart LR
     n0["symptom_onset"]
     n1["misdiagnosis"]
     n2["diagnostic_delay"]
-    n3["diagnostic_testing"]
+    n3["comorbidity"]
     n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["adverse_reaction"]
-    n7["relapse"]
-    n8["comorbidity"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["biologic_switch"]
-    n12["planning_next_step"]
+    n5["biologic_taken"]
+    n6["loss_of_response"]
+    n7["biologic_switch"]
+    n8["planning_next_step"]
+    n9["unresolved"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
@@ -1390,47 +1338,61 @@ flowchart LR
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
+    n7 -->n6
+    n6 -->n8
     n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
 ```
 
-### P040
+### P039 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["diagnostic_testing"]
-    n4["crohns_diagnosis"]
-    n5["conventional_therapy"]
-    n6["adverse_reaction"]
-    n7["relapse"]
-    n8["comorbidity"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["loss_of_response"]
-    n12["biologic_switch"]
-    n13["alternative_therapy"]
-    n14["planning_next_step"]
+    n1["crohns_diagnosis"]
+    n2["conventional_therapy"]
+    n3["adverse_reaction"]
+    n4["biologic_taken"]
+    n5["comorbidity"]
+    n6["planning_next_step"]
+    n7["unresolved"]
     n0 -->n1
     n1 -->n2
-    n2 -->n3
+    n2 -->n2
+    n2 -->|x2| n3
+    n3 -->n2
+    n3 -->n4
+    n4 -->n5
+    n5 -->n5
+    n5 -->n6
+    n6 -->n7
+```
+
+### P040 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["crohns_diagnosis"]
+    n2["conventional_therapy"]
+    n3["adverse_reaction"]
+    n4["biologic_taken"]
+    n5["insurance_denial"]
+    n6["loss_of_response"]
+    n7["biologic_switch"]
+    n8["planning_next_step"]
+    n9["unresolved"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->|x2| n3
+    n3 -->n2
     n3 -->n4
     n4 -->n5
     n5 -->n6
     n6 -->n7
     n7 -->n8
     n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
 ```
 
 ### P041 — cyclic (loops)
@@ -1439,192 +1401,135 @@ flowchart LR
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["loss_of_response"]
-    n12["alternative_therapy"]
-    n13["planning_next_step"]
+    n1["symptoms_worsen"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["biologic_taken"]
+    n5["loss_of_response"]
+    n6["biologic_switch"]
+    n7["planning_next_step"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
+    n3 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
     n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n10
-    n10 -->n13
 ```
 
-### P042
+### P042 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
-    n2["primary_care_contact"]
-    n3["symptoms_worsen"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["therapy_failed"]
-    n8["adverse_reaction"]
-    n9["alternative_therapy"]
-    n10["biologic_recommended"]
-    n11["biologic_taken"]
-    n12["biologic_switch"]
+    n1["symptoms_worsen"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["adverse_reaction"]
+    n5["therapy_failed"]
+    n6["biologic_taken"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
+    n3 -->n3
     n3 -->n4
-    n4 -->n5
+    n4 -->n3
+    n3 -->n5
     n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
 ```
 
-### P043
+### P043 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["surgery"]
-    n8["relapse"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
-    n11["loss_of_response"]
-    n12["biologic_switch"]
-    n13["comorbidity"]
-    n14["alternative_therapy"]
-    n15["planning_next_step"]
+    n1["diagnostic_delay"]
+    n2["crohns_diagnosis"]
+    n3["surgery"]
+    n4["relapse"]
+    n5["biologic_taken"]
+    n6["loss_of_response"]
+    n7["biologic_switch"]
+    n8["conventional_therapy"]
+    n9["planning_next_step"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
+    n6 -->|x2| n7
     n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
-    n11 -->n12
-    n12 -->n13
-    n13 -->n14
-    n14 -->n15
+    n8 -->n6
+    n7 -->n9
 ```
 
-### P044
+### P044 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["adverse_reaction"]
-    n9["biologic_recommended"]
-    n10["patient_fear"]
+    n1["symptoms_worsen"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["biologic_recommended"]
+    n5["patient_fear"]
+    n6["planning_next_step"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
+    n3 -->|x2| n3
     n3 -->n4
     n4 -->n5
     n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
 ```
 
-### P045
+### P045 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["therapy_failed"]
-    n9["insurance_step_therapy"]
-    n10["alternative_therapy"]
-    n11["biologic_recommended"]
+    n1["diagnostic_delay"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["biologic_recommended"]
+    n5["insurance_step_therapy"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
+    n3 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
-    n10 -->n11
+    n5 -->n3
 ```
 
-### P046
+### P046 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["self_managed"]
-    n2["symptoms_worsen"]
-    n3["primary_care_contact"]
-    n4["diagnostic_testing"]
-    n5["crohns_diagnosis"]
-    n6["conventional_therapy"]
-    n7["complication"]
-    n8["comorbidity"]
-    n9["biologic_recommended"]
-    n10["biologic_taken"]
+    n1["symptoms_worsen"]
+    n2["crohns_diagnosis"]
+    n3["conventional_therapy"]
+    n4["adverse_reaction"]
+    n5["therapy_failed"]
+    n6["biologic_taken"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
-    n4 -->n5
+    n4 -->n3
+    n3 -->n5
     n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
 ```
 
-### P047
+### P047 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
@@ -1632,27 +1537,18 @@ flowchart LR
     n0["symptom_onset"]
     n1["misdiagnosis"]
     n2["diagnostic_delay"]
-    n3["symptoms_worsen"]
-    n4["specialist_referral"]
-    n5["diagnostic_testing"]
-    n6["crohns_diagnosis"]
-    n7["conventional_therapy"]
-    n8["adverse_reaction"]
-    n9["alternative_therapy"]
-    n10["biologic_recommended"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["adverse_reaction"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n6
-    n6 -->n7
-    n7 -->n8
-    n8 -->n9
-    n9 -->n10
+    n5 -->n4
 ```
 
-### P048
+### P048 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
@@ -1667,45 +1563,47 @@ flowchart LR
     n1 -->n2
     n2 -->n3
     n3 -->n4
+    n4 -->n4
     n4 -->n5
 ```
 
-### P049
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["diagnostic_testing"]
-    n1["surgery"]
-    n2["crohns_diagnosis"]
-    n3["conventional_therapy"]
-    n4["biologic_recommended"]
-    n5["patient_fear"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-```
-
-### P050
+### P049 — cyclic (loops)
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["symptoms_worsen"]
-    n2["diagnostic_testing"]
-    n3["crohns_diagnosis"]
-    n4["conventional_therapy"]
-    n5["therapy_failed"]
-    n6["comorbidity"]
-    n7["alternative_therapy"]
+    n1["crohns_diagnosis"]
+    n2["conventional_therapy"]
+    n3["adverse_reaction"]
+    n4["biologic_recommended"]
+    n5["patient_fear"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
-    n3 -->n4
+    n3 -->n2
+    n2 -->n4
     n4 -->n5
+```
+
+### P050 — cyclic (loops)
+
+``` mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    n0["symptom_onset"]
+    n1["crohns_diagnosis"]
+    n2["conventional_therapy"]
+    n3["therapy_failed"]
+    n4["adverse_reaction"]
+    n5["biologic_recommended"]
+    n6["biologic_not_taken"]
+    n0 -->n1
+    n1 -->n2
+    n2 -->n3
+    n3 -->n2
+    n2 -->n4
+    n4 -->n2
+    n2 -->n5
     n5 -->n6
-    n6 -->n7
 ```

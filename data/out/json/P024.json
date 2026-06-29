@@ -10,49 +10,53 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "reasons_for_biologic_not_taken": [
+    "INSURANCE_PROBLEMS"
+  ],
   "comorbid_conditions": [
-    "TYPE_2_DIABETES",
+    "OTHER",
     "SLEEP_APNEA"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "not enough",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
-      "treatment_class": "conventional",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "blood sugar issues",
-      "before_biologic": true
+      "reason_stopped": "blood sugar went crazy",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "sulfasalazine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "ONGOING",
-      "reason_stopped": "headaches",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
-    "symptoms_worsen",
+    "misdiagnosis",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "adverse_reaction",
+    "comorbidity",
+    "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "insurance_denial",
-    "insurance_step_therapy"
+    "insurance_step_therapy",
+    "conventional_therapy",
+    "adverse_reaction",
+    "planning_next_step"
   ],
-  "evidence_notes": "Patient has a recent diagnosis and is struggling with conventional therapies and insurance hurdles for biologics. Treatment outcome is ongoing as the patient is still trying to get on biologics. The narrative ends with a statement of hope and determination, not a cut-off."
+  "evidence_notes": "Derek, 40, was diagnosed with Crohn's three months ago, but likely had it for years. He is also pre-diabetic and has sleep apnea. He started with mesalamine and prednisone. Prednisone helped but caused blood sugar issues, so he tapered off quickly. Mesalamine alone was not enough. His doctor wants to try biologics, but insurance requires him to fail more drugs first. He is currently trying sulfasalazine, which is causing terrible headaches. He is pushing hard for biologics at his next appointment. His overall outcome is ongoing as he is still in the early stages of treatment and facing insurance barriers to biologics."
 }

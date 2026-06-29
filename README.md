@@ -11,6 +11,13 @@ Health AI companion records each patient’s treatment journey
 **longitudinally over time**, so the temporal axis is central to the
 data.
 
+*Pipeline version `0.1.0` · extraction model `gemini/gemini-2.5-flash` ·
+gold `interviews_ground_truth_v7.ods` — rendered from `config.json` /
+`pyproject.toml`, so this line always names the model this build used
+(`config.MODEL` resolves the `CROHNICITY_MODEL` env override; the model
+is also logged per call in `logs/extract.log`). Changes between runs:
+[`CHANGELOG.md`](CHANGELOG.md).*
+
 ## Pydantic Schema Design
 
 - Which fields should be **enums** vs. **free text** vs. **structured
@@ -30,27 +37,49 @@ data.
   groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`,
   `ReasonNotTaken`, `ComorbidCondition`, `PathwayStep` — so
   `value_counts`/joins get stable categories and membership is checked
-  at the model boundary (`enforce_validation`). Open, high-cardinality,
-  not-yet-canonical fields stay **free text**: `biologic_type`,
-  `TreatmentRecord.name`/`treatment_class` (a branded-drug +
-  treatment-class registry is future work — `docs/TODO.md`). Repeated,
-  multi-attribute things are **structured objects/lists**:
-  `treatment_records` (a list of `TreatmentRecord`, each carrying
-  `before_biologic`, the flag that answers Q3), `demographics`, and
-  `referral_pathway` (`list[PathwayStep]`). The visible cost of the
-  free-text choice shows up in the **Q3 table** —
+  at the model boundary (`enforce_validation`) — **Gemini literally
+  cannot return a value outside each enum, regardless of what the prompt
+  lists** (the schema is sent as `response_schema` and the reply is
+  validated, raising `JSONSchemaValidationError` on a mismatch). Open,
+  high-cardinality, not-yet-canonical fields stay **free text**:
+  `biologic_type`, `TreatmentRecord.name`/`treatment_class` (a
+  branded-drug + treatment-class registry is future work —
+  `docs/TODO.md`). Repeated, multi-attribute things are **structured
+  objects/lists**: `treatment_records` (a list of `TreatmentRecord`,
+  each carrying `biologic_timing`, the field that answers Q3),
+  `demographics`, and `referral_pathway` (`list[PathwayStep]`). The
+  visible cost of the free-text choice shows up in the **Q3 table** —
   `conventional_therapy`/`conventional` and case variants are one class
   left un-normalised.
 - **Three states, not one null.** “Not mentioned” (absence), “explicitly
   denied” (negation) and “cut off” (truncation) are kept as *separate*
   signals rather than collapsed into a null: absence →
   `biologic_not_mentioned` + null/empty fields + `NOT_MENTIONED`;
-  negation → the `biologic_prescribed` vs. `biologic_taken` pair + a
-  specific `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…);
-  truncation → `churn` + `JOURNEY_CUT_OFF`. A `NOT_APPLICABLE` member
-  marks “genuinely doesn’t apply” so it isn’t confused with a blank “not
-  yet annotated” cell. This is the split the churn table under Q4
-  operationalises.
+  negation → the `biologic_prescribed` vs. `biologic_taken` pair + one
+  or more `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…;
+  multi-select); truncation → `churn` (a cut-off journey is the same
+  truncation signal `churn` already carries, so there is no separate
+  `JOURNEY_CUT_OFF` reason — it was folded into `churn`, like
+  `incomplete_journey` before it). Explicit non-reason values
+  (`BIOLOGIC_TAKEN` when a biologic was taken, `NOT_APPLICABLE` when
+  none was ever prescribed) keep `reasons_for_biologic_not_taken`
+  **never empty**, so “doesn’t apply” is never confused with a missing
+  value or a blank “not yet annotated” cell. This is the split the churn
+  table under Q4 operationalises.
+- **Reason enums — aligned to the spec, departing only where the
+  evidence demanded.** The spec’s Q2 reasons (*doctor choice / patient
+  fears / cost / access*) shaped these enums, but reviewing all 50
+  transcripts drove two deliberate calls (evidenced in
+  [`docs/SCHEMA.md`](docs/SCHEMA.md) v0.7): **(1)** we keep
+  `INSURANCE_PROBLEMS` rather than the spec’s bare *“access”* — every
+  real barrier in the data is payer-gating (step-therapy / prior-auth /
+  tier), not drug *availability*, and `ACCESS` had **zero** transcript
+  support (covered by `COST` + `INSURANCE_PROBLEMS`); **(2)**
+  `reasons_for_biologic_not_taken` is **multi-select** (a list), because
+  patients routinely have several reasons at once (e.g. cost + fear).
+  Relatedly, `ReasonPrescribed` was trimmed to the initiation signal
+  (`DOCTOR_CHOICE` / `PATIENT_REQUEST`), since cost / fears / access are
+  reasons a biologic is *not taken*, not reasons it was prescribed.
 - **Evidence / auditability.** The model **does populate
   `evidence_notes`** — a free-text rationale per patient (all 50
   predictions carry one, e.g. *“cycled through Remicade, Humira due to
@@ -104,16 +133,17 @@ data.
   transcript does not support a confident value”* — covers **absence**.
   **Negation** rides on the prescribed-vs-taken booleans + the
   `ReasonNotTaken` enum. **Truncation** gets the most explicit
-  instruction: judge `churn` from how the transcript *ends*, treat a
-  trailing “…” as a cut-off *only* if “…” isn’t a recurring stylistic
-  device, prefer `false` when ambiguous, and — critically — *“keep this
-  truncation signal distinct from a topic simply being absent … (that is
-  ‘not mentioned’, not churn).”* Honest limit: truncation is a
-  lexical/structural property of the transcript’s end that the narrative
-  under-determines, so the instruction alone isn’t enough — the gold
-  audit found it unreliable in both directions (over-flagging and missed
-  truncation), and a deterministic tail-of-text rule would do better
-  (`docs/TO_REVIEW.md`).
+  instruction: judge `churn` from how the transcript *ends* — churn
+  **only** when it breaks off mid-word / mid-thought (e.g. ends on
+  “Chronic…”), while a deliberately-typed “…” on a coherent phrase is an
+  intentional sign-off, **not** churn (no recurrence heuristic) — and —
+  critically — *“keep this truncation signal distinct from a topic
+  simply being absent … (that is ‘not mentioned’, not churn).”* Honest
+  limit: truncation is a lexical/structural property of the transcript’s
+  end that the narrative under-determines, so the instruction alone
+  isn’t enough — the gold audit found it unreliable in both directions
+  (over-flagging and missed truncation), and a deterministic
+  tail-of-text rule would do better (`docs/TO_REVIEW.md`).
 - **Determinism & reproducibility.** Three levers, in decreasing order
   of leverage. **(1) Structured-output mode** —
   `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`:
@@ -131,15 +161,24 @@ data.
   want *same transcript → same labels*, not sampled variety. This build
   is the live test case for *why*: a fresh re-run at the provider
   default (Gemini’s default `temperature` is `1.0`) shifted long-tail
-  outputs (the GP-node count; which biologics got mislabelled
-  `before_biologic`) while the headline answers held — exactly the
+  outputs (the GP-node count; which biologics got mislabelled on
+  `biologic_timing`) while the headline answers held — exactly the
   run-to-run drift `0` removes. Temperature is **logged per run** (with
   the model) so runs at different parameter levels stay comparable. A
   seed would add belt-and-braces, but with a reasoning-capable model `0`
   *minimises* rather than *guarantees* bit-identical output; **(2)** is
-  the hard reproducibility guarantee for the analysis. No explicit
-  prompt **caching** yet — the static system prompt + schema are
-  identical across calls, so implicit context caching may apply, and
+  the hard reproducibility guarantee for the analysis. **Reasoning is
+  also disabled** — `reasoning_effort="disable"` (LiteLLM → Gemini
+  `thinkingConfig.thinkingBudget=0`, verified via `get_optional_params`)
+  — because extraction is *classification*, not multi-step inference:
+  the hidden thinking step added run-to-run variance and on
+  `gemini-2.5-flash` consumed the output budget until the JSON truncated
+  mid-array (a `JSONSchemaValidationError`), with no accuracy upside.
+  The *inspectable chain-of-thought* the stretch brief asks for is a
+  **different** thing — explicit multi-stage prompts with auditable
+  intermediates (the \#1 *Next Step* above), not opaque internal tokens.
+  No explicit prompt **caching** yet — the static system prompt + schema
+  are identical across calls, so implicit context caching may apply, and
   cached-token counts are logged (`docs/TELEMETRY.md`).
 
 ## Evaluation
@@ -162,21 +201,33 @@ where it’s shaky, what you’d fix first with more time.
 I picked (1).
 
 **What it surfaced.** Gold labels live in
-`interviews_ground_truth_v5.ods`, scored on the `to_review` validation
-split. Headline: `biologic_taken` — the field Q1 rests on — scores a
-high F1 (precision / recall / F1 computed inline in the Q1 gold-eval
-table below), so the “% on a biologic” answer is well-supported. Where
-it’s shaky: **`churn`** is unreliable in both directions (a false
-positive *and* a false negative in the gold audit — `docs/TO_REVIEW.md`)
-because truncation is a lexical/structural signal the narrative
-under-determines; **`treatment_class`** drifts (un-normalised free-text
-categories inflate the Q3 count); and the **GP node**
-(`primary_care_contact`) is under-emitted (see the Q4 caveat’s live
-count), weakening the strict Q4 step count. Fix-first order: a
+interviews_ground_truth_v7.ods, scored on the human-reviewed gold set
+(`to_review == 1`). Headline: `biologic_taken` — the field Q1 rests on —
+scores a high F1 (precision / recall / F1 computed inline in the Q1
+gold-eval table below), so the “% on a biologic” answer is
+well-supported. Where it’s shaky: **`churn`** is unreliable in both
+directions (a false positive *and* a false negative in the gold audit —
+`docs/TO_REVIEW.md`) because truncation is a lexical/structural signal
+the narrative under-determines; **`treatment_class`** drifts
+(un-normalised free-text categories inflate the Q3 count); and the **GP
+node** (`primary_care_contact`) is under-emitted (see the Q4 caveat’s
+live count), weakening the strict Q4 step count. Fix-first order: a
 deterministic tail-of-text churn rule, a treatment/biologic registry to
 normalise classes, and a larger, multi-annotator gold set — today’s is
-single-annotator over the `to_review` gold split, so the metric carries
+single-annotator over the `to_review` gold set, so the metric carries
 real sampling uncertainty.
+
+**Edge case — biologic over-detection (P047).** P047’s transcript names
+*no* biologic (conventional therapy only — prednisone, mesalamine,
+methotrexate), yet the model returned `biologic_prescribed=True` with a
+fabricated `DOCTOR_CHOICE` reason — a hallucination inferred from
+disease severity, because the biologic-funnel booleans had no prompt
+guidance. Two fixes landed: P047 is now a reviewed gold case
+(`biologic_not_mentioned=1`, `biologic_prescribed=0`), and `system.txt`
+now instructs the model never to *infer* `biologic_prescribed` and to
+set `biologic_not_mentioned` when no biologic is named. Tellingly, this
+error sat in the then-unreviewed cases — invisible to the gold metric
+until P047 was reviewed.
 
 > **A second eval, by accident — the temperature consistency check
 > (option 3).** I picked (1), but the rate-limited re-runs left a
@@ -227,23 +278,23 @@ Computed from the persisted predictions in `data/out/` (`n = 50`).
 (`biologic_taken == true`).
 
 *Evaluation — mini golden set.* `biologic_taken` (the field Q1 rests on)
-scored against the hand-annotated gold in `_v5.ods` (the `to_review`
-cases), as precision / recall / F1:
+scored against the hand-annotated gold in interviews_ground_truth_v7.ods
+(the `to_review` cases), as precision / recall / F1:
 
 | metric    | value |
 |:----------|------:|
 | precision |   0.9 |
 | recall    |     1 |
 | F1        | 0.947 |
-| accuracy  | 0.947 |
-| n (gold)  |    19 |
+| accuracy  |  0.95 |
+| n (gold)  |    20 |
 
-On the 19-case golden set, `biologic_taken` scores **F1 = 0.95**
-(precision 0.9, recall 1.0; TP/FP/FN/TN = 9/1/0/9) — so the Q1 headline
+On the 20-case golden set, `biologic_taken` scores **F1 = 0.95**
+(precision 0.9, recall 1.0; TP/FP/FN/TN = 9/1/0/10) — so the Q1 headline
 is well-supported by the gold.
 
 *Limitation.* This is measured only on the hand-annotated gold
-(`to_review`) split — **19 of 50** patients (those with a non-null
+(`to_review`) set — **20 of 50** patients (those with a non-null
 `biologic_taken`) — so the metric carries real **sampling uncertainty**
 (a few flips would move it noticeably), and the gold is a
 **single-annotator judgement** with its own error. A trustworthy
@@ -252,44 +303,39 @@ audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
 
 #### Q2 — reasons not on a biologic
 
-| reason             | patients |
+| reason             | mentions |
 |:-------------------|---------:|
-| COST               |        4 |
-| INSURANCE_PROBLEMS |        3 |
-| PATIENT_FEARS      |        2 |
-| unspecified        |        2 |
-| DEFERRED           |        1 |
+| INSURANCE_PROBLEMS |        5 |
+| PATIENT_FEARS      |        4 |
+| COST               |        3 |
+| DEFERRED           |        2 |
+| NOT_APPLICABLE     |        1 |
 | CONTRAINDICATION   |        1 |
 
 ![Q2 reasons not on a biologic](data/out/plots/q2_reasons.png)
 
 > **`unspecified` (Q2) — null handling.** An `unspecified` row is a
-> biologic **prescribed but not taken** where the model extracted **no
-> `ReasonNotTaken`** — a genuine null, not a stated reason. It’s
-> relabelled from `(null)` for readability and kept **visible as its own
-> category** rather than dropped — consistent with the schema’s stance
-> on nulls (*Pydantic Schema Design → “Three states, not one null”*):
-> absence, negation and truncation are distinct first-class states, and
-> `UNKNOWN` / `NOT_APPLICABLE` exist so a missing value is never
-> silently conflated with a real one. The fix (prompt the model to
-> always set a reason, default `UNKNOWN`) is tracked in `docs/TODO.md`.
+> biologic **prescribed but not taken** with an **empty
+> `reasons_for_biologic_not_taken`** list (`[]`) — no reason extracted,
+> not a stated one. It’s kept **visible as its own category** rather
+> than dropped — consistent with the schema’s stance on nulls (*Pydantic
+> Schema Design → “Three states, not one null”*): absence, negation and
+> truncation are distinct first-class states, and `UNKNOWN` /
+> `NOT_APPLICABLE` exist so a missing value is never silently conflated
+> with a real one. `system.txt` now requires a **never-empty** list
+> (`[UNKNOWN]` for prescribed-but-not-taken with no stated reason,
+> `[BIOLOGIC_TAKEN]` when a biologic was taken), so `unspecified` should
+> disappear on the next extraction run.
 
 #### Q3 — treatments tried before a biologic
 
     | treatment_class   |   mentions |
     |:------------------|-----------:|
-    | 5-ASA             |         26 |
-    | conventional      |         26 |
-    | corticosteroid    |         22 |
-    | immunomodulator   |         17 |
-    | 5-asa             |         11 |
-    | Corticosteroid    |          7 |
-    | DMARD             |          6 |
-    | Immunosuppressant |          4 |
-    | Biologic          |          2 |
-    | NSAID             |          2 |
-    | surgery           |          1 |
-    | biologic          |          1 |
+    | 5-asa             |         48 |
+    | corticosteroid    |         40 |
+    | immunomodulator   |         37 |
+    | nsaid             |          2 |
+    | other             |          1 |
     | antibiotic        |          1 |
 
 ![Q3 treatments before a
@@ -297,50 +343,53 @@ biologic](data/out/plots/q3_before_biologic.png)
 
 > **Known extraction error (Q3) — error-handling note.** A `biologic`
 > appearing in “treatments before a biologic” carries
-> `before_biologic = true` on a biologic — which is either a genuine
+> `biologic_timing = BEFORE` on a biologic — which is either a genuine
 > **biologic switch** (an earlier biologic tried before the one
 > ultimately taken) or a **model mislabel** (the *taken* biologic itself
-> flagged `before_biologic`, which can’t be right — a treatment isn’t
-> “before” itself); the per-patient `treatment_records` distinguish the
-> two. So “treatments before a biologic” currently also counts
-> biologics. We **surface this rather than silently drop it**: a clear
-> include/exclude rule for biologics, plus the prompt fix, is tracked in
-> `docs/TODO.md`.
+> flagged `BEFORE`, which can’t be right — a treatment isn’t “before”
+> itself); the per-patient `treatment_records` distinguish the two. So
+> “treatments before a biologic” currently also counts biologics. We
+> **surface this rather than silently drop it**: a clear include/exclude
+> rule for biologics, plus the prompt fix, is tracked in `docs/TODO.md`.
 
 #### Q4 — referral pathway length (steps to a biologic-prescribing specialist)
 
 > **Caveat.** The literal “GP” node (`primary_care_contact`) appears in
-> only 10/50 predicted pathways, so a strict GP→prescriber count isn’t
+> only 4/50 predicted pathways, so a strict GP→prescriber count isn’t
 > representative. We count steps from the journey **start** (or
 > `primary_care_contact` where present) to `biologic_recommended`
-> (present in 44/50) — the point a biologic-prescribing specialist is
+> (present in 29/50) — the point a biologic-prescribing specialist is
 > reached. Under-emission of the GP node is a prompt-fix candidate (see
 > `docs/TODO.md`). The per-case interactive journey graphs are linked
 > below.
 
 | steps | patients |
 |------:|---------:|
-|     9 |       12 |
-|     7 |        7 |
-|     6 |        7 |
-|    10 |        6 |
-|     8 |        5 |
-|     5 |        3 |
+|    10 |        7 |
+|     6 |        5 |
+|     9 |        3 |
 |    11 |        2 |
-|     4 |        2 |
+|    13 |        2 |
+|     8 |        2 |
+|     7 |        2 |
+|     5 |        2 |
+|    12 |        1 |
+|    15 |        1 |
+|    14 |        1 |
+|    16 |        1 |
 
 ![Q4 steps to biologic recommendation](data/out/plots/q4_steps.png)
 
-The **most common** journey length is **9 steps** (the modal value —
-highest patient count in the chart), with a **median of ~8** (range
-4–11, n=44).
+The **most common** journey length is **10 steps** (the modal value —
+highest patient count in the chart), with a **median of ~10** (range
+5–16, n=29).
 
-Crucially, **17/50 journeys are cyclic** — the patient loops back
+Crucially, **48/50 journeys are cyclic** — the patient loops back
 through relapse / `loss_of_response` / `biologic_switch` (recurrence the
 prompt now captures; the per-case graphs render these as loops — see the
 deep-dive below). So “a typical referral pathway” is as much about
 **recurrence** (repeated biologic switching) as about step count — a
-linear step number alone understates the journey for the **34%** of
+linear step number alone understates the journey for the **96%** of
 patients whose journey loops.
 
 **Deep dive — the individual journeys.** Two views of the same data: a
@@ -348,28 +397,24 @@ GitHub-viewable static gallery of all 50 pathways as Mermaid diagrams in
 [docs/referral_pathways.md](docs/referral_pathways.md), and the
 **interactive** pyvis graphs in [`data/out/html/`](data/out/html/) (open
 `index.html`) — these render **live in a browser from a local clone**;
-GitHub only shows them as source. As a teaser, here is patient **P037**
+GitHub only shows them as source. As a teaser, here is patient **P047**
 — a *cyclic* journey (a phase recurs, so it renders as a loop):
 
 ``` mermaid
 %%{init: {'theme':'neutral'}}%%
 flowchart LR
     n0["symptom_onset"]
-    n1["comorbidity"]
-    n2["conventional_therapy"]
-    n3["therapy_failed"]
-    n4["biologic_recommended"]
-    n5["biologic_taken"]
-    n6["loss_of_response"]
-    n7["planning_next_step"]
+    n1["misdiagnosis"]
+    n2["diagnostic_delay"]
+    n3["crohns_diagnosis"]
+    n4["conventional_therapy"]
+    n5["adverse_reaction"]
     n0 -->n1
     n1 -->n2
     n2 -->n3
     n3 -->n4
     n4 -->n5
-    n5 -->n1
-    n1 -->n6
-    n6 -->n7
+    n5 -->n4
 ```
 
 **Churn handling matters here.** Be explicit about:
@@ -381,13 +426,22 @@ flowchart LR
 - Which of the four answers are most and least trustworthy given the
   churn distribution, and why.
 
+**Three data-states, by patient count** — how many patients show each
+way the biologic signal can present: *absence* (biologic never
+mentioned), *negation* (prescribed but not taken), and *truncation* (the
+interview churned before resolving). These are **independent counts, not
+a partition** of the cohort. Here *absence* is `0` because the model
+marks **every** patient `biologic_prescribed` (so none are “never
+mentioned”), and *truncation* is `0` because the model under-detects
+churn (see the false-negative note below).
+
 | state                              | patients |
 |:-----------------------------------|---------:|
 | biologic not mentioned (absence)   |        0 |
 | discussed but not taken (negation) |       13 |
-| churned / truncated                |        0 |
+| churned / truncated                |        4 |
 
-The model flagged `churn = true` for only **0/50** patient(s). Manual
+The model flagged `churn = true` for only **4/50** patient(s). Manual
 review of the flagged/edge cases (`docs/TO_REVIEW.md`) found churn
 detection unreliable in both directions — both an over-flag and a missed
 truncation — because truncation is a lexical/structural property of the
@@ -398,12 +452,12 @@ under-emitted GP node).
 
 > **Why `churn` reads low — under-detection, not absence.** The gold set
 > flags genuinely truncated transcripts the model misses (gold
-> `churn = 1` but the model returns `False`; this run: **P049**) — a
+> `churn = 1` but the model returns `False`; this run: **none**) — a
 > **false negative**. A low count is therefore *not* “no truncated
 > transcripts”: the model **can’t reliably detect truncation** — a
 > lexical/structural end-of-text signal the narrative under-determines,
-> compounded by the prompt’s *“prefer `false` when ambiguous”* bias.
-> This is **independent of `temperature`** (it persists at `0`); pinning
+> compounded by the prompt’s conservative bias toward `false`. This is
+> **independent of `temperature`** (it persists at `0`); pinning
 > `temperature = 0` (see *Extraction Pipeline → Determinism*) makes the
 > count reproducible run-to-run, but the real fix is a deterministic
 > tail-of-text rule (`docs/TODO.md`). The temperature change is about
@@ -432,6 +486,24 @@ the *same* signal under this reading, we collapse them into a single
 `churn = true` when there’s evidence of **(a)** disengagement from the
 app interaction, or **(b)** a truncated / cut-off / vague narrative.
 Signals: completeness, cut off mid-journey, truncation, vagueness.
+
+**Deciding churn from a trailing `"..."`.** A trailing `"..."` is
+ambiguous — it can be an intentional emotional sign-off *or* a real
+cut-off — and we have no behavioural signal (e.g. a last-login
+timestamp) to disambiguate, so we decide from the text alone: **churn
+only when the transcript breaks off mid-word / mid-thought**, not when
+it closes on a coherent phrase. We do **not** use whether `"..."` recurs
+elsewhere (an earlier heuristic we dropped).
+
+- **Mid-thought break → churn:** P049
+  `"…Different but same. Chronic..."` — ends on an incomplete fragment
+  (“Chronic” with no following noun), so the interview was genuinely cut
+  off.
+- **Coherent emotional close → NOT churn:** P016
+  `"…better than this..."`, P036 `"…Don't want to   know..."`, P045
+  `"…but it's hard..."`, P046 `"…how people manage..."`, P047
+  `"…Not worry about   mom..."`, P048 `"…I'm only 56..."` — the patient
+  *typed* the ellipsis, a deliberate sign-off, not a disconnection.
 
 **Why this matters for the answers.** `churn` is the *truncation* state
 that, with `biologic_not_mentioned` (absence) and a
@@ -502,10 +574,20 @@ With more time, after the core is complete:
 
 - **Split the single system prompt into multiple focused prompts run
   concurrently.** This version deliberately uses one prompt; a later
-  iteration would break extraction into per-section prompts
-  (e.g. biologic funnel, treatment history, referral pathway) run in
-  parallel — better per-field accuracy and inspectable intermediate
-  artifacts, at the cost of more calls and orchestration.
+  iteration would split it **by task** into focused prompts run in
+  parallel — **(1)** biologic funnel (prescribed/taken/type/reasons),
+  **(2)** treatment history (records + `biologic_timing` + outcome),
+  **(3)** referral pathway, **(4)** context (churn, demographics,
+  comorbidities) — then merge into one `PatientLabels`. Better per-field
+  accuracy and inspectable intermediates, at the cost of more calls and
+  orchestration. **This is where chain-of-thought genuinely earns its
+  place here:** as the *explicit, inspectable* reasoning the stretch
+  brief means, it both fixes the single-shot attention-competition
+  behind shaky `churn`/`referral_pathway`/`biologic_timing` **and**
+  hands a reviewer auditable intermediates (the brief’s whole point). So
+  we turn off the *opaque* internal thinking now (*Determinism &
+  reproducibility* above) and add *explicit* staged CoT here —
+  complementary, not contradictory.
 
 - **A telemetry feature for optimisation.** Per-call usage is currently
   logged (tokens, cost, cached tokens — see
@@ -513,12 +595,13 @@ With more time, after the core is complete:
   as a first-class artifact (a structured per-run metrics file + plots)
   to track cost/latency/cache-hit rate and tune the pipeline at scale.
 
-- **Try a larger Gemini model in production.** This version uses
-  `gemini-2.5-flash-lite` (cheap, fast for iteration). With more time
-  I’d evaluate a more capable model (e.g. `gemini-2.5-flash` / `pro`)
-  for extraction quality, weighed against its free-tier **request/token
-  rate limits** (the ~20 calls/day cap that drove the chunking design)
-  and cost.
+- **Try an even larger Gemini model.** This run uses
+  gemini/gemini-2.5-flash (it ran on `gemini-2.5-flash-lite` during
+  iteration, then moved up to dodge `-lite`’s 503 spikes and give the
+  batched JSON enough output budget). With more time I’d evaluate
+  `gemini-2.5-pro` for extraction quality, weighed against its free-tier
+  **request/token rate limits** (the ~20 calls/day cap that drove the
+  chunking design) and cost.
 
 - **Deep dive on cyclical journey patterns.** The `referral_pathway`
   initially flattened recurrence (each phase emitted once); the prompt
@@ -604,7 +687,7 @@ With more time, after the core is complete:
   LibreOffice Writer (open source version of Excel) to mimic
   non-technical domain expert labeling of a “gold” ground truth dataset.
   I returned to this dataset and manual labeling throughout the process,
-  labeling ~20/50 cases.
+  labeling ~21/50 cases.
 
 - I wrote the code for the beginning notebooks (`00_setup`, half of
   `01_eda_transform_export`) by hand, before transitioning to Claude
@@ -661,24 +744,25 @@ With more time, after the core is complete:
 ## Usage
 
 **Dagster, driven by the `dg` CLI, is the main entry point.** It
-orchestrates the whole pipeline end-to-end — extract → EDA / README
-render → referral graphs → docsite — and shows which stage failed in the
-UI. Launch a run two ways — the UI’s *Materialize all*, or headless from
-a second terminal:
+orchestrates the whole pipeline end-to-end — extract → (EDA/README
+render · referral graphs · referral-pathway gallery) → docsite — and
+shows which stage failed in the UI. Launch a run two ways — the UI’s
+*Materialize all*, or headless from a second terminal:
 
 ``` bash
-uv run dg dev -m pipeline -d src   # UI at http://127.0.0.1:3000 → "Materialize all"
+uv run dg dev -m pipeline -d src -p 3050   # UI at http://127.0.0.1:3050 → "Materialize all" (port: config.json → dagster_port)
 
 # ...or headless from another terminal (no UI):
 uv run dg launch --assets "*" -m pipeline -d src
 ```
 
-> Set `DAGSTER_HOME` in `.env` to persist run history to
-> `.dagster_home/` (see DEV_SETUP); without it Dagster uses a temp dir.
-> The instance config `.dagster_home/dagster.yaml` is committed (it
-> shows the pipeline wiring); Dagster runs **locally only** — it never
-> pushes to GitHub, so publishing refreshed artefacts (data + logs +
-> README) is your separate `git` step.
+> `DAGSTER_HOME` is set in `.env` to `.dagster_home/` (see DEV_SETUP),
+> so Dagster persists run history there — **not** a temp dir (a temp dir
+> is only the fallback if the var is unset). The instance config
+> `.dagster_home/dagster.yaml` is committed (it shows the pipeline
+> wiring); the sqlite run-state is git-ignored. Dagster runs **locally
+> only** — it never pushes to GitHub, so publishing refreshed artefacts
+> (data + logs + README) is your separate `git` step.
 
 The processes below are the stages Dagster orchestrates; each also runs
 **standalone** to drive or test one part on its own (Dagster calls the
@@ -693,6 +777,25 @@ Run the extraction pipeline via the `src/main.py` CLI (python-fire).
 calls**, sized to the Gemini free tier’s ~20 requests/day cap (taken as
 a fixed constraint; 50 one-at-a-time calls would exceed it).
 
+**Retries are quota-sparing.** On the free tier a *failed* request costs
+the same daily quota as a successful one, so retry policy is
+deliberately frugal and **treats the two error classes differently**:
+litellm’s own auto-retries are **off** (`num_retries=0`), so one failure
+is one request — not three. (Why off, not just lower? `num_retries` is
+one knob across *all* error types, but a daily quota needs *opposite*
+policies — retry 503, never 429 — which a single count can’t express;
+litellm’s per-exception `RetryPolicy` is Router-only, not on
+`litellm.completion()`, so we switch the blanket retry off and own a
+tiny loop, `_with_503_retry`.) A **429** (rate-limit / daily quota)
+**fails fast** — no retry, since retrying a spent quota only burns more
+of it — while a **503** (transient model overload) is retried
+**sparingly** (up to 4 retries, 60s apart — set in `config.json`), then
+gives up. The **stop-vs-retry decision is in the code**
+(`give_up_reason`), not left to manual log-watching: the failure message
+states the action — **429 → stop** (the quota won’t clear by retrying;
+wait for the reset), **503 → wait and re-run**. Full table:
+[`docs/DEBUGGING_ERROR_HANDLING.md`](docs/DEBUGGING_ERROR_HANDLING.md).
+
 ``` bash
 uv run python src/main.py                          # all 50, chunks of 10 (5 calls)
 uv run python src/main.py --limit=10               # run 1 only: P001–P010
@@ -701,7 +804,7 @@ uv run python src/main.py --limit=10 --offset=10   # run 2: P011–P020 (no re-r
 
 | Flag | Default | Purpose |
 |----|----|----|
-| `--model` | `gemini/gemini-2.5-flash-lite` | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
+| `--model` | gemini/gemini-2.5-flash | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
 | `--limit` | all | slice size — run one chunk for testing / incremental runs |
 | `--offset` | `0` | which slice — incremental runs without redoing earlier chunks |
 | `--chunk-size` | `10` | transcripts per API call |
@@ -754,7 +857,7 @@ Preview the mkdocstrings API site locally — it regenerates from the
 docstrings on every build:
 
 ``` bash
-uv run mkdocs serve   # live preview at http://127.0.0.1:8000
+uv run mkdocs serve -a localhost:8000   # live preview at http://localhost:8000 (port: config.json → docsite_port)
 uv run mkdocs build   # render the static site to site/ (gitignored)
 ```
 
@@ -791,8 +894,8 @@ Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in
 
 - [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) — architecture diagram: the
   Dagster asset graph + the library-first CLI/gate relation.
-- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema
-  (v0.4) and the Pydantic-model rationale.
+- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema and
+  the Pydantic-model rationale.
 - [QUESTIONS.md](docs/QUESTIONS.md) — outstanding questions for the CAIO
   (assumptions needing a domain decision).
 - [HYPOTHESES.md](docs/HYPOTHESES.md) — early hypotheses about the data
@@ -824,12 +927,14 @@ Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in
 site via [MkDocs](https://www.mkdocs.org/) + mkdocstrings:
 
 ``` bash
-uv run mkdocs serve     # live preview at http://127.0.0.1:8000 (hot-reloads on edit)
+uv run mkdocs serve -a localhost:8000     # live preview at http://localhost:8000 (hot-reloads; port: config.json → docsite_port)
 uv run mkdocs build     # render the static site to site/ (git-ignored)
 ```
 
-`mkdocs build` is also wired as the independent `docsite` asset in the
-Dagster run (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
+`mkdocs build` is wired as the `docsite` asset, which depends on
+`referral_pathways_md` so the journey gallery is re-rendered from the
+latest predictions before the site is built (see
+[SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
 
 ## Project layout
 
@@ -840,7 +945,7 @@ Dagster run (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
 │   ├── schema.py                     #   Pydantic models + enums (PatientLabels, …)
 │   ├── extract.py                    #   the Gemini call — chunked, structured-output, temperature=0
 │   ├── main.py                       #   fire CLI: load → run_chunked → persist
-│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs; docsite
+│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs/pathways-md → docsite
 │   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
 │   └── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
 ├── tests/                            # pytest suite + the quality gate

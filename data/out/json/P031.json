@@ -8,58 +8,59 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Stelara",
+  "biologic_type": "Remicade, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "FIBROMYALGIA"
+    "FIBROMYALGIA",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "SUCCESS",
-      "reason_stopped": "Cancer diagnosis and treatment required stopping immunosuppressants.",
-      "before_biologic": false
+      "reason_stopped": "cancer diagnosis",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Stelara",
-      "treatment_class": "Biologic",
+      "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
-    "diagnostic_testing",
+    "diagnostic_delay",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
-    "relapse",
+    "conventional_therapy",
     "comorbidity",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
+    "complication",
     "biologic_switch",
-    "alternative_therapy",
+    "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient has Crohn's, fibromyalgia, and is a breast cancer survivor. Started biologics 7 years ago with Remicade, which worked for 3 years. Stopped Remicade due to cancer diagnosis and treatment. Started Stelara after cancer treatment, which is working somewhat but not achieving remission. Patient expresses significant emotional and physical toll from managing multiple conditions and treatment side effects."
+  "evidence_notes": "Patricia, 46, has had Crohn's for 15 years. She also has fibromyalgia and is a breast cancer survivor. She was diagnosed with Crohn's at 31. She started with mesalamine and prednisone. Seven years ago, she started Remicade, which worked for three years. She had to stop all immunosuppressants for breast cancer treatment. After cancer treatment, she started Stelara, which is working somewhat but not achieving remission. She is on disability and manages her diet strictly. She also deals with depression and is considering surgery if Stelara fails."
 }

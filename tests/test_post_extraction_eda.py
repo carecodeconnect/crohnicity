@@ -1,10 +1,12 @@
 """Unit tests for src/post_extraction_eda.py — the post-extraction EDA functions.
 
-Deterministic: they read the persisted predictions in data/out/ and the gold _v6.ods (no API call),
+Deterministic: they read the persisted predictions in data/out/ and the gold .ods (config.GOLD; no API call),
 so the same artefacts the README.qmd renders from are the ones under test.
 """
 
 import math
+
+import pandas as pd
 
 import post_extraction_eda as eda
 
@@ -73,17 +75,16 @@ def test_churn_three_state_three_rows() -> None:
 
 
 def test_churn_false_negatives_flags_gold_churn_the_model_missed() -> None:
-    """The gold churn==1 cases the model did NOT label churn — the false negatives behind the low
-    count. (Powers the dynamic churn note in README.qmd, so it must not regress silently.)"""
-    fn = eda.churn_false_negatives(DF)
-    assert isinstance(fn, list) and all(isinstance(p, str) for p in fn)
-    model_churn = dict(zip(DF["patient_id"], DF["churn"]))
-    assert all(
-        model_churn.get(p) is not True for p in fn
-    )  # by definition: model didn't flag churn
-    assert (
-        "P049" in fn
-    )  # the gold-annotated truncated case the model under-detects (TO_REVIEW)
+    """churn_false_negatives() reports the gold churn==1 cases the model failed to flag. Tested on
+    the function's *logic* against the real gold anchor (P049 is gold churn==1 & to_review==1), not
+    a specific run — the live result is dynamic (the -flash run now catches P049, so it is currently
+    empty). Powers the README churn note, so the function must not regress silently."""
+    # model MISSED P049's churn -> it must be reported as a false negative
+    missed = pd.DataFrame({"patient_id": ["P049"], "churn": [False]}, dtype=object)
+    assert eda.churn_false_negatives(missed) == ["P049"]
+    # model CAUGHT P049's churn -> it must NOT be reported
+    caught = pd.DataFrame({"patient_id": ["P049"], "churn": [True]}, dtype=object)
+    assert eda.churn_false_negatives(caught) == []
 
 
 def test_pathway_mermaid_renders_a_cyclic_example() -> None:

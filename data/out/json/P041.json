@@ -8,9 +8,11 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Stelara",
+  "biologic_type": "Remicade, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "ENDOMETRIOSIS",
     "MIGRAINE"
@@ -19,48 +21,50 @@
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "side effects/long term use",
-      "before_biologic": true
+      "outcome": "UNKNOWN",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "PARTIAL",
-      "reason_stopped": "insufficient efficacy",
-      "before_biologic": true
+      "treatment_class": "5-asa",
+      "outcome": "UNKNOWN",
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "FAILED",
-      "reason_stopped": "loss of response",
-      "before_biologic": false
+      "outcome": "SUCCESS",
+      "reason_stopped": "stopped working",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "methotrexate",
+      "treatment_class": "immunomodulator",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
     "symptoms_worsen",
-    "specialist_referral",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
-    "therapy_failed",
+    "conventional_therapy",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
-    "alternative_therapy",
     "planning_next_step"
   ],
-  "evidence_notes": "Patient is 35, female, diagnosed with Crohn's at 28. Also has endometriosis and chronic migraines. Initially treated with prednisone and mesalamine. Then Remicade for 4 years, which stopped working. Currently on Stelara, reporting ~60% improvement. Endometriosis pain is severe and impacts treatment choices due to need for surgery and immunosuppression. Also dealing with opioid side effects impacting Crohn's. Considering combination therapy (Stelara + methotrexate). Left investment banking for a more flexible role due to health. Facing challenges with dating and family expectations regarding children due to chronic illness. Insurance battles are constant. Considering clinical trials."
+  "evidence_notes": "Julie, 35, female, diagnosed with Crohn's at 28. Also has severe endometriosis and chronic migraines. Started on prednisone and mesalamine. Then Remicade, which worked for four years. Now on Stelara, which is 60% effective. Doctor wants to try Stelara plus methotrexate. She is considering clinical trials."
 }

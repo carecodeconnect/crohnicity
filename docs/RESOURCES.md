@@ -21,7 +21,7 @@ against during testing, not to assume.
 
 ## Which Gemini model — does swapping change the call?
 
-- Our model: **`gemini/gemini-2.5-flash-lite`** (chosen in `notebooks/00_setup.ipynb`).
+- Our model is the single source of truth in [`config.json`](../config.json) (`config.MODEL`); the call pattern was first sanity-checked in `notebooks/00_setup.ipynb`.
 - Gemini **2.0+ uses the native `responseJsonSchema`**; LiteLLM maps our `response_format`
   (`response_schema` + `enforce_validation`) onto it, preserving the `$ref`/`$defs` Pydantic
   emits for nested models (PR #21597; gemini-3 preview added the same, PR #30696).

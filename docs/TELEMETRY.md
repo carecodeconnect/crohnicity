@@ -20,7 +20,7 @@ u = response.usage                          # litellm.types.utils.Usage
 u.prompt_tokens, u.completion_tokens, u.total_tokens
 u.prompt_tokens_details.cached_tokens       # context-cache hits
 u.cache_read_input_tokens
-response.model                              # "gemini-2.5-flash-lite"
+response.model                              # the model string (set in config.json)
 response.choices[0].finish_reason           # "stop"
 
 import litellm
@@ -63,7 +63,11 @@ prefer Source 1.
 Latency isn't in either payload — derive it from the call (wall-clock around `completion()`, or the
 debug log's request/response timestamps).
 
-## Measured diagnostics — `gemini/gemini-2.5-flash-lite`, this dataset
+## Measured diagnostics — iteration runs (`gemini-2.5-flash-lite`), this dataset
+
+> Historical: these numbers were measured during iteration on the then-configured model. The current
+> model is the SSOT in [`config.json`](../config.json); per-call telemetry for the live run is in
+> `logs/extract.log`.
 
 From the live single-patient runs (logged in `logs/litellm_debug.log`; `extract.py` also logs a
 per-call `telemetry: ...` line to `logs/extract.log`):

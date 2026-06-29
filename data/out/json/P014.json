@@ -10,35 +10,37 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "OTHER",
-    "DEPRESSION"
+    "DEPRESSION",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "therapy_failed",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "sulfasalazine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "reason_stopped": "allergic reaction",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
@@ -47,13 +49,14 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
     "adverse_reaction",
-    "comorbidity",
-    "biologic_recommended",
-    "insurance_step_therapy",
+    "biologic_taken",
+    "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken"
+    "comorbidity",
+    "unresolved"
   ],
-  "evidence_notes": "Patient has Crohn's, psoriasis, and psoriatic arthritis. Methotrexate for psoriasis did not help Crohn's. Sulfasalazine caused an allergic reaction. Stelara was prescribed to treat both Crohn's and psoriasis, but required an extensive insurance appeal. Stelara is helping somewhat but not perfectly. He is also dealing with depression and fatigue, impacting his ability to work and his social life. The journey is ongoing with a focus on managing multiple conditions and financial concerns."
+  "evidence_notes": "Brian, 41, male, diagnosed with Crohn's three years ago. Also has severe psoriasis and depression. Was on methotrexate for psoriasis, but it didn't help Crohn's. Tried sulfasalazine (allergic reaction). Switched to Stelara to treat both conditions. Stelara is helping somewhat, but he still has bad days and struggles with depression, fatigue, and the physical demands of his job. He is worried about his future and the need for more medication."
 }

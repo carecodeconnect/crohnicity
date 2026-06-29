@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "DEFERRED"
+  ],
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
     "OTHER"
@@ -18,27 +20,28 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "UNKNOWN",
+      "treatment_class": "5-asa",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "antibiotics",
       "treatment_class": "antibiotic",
-      "outcome": "UNKNOWN",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     }
   ],
-  "treatment_outcome": "UNKNOWN",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "acute_flare",
     "surgery",
     "crohns_diagnosis",
     "conventional_therapy",
+    "conventional_therapy",
     "biologic_recommended"
   ],
-  "evidence_notes": "Larry, 56, male, diagnosed with Crohn's three weeks ago after ER visit for severe pain. Also has diabetes and heart disease. Underwent emergency surgery for blocked intestine. Currently on mesalamine and antibiotics. Doctor wants to start biologics after recovery. Recovery is rough, living alone. Ex-wife and kids offer some help but live out of state. Neighbor checks in. Humbling experience after running construction company. Savings depleting due to surgery bills. Insurance fighting claims. May have to sell house."
+  "evidence_notes": "Larry, 56, male, diagnosed with Crohn's three weeks ago after emergency surgery. Also has diabetes and heart disease. Started on mesalamine and antibiotics. Doctor wants biologics after he heals from surgery."
 }

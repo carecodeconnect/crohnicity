@@ -1,6 +1,6 @@
 {
   "patient_id": "P016",
-  "churn": false,
+  "churn": true,
   "demographics": {
     "gender": "male",
     "age": 44
@@ -8,39 +8,51 @@
   "biologic_prescribed": true,
   "biologic_taken": false,
   "biologic_not_mentioned": false,
-  "biologic_type": null,
+  "biologic_type": "biologics",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "COST",
-  "comorbid_conditions": [],
+  "reasons_for_biologic_not_taken": [
+    "COST",
+    "INSURANCE_PROBLEMS",
+    "PATIENT_FEARS"
+  ],
+  "comorbid_conditions": [
+    "OTHER"
+  ],
   "treatment_records": [
     {
       "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "therapy_failed",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": "adverse_reaction",
-      "before_biologic": true
+      "outcome": "FAILED",
+      "reason_stopped": "made me crazy/aggressive",
+      "biologic_timing": "BEFORE"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
+    "diagnostic_delay",
     "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "therapy_failed",
+    "conventional_therapy",
     "adverse_reaction",
     "biologic_recommended",
+    "insurance_denial",
     "insurance_step_therapy",
-    "insurance_cost_barrier"
+    "insurance_cost_barrier",
+    "patient_fear",
+    "biologic_not_taken",
+    "unresolved"
   ],
-  "evidence_notes": "Patient was diagnosed two years ago and has been struggling with symptoms impacting his work as a construction foreman. He experienced side effects from prednisone and has not yet started biologics due to cost and insurance issues. He is concerned about the risks of immunosuppression given his job. The journey is ongoing with a focus on finding a treatment that is both effective and affordable."
+  "evidence_notes": "Steve, 44, male, diagnosed with Crohn's two years ago. Also has a bad back and drinks too much. Started with mesalamine, then prednisone (stopped due to aggression). His doctor wants to put him on biologics, but he is hesitant due to cost, insurance issues, and concerns about immune suppression. He is struggling to work and his quality of life is suffering."
 }

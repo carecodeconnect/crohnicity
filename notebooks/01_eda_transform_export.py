@@ -28,18 +28,25 @@ from wordcloud import WordCloud, STOPWORDS
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment, PatternFill
 from openpyxl.worksheet.datavalidation import DataValidation
-from referral_pathway_analysis import PATHWAYS                # reviewed candidate chains, P001-P010
+from referral_pathway_analysis import PATHWAYS  # reviewed candidate chains, P001-P010
 import sys
 from pathlib import Path
 import pandas as pd
 from odf.opendocument import OpenDocumentSpreadsheet
 from odf.style import Style, TableCellProperties, TableColumnProperties, TextProperties
-from odf.table import DatabaseRange, DatabaseRanges, Table, TableCell, TableColumn, TableRow
+from odf.table import (
+    DatabaseRange,
+    DatabaseRanges,
+    Table,
+    TableCell,
+    TableColumn,
+    TableRow,
+)
 from odf.text import P
 
 
 # %%
-DATA_DIR = Path('../data/in/')
+DATA_DIR = Path("../data/in/")
 RAW_DATA = DATA_DIR / "interviews.json"
 
 # %%
@@ -103,7 +110,7 @@ df.to_excel(GROUND_TRUTH_SPREADSHEET)
 #
 # I decided to build a spreadsheet for non-technical stakeholders so that domain experts can create a "gold set" ground truth with labelled data. Currently the `interviews.json` has no labels, so we can only really do unsupervised learning (e.g. clustering like the word cloud) rather than supervised learning (e.g. classification).
 #
-# For this laborious task, involving mostly boiler-plate code, I started using Claude Code (Opus 4.8 with xhigh effort) in "Explanatory" mode (specifically for software engineers building a system from scratch who need to check every step carefully). 
+# For this laborious task, involving mostly boiler-plate code, I started using Claude Code (Opus 4.8 with xhigh effort) in "Explanatory" mode (specifically for software engineers building a system from scratch who need to check every step carefully).
 #
 # I copy/pasted the code block from Claude Code, modified it a bit for my notebook workflow, read it for accuracy, then tested it.
 #
@@ -368,7 +375,7 @@ df.to_excel(GROUND_TRUTH_SPREADSHEET)
 #
 # This is the "final" stage of the EDA/transform/export steps for creating the minimal testing harness for this use case.
 #
-# I'll review the latest version of the spreadsheet, and use this to create the test suite to evaluate the live model inference accuracy against the "gold" ground truth. 
+# I'll review the latest version of the spreadsheet, and use this to create the test suite to evaluate the live model inference accuracy against the "gold" ground truth.
 #
 # A key point is that I won't use the annotated column values for the prompt engineering/few-shot examples, to avoid overfitting. I want the model to only receive the "interview_transcript" values and see if it can output correctly formatted values which fit the schema. Then we'll measure the accuracy against our testing suite output.
 #

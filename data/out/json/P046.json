@@ -10,9 +10,11 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
-    "OTHER",
+    "TYPE_2_DIABETES",
     "OTHER"
   ],
   "treatment_records": [
@@ -20,38 +22,34 @@
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "adverse reaction",
-      "before_biologic": true
+      "reason_stopped": "made blood sugar go haywire",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "insufficient efficacy",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
     "symptoms_worsen",
-    "primary_care_contact",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "conventional_therapy",
     "therapy_failed",
-    "biologic_taken",
-    "comorbidity",
-    "complication"
+    "biologic_taken"
   ],
-  "evidence_notes": "Ben, 49, male, diagnosed with Crohn's 18 months ago, likely had it longer. Also pre-diabetic and chronic back pain from work injury. Symptoms initially dismissed as job-related. Severe bleeding led to diagnosis of severe disease with multiple strictures. Prednisone worsened blood sugar. Mesalamine ineffective. Currently on Humira with ~50% improvement. Company placed him on desk duty due to missed work. Wife working double shifts. Financial strain, sold assets to cover medical bills. Union insurance covers some costs but 20% of biologics is still thousands."
+  "evidence_notes": "Ben, 49, male, diagnosed with Crohn's eighteen months ago. Also pre-diabetic and has chronic back pain. Started on prednisone (made blood sugar haywire) and mesalamine (didn't work). Currently on Humira, which provides 50% improvement."
 }

@@ -8,9 +8,11 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira, Remicade, Stelara",
+  "biologic_type": "Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": [],
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "DEPRESSION",
     "SLEEP_APNEA"
@@ -20,7 +22,7 @@
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "lung problems",
+      "reason_stopped": "developed lung problems",
       "biologic_timing": "BEFORE"
     },
     {
@@ -34,7 +36,7 @@
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "FAILED",
-      "reason_stopped": "developed antibodies",
+      "reason_stopped": "developed antibodies within six months",
       "biologic_timing": "LATER"
     },
     {
@@ -50,19 +52,18 @@
     "symptom_onset",
     "misdiagnosis",
     "diagnostic_delay",
+    "crohns_diagnosis",
     "complication",
     "surgery",
     "conventional_therapy",
     "adverse_reaction",
-    "biologic_recommended",
+    "biologic_taken",
+    "loss_of_response",
     "insurance_step_therapy",
-    "biologic_taken",
+    "biologic_switch",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
-    "loss_of_response",
-    "biologic_switch",
-    "biologic_taken"
+    "unresolved"
   ],
-  "evidence_notes": "Tom, 38, diagnosed with Crohn's 10 years ago, initially misdiagnosed as UC. Had surgery for strictures, losing 30cm of small intestine. Tried methotrexate (lung problems), Humira (worked for 3 years, then failed), Remicade (developed antibodies). Currently on Stelara for 2 years. Experiences fatigue, depression, sleep apnea, and short bowel syndrome requiring supplements and infusions. Considering combo therapy with methotrexate. High medical debt. Worried about long-term effects of medications and quality of life."
+  "evidence_notes": "Tom, 38, has had Crohn's for 10 years, initially misdiagnosed with ulcerative colitis. He underwent surgery for strictures. He tried methotrexate, which caused lung problems. He then used Humira, which worked for three years before failing. Insurance issues led him to try Remicade, which also failed due to antibodies. He is now on Stelara. He also has depression and sleep apnea. He experiences fatigue and short bowel syndrome. His overall outcome is ongoing as he manages his current treatment and its challenges."
 }

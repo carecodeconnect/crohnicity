@@ -1,6 +1,6 @@
 {
   "patient_id": "P049",
-  "churn": false,
+  "churn": true,
   "demographics": {
     "gender": "Female",
     "age": 28
@@ -10,37 +10,38 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "PATIENT_FEARS",
+  "reasons_for_biologic_not_taken": [
+    "PATIENT_FEARS"
+  ],
   "comorbid_conditions": [
-    "OTHER",
-    "ANXIETY_DISORDER"
+    "ANXIETY_DISORDER",
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "side effects",
-      "before_biologic": true
+      "reason_stopped": "made me manic",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
-      "outcome": "UNKNOWN",
+      "treatment_class": "5-asa",
+      "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     }
   ],
-  "treatment_outcome": "UNKNOWN",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "surgery",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
-    "alternative_therapy",
-    "patient_fear",
-    "planning_next_step"
+    "conventional_therapy",
+    "biologic_recommended",
+    "patient_fear"
   ],
-  "evidence_notes": "Tammy, 28, female, diagnosed with Crohn's last month during appendectomy. Also recovering from eating disorder and has anxiety. Diagnosis is triggering due to history of restricting food. Started prednisone in hospital (caused mania), now on mesalamine. Too early to tell if effective. GI wants aggressive treatment due to age and disease extent. Biologics mentioned, but patient fears side effects (cancer, infections). Boyfriend supportive but overwhelmed, marriage and children plans on hold. Parents are worried, seeing parallels to eating disorder recovery. Chronic illness adds to existing mental health challenges."
+  "evidence_notes": "Tammy, 28, female, diagnosed with Crohn's last month. Also dealing with eating disorder recovery and anxiety. Started on prednisone (made her manic) and now on mesalamine. GI wants to be aggressive and mentioned biologics, but she is scared of side effects."
 }

@@ -16,6 +16,8 @@ from pathlib import Path
 
 import fire
 import litellm
+from loguru import logger
+from pydantic import ValidationError
 
 from config import CHUNK_SIZE, INTERVIEWS, JSON_DIR, MODEL
 from extract import HANDLED, extract_batch, give_up_reason
@@ -33,10 +35,31 @@ def load_interviews(path: Path = IN_PATH) -> list[Interview]:
 def run_chunked(
     records: list[Interview], model: str, out_dir: Path, chunk_size: int
 ) -> list[PatientLabels]:
-    """Run extract_batch over chunks of `chunk_size` — fewer Gemini requests for the daily cap."""
+    """Run extract_batch over chunks of `chunk_size` — fewer Gemini requests for the daily cap.
+
+    A chunk whose output is invalid/truncated (`JSONSchemaValidationError` / Pydantic
+    `ValidationError`) is logged and **skipped** so one bad chunk can't abort the whole run; the
+    skipped patients are counted + logged. Quota/overload errors (429/503) still propagate to stop
+    the run, since continuing is futile (see `give_up_reason`)."""
     out: list[PatientLabels] = []
+    skipped: list[str] = []
     for i in range(0, len(records), chunk_size):
-        out += extract_batch(records[i : i + chunk_size], out_dir, model)
+        chunk = records[i : i + chunk_size]
+        try:
+            out += extract_batch(chunk, out_dir, model)
+        except litellm.JSONSchemaValidationError, ValidationError:
+            ids = [r.patient_id for r in chunk]
+            skipped += ids
+            logger.error(
+                "chunk {} skipped (invalid/truncated output) — continuing run", ids
+            )
+    if skipped:
+        logger.warning(
+            "run_chunked: {}/{} patients skipped after extraction failures: {}",
+            len(skipped),
+            len(records),
+            skipped,
+        )
     return out
 
 

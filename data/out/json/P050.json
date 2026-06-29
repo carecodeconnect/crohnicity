@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "CONTRAINDICATION",
+  "reasons_for_biologic_not_taken": [
+    "CONTRAINDICATION"
+  ],
   "comorbid_conditions": [
     "OTHER",
     "OTHER"
@@ -18,39 +20,37 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "insufficient efficacy",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "contraindicated",
-      "before_biologic": true
+      "reason_stopped": "breathing got worse",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "BEFORE"
     }
   ],
-  "treatment_outcome": "FAILED",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "symptoms_worsen",
-    "diagnostic_delay",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
     "adverse_reaction",
-    "alternative_therapy",
+    "conventional_therapy",
     "biologic_recommended",
-    "patient_fear"
+    "biologic_not_taken"
   ],
-  "evidence_notes": "Victor, 62, male, diagnosed with Crohn's 8 months ago. Also has COPD and arthritis. Symptoms lasted months, significant weight loss. Initially treated with mesalamine (ineffective). Prednisone contraindicated due to COPD. Now on budesonide with minimal improvement (~20%). GI wants to try biologics, but pulmonologist deems it too risky due to COPD and infection risk. Feels stuck with inadequate treatment. Quality of life is very poor. Wife passed away, children are distant. Financial concerns about medical costs. Considers stopping treatment but motivated by grandchildren. Hopes for new treatments."
+  "evidence_notes": "Victor, 62, male, diagnosed with Crohn's eight months ago. Also has COPD and arthritis. Started with mesalamine (nothing), then prednisone (breathing got worse). Now on budesonide (20% effective). GI wants to try biologics but lung doctor says too risky with COPD."
 }

@@ -45,7 +45,9 @@ litellm._turn_on_debug()  # verbose LiteLLM logging for debugging API calls (e.g
 
 # litellm logs via the stdlib `logging` module (not loguru); attach a file handler to the
 # "LiteLLM" logger so the verbose debug stream persists to logs/litellm_debug.log.
-logging.getLogger("LiteLLM").addHandler(logging.FileHandler(LOG_DIR / "litellm_debug.log"))
+logging.getLogger("LiteLLM").addHandler(
+    logging.FileHandler(LOG_DIR / "litellm_debug.log")
+)
 
 # %%
 # Synthetic transcript with unambiguous facts (same as tests/test_extract.py).
@@ -78,7 +80,9 @@ print("=== SYSTEM PROMPT (data/prompts/system.txt) ===")
 print(messages[0]["content"])
 print("\n=== USER MESSAGE ===")
 print(messages[1]["content"])
-print("\n=== response_format.response_schema (PatientLabels JSON schema sent to Gemini) ===")
+print(
+    "\n=== response_format.response_schema (PatientLabels JSON schema sent to Gemini) ==="
+)
 print(json.dumps(response_format["response_schema"], indent=2))
 
 # %%

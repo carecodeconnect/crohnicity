@@ -15,14 +15,15 @@
   ],
   "comorbid_conditions": [
     "HYPERTENSION",
-    "OTHER"
+    "HYPERLIPIDEMIA",
+    "DEPRESSION"
   ],
   "treatment_records": [
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "not a long-term solution",
+      "reason_stopped": null,
       "biologic_timing": "BEFORE"
     },
     {
@@ -50,18 +51,22 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "symptoms_worsen",
-    "comorbidity",
+    "diagnostic_delay",
     "acute_flare",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
     "adverse_reaction",
     "biologic_recommended",
     "insurance_cost_barrier",
-    "alternative_therapy"
+    "biologic_not_taken",
+    "conventional_therapy",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Robert, 55, diagnosed with Crohn's six months ago, likely had it for years. Also has hypertension and high cholesterol. Collapsed from dehydration and pain, leading to diagnosis. Extensive colon involvement. Started prednisone, then mesalamine (minimal improvement), then sulfasalazine (headaches). Entyvio recommended, but insurance is catastrophic coverage only, making infusions unaffordable ($5,000 each). Currently managing with diet changes and budesonide. Fatigue impacts work. Considering clinical trials. Dealing with depression and worsening joint pain. Worried about colon cancer risk."
+  "evidence_notes": "Robert, 55, was diagnosed with Crohn's six months ago, though he suspects he had it for years. He also has hypertension and high cholesterol. After a severe flare, he was diagnosed with extensive Crohn's. He tried prednisone, mesalamine, and sulfasalazine, with limited success or adverse effects. His doctor recommended Entyvio, but the cost is prohibitive due to catastrophic insurance coverage. He is currently managing with diet changes and budesonide, and exploring clinical trials. He also experiences fatigue, joint pain, and depression. His overall outcome is ongoing as he is still seeking effective and affordable treatment."
 }

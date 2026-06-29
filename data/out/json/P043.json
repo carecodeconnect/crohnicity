@@ -8,64 +8,66 @@
   "biologic_prescribed": true,
   "biologic_taken": true,
   "biologic_not_mentioned": false,
-  "biologic_type": "Humira",
+  "biologic_type": "Remicade, Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "OTHER"
   ],
   "treatment_records": [
     {
-      "name": "surgery",
-      "treatment_class": "surgery",
-      "outcome": "FAILED",
-      "reason_stopped": "disease recurrence",
-      "before_biologic": true
-    },
-    {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "FAILED",
-      "reason_stopped": "loss of response",
-      "before_biologic": true
+      "outcome": "SUCCESS",
+      "reason_stopped": "developed antibodies",
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "DMARD",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "Synthroid",
+      "treatment_class": "thyroid hormone",
+      "outcome": "PARTIAL",
+      "reason_stopped": null,
+      "biologic_timing": "UNKNOWN"
+    },
+    {
+      "name": "Stelara",
+      "treatment_class": "biologic",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
-    "symptoms_worsen",
     "diagnostic_delay",
-    "specialist_referral",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "surgery",
     "relapse",
-    "conventional_therapy",
-    "therapy_failed",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "biologic_taken",
-    "comorbidity",
-    "alternative_therapy",
+    "conventional_therapy",
+    "loss_of_response",
+    "biologic_switch",
     "planning_next_step"
   ],
-  "evidence_notes": "Sandra, 44, female, diagnosed with Crohn's 12 years ago. Also has Hashimoto's thyroiditis and osteoarthritis. Initial symptoms mistaken for runner's stomach. Had surgery at 33 (resection), disease returned. Treated with Remicade (worked 5 years, then lost response), then Humira (moderate help, ~60%), added methotrexate (improvement to ~75%). Hashimoto's diagnosis led to Synthroid. Spine issues diagnosed as osteoarthritis. Marriage strained, husband acts as caregiver. Daughter (8) worried. Work as marketing director is high stress. Considering Stelara next as Humira losing effectiveness. Scared of transition. Financial strain, debt growing. Support group disbanded. Isolation is an issue. Considering another surgery."
+  "evidence_notes": "Sandra, 44, female, diagnosed with Crohn's twelve years ago. Also has Hashimoto's thyroiditis and osteoarthritis. Had surgery (resection). Started Remicade, which worked for five years, then developed antibodies. Tried Humira (60% effective), added methotrexate (75% effective). Now Humira is losing effectiveness and she is looking at Stelara next. Also discussing another surgery."
 }

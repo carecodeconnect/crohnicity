@@ -8,41 +8,43 @@
   "biologic_prescribed": true,
   "biologic_taken": false,
   "biologic_not_mentioned": false,
-  "biologic_type": null,
+  "biologic_type": "biologics",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "DEFERRED",
+  "reasons_for_biologic_not_taken": [
+    "DEFERRED"
+  ],
   "comorbid_conditions": [
-    "OTHER"
+    "ADHD",
+    "ANXIETY_DISORDER"
   ],
   "treatment_records": [
     {
       "name": "mesalamine",
       "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "therapy_failed",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "ONGOING",
       "reason_stopped": null,
-      "before_biologic": true
+      "biologic_timing": "BEFORE"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
-    "misdiagnosis",
     "diagnostic_delay",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "conventional_therapy",
     "biologic_recommended",
-    "patient_fear",
-    "planning_next_step"
+    "biologic_not_taken",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient diagnosed eight months ago, currently on azathioprine. Her doctor is taking a conservative approach, hesitant to start biologics. She is experiencing fatigue and anxiety, and is concerned about job security and the cost of treatment. She plans to advocate for herself at her next appointment to discuss biologics again. The journey is ongoing with a focus on finding the right treatment and managing symptoms."
+  "evidence_notes": "Diana, 29, female, diagnosed with Crohn's eight months ago. Also has ADHD and anxiety. Started with mesalamine, which seemed to help at first. Now on azathioprine. Her GI doctor mentioned biologics but wants to try other things first. Diana is considering pushing for biologics due to ongoing symptoms and fatigue, but struggles with advocating for herself."
 }

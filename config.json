@@ -1,5 +1,6 @@
 {
-  "model": "gemini/gemini-2.5-flash-lite",
+  "model": "gemini/gemini-2.5-flash",
+  "_comment_model": "Free-tier extraction model. Override per-run without editing this file: --model=gemini/gemini-2.5-flash (CLI) or the CROHNICITY_MODEL env var. Switched from gemini-2.5-flash-lite to dodge -lite 503 high-demand spikes (free-tier quota is per-model, so -flash has its own pool).",
   "temperature": 0,
   "interviews": "data/in/interviews.json",
   "gold": "data/in/interviews_ground_truth_v7.ods",
@@ -14,5 +15,6 @@
   "chunk_size": 10,
   "retry_503_max": 4,
   "retry_503_delay_s": 60,
-  "max_tokens": 8192
+  "max_tokens": 32768,
+  "_comment_max_tokens": "Generous output cap (headroom for a 10-patient batch JSON). Reasoning is disabled in extract.py (reasoning_effort='disable' -> thinkingBudget=0), so thinking no longer competes for this budget; 8192 had truncated the JSON mid-output -> JSONSchemaValidationError."
 }

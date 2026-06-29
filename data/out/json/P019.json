@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Humira",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "NOT_APPLICABLE",
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "ANXIETY_DISORDER"
   ],
@@ -18,25 +20,28 @@
     {
       "name": "Humira",
       "treatment_class": "biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
     "diagnostic_delay",
+    "symptoms_worsen",
     "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "biologic_recommended",
-    "insurance_step_therapy",
+    "biologic_taken",
+    "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken",
-    "patient_fear"
+    "patient_fear",
+    "breakthrough_symptoms",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient diagnosed at 24, started on Humira immediately due to moderate to severe disease. She struggles with self-injection due to anxiety and relies on her boyfriend. She is concerned about disclosing her condition at work and the impact on her career. She experiences FOMO and is processing grief related to her diagnosis. The journey is ongoing with a focus on managing treatment, career, and personal life."
+  "evidence_notes": "Natalie, 24, female, diagnosed with Crohn's after graduating college. Also has generalized anxiety disorder. Her GI doctor suggested aggressive treatment and started Humira right away, skipping traditional steps. She struggles with self-injecting due to anxiety, and her boyfriend helps. Humira is working okay, but she still has breakthrough symptoms and worries about her career, relationships, and future."
 }

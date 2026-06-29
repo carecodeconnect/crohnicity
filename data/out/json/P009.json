@@ -11,7 +11,7 @@
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
   "reasons_for_biologic_not_taken": [
-    "PATIENT_FEARS"
+    "BIOLOGIC_TAKEN"
   ],
   "comorbid_conditions": [
     "ASTHMA",
@@ -28,8 +28,8 @@
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "mood swings",
+      "outcome": "PARTIAL",
+      "reason_stopped": "mood swings were horrible",
       "biologic_timing": "BEFORE"
     },
     {
@@ -42,14 +42,14 @@
     {
       "name": "Entyvio",
       "treatment_class": "biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "LATER"
     },
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "LATER"
     }
@@ -57,21 +57,30 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
+    "misdiagnosis",
     "symptoms_worsen",
     "acute_flare",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
+    "adverse_reaction",
+    "conventional_therapy",
     "adverse_reaction",
     "biologic_recommended",
     "patient_fear",
     "alternative_therapy",
     "biologic_taken",
-    "loss_of_response",
+    "remission",
+    "breakthrough_symptoms",
     "comorbidity",
-    "alternative_therapy",
-    "planning_next_step"
+    "conventional_therapy",
+    "adverse_reaction",
+    "loss_of_response",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Rachel, 36, diagnosed with Crohn's at 33. Also has asthma and rheumatoid arthritis. Symptoms started in twenties but dismissed as stress. Hospitalization led to diagnosis. Tried mesalamine (minimal improvement), prednisone (mood swings), and azathioprine (liver enzymes spiked). Resisted biologics due to needle phobia. Tried dietary modifications, supplements, and acupuncture with marginal improvement. Hospitalization convinced her to try Entyvio infusions, which worked for a year. Now experiencing joint pain, diagnosed with RA. Juggling methotrexate for RA, which may help Crohn's. Side effects include hair thinning, mouth sores, nausea. Career impacted by sick days. Considering career change. Insurance through spouse. Fertility concerns due to medications. Parents don't understand. Fatigue is a major issue. Entyvio losing effectiveness, considering Stelara."
+  "evidence_notes": "Rachel, 36, was diagnosed with Crohn's at 33 after years of misdiagnosis. She also has asthma and rheumatoid arthritis. She tried mesalamine, prednisone, and azathioprine, all with limited success or adverse effects. She initially resisted biologics due to needle phobia but eventually started Entyvio infusions. It worked well for a year, but she then developed joint pain, leading to an RA diagnosis. She added methotrexate for RA. Entyvio is losing effectiveness, and she is considering Stelara. Her overall outcome is ongoing as she manages multiple conditions and anticipates a treatment switch."
 }

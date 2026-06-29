@@ -3,8 +3,10 @@ shows which stage failed in the UI.
 
     uv run dg dev -m pipeline -d src -p 3050     # UI at http://127.0.0.1:3050 (port: config.json -> dagster_port)
 
-Data flow: ``interviews -> predictions -> {readme, referral_graphs}``; ``docsite`` is independent
-(it documents the *source* docstrings, not the data). Extraction is **chunked** (``CHUNK_SIZE``
+Data flow: ``interviews -> predictions -> {readme, referral_graphs, referral_pathways_md -> docsite}``.
+``docsite`` (mkdocs) depends on ``referral_pathways_md`` because the journey gallery
+(``docs/referral_pathways.md``) is *rendered from the predictions*; the rest of the site documents
+the *source* docstrings. Extraction is **chunked** (``CHUNK_SIZE``
 transcripts/call) to fit the Gemini free-tier ~20-requests/day cap. The model comes from ``config``
 (``CROHNICITY_MODEL`` env var overrides ``config.json``). Input is the static committed
 ``data/in/interviews.json``, so there is **no sensor** — materialise on demand.
@@ -69,12 +71,31 @@ def readme() -> None:
     )
 
 
-@dg.asset
+@dg.asset(deps=[predictions])
+def referral_pathways_md() -> None:
+    """Render docs/referral_pathways.qmd -> docs/referral_pathways.md: the 50 per-patient mermaid
+    journeys, rebuilt from the latest predictions (data/out) so the docsite gallery isn't stale."""
+    subprocess.run(
+        ["uv", "run", "quarto", "render", "docs/referral_pathways.qmd"],
+        cwd=ROOT,
+        check=True,
+    )
+
+
+@dg.asset(deps=[referral_pathways_md])
 def docsite() -> None:
-    """mkdocstrings API docsite -> site/. Independent: documents source docstrings, not the data."""
+    """mkdocs site -> site/. Depends on referral_pathways_md so the data-derived journey gallery is
+    freshly rendered before mkdocs copies it; the rest of the site documents source docstrings."""
     subprocess.run(["uv", "run", "mkdocs", "build"], cwd=ROOT, check=True)
 
 
 defs = dg.Definitions(
-    assets=[interviews, predictions, referral_graphs, readme, docsite]
+    assets=[
+        interviews,
+        predictions,
+        referral_graphs,
+        readme,
+        referral_pathways_md,
+        docsite,
+    ]
 )

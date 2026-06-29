@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Entyvio",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": [],
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "FIBROMYALGIA"
@@ -19,40 +21,43 @@
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "FAILED",
-      "reason_stopped": "severe side effects",
+      "outcome": "PARTIAL",
+      "reason_stopped": "tapered off after three months",
       "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": null,
       "biologic_timing": "BEFORE"
     },
     {
       "name": "Entyvio",
       "treatment_class": "biologic",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "misdiagnosis",
     "diagnostic_delay",
     "symptoms_worsen",
-    "comorbidity",
+    "diagnostic_testing",
+    "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
+    "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
-    "insurance_approval",
     "biologic_taken",
+    "remission",
     "breakthrough_symptoms",
-    "planning_next_step"
+    "complication",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Jennifer, 45, diagnosed with Crohn's 3 years ago after decades of misdiagnosis. Also hypothyroid and fibromyalgia. Started prednisone and azathioprine, but prednisone had severe side effects. Azathioprine alone was insufficient. Entyvio recommended due to age and disease extent, covered by insurance. Stable-ish for 18 months with breakthrough symptoms during stress. Going through divorce, financial strain. Managing work, kids, and illness. Developing osteoporosis. Juggling multiple specialists. Concerned about long-term prognosis and medication effectiveness. Considering adding an immunomodulator."
+  "evidence_notes": "Jennifer, 45, was diagnosed with Crohn's three years ago after decades of misdiagnosis. She also has hypothyroidism and fibromyalgia. She started with prednisone and azathioprine, but azathioprine alone wasn't sufficient. Her doctor recommended biologics, and she started Entyvio. She has been stable-ish for 18 months, but still experiences breakthrough symptoms. She is also dealing with osteoporosis and vitamin D deficiency. Her overall outcome is partial success due to ongoing symptoms and complications."
 }

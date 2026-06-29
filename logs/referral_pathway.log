@@ -3711,3 +3711,121 @@ biologic_recommended       biologic_taken     18
   insurance_approval       biologic_taken     10
 2026-06-22 08:05:05.361 | INFO     | referral_pathway_analysis:main:143 - wrote 50/50 per-case graphs -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/referral_pathway_*.html
 2026-06-22 08:05:05.361 | INFO     | referral_pathway_analysis:main:150 - wrote gallery index -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/index.html
+2026-06-29 13:53:11.043 | INFO     | referral_pathway_analysis:main:126 - 50 pathways - 32 distinct phases - 696 transitions
+2026-06-29 13:53:11.045 | INFO     | referral_pathway_analysis:main:132 - PHASE FREQUENCY
+                 phase  count
+  conventional_therapy    125
+      adverse_reaction     51
+         symptom_onset     50
+      crohns_diagnosis     50
+        biologic_taken     44
+            unresolved     38
+    diagnostic_testing     35
+        therapy_failed     32
+  biologic_recommended     30
+    planning_next_step     27
+      loss_of_response     26
+       biologic_switch     26
+      diagnostic_delay     24
+       symptoms_worsen     21
+           comorbidity     21
+          misdiagnosis     19
+   specialist_referral     17
+      insurance_denial     16
+    insurance_approval     14
+          patient_fear     10
+      insurance_appeal     10
+           acute_flare      9
+          complication      8
+    biologic_not_taken      7
+  primary_care_contact      6
+ breakthrough_symptoms      6
+               surgery      6
+             remission      5
+insurance_step_therapy      5
+insurance_cost_barrier      4
+   alternative_therapy      2
+               relapse      2
+2026-06-29 13:53:11.046 | INFO     | referral_pathway_analysis:main:133 - TRANSITIONS (top 20)
+          from_phase             to_phase  count
+conventional_therapy     adverse_reaction     46
+    crohns_diagnosis conventional_therapy     42
+  diagnostic_testing     crohns_diagnosis     34
+conventional_therapy       therapy_failed     31
+    adverse_reaction conventional_therapy     24
+conventional_therapy conventional_therapy     23
+       symptom_onset     diagnostic_delay     21
+      therapy_failed conventional_therapy     19
+    loss_of_response      biologic_switch     17
+ specialist_referral   diagnostic_testing     16
+      biologic_taken     loss_of_response     16
+  planning_next_step           unresolved     14
+    adverse_reaction biologic_recommended     12
+    insurance_denial     insurance_appeal     10
+    insurance_appeal   insurance_approval     10
+     symptoms_worsen  specialist_referral      9
+biologic_recommended       biologic_taken      9
+conventional_therapy biologic_recommended      9
+  insurance_approval       biologic_taken      8
+       symptom_onset         misdiagnosis      8
+2026-06-29 13:53:11.411 | INFO     | referral_pathway_analysis:main:143 - wrote 50/50 per-case graphs -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/referral_pathway_*.html
+2026-06-29 13:53:11.411 | INFO     | referral_pathway_analysis:main:150 - wrote gallery index -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/index.html
+2026-06-29 15:14:29.546 | INFO     | referral_pathway_analysis:main:126 - 50 pathways - 32 distinct phases - 672 transitions
+2026-06-29 15:14:29.549 | INFO     | referral_pathway_analysis:main:132 - PHASE FREQUENCY
+                 phase  count
+  conventional_therapy    123
+         symptom_onset     50
+      crohns_diagnosis     50
+      adverse_reaction     50
+        biologic_taken     44
+            unresolved     38
+        therapy_failed     31
+  biologic_recommended     30
+    diagnostic_testing     27
+    planning_next_step     26
+      diagnostic_delay     26
+      loss_of_response     26
+       biologic_switch     26
+           comorbidity     21
+       symptoms_worsen     20
+          misdiagnosis     16
+      insurance_denial     16
+   specialist_referral     14
+    insurance_approval     12
+      insurance_appeal     10
+          patient_fear      9
+           acute_flare      9
+          complication      7
+    biologic_not_taken      7
+ breakthrough_symptoms      6
+               surgery      6
+             remission      5
+insurance_step_therapy      5
+  primary_care_contact      4
+insurance_cost_barrier      4
+   alternative_therapy      2
+               relapse      2
+2026-06-29 15:14:29.550 | INFO     | referral_pathway_analysis:main:133 - TRANSITIONS (top 20)
+          from_phase             to_phase  count
+conventional_therapy     adverse_reaction     46
+    crohns_diagnosis conventional_therapy     42
+conventional_therapy       therapy_failed     30
+  diagnostic_testing     crohns_diagnosis     26
+    adverse_reaction conventional_therapy     24
+conventional_therapy conventional_therapy     23
+       symptom_onset     diagnostic_delay     22
+      therapy_failed conventional_therapy     18
+    loss_of_response      biologic_switch     17
+      biologic_taken     loss_of_response     16
+  planning_next_step           unresolved     16
+ specialist_referral   diagnostic_testing     13
+    adverse_reaction biologic_recommended     12
+    insurance_denial     insurance_appeal     10
+    insurance_appeal   insurance_approval     10
+     symptoms_worsen  specialist_referral      9
+    diagnostic_delay     crohns_diagnosis      9
+biologic_recommended       biologic_taken      9
+conventional_therapy biologic_recommended      9
+  insurance_approval       biologic_taken      8
+2026-06-29 15:14:29.914 | INFO     | referral_pathway_analysis:main:143 - wrote 50/50 per-case graphs -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/referral_pathway_*.html
+2026-06-29 15:14:29.915 | INFO     | referral_pathway_analysis:main:150 - wrote gallery index -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/index.html

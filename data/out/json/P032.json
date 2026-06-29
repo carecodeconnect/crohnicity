@@ -10,48 +10,49 @@
   "biologic_not_mentioned": false,
   "biologic_type": null,
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": "INSURANCE_PROBLEMS",
+  "reasons_for_biologic_not_taken": [
+    "INSURANCE_PROBLEMS"
+  ],
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
-    "HYPERTENSION",
-    "OTHER"
+    "OTHER",
+    "HYPERTENSION"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
-      "treatment_class": "5-ASA",
+      "treatment_class": "5-asa",
       "outcome": "FAILED",
-      "reason_stopped": "Ineffective.",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Prednisone",
-      "treatment_class": "Corticosteroid",
+      "treatment_class": "corticosteroid",
       "outcome": "FAILED",
-      "reason_stopped": "Caused significant blood sugar issues.",
-      "before_biologic": true
+      "reason_stopped": "blood sugar went insane",
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Sulfasalazine",
-      "treatment_class": "DMARD",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "Headaches are terrible, but continuing.",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     }
   ],
-  "treatment_outcome": "FAILED",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "self_managed",
-    "primary_care_contact",
-    "diagnostic_testing",
+    "diagnostic_delay",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
     "adverse_reaction",
+    "conventional_therapy",
     "biologic_recommended",
     "insurance_denial",
-    "planning_next_step"
+    "unresolved"
   ],
-  "evidence_notes": "Patient diagnosed with Crohn's last year, late onset. Also has diabetes, heart disease, and arthritis. Symptoms started two years ago, ignored. Mesalamine and prednisone tried, prednisone caused blood sugar issues. Now on sulfasalazine. GI doctor wants biologics, but insurance denied, requiring failure of more drugs. Patient is miserable, frequent bathroom trips, had to close shop. Financial strain. Feels alone, depression is worsening due to medication interactions."
+  "evidence_notes": "Frank, 54, was diagnosed with Crohn's last year. He also has diabetes, heart disease, and arthritis. He started with mesalamine, which didn't work. Prednisone caused blood sugar issues. He is now on sulfasalazine, experiencing headaches. His GI doctor wants to prescribe biologics, but insurance denied it, requiring him to fail more drugs first. He is experiencing severe symptoms, has lost his job, and is facing financial difficulties. He is also dealing with depression and is considering selling his house. He plans to push for biologics again."
 }

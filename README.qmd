@@ -23,9 +23,15 @@ jupyter: crohnicity
 import sys
 
 sys.path.insert(0, "src")
-from config import APP_VERSION  # version SSOT: pyproject.toml
+from config import APP_VERSION, GOLD, MODEL  # version / gold / model SSOT (pyproject.toml + config.json)
 
-print(f"*Pipeline version `{APP_VERSION}` — single source of truth: `pyproject.toml`.*")
+GOLD_FILE = GOLD.name  # gold .ods filename — used inline below; defined early, never hard-coded
+print(
+    f"*Pipeline version `{APP_VERSION}` · extraction model `{MODEL}` · gold `{GOLD_FILE}` — "
+    f"rendered from `config.json` / `pyproject.toml`, so this line always names the model this "
+    f"build used (`config.MODEL` resolves the `CROHNICITY_MODEL` env override; the model is also "
+    f"logged per call in `logs/extract.log`). Changes between runs: [`CHANGELOG.md`](CHANGELOG.md).*"
+)
 ```
 
 ## Pydantic Schema Design
@@ -55,7 +61,7 @@ print(f"*Pipeline version `{APP_VERSION}` — single source of truth: `pyproject
 
 - **Single-shot, batched — not multi-stage.** One system prompt extracts *all* `PatientLabels` fields in a single structured call per patient; transcripts are then **batched** (10 per request) only to fit Gemini's free-tier ~20-requests/day cap — batching ≠ staging, it's still one pass over every field, just several patients per call. Single-shot minimises calls (decisive under the rate cap), keeps the code simple, and lets the model set inter-dependent fields (`biologic_prescribed`/`biologic_taken`, `churn`, `referral_pathway`) with the whole story in view. The cost: every field competes for attention in one prompt, so the hard fields suffer — the EDA shows `churn` unreliable and the GP node under-emitted. A multi-stage split (per-section prompts run concurrently, with inspectable intermediates) is the #1 item in *Next Steps* below; it trades more calls + orchestration for better per-field accuracy.
 - **Uncertainty: absence vs. negation vs. truncation.** The prompt separates them by construction, onto the three schema mechanisms above. A global rule — *"Leave a field null or empty when the transcript does not support a confident value"* — covers **absence**. **Negation** rides on the prescribed-vs-taken booleans + the `ReasonNotTaken` enum. **Truncation** gets the most explicit instruction: judge `churn` from how the transcript *ends* — churn **only** when it breaks off mid-word / mid-thought (e.g. ends on "Chronic…"), while a deliberately-typed "…" on a coherent phrase is an intentional sign-off, **not** churn (no recurrence heuristic) — and — critically — *"keep this truncation signal distinct from a topic simply being absent … (that is 'not mentioned', not churn)."* Honest limit: truncation is a lexical/structural property of the transcript's end that the narrative under-determines, so the instruction alone isn't enough — the gold audit found it unreliable in both directions (over-flagging and missed truncation), and a deterministic tail-of-text rule would do better (`docs/TO_REVIEW.md`).
-- **Determinism & reproducibility.** Three levers, in decreasing order of leverage. **(1) Structured-output mode** — `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`: a Pydantic-derived schema constrains the *shape* and enum membership, and LiteLLM validates the reply (raising `JSONSchemaValidationError` on a mismatch), so format/parse variance is removed and downstream pandas never meets an off-vocabulary value. **(2) Persisted predictions** — each chunk writes one validated JSON per patient to `data/out/`, and the whole analysis (this README) reads *only* those frozen artefacts with no API call, so every number and plot is **exactly reproducible run-to-run** regardless of LLM nondeterminism; this is the real guarantee. **(3) Decoding params** — `temperature` is **pinned to `0`** (greedy) in `config.json` and imported by `extract.py` — extraction here is a **classification** task, so we want *same transcript → same labels*, not sampled variety. This build is the live test case for *why*: a fresh re-run at the provider default (Gemini's default `temperature` is `1.0`) shifted long-tail outputs (the GP-node count; which biologics got mislabelled on `biologic_timing`) while the headline answers held — exactly the run-to-run drift `0` removes. Temperature is **logged per run** (with the model) so runs at different parameter levels stay comparable. A seed would add belt-and-braces, but with a reasoning-capable model `0` *minimises* rather than *guarantees* bit-identical output; **(2)** is the hard reproducibility guarantee for the analysis. No explicit prompt **caching** yet — the static system prompt + schema are identical across calls, so implicit context caching may apply, and cached-token counts are logged (`docs/TELEMETRY.md`).
+- **Determinism & reproducibility.** Three levers, in decreasing order of leverage. **(1) Structured-output mode** — `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`: a Pydantic-derived schema constrains the *shape* and enum membership, and LiteLLM validates the reply (raising `JSONSchemaValidationError` on a mismatch), so format/parse variance is removed and downstream pandas never meets an off-vocabulary value. **(2) Persisted predictions** — each chunk writes one validated JSON per patient to `data/out/`, and the whole analysis (this README) reads *only* those frozen artefacts with no API call, so every number and plot is **exactly reproducible run-to-run** regardless of LLM nondeterminism; this is the real guarantee. **(3) Decoding params** — `temperature` is **pinned to `0`** (greedy) in `config.json` and imported by `extract.py` — extraction here is a **classification** task, so we want *same transcript → same labels*, not sampled variety. This build is the live test case for *why*: a fresh re-run at the provider default (Gemini's default `temperature` is `1.0`) shifted long-tail outputs (the GP-node count; which biologics got mislabelled on `biologic_timing`) while the headline answers held — exactly the run-to-run drift `0` removes. Temperature is **logged per run** (with the model) so runs at different parameter levels stay comparable. A seed would add belt-and-braces, but with a reasoning-capable model `0` *minimises* rather than *guarantees* bit-identical output; **(2)** is the hard reproducibility guarantee for the analysis. **Reasoning is also disabled** — `reasoning_effort="disable"` (LiteLLM → Gemini `thinkingConfig.thinkingBudget=0`, verified via `get_optional_params`) — because extraction is *classification*, not multi-step inference: the hidden thinking step added run-to-run variance and on `gemini-2.5-flash` consumed the output budget until the JSON truncated mid-array (a `JSONSchemaValidationError`), with no accuracy upside. The *inspectable chain-of-thought* the stretch brief asks for is a **different** thing — explicit multi-stage prompts with auditable intermediates (the #1 *Next Step* above), not opaque internal tokens. No explicit prompt **caching** yet — the static system prompt + schema are identical across calls, so implicit context caching may apply, and cached-token counts are logged (`docs/TELEMETRY.md`).
 
 ## Evaluation
 
@@ -114,11 +120,10 @@ from plotnine import (
 
 sys.path.insert(0, "src")
 import post_extraction_eda as eda
-from config import GOLD, PLOTS_DIR, RETRY_503_DELAY_S, RETRY_503_MAX
+from config import PLOTS_DIR, RETRY_503_DELAY_S, RETRY_503_MAX
 
 PLOTS = PLOTS_DIR
 PLOTS.mkdir(parents=True, exist_ok=True)
-GOLD_FILE = GOLD.name  # gold .ods filename from config — never hard-code the version
 
 records = eda.load_records()
 df = eda.load_predictions()
@@ -391,17 +396,23 @@ With more time, after the core is complete:
   run in parallel — **(1)** biologic funnel (prescribed/taken/type/reasons), **(2)** treatment
   history (records + `biologic_timing` + outcome), **(3)** referral pathway, **(4)** context
   (churn, demographics, comorbidities) — then merge into one `PatientLabels`. Better per-field
-  accuracy and inspectable intermediates, at the cost of more calls and orchestration.
+  accuracy and inspectable intermediates, at the cost of more calls and orchestration. **This is
+  where chain-of-thought genuinely earns its place here:** as the *explicit, inspectable* reasoning
+  the stretch brief means, it both fixes the single-shot attention-competition behind shaky
+  `churn`/`referral_pathway`/`biologic_timing` **and** hands a reviewer auditable intermediates (the
+  brief's whole point). So we turn off the *opaque* internal thinking now (*Determinism &
+  reproducibility* above) and add *explicit* staged CoT here — complementary, not contradictory.
 
 - **A telemetry feature for optimisation.** Per-call usage is currently logged (tokens, cost,
   cached tokens — see [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I'd surface it as a
   first-class artifact (a structured per-run metrics file + plots) to track cost/latency/cache-hit
   rate and tune the pipeline at scale.
 
-- **Try a larger Gemini model in production.** This version uses `gemini-2.5-flash-lite` (cheap,
-  fast for iteration). With more time I'd evaluate a more capable model (e.g. `gemini-2.5-flash` /
-  `pro`) for extraction quality, weighed against its free-tier **request/token rate limits** (the
-  ~20 calls/day cap that drove the chunking design) and cost.
+- **Try an even larger Gemini model.** This run uses `{python} MODEL` (it ran on
+  `gemini-2.5-flash-lite` during iteration, then moved up to dodge `-lite`'s 503 spikes and give the
+  batched JSON enough output budget). With more time I'd evaluate `gemini-2.5-pro` for extraction
+  quality, weighed against its free-tier **request/token rate limits** (the ~20 calls/day cap that
+  drove the chunking design) and cost.
 
 - **Deep dive on cyclical journey patterns.** The `referral_pathway` initially flattened recurrence
   (each phase emitted once); the prompt now asks the model to repeat steps when phases recur. A
@@ -484,7 +495,7 @@ With more time, after the core is complete:
 
 ## Usage
 
-**Dagster, driven by the `dg` CLI, is the main entry point.** It orchestrates the whole pipeline end-to-end — extract → EDA / README render → referral graphs → docsite — and shows which stage failed in the UI. Launch a run two ways — the UI's *Materialize all*, or headless from a second terminal:
+**Dagster, driven by the `dg` CLI, is the main entry point.** It orchestrates the whole pipeline end-to-end — extract → (EDA/README render · referral graphs · referral-pathway gallery) → docsite — and shows which stage failed in the UI. Launch a run two ways — the UI's *Materialize all*, or headless from a second terminal:
 
 ```bash
 uv run dg dev -m pipeline -d src -p 3050   # UI at http://127.0.0.1:3050 → "Materialize all" (port: config.json → dagster_port)
@@ -522,7 +533,7 @@ uv run python src/main.py --limit=10 --offset=10   # run 2: P011–P020 (no re-r
 
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `--model` | `gemini/gemini-2.5-flash-lite` | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
+| `--model` | `{python} MODEL` | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
 | `--limit` | all | slice size — run one chunk for testing / incremental runs |
 | `--offset` | `0` | which slice — incremental runs without redoing earlier chunks |
 | `--chunk-size` | `10` | transcripts per API call |
@@ -626,7 +637,7 @@ uv run mkdocs serve -a localhost:8000     # live preview at http://localhost:800
 uv run mkdocs build     # render the static site to site/ (git-ignored)
 ```
 
-`mkdocs build` is also wired as the independent `docsite` asset in the Dagster run (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
+`mkdocs build` is wired as the `docsite` asset, which depends on `referral_pathways_md` so the journey gallery is re-rendered from the latest predictions before the site is built (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
 
 ## Project layout
 
@@ -637,7 +648,7 @@ uv run mkdocs build     # render the static site to site/ (git-ignored)
 │   ├── schema.py                     #   Pydantic models + enums (PatientLabels, …)
 │   ├── extract.py                    #   the Gemini call — chunked, structured-output, temperature=0
 │   ├── main.py                       #   fire CLI: load → run_chunked → persist
-│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs; docsite
+│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs/pathways-md → docsite
 │   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
 │   └── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
 ├── tests/                            # pytest suite + the quality gate

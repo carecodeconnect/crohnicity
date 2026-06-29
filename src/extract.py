@@ -1,7 +1,7 @@
 """Minimal LiteLLM/Gemini extraction: one interview transcript -> PatientLabels (a prediction).
 
 Builds on the canonical call verified in `notebooks/00_setup.ipynb` (litellm.completion,
-gemini-2.5-flash-lite, GEMINI_API_KEY loaded from `.env`) and the documented Gemini
+a Gemini model, GEMINI_API_KEY loaded from `.env`) and the documented Gemini
 structured-output pattern (https://docs.litellm.ai/docs/providers/gemini):
 
     response_format={"type": "json_object", "response_schema": <json schema>,
@@ -137,6 +137,7 @@ def extract(
                 model=model,
                 num_retries=0,  # we own retries: 503 only, sparingly (see _with_503_retry)
                 temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
+                reasoning_effort="disable",  # extraction is classification, not multi-step reasoning (-> thinkingBudget=0)
                 # drop params a provider doesn't support (Gemini vs Ollama)
                 drop_params=True,
                 messages=[
@@ -199,8 +200,9 @@ def extract_batch(
     interviews: list[Interview], out_dir: Path = JSON_DIR, model: str = MODEL
 ) -> list[PatientLabels]:
     """Extract a chunk of interviews in ONE call — fewer requests for the daily cap (see main.py
-    `--chunk-size`). Strict: a malformed/short batch fails the whole chunk (minimal; a tolerant
-    per-record parse is future hardening — docs/TODO.md)."""
+    `--chunk-size`). A malformed/truncated batch raises (enforce_validation); `run_chunked`
+    (main.py) skips + logs that chunk and continues — per-record salvage is future hardening
+    (docs/TODO.md)."""
     load_dotenv()  # GEMINI_API_KEY -> env
     ids = [r.patient_id for r in interviews]
     user_message = "\n\n---\n\n".join(
@@ -213,6 +215,7 @@ def extract_batch(
                 model=model,
                 num_retries=0,  # we own retries: 503 only, sparingly (see _with_503_retry)
                 temperature=TEMPERATURE,  # 0 = deterministic; logged below for cross-run comparison
+                reasoning_effort="disable",  # classification task; frees the token budget for JSON (-> thinkingBudget=0)
                 drop_params=True,
                 max_tokens=MAX_TOKENS,  # headroom for ~N records (keep chunk_size <= ~15)
                 messages=[

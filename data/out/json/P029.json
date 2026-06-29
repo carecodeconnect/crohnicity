@@ -10,7 +10,9 @@
   "biologic_not_mentioned": false,
   "biologic_type": "Remicade, Humira, Stelara",
   "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
-  "reasons_for_biologic_not_taken": null,
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
   "comorbid_conditions": [
     "HYPOTHYROIDISM",
     "MIGRAINE"
@@ -18,74 +20,86 @@
   "treatment_records": [
     {
       "name": "mesalamine",
-      "treatment_class": "conventional",
+      "treatment_class": "5-asa",
       "outcome": "PARTIAL",
-      "reason_stopped": "minimal help",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "prednisone",
-      "treatment_class": "conventional",
+      "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": "weight gain, appearance concerns",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "azathioprine",
-      "treatment_class": "conventional",
+      "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "worked for two years, then stopped",
-      "before_biologic": true
+      "reason_stopped": null,
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "methotrexate",
-      "treatment_class": "conventional",
-      "outcome": "PARTIAL",
+      "treatment_class": "immunomodulator",
+      "outcome": "FAILED",
       "reason_stopped": "hair loss",
-      "before_biologic": false
+      "biologic_timing": "BEFORE"
     },
     {
       "name": "Remicade",
       "treatment_class": "biologic",
       "outcome": "FAILED",
-      "reason_stopped": "effectiveness dropped",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "Humira",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
-      "reason_stopped": "less effective",
-      "before_biologic": false
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "Synthroid",
+      "treatment_class": "hormone replacement",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     },
     {
       "name": "Stelara",
       "treatment_class": "biologic",
       "outcome": "PARTIAL",
       "reason_stopped": null,
-      "before_biologic": false
+      "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "PARTIAL",
+  "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
-    "symptoms_worsen",
-    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "conventional_therapy",
+    "conventional_therapy",
+    "loss_of_response",
+    "conventional_therapy",
     "adverse_reaction",
-    "therapy_failed",
     "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
     "biologic_taken",
+    "comorbidity",
+    "biologic_switch",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
-    "biologic_taken"
+    "biologic_taken",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Patient has a long history of Crohn's and other conditions, facing career and personal life impacts. Treatment outcome is partial as Stelara is only 'okay' and the patient is considering combination therapy. The narrative ends with a reflection on acceptance and continuing to move forward, not a cut-off."
+  "evidence_notes": "Linda, 38, has had Crohn's for twelve years. She also has thyroid disease and chronic migraines. She started with mesalamine, then prednisone for flares, which caused 50 pounds of weight gain. Azathioprine worked for two years, then stopped. Methotrexate caused hair loss. She started Remicade five years ago, then switched to Humira after Remicade failed. Humira was less effective (60% improvement). She developed thyroid disease and takes Synthroid. She is currently on Stelara, which was approved after six months of appeals and is working \"okay, not great.\" She is discussing combo therapy with Stelara and something else. Her overall outcome is ongoing as she is managing multiple chronic conditions and seeking more effective treatment for her Crohn's."
 }
