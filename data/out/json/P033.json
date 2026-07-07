@@ -15,20 +15,20 @@
   ],
   "comorbid_conditions": [
     "OTHER",
-    "DEPRESSION"
+    "OTHER"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
       "treatment_class": "5-asa",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": null,
       "biologic_timing": "BEFORE"
     },
     {
       "name": "Prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": "triggered hypomanic episode",
       "biologic_timing": "BEFORE"
     },
@@ -36,7 +36,7 @@
       "name": "Methotrexate",
       "treatment_class": "immunomodulator",
       "outcome": "PARTIAL",
-      "reason_stopped": "nauseous",
+      "reason_stopped": "nausea",
       "biologic_timing": "BEFORE"
     },
     {
@@ -52,11 +52,29 @@
       "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "LATER"
+    },
+    {
+      "name": "Lamotrigine",
+      "treatment_class": "mood stabilizer",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
+    },
+    {
+      "name": "Ursodiol",
+      "treatment_class": "other",
+      "outcome": "ONGOING",
+      "reason_stopped": null,
+      "biologic_timing": "LATER"
     }
   ],
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "symptoms_worsen",
+    "primary_care_contact",
+    "specialist_referral",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
@@ -67,5 +85,5 @@
     "comorbidity",
     "unresolved"
   ],
-  "evidence_notes": "Nina, 26, was diagnosed with Crohn's at 19. She also has severe eczema and bipolar II. She started with mesalamine and prednisone, with prednisone triggering a hypomanic episode. She then tried methotrexate, which helped Crohn's but caused nausea. At 21, she started Humira, which initially helped Crohn's but led to severe eczema. She is now on Stelara, which helps both conditions somewhat. She is also on mood stabilizers for bipolar II. She is struggling with dating, work, and financial stress. She is considering ketamine therapy and is looking into next steps if Stelara fails."
+  "evidence_notes": "Nina, 26, was diagnosed with Crohn's at 19. She also has severe eczema and bipolar II. She started with mesalamine and prednisone, but prednisone triggered a hypomanic episode. She then tried methotrexate, which helped Crohn's but caused nausea. At 21, she started Humira, which initially helped Crohn's but caused severe eczema. She then switched to Stelara, which helps both conditions somewhat. She is also on mood stabilizers for bipolar disorder. She is struggling with dating, work, and financial stability. She is considering ketamine therapy for depression and inflammation."
 }

@@ -12,7 +12,8 @@ under another). The input is static, so there is **no sensor**.
 
 *Part of
 [Crohnicity](https://github.com/carecodeconnect/crohnicity/blob/main/README.md)
-— the root README carries the business answers, evaluation and Next
+— the root README is the high-level overview; the [solution
+write-up](SOLUTION.md) carries the business answers, evaluation and Next
 Steps.*
 
 ## Architecture
@@ -32,18 +33,18 @@ flowchart TB
         interviews["interviews<br/>load_interviews()"]
         predictions["predictions<br/>run_chunked() · 10 per call"]
         referral["referral_graphs<br/>rpa.main()"]
-        rdme["readme<br/>quarto render README.qmd"]
+        sol["solution<br/>quarto render docs/SOLUTION.qmd"]
         rpmd["referral_pathways_md<br/>quarto render docs/referral_pathways.qmd"]
         docsite["docsite<br/>mkdocs build"]
         interviews --> predictions --> referral
-        predictions --> rdme
+        predictions --> sol
         predictions --> rpmd --> docsite
     end
 
     indata[("data/in/interviews.json<br/>static · committed · NO sensor")]
     gemini["LiteLLM → Gemini · model from config.json<br/>structured output · enforce_validation · reasoning off"]
     outjson[("data/out/json/P*.json<br/>validated PatientLabels")]
-    arte[("README.md / .html · data/out/html graphs<br/>data/out/plots · site/")]
+    arte[("docs/SOLUTION.md / .html · data/out/html graphs<br/>data/out/plots · site/")]
 
     cfg --> dgr
     cfg --> cli
@@ -54,10 +55,10 @@ flowchart TB
     predictions --> gemini
     predictions --> outjson
     outjson --> referral
-    outjson --> rdme
+    outjson --> sol
     outjson --> rpmd
     referral --> arte
-    rdme --> arte
+    sol --> arte
     docsite --> arte
 ```
 
@@ -66,7 +67,7 @@ a `src/` function (`interviews` → `load_interviews`, `predictions` →
 `run_chunked`, `referral_graphs` → `rpa.main`); it does **not** shell
 out to the CLI. So the identical code path runs whether you launch the
 whole graph in Dagster or one part from `uv run python src/main.py`.
-(`readme`, `referral_pathways_md` and `docsite` *do* subprocess out —
+(`solution`, `referral_pathways_md` and `docsite` *do* subprocess out —
 but to the external `quarto` / `mkdocs` tools, not to our own scripts.
 `docsite` depends on `referral_pathways_md` so the journey gallery is
 rendered from the latest predictions before the site is built.)
@@ -74,11 +75,11 @@ rendered from the latest predictions before the site is built.)
 **Static input → no sensor.** `data/in/interviews.json` is the single
 committed input; the pipeline never re-fetches it, so a run is manual /
 on-demand. A sensor only earns its place once the input becomes
-*dynamic* — e.g. transcripts arriving via the FastAPI endpoint in README
-→ *Next Steps*.
+*dynamic* — e.g. transcripts arriving via the FastAPI endpoint in
+SOLUTION → *Next Steps*.
 
 **Determinism & logging.** `temperature = 0` (from `config.json`) plus
 structured-output validation; each run logs to `logs/` — `extract.log`,
 `referral_pathway.log`, and the combined `dagster.log` (written by a
 loguru sink in `pipeline.py`). Predictions are scored against the gold
-`_v7.ods` on the `to_review` reviewed set (README → *Evaluation*).
+`_v7.ods` on the `to_review` reviewed set (SOLUTION → *Evaluation*).

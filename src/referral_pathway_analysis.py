@@ -14,7 +14,7 @@ Capturing cycles / repetition — why & how:
   visit count), and every edge's tooltip carries its traversal count `(xN)`. Layout is chosen
   per journey: a *cyclic* one (a phase recurs) uses a force layout so loops render as loops; a
   *linear* one uses a left-to-right hierarchy for a clean start -> outcome read. Recurrence is
-  also recoverable from `treatment_records`; the cyclical deep-dive is in README "Next Steps".
+  also recoverable from `treatment_records`; the cyclical deep-dive is in docs/SOLUTION.md "Next Steps".
 
 Run: `uv run python src/referral_pathway_analysis.py`  (offline — reads artefacts, no Gemini calls)
 """
@@ -92,7 +92,7 @@ def render(pid: str, seq: list[str], path: Path) -> Path:
 
 def render_index(pids: list[str], path: Path) -> Path:
     """A gallery landing page linking every per-case graph — open this one file to browse all
-    journeys (the README's deep-dive entry point for the interactive pathways)."""
+    journeys (the docs/SOLUTION.md deep-dive entry point for the interactive pathways)."""
     links = "\n".join(
         f'      <li><a href="referral_pathway_{pid}.html">{pid}</a></li>'
         for pid in pids

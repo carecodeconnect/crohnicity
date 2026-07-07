@@ -12,6 +12,7 @@ validation:
 # gallery's Mermaid diagrams in the docsite. Swap in mkdocs-material later if wanted.
 nav:
   - Home: index.md
+  - Solution & evaluation: SOLUTION.md
   - Schema: SCHEMA.md
   - System design: SYSTEM_DESIGN.md
   - Referral pathways: referral_pathways.md

@@ -1,6 +1,6 @@
 {
   "patient_id": "P045",
-  "churn": true,
+  "churn": false,
   "demographics": {
     "gender": "Female",
     "age": 33
@@ -35,7 +35,7 @@
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
-      "outcome": "ONGOING",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "BEFORE"
     }
@@ -49,7 +49,8 @@
     "conventional_therapy",
     "biologic_recommended",
     "insurance_step_therapy",
-    "conventional_therapy"
+    "conventional_therapy",
+    "unresolved"
   ],
-  "evidence_notes": "Rosa, 33, female, diagnosed with Crohn's four months ago. Also has PCOS and insulin resistance. Started on budesonide and mesalamine. Doctor mentioned biologics might be next step but insurance wants her to fail more medications first. Currently trying methotrexate, which causes terrible nausea."
+  "evidence_notes": "Rosa, 33, was diagnosed with Crohn's four months ago, but had symptoms for two years. She also has PCOS and insulin resistance. She started on budesonide and mesalamine, with some improvement. Her doctor mentioned biologics might be next, but insurance wants her to fail more medications first. She is currently trying methotrexate, which causes terrible nausea. She is struggling with the impact of her illness on her job, personal life, and finances."
 }

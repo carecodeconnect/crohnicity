@@ -60,7 +60,7 @@ brew install graphviz
 
 **Rate limits & a local model.** The Gemini free-tier daily cap and the local-Ollama `--model`
 swap (with litellm's `drop_params`) are documented in
-**[README → Usage](../README.qmd)** (the chunking strategy and the `--model` flag table); see
+**[SOLUTION → Usage](SOLUTION.qmd)** (the chunking strategy and the `--model` flag table); see
 [`config.json`](../config.json) for the actual limits/ports. Reference docs:
 [Gemini limits & tiers](https://ai.google.dev/gemini-api/docs/rate-limits) ·
 [current usage](https://ai.dev/rate-limit) · [litellm Ollama](https://docs.litellm.ai/docs/providers/ollama).
@@ -68,7 +68,7 @@ swap (with litellm's `drop_params`) are documented in
 ## Running the pipeline (Dagster)
 
 How to launch a run (UI *Materialize all* vs. headless `dg launch`), the asset graph, and the
-free-tier chunking are in **[README → Usage](../README.qmd)**; ports come from
+free-tier chunking are in **[SOLUTION → Usage](SOLUTION.qmd)**; ports come from
 [`config.json`](../config.json) (`dagster_port`). The Dagster-setup details *unique* to this doc:
 
 **`DAGSTER_HOME` in `.env`.** Dagster keeps run history in a temp dir by default (wiped on exit).
@@ -111,9 +111,9 @@ absolute paths, so after renaming + reopening the editor:
 
 ```bash
 uv sync --reinstall                                                       # recreate .venv AND rewrite console-script shebangs (pytest, etc.) for the new path — not plain `uv sync`
-uv run python -m ipykernel install --user --name crohnicity --display-name "Python (crohnicity)"   # re-point the jupyter kernel (used by the notebooks + README.qmd)
+uv run python -m ipykernel install --user --name crohnicity --display-name "Python (crohnicity)"   # re-point the jupyter kernel (used by the notebooks + docs/SOLUTION.qmd)
 git remote set-url origin https://github.com/carecodeconnect/crohnicity.git
-uv run quarto render README.qmd                                           # regenerate README.md (gfm)
+uv run quarto render docs/SOLUTION.qmd                                     # regenerate docs/SOLUTION.md (gfm)
 uv run python src/referral_pathway_analysis.py                            # regenerate the per-case graphs
 RUN_RENDER_TEST=1 uv run pytest tests/test_render.py                      # verify the render pipeline end-to-end
 ```

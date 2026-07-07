@@ -3829,3 +3829,62 @@ conventional_therapy biologic_recommended      9
   insurance_approval       biologic_taken      8
 2026-06-29 15:14:29.914 | INFO     | referral_pathway_analysis:main:143 - wrote 50/50 per-case graphs -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/referral_pathway_*.html
 2026-06-29 15:14:29.915 | INFO     | referral_pathway_analysis:main:150 - wrote gallery index -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/index.html
+2026-07-07 19:29:55.377 | INFO     | referral_pathway_analysis:main:126 - 50 pathways - 32 distinct phases - 717 transitions
+2026-07-07 19:29:55.380 | INFO     | referral_pathway_analysis:main:132 - PHASE FREQUENCY
+                 phase  count
+  conventional_therapy    125
+      adverse_reaction     54
+         symptom_onset     50
+      crohns_diagnosis     50
+            unresolved     49
+        biologic_taken     44
+    diagnostic_testing     34
+        therapy_failed     34
+    planning_next_step     29
+  biologic_recommended     27
+      loss_of_response     25
+       biologic_switch     25
+           comorbidity     23
+      diagnostic_delay     22
+       symptoms_worsen     21
+          misdiagnosis     20
+   specialist_referral     17
+      insurance_denial     16
+    insurance_approval     14
+          patient_fear     13
+      insurance_appeal     10
+          complication      9
+           acute_flare      8
+  primary_care_contact      7
+    biologic_not_taken      7
+ breakthrough_symptoms      6
+               surgery      6
+             remission      5
+insurance_step_therapy      5
+   alternative_therapy      5
+insurance_cost_barrier      4
+               relapse      3
+2026-07-07 19:29:55.381 | INFO     | referral_pathway_analysis:main:133 - TRANSITIONS (top 20)
+          from_phase             to_phase  count
+conventional_therapy     adverse_reaction     49
+    crohns_diagnosis conventional_therapy     42
+  diagnostic_testing     crohns_diagnosis     34
+conventional_therapy       therapy_failed     30
+    adverse_reaction conventional_therapy     26
+      therapy_failed conventional_therapy     23
+       symptom_onset     diagnostic_delay     19
+  planning_next_step           unresolved     18
+ specialist_referral   diagnostic_testing     17
+      biologic_taken     loss_of_response     16
+    loss_of_response      biologic_switch     16
+conventional_therapy conventional_therapy     16
+conventional_therapy biologic_recommended     12
+    insurance_denial     insurance_appeal     10
+    insurance_appeal   insurance_approval     10
+     symptoms_worsen  specialist_referral      9
+    adverse_reaction biologic_recommended      9
+    adverse_reaction       biologic_taken      9
+          unresolved   planning_next_step      9
+  insurance_approval       biologic_taken      8
+2026-07-07 19:29:55.746 | INFO     | referral_pathway_analysis:main:143 - wrote 50/50 per-case graphs -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/referral_pathway_*.html
+2026-07-07 19:29:55.746 | INFO     | referral_pathway_analysis:main:150 - wrote gallery index -> /Users/shoutt/projects/mama_health/crohnicity/data/out/html/index.html

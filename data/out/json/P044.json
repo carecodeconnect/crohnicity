@@ -35,8 +35,8 @@
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "outcome": "FAILED",
+      "reason_stopped": "anxiety went crazy",
       "biologic_timing": "BEFORE"
     },
     {
@@ -50,14 +50,15 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "symptoms_worsen",
     "crohns_diagnosis",
     "conventional_therapy",
     "conventional_therapy",
+    "adverse_reaction",
     "conventional_therapy",
     "biologic_recommended",
     "patient_fear",
-    "planning_next_step"
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Peter, 27, male, diagnosed with Crohn's two years ago. Also has ADHD and anxiety. Started on mesalamine suppositories and oral, then prednisone. Currently on azathioprine (40% effective). Doctor wants to try biologics, but Peter is terrified due to being immunocompromised and fear of needles."
+  "evidence_notes": "Peter, 27, was diagnosed with Crohn's two years ago. He also has ADHD and anxiety. He started on mesalamine suppositories and oral, then prednisone. He is currently on azathioprine, which helps about 40%. His doctor wants to try biologics, but he is terrified due to being immunocompromised and having needle anxiety. He is considering agreeing to biologics at his next appointment."
 }

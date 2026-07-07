@@ -1,7 +1,7 @@
 """Central config — the single source of truth for paths and parameters, loaded from
 ``config.json`` at the repo root.
 
-Every script (the ``src/`` modules and the ``README.qmd`` chunks) imports these constants instead
+Every script (the ``src/`` modules and the ``docs/SOLUTION.qmd`` chunks) imports these constants instead
 of hard-coding the model name or a path, so swapping the model or bumping the gold-set version is a
 one-line edit in ``config.json``. Paths resolve against the repo root, so they hold regardless of
 the caller's working directory.
@@ -31,7 +31,7 @@ PROMPT = ROOT / _CFG["prompt"]  # system prompt, kept as its own reviewable arti
 OUT_DIR = ROOT / _CFG["out_dir"]  # base output dir (holds json/, html/, plots/, tests/)
 JSON_DIR = ROOT / _CFG["json_dir"]  # per-patient prediction JSON
 HTML_DIR = ROOT / _CFG["html_dir"]  # per-case referral_pathway graphs
-PLOTS_DIR = ROOT / _CFG["plots_dir"]  # EDA plots embedded in the README
+PLOTS_DIR = ROOT / _CFG["plots_dir"]  # EDA plots embedded in docs/SOLUTION.md
 LOG_DIR = ROOT / _CFG["log_dir"]  # loguru sinks
 DAGSTER_PORT: int = _CFG[
     "dagster_port"

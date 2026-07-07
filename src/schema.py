@@ -201,7 +201,7 @@ class PatientLabels(BaseModel):
     patient_id: str
 
     # Truncation/disengagement signal: true if the interview looks cut off before the story
-    # resolved. `incomplete_journey` was merged into this in v4 — see README "Churn".
+    # resolved. `incomplete_journey` was merged into this in v4 — see docs/SOLUTION.md "Churn".
     churn: bool | None = None
 
     demographics: Demographics = Demographics()

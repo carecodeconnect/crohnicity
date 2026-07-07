@@ -47,6 +47,7 @@ T = TypeVar("T")
 # API errors we log cleanly and surface for a graceful CLI exit (no traceback dump):
 # 429 (rate limit), 503 (busy), connection / model-not-found, and schema mismatch.
 HANDLED = (
+    litellm.AuthenticationError,
     litellm.RateLimitError,
     litellm.ServiceUnavailableError,
     litellm.APIConnectionError,
@@ -110,6 +111,11 @@ def give_up_reason(e: Exception) -> str:
     """The action to take for a terminal API/schema error — the 429-stop vs 503-retry decision lives
     here in code, not in the operator's head: 429 = STOP (the quota won't clear by retrying); 503 =
     transient overload, wait and re-run."""
+    if isinstance(e, litellm.AuthenticationError):
+        return (
+            "401 invalid credentials — NOT retried; fix GEMINI_API_KEY in .env "
+            "(mint a key at https://aistudio.google.com/apikey)"
+        )
     if isinstance(e, litellm.RateLimitError):
         return "429 rate/daily quota — NOT retried; STOP, re-running won't help until the quota resets"
     if isinstance(e, litellm.ServiceUnavailableError):

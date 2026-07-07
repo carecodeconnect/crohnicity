@@ -41,7 +41,7 @@ kept distinct:
   optimisation** — the token/cost fields are documented in [`TELEMETRY.md`](TELEMETRY.md).
 
 **Reasoning output:** we **disable** model reasoning for extraction (`reasoning_effort="disable"` →
-`thinkingBudget=0`, in [`src/extract.py`](../src/extract.py); rationale in README → *Determinism*),
+`thinkingBudget=0`, in [`src/extract.py`](../src/extract.py); rationale in SOLUTION → *Determinism*),
 so `reasoning_content` / `thinking_blocks` aren't used here. (Their docs were also inconsistent —
 `thinking_blocks` looks Anthropic-only — noted in `00_setup.ipynb`.)
 

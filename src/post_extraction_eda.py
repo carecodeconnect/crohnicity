@@ -1,7 +1,7 @@
 """Post-extraction EDA — pure functions over the persisted predictions in ``data/out/``.
 
 This is the phase *after* the inference loop: it reads only the validated prediction JSON
-(and the gold ``.ods`` for the eval), never the Gemini API. Both the ``README.qmd`` chunks and
+(and the gold ``.ods`` for the eval), never the Gemini API. Both the ``docs/SOLUTION.qmd`` chunks and
 the (future) Dagster EDA asset import these, so the **computation lives here** (reusable, testable)
 and the ``.qmd`` keeps only presentation (plots, tables, prose). See ``docs/TODO.md``.
 """
@@ -146,7 +146,7 @@ def n_cyclic(records: list[dict]) -> int:
 
 def pick_cyclic_example(records: list[dict]) -> str:
     """A representative patient whose journey *loops* (a phase recurs), chosen deterministically —
-    the shortest cyclic pathway, ties broken by lowest id — so the README example renders the same
+    the shortest cyclic pathway, ties broken by lowest id — so the docs/SOLUTION.md example renders the same
     run-to-run (no hardcoded id). Falls back to the shortest pathway overall if none cycle."""
     cyclic = [
         r
@@ -161,7 +161,7 @@ def pick_cyclic_example(records: list[dict]) -> str:
 
 def pathway_mermaid(records: list[dict], pid: str) -> str:
     """A GitHub-renderable Mermaid flowchart of one patient's ``referral_pathway`` — the static
-    in-README preview of the interactive pyvis graph. A revisited phase is one node the journey
+    docs/SOLUTION.md preview of the interactive pyvis graph. A revisited phase is one node the journey
     loops back to; an edge's ``xN`` label is its traversal count."""
     seq = next(r["referral_pathway"] for r in records if r["patient_id"] == pid)
     ids = {step: f"n{i}" for i, step in enumerate(dict.fromkeys(seq))}

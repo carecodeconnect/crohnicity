@@ -3,7 +3,7 @@
 A running log of **model-output edge cases** surfaced while verifying each chunked run, for a human
 to eyeball against the source transcript in `data/in/interviews_ground_truth_v7.ods`. These are
 *judgement calls*, **not schema errors** — schema validity is enforced automatically
-(`tests/test_outputs.py`). The point is to catch labels the README's uncertainty handling cares
+(`tests/test_outputs.py`). The point is to catch labels the SOLUTION's uncertainty handling cares
 about — churn, ambiguity, absence — that may be over- or under-flagged.
 
 ## Churn audit summary (reviewed cases)

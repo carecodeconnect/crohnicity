@@ -55,13 +55,14 @@
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "comorbidity",
     "conventional_therapy",
     "conventional_therapy",
-    "therapy_failed",
-    "biologic_recommended",
     "biologic_taken",
+    "therapy_failed",
+    "alternative_therapy",
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "Marcus, 29, was diagnosed with aggressive Crohn's two years ago. He also has severe depression and ADHD. He started with high-dose prednisone, then mesalamine and azathioprine, but his body couldn't keep up. He started Humira six months ago, which helps some (40% better), but not enough to return to his previous life. He is discussing Stelara or Entyvio next. His overall outcome is ongoing as he is managing multiple chronic conditions, experiencing partial response to biologic therapy, and considering further treatment escalation."
+  "evidence_notes": "Marcus, 29, was diagnosed with aggressive Crohn's two years ago. He also deals with severe depression and ADHD. He was hospitalized and started on high-dose prednisone. He then tried mesalamine and azathioprine. He started Humira six months ago, which helps some, about 40% better. He is looking into clinical trials and discussing Stelara or Entyvio at his next appointment."
 }

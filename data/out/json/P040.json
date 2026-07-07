@@ -36,7 +36,7 @@
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "SUCCESS",
+      "outcome": "FAILED",
       "reason_stopped": "developed antibodies",
       "biologic_timing": "LATER"
     },
@@ -51,6 +51,7 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
@@ -58,10 +59,12 @@
     "adverse_reaction",
     "biologic_taken",
     "insurance_denial",
+    "insurance_approval",
     "loss_of_response",
     "biologic_switch",
-    "planning_next_step",
-    "unresolved"
+    "comorbidity",
+    "unresolved",
+    "planning_next_step"
   ],
-  "evidence_notes": "George, 52, was diagnosed with Crohn's seven years ago. He also has type 2 diabetes, hypertension, and recently osteoporosis. He started with prednisone and azathioprine, but prednisone caused blood sugar issues, and azathioprine caused liver enzyme problems. He then switched to Remicade, which worked well for three years before he developed antibodies. He is currently on Humira, which is only 50% effective. His GI wants to add methotrexate, but he is concerned about his liver. He is struggling with work, finances, and the impact of his illnesses on his family. He is considering a clinical trial."
+  "evidence_notes": "George, 52, was diagnosed with Crohn's seven years ago. He also has type 2 diabetes, hypertension, and recently osteoporosis. He started with prednisone and azathioprine. Prednisone caused blood sugar issues, and azathioprine was stopped due to liver enzymes. He then switched to Remicade, which worked well for three years but then he developed antibodies. He is currently on Humira, which is only 50% effective. His GI wants to add methotrexate, but he is worried about his liver. He is struggling with work, finances, and social life. He is considering a clinical trial."
 }

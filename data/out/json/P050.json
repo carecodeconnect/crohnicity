@@ -50,7 +50,8 @@
     "adverse_reaction",
     "conventional_therapy",
     "biologic_recommended",
-    "biologic_not_taken"
+    "biologic_not_taken",
+    "unresolved"
   ],
-  "evidence_notes": "Victor, 62, male, diagnosed with Crohn's eight months ago. Also has COPD and arthritis. Started with mesalamine (nothing), then prednisone (breathing got worse). Now on budesonide (20% effective). GI wants to try biologics but lung doctor says too risky with COPD."
+  "evidence_notes": "Victor, 62, was diagnosed with Crohn's eight months ago. He also has COPD and arthritis. He tried mesalamine (nothing) and prednisone (breathing got worse). He is currently on budesonide, which helps about 20%. His GI wants to try biologics, but his lung doctor says it's too risky with COPD. He is stuck with inadequate treatment and is struggling with his quality of life, finances, and isolation."
 }

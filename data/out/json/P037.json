@@ -44,8 +44,12 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
+    "misdiagnosis",
+    "specialist_referral",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "therapy_failed",
     "conventional_therapy",
     "comorbidity",
     "biologic_taken",
@@ -53,5 +57,5 @@
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "Karen, 34, was diagnosed with Crohn's six years ago after her second child. She also has postpartum anxiety and lupus. She started with mesalamine while breastfeeding, then added azathioprine. Two years ago, she started Humira, which helps both conditions moderately. She is struggling with managing two autoimmune diseases, two young children, and maintaining her marriage. She is considering changing biologics as Humira is losing effectiveness and plans to bring her husband to her next appointment."
+  "evidence_notes": "Karen, 34, was diagnosed with Crohn's six years ago after her second child. She also has postpartum anxiety and lupus. She started with mesalamine while breastfeeding, but it wasn't enough. She then added azathioprine, which helped for about a year. Two years ago, she started Humira, which helps both conditions moderately. She is struggling to be a normal mom, dealing with judgment from other mothers, and financial stress. She is considering changing biologics as Humira is losing effectiveness. She plans to bring her husband to the next appointment to help him understand the seriousness of her condition."
 }

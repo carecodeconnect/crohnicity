@@ -36,7 +36,7 @@
       "name": "azathioprine",
       "treatment_class": "immunomodulator",
       "outcome": "FAILED",
-      "reason_stopped": "developed pancreatitis",
+      "reason_stopped": "pancreatitis",
       "biologic_timing": "BEFORE"
     },
     {
@@ -64,16 +64,20 @@
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "therapy_failed",
+    "conventional_therapy",
+    "adverse_reaction",
     "conventional_therapy",
     "adverse_reaction",
     "biologic_recommended",
     "insurance_step_therapy",
     "conventional_therapy",
     "adverse_reaction",
-    "biologic_recommended",
     "insurance_approval",
     "biologic_taken",
-    "unresolved"
+    "patient_fear",
+    "unresolved",
+    "planning_next_step"
   ],
-  "evidence_notes": "Monica, 27, was diagnosed with Crohn's last year, but had symptoms for three years prior. She also has PCOS and depression. She started with mesalamine, which provided minimal help. She then took prednisone for a flare, which caused weight gain. She tried azathioprine, but developed pancreatitis and was hospitalized. After this, her doctor recommended biologics, but insurance required her to fail more drugs. She tried methotrexate, but the nausea was unbearable. Finally, she was approved for Humira, which is helping some (40% better), but she is scared to switch. Her overall outcome is ongoing as she is still managing her conditions and considering future treatment options."
+  "evidence_notes": "Monica, 27, was diagnosed with Crohn's last year after three years of symptoms. She also has PCOS and depression. She tried mesalamine with minimal help and prednisone for a flare, which caused weight gain. Azathioprine led to pancreatitis, and methotrexate caused unbearable nausea. Her doctor recommended biologics, and after an insurance battle, she was approved for Humira. She has injection anxiety but Humira is helping some, about 40% better. Her doctor suggests being more aggressive, but she is scared to switch. She is considering increasing Humira frequency, adding another drug, or switching biologics."
 }

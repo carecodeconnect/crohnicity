@@ -1,6 +1,6 @@
-# mama health — NLP / AI Engineer Challenge 🧑‍⚕️
+# NLP / AI Engineer challenge — health-tech take-home
 
-Welcome, and thanks for your interest in joining mama health. This challenge simulates a real task you'd work on day one with the Data team: turning unstructured patient narratives into trustworthy structured data, which is the bread and butter of everything we ship.
+Welcome. This challenge simulates a real task on a health-tech Data team: turning unstructured patient narratives into trustworthy structured data, which is the bread and butter of everything such a team ships.
 
 Plan for **4–5 hours**. We're not looking for a production-ready system. We want to see how you **design an extraction pipeline**, **handle uncertainty**, and **reason about quality**. Ship something small and honest rather than big and brittle.
 

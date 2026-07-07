@@ -41,7 +41,8 @@
     "adverse_reaction",
     "conventional_therapy",
     "biologic_recommended",
-    "patient_fear"
+    "patient_fear",
+    "unresolved"
   ],
-  "evidence_notes": "Tammy, 28, female, diagnosed with Crohn's last month. Also dealing with eating disorder recovery and anxiety. Started on prednisone (made her manic) and now on mesalamine. GI wants to be aggressive and mentioned biologics, but she is scared of side effects."
+  "evidence_notes": "Tammy, 28, was diagnosed with Crohn's last month during an appendectomy. She is also in eating disorder recovery and has anxiety. She was on prednisone (made her manic) and is now on mesalamine. Her GI wants to be aggressive and mentioned biologics, but she is scared of the side effects. She is struggling with the impact of her diagnosis on her mental health, relationship, and family."
 }

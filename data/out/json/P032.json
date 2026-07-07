@@ -16,7 +16,7 @@
   "comorbid_conditions": [
     "TYPE_2_DIABETES",
     "OTHER",
-    "HYPERTENSION"
+    "DEPRESSION"
   ],
   "treatment_records": [
     {
@@ -45,6 +45,8 @@
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
+    "primary_care_contact",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "therapy_failed",
@@ -54,5 +56,5 @@
     "insurance_denial",
     "unresolved"
   ],
-  "evidence_notes": "Frank, 54, was diagnosed with Crohn's last year. He also has diabetes, heart disease, and arthritis. He started with mesalamine, which didn't work. Prednisone caused blood sugar issues. He is now on sulfasalazine, experiencing headaches. His GI doctor wants to prescribe biologics, but insurance denied it, requiring him to fail more drugs first. He is experiencing severe symptoms, has lost his job, and is facing financial difficulties. He is also dealing with depression and is considering selling his house. He plans to push for biologics again."
+  "evidence_notes": "Frank, 54, was diagnosed with Crohn's last year. He also has diabetes, heart disease, and arthritis. He ignored symptoms for two years. He tried mesalamine, which did nothing. Prednisone caused blood sugar issues. He is now on sulfasalazine, experiencing headaches. His GI doctor wants him to start biologics, but his insurance requires him to fail more drugs first. He is experiencing severe symptoms, has lost his job, and is struggling financially. He is also dealing with depression and is considering selling his house."
 }

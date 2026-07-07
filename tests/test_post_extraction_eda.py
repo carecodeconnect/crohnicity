@@ -1,7 +1,7 @@
 """Unit tests for src/post_extraction_eda.py — the post-extraction EDA functions.
 
 Deterministic: they read the persisted predictions in data/out/ and the gold .ods (config.GOLD; no API call),
-so the same artefacts the README.qmd renders from are the ones under test.
+so the same artefacts the docs/SOLUTION.qmd renders from are the ones under test.
 """
 
 import math
@@ -26,7 +26,7 @@ def test_q1_share_sums_to_cohort() -> None:
 
 
 def test_gold_eval_matches_documented_metrics() -> None:
-    """The 20-case to_review gold set documented in the README (TP/FP/FN/TN = 9/1/0/10)."""
+    """The 20-case to_review gold set documented in docs/SOLUTION.md (TP/FP/FN/TN = 9/1/0/10)."""
     ev = eda.gold_eval(DF)
     assert ev["n"] == 20
     assert (ev["tp"], ev["fp"], ev["fn"], ev["tn"]) == (9, 1, 0, 10)
@@ -78,7 +78,7 @@ def test_churn_false_negatives_flags_gold_churn_the_model_missed() -> None:
     """churn_false_negatives() reports the gold churn==1 cases the model failed to flag. Tested on
     the function's *logic* against the real gold anchor (P049 is gold churn==1 & to_review==1), not
     a specific run — the live result is dynamic (the -flash run now catches P049, so it is currently
-    empty). Powers the README churn note, so the function must not regress silently."""
+    empty). Powers the docs/SOLUTION.md churn note, so the function must not regress silently."""
     # model MISSED P049's churn -> it must be reported as a false negative
     missed = pd.DataFrame({"patient_id": ["P049"], "churn": [False]}, dtype=object)
     assert eda.churn_false_negatives(missed) == ["P049"]

@@ -64,7 +64,8 @@
     "adverse_reaction",
     "conventional_therapy",
     "therapy_failed",
-    "biologic_taken"
+    "biologic_taken",
+    "unresolved"
   ],
-  "evidence_notes": "Kevin, 39, male, diagnosed with Crohn's five years ago. Also has psoriatic arthritis and depression. Started on mesalamine and prednisone, then sulfasalazine (allergic reaction), then methotrexate (unbearable nausea). Now on Humira, which provides 70% improvement for both Crohn's and psoriatic arthritis."
+  "evidence_notes": "Kevin, 39, was diagnosed with Crohn's five years ago. He also has psoriatic arthritis and depression. He started on mesalamine and prednisone, then sulfasalazine (allergic reaction), then methotrexate (unbearable nausea). He is currently on Humira, which provides about 70% improvement for both Crohn's and psoriatic arthritis. He is concerned about the long-term effectiveness of biologics and the impact of his illness on his family and finances."
 }

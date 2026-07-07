@@ -14,7 +14,7 @@
     "INSURANCE_PROBLEMS"
   ],
   "comorbid_conditions": [
-    "OTHER",
+    "TYPE_2_DIABETES",
     "SLEEP_APNEA"
   ],
   "treatment_records": [
@@ -28,7 +28,7 @@
     {
       "name": "prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": "blood sugar went crazy",
       "biologic_timing": "BEFORE"
     },
@@ -50,13 +50,14 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "comorbidity",
-    "conventional_therapy",
     "therapy_failed",
+    "conventional_therapy",
     "biologic_recommended",
     "insurance_step_therapy",
     "conventional_therapy",
     "adverse_reaction",
-    "planning_next_step"
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Derek, 40, was diagnosed with Crohn's three months ago, but likely had it for years. He is also pre-diabetic and has sleep apnea. He started with mesalamine and prednisone. Prednisone helped but caused blood sugar issues, so he tapered off quickly. Mesalamine alone was not enough. His doctor wants to try biologics, but insurance requires him to fail more drugs first. He is currently trying sulfasalazine, which is causing terrible headaches. He is pushing hard for biologics at his next appointment. His overall outcome is ongoing as he is still in the early stages of treatment and facing insurance barriers to biologics."
+  "evidence_notes": "Derek, 40, was diagnosed with Crohn's three months ago. He is also pre-diabetic and has sleep apnea. He started mesalamine and prednisone, but prednisone caused his blood sugar to spike. Mesalamine alone is not enough. His doctor wants to try biologics, but insurance requires him to fail more drugs first. He is currently trying sulfasalazine, experiencing terrible headaches. He plans to push for biologics at his next appointment."
 }

@@ -95,6 +95,12 @@ def test_extract_end_to_end():
     assert result.biologic_taken is True
 
 
+def test_give_up_reason_401_says_fix_key():
+    """Offline: a 401 (bad/rotated GEMINI_API_KEY) is not retried — the message says fix the key."""
+    msg = give_up_reason(litellm.AuthenticationError("auth", "gemini", "gemini/x"))
+    assert "401" in msg and "GEMINI_API_KEY" in msg
+
+
 def test_give_up_reason_429_says_stop():
     """Offline: the stop-vs-retry decision is encoded, not manual — a 429 (rate/daily quota) STOPs."""
     msg = give_up_reason(litellm.RateLimitError("rate", "gemini/x", "gemini"))

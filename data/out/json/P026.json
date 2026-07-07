@@ -67,18 +67,18 @@
     "crohns_diagnosis",
     "comorbidity",
     "conventional_therapy",
-    "conventional_therapy",
     "therapy_failed",
     "conventional_therapy",
+    "relapse",
+    "conventional_therapy",
     "adverse_reaction",
     "conventional_therapy",
     "adverse_reaction",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "Alan, 50, was diagnosed with Crohn's eight years ago. He also has Barrett's esophagus and chronic back pain. He started with mesalamine for Crohn's and PPIs for Barrett's, with minimal improvement. He used prednisone for flares four times, finding it harder to taper each time. He tried azathioprine, but it elevated his liver enzymes. Methotrexate made him feel drunk, so he stopped. He started Remicade three years ago, which worked well for two years, then its effectiveness dropped. He increased the frequency, which helped temporarily, but it's now failing again. His doctor wants to switch to Humira. His overall outcome is ongoing as he is experiencing loss of response to Remicade and considering a switch to another biologic."
+  "evidence_notes": "Alan, 50, was diagnosed with Crohn's eight years ago. He also has Barrett's esophagus and chronic back pain. He started with mesalamine and PPIs, with minimal improvement. He used prednisone for flares, but tapering became harder. Azathioprine caused elevated liver enzymes and was stopped. Methotrexate made him feel drunk, so he stopped it. He started Remicade three years ago, which worked for two years, then its effectiveness dropped. Increasing frequency helped temporarily, but it's failing again. His doctor wants to switch to Humira."
 }

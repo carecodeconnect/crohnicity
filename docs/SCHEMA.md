@@ -28,7 +28,7 @@ of labels for evaluating the extraction pipeline.
 | 1 | `patient_id` | `str` | — | Primary key. **Read-only.** |
 | 2 | `interview_transcript` | `str` | — | Full interview text. **Read-only.** |
 | 3 | `to_review` | `bool` (1/0) | `1`/`0` | `1` = case is in the annotation scope; filter on this. Single source of truth for which cases `gold_eval` scores against the gold. |
-| 4 | `churn` | `bool` (1/0) | `1`/`0` | `1` = interview truncated / patient disengaged before the story resolved (cut off, trails off, vague). **Merges the old `incomplete_journey`** (v4). See README "Churn" / `QUESTIONS.md` #1. |
+| 4 | `churn` | `bool` (1/0) | `1`/`0` | `1` = interview truncated / patient disengaged before the story resolved (cut off, trails off, vague). **Merges the old `incomplete_journey`** (v4). See SOLUTION "Churn" / `QUESTIONS.md` #1. |
 | 5 | `gender` | `str` | free text | Self-reported (`female`/`male` as stated) → `Demographics`. |
 | 6 | `age` | `int` | — | Self-reported → `Demographics`. |
 | 7 | `biologic_prescribed` | `bool` (1/0) | `1`/`0` | Was a biologic prescribed/recommended at any point? (recommend vs prescribe — `QUESTIONS.md` #5.) |
@@ -112,7 +112,7 @@ Both **only write into empty cells, so existing annotations are preserved**, and
 
 - **`churn` definition (resolved for this version)** — `churn` = the interview is truncated /
   the patient disengaged before the story resolved (reading the "interview" as the patient's
-  interaction with the Mama Health app). The old `incomplete_journey` is **merged into `churn`**
+  interaction with the app). The old `incomplete_journey` is **merged into `churn`**
   (v4) — same truncation signal, one flag. Still a judgement call; CAIO confirmation welcome
   (`QUESTIONS.md` #1).
 - **`comorbid_conditions` token gaps** — bipolar, heart disease, COPD, PSC + autoimmune
@@ -157,9 +157,9 @@ SUCCESS/FAILED call).
   controlled vocabularies. Q3 now counts `biologic_timing == "BEFORE"` (same set as the old
   `before_biologic == true`). Takes effect on the next fresh extraction run.
 - **v0.4** — **`incomplete_journey` merged into `churn` and dropped** (working file `_v4.ods`).
-  *Why:* reading the "interview" as the patient's interaction with the Mama Health app, `churn`
+  *Why:* reading the "interview" as the patient's interaction with the app, `churn`
   (app disengagement) and `incomplete_journey` (truncated transcript) are the **same signal**, so
-  one honest flag beats two overlapping ones (see README "Churn"). `churn` is therefore defined
+  one honest flag beats two overlapping ones (see SOLUTION "Churn"). `churn` is therefore defined
   (interview truncated / patient disengaged), no longer "pending CAIO". `TreatmentRecord` gained
   `before_biologic` (the before/after split for Q3). `PatientLabels` is now implemented in
   `src/schema.py`; the system prompt lives in `data/prompts/system.txt`.

@@ -35,7 +35,7 @@
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
-      "outcome": "FAILED",
+      "outcome": "PARTIAL",
       "reason_stopped": "hair falling out",
       "biologic_timing": "LATER"
     }
@@ -44,11 +44,12 @@
   "referral_pathway": [
     "symptom_onset",
     "symptoms_worsen",
+    "misdiagnosis",
+    "specialist_referral",
     "diagnostic_testing",
     "crohns_diagnosis",
     "complication",
     "surgery",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "comorbidity",
@@ -59,5 +60,5 @@
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "Vanessa, 32, was diagnosed with Crohn's four years ago. She also has bipolar disorder and rheumatoid arthritis. She had two fistulas and underwent surgery. She started Remicade immediately after surgery, which worked for about 18 months. Then she developed rheumatoid arthritis. She switched from Remicade to Humira, which helped neither condition well. She added methotrexate, which caused hair loss. She is now discussing Stelara or surgery. Her overall outcome is ongoing as she is managing multiple complex conditions, experiencing loss of response to biologics, and considering further treatment escalation."
+  "evidence_notes": "Vanessa, 32, was diagnosed with aggressive Crohn's four years ago, also has bipolar disorder and rheumatoid arthritis. She had surgery for two fistulas. She started Remicade immediately after surgery, which worked for about eighteen months. She then developed rheumatoid arthritis. She switched from Remicade to Humira, which helps neither condition well. Methotrexate was added, causing hair loss. She is now discussing Stelara or surgery."
 }

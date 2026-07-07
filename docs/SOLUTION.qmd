@@ -1,5 +1,5 @@
 ---
-title: "Crohnicity: Mama Health Challenge"
+title: "Crohnicity — solution & evaluation"
 format:
   gfm: default
   html:
@@ -11,18 +11,19 @@ execute:
 jupyter: crohnicity
 ---
 
-<!-- Source of truth: edit README.qmd, then `uv run quarto render README.qmd` to regenerate
-     README.md (gfm) + README.html (local verification). The analysis chunks read only the
+<!-- Source of truth: edit docs/SOLUTION.qmd, then `uv run quarto render docs/SOLUTION.qmd` to regenerate
+     SOLUTION.md (gfm) + SOLUTION.html (local verification). The analysis chunks read only the
      persisted predictions in data/out/ — no Gemini API calls. -->
 
-***Crohnicity*** = **Crohn's** + **chronicity** — the disease and its time dimension. Crohn's is a chronic, lifelong condition, and the Mama Health AI companion records each patient's treatment journey **longitudinally over time**, so the temporal axis is central to the data.
+***Crohnicity*** = **Crohn's** + **chronicity** — the disease and its time dimension. Crohn's is a chronic, lifelong condition, and the health-tech AI companion records each patient's treatment journey **longitudinally over time**, so the temporal axis is central to the data.
 
 ```{python}
 # | echo: false
 # | output: asis
 import sys
+from pathlib import Path
 
-sys.path.insert(0, "src")
+sys.path.insert(0, str(next(p for p in (Path("src"), Path("../src")) if p.exists())))
 from config import APP_VERSION, GOLD, MODEL  # version / gold / model SSOT (pyproject.toml + config.json)
 
 GOLD_FILE = GOLD.name  # gold .ods filename — used inline below; defined early, never hard-coded
@@ -30,7 +31,7 @@ print(
     f"*Pipeline version `{APP_VERSION}` · extraction model `{MODEL}` · gold `{GOLD_FILE}` — "
     f"rendered from `config.json` / `pyproject.toml`, so this line always names the model this "
     f"build used (`config.MODEL` resolves the `CROHNICITY_MODEL` env override; the model is also "
-    f"logged per call in `logs/extract.log`). Changes between runs: [`CHANGELOG.md`](CHANGELOG.md).*"
+    f"logged per call in `logs/extract.log`). Changes between runs: [`CHANGELOG.md`](../CHANGELOG.md).*"
 )
 ```
 
@@ -45,13 +46,13 @@ print(
 
 - **Enums vs. free text vs. objects.** Closed vocabularies the analysis groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`, `ReasonNotTaken`, `ComorbidCondition`, `PathwayStep` — so `value_counts`/joins get stable categories and membership is checked at the model boundary (`enforce_validation`) — **Gemini literally cannot return a value outside each enum, regardless of what the prompt lists** (the schema is sent as `response_schema` and the reply is validated, raising `JSONSchemaValidationError` on a mismatch). Open, high-cardinality, not-yet-canonical fields stay **free text**: `biologic_type`, `TreatmentRecord.name`/`treatment_class` (a branded-drug + treatment-class registry is future work — `docs/TODO.md`). Repeated, multi-attribute things are **structured objects/lists**: `treatment_records` (a list of `TreatmentRecord`, each carrying `biologic_timing`, the field that answers Q3), `demographics`, and `referral_pathway` (`list[PathwayStep]`). The visible cost of the free-text choice shows up in the **Q3 table** — `conventional_therapy`/`conventional` and case variants are one class left un-normalised.
 - **Three states, not one null.** "Not mentioned" (absence), "explicitly denied" (negation) and "cut off" (truncation) are kept as *separate* signals rather than collapsed into a null: absence → `biologic_not_mentioned` + null/empty fields + `NOT_MENTIONED`; negation → the `biologic_prescribed` vs. `biologic_taken` pair + one or more `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…; multi-select); truncation → `churn` (a cut-off journey is the same truncation signal `churn` already carries, so there is no separate `JOURNEY_CUT_OFF` reason — it was folded into `churn`, like `incomplete_journey` before it). Explicit non-reason values (`BIOLOGIC_TAKEN` when a biologic was taken, `NOT_APPLICABLE` when none was ever prescribed) keep `reasons_for_biologic_not_taken` **never empty**, so "doesn't apply" is never confused with a missing value or a blank "not yet annotated" cell. This is the split the churn table under Q4 operationalises.
-- **Reason enums — aligned to the spec, departing only where the evidence demanded.** The spec's Q2 reasons (*doctor choice / patient fears / cost / access*) shaped these enums, but reviewing all 50 transcripts drove two deliberate calls (evidenced in [`docs/SCHEMA.md`](docs/SCHEMA.md) v0.7): **(1)** we keep `INSURANCE_PROBLEMS` rather than the spec's bare *"access"* — every real barrier in the data is payer-gating (step-therapy / prior-auth / tier), not drug *availability*, and `ACCESS` had **zero** transcript support (covered by `COST` + `INSURANCE_PROBLEMS`); **(2)** `reasons_for_biologic_not_taken` is **multi-select** (a list), because patients routinely have several reasons at once (e.g. cost + fear). Relatedly, `ReasonPrescribed` was trimmed to the initiation signal (`DOCTOR_CHOICE` / `PATIENT_REQUEST`), since cost / fears / access are reasons a biologic is *not taken*, not reasons it was prescribed.
+- **Reason enums — aligned to the spec, departing only where the evidence demanded.** The spec's Q2 reasons (*doctor choice / patient fears / cost / access*) shaped these enums, but reviewing all 50 transcripts drove two deliberate calls (evidenced in [`SCHEMA.md`](SCHEMA.md) v0.7): **(1)** we keep `INSURANCE_PROBLEMS` rather than the spec's bare *"access"* — every real barrier in the data is payer-gating (step-therapy / prior-auth / tier), not drug *availability*, and `ACCESS` had **zero** transcript support (covered by `COST` + `INSURANCE_PROBLEMS`); **(2)** `reasons_for_biologic_not_taken` is **multi-select** (a list), because patients routinely have several reasons at once (e.g. cost + fear). Relatedly, `ReasonPrescribed` was trimmed to the initiation signal (`DOCTOR_CHOICE` / `PATIENT_REQUEST`), since cost / fears / access are reasons a biologic is *not taken*, not reasons it was prescribed.
 - **Evidence / auditability.** The model **does populate `evidence_notes`** — a free-text rationale per patient (all 50 predictions carry one, e.g. *"cycled through Remicade, Humira due to loss of response; currently on Stelara; injection anxiety"*). What's **deferred is the manual side**: the gold annotation keeps `evidence_notes` as an unfilled column (`docs/SCHEMA.md`), and structured **per-field** evidence — a snippet/turn-ref *per field* rather than one blob — is stretch task 2 (it costs tokens + prompt complexity). The broader audit trail is the **logged raw model output** (`logs/extract.log` keeps the system prompt, schema, input and pre-validation response per call) plus the **gold-set comparison** (`docs/TO_REVIEW.md`).
 - **Socio-demographics.** Deliberately minimal — `Demographics{gender, age}`, self-reported, grouped so a later "do pathways/outcomes differ by demographic" cut is possible; everything else is noise for these four questions.
 
 ## Extraction Pipeline
 
-> **Architecture diagram.** The full Dagster asset graph and the Dagster ↔ `uv run` relation are drawn in [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md).
+> **Architecture diagram.** The full Dagster asset graph and the Dagster ↔ `uv run` relation are drawn in [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md).
 
 - **Single-shot vs. multi-stage extraction.** One big call, or a pipeline (e.g., identify-then-extract, or narrative-then-structured)? What are the tradeoffs?
 - **Prompt design for uncertainty.** How do you instruct the model to separate absence, negation, and truncation?
@@ -61,7 +62,7 @@ print(
 
 - **Single-shot, batched — not multi-stage.** One system prompt extracts *all* `PatientLabels` fields in a single structured call per patient; transcripts are then **batched** (10 per request) only to fit Gemini's free-tier ~20-requests/day cap — batching ≠ staging, it's still one pass over every field, just several patients per call. Single-shot minimises calls (decisive under the rate cap), keeps the code simple, and lets the model set inter-dependent fields (`biologic_prescribed`/`biologic_taken`, `churn`, `referral_pathway`) with the whole story in view. The cost: every field competes for attention in one prompt, so the hard fields suffer — the EDA shows `churn` unreliable and the GP node under-emitted. A multi-stage split (per-section prompts run concurrently, with inspectable intermediates) is the #1 item in *Next Steps* below; it trades more calls + orchestration for better per-field accuracy.
 - **Uncertainty: absence vs. negation vs. truncation.** The prompt separates them by construction, onto the three schema mechanisms above. A global rule — *"Leave a field null or empty when the transcript does not support a confident value"* — covers **absence**. **Negation** rides on the prescribed-vs-taken booleans + the `ReasonNotTaken` enum. **Truncation** gets the most explicit instruction: judge `churn` from how the transcript *ends* — churn **only** when it breaks off mid-word / mid-thought (e.g. ends on "Chronic…"), while a deliberately-typed "…" on a coherent phrase is an intentional sign-off, **not** churn (no recurrence heuristic) — and — critically — *"keep this truncation signal distinct from a topic simply being absent … (that is 'not mentioned', not churn)."* Honest limit: truncation is a lexical/structural property of the transcript's end that the narrative under-determines, so the instruction alone isn't enough — the gold audit found it unreliable in both directions (over-flagging and missed truncation), and a deterministic tail-of-text rule would do better (`docs/TO_REVIEW.md`).
-- **Determinism & reproducibility.** Three levers, in decreasing order of leverage. **(1) Structured-output mode** — `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`: a Pydantic-derived schema constrains the *shape* and enum membership, and LiteLLM validates the reply (raising `JSONSchemaValidationError` on a mismatch), so format/parse variance is removed and downstream pandas never meets an off-vocabulary value. **(2) Persisted predictions** — each chunk writes one validated JSON per patient to `data/out/`, and the whole analysis (this README) reads *only* those frozen artefacts with no API call, so every number and plot is **exactly reproducible run-to-run** regardless of LLM nondeterminism; this is the real guarantee. **(3) Decoding params** — `temperature` is **pinned to `0`** (greedy) in `config.json` and imported by `extract.py` — extraction here is a **classification** task, so we want *same transcript → same labels*, not sampled variety. This build is the live test case for *why*: a fresh re-run at the provider default (Gemini's default `temperature` is `1.0`) shifted long-tail outputs (the GP-node count; which biologics got mislabelled on `biologic_timing`) while the headline answers held — exactly the run-to-run drift `0` removes. Temperature is **logged per run** (with the model) so runs at different parameter levels stay comparable. A seed would add belt-and-braces, but with a reasoning-capable model `0` *minimises* rather than *guarantees* bit-identical output; **(2)** is the hard reproducibility guarantee for the analysis. **Reasoning is also disabled** — `reasoning_effort="disable"` (LiteLLM → Gemini `thinkingConfig.thinkingBudget=0`, verified via `get_optional_params`) — because extraction is *classification*, not multi-step inference: the hidden thinking step added run-to-run variance and on `gemini-2.5-flash` consumed the output budget until the JSON truncated mid-array (a `JSONSchemaValidationError`), with no accuracy upside. The *inspectable chain-of-thought* the stretch brief asks for is a **different** thing — explicit multi-stage prompts with auditable intermediates (the #1 *Next Step* above), not opaque internal tokens. No explicit prompt **caching** yet — the static system prompt + schema are identical across calls, so implicit context caching may apply, and cached-token counts are logged (`docs/TELEMETRY.md`).
+- **Determinism & reproducibility.** Three levers, in decreasing order of leverage. **(1) Structured-output mode** — `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`: a Pydantic-derived schema constrains the *shape* and enum membership, and LiteLLM validates the reply (raising `JSONSchemaValidationError` on a mismatch), so format/parse variance is removed and downstream pandas never meets an off-vocabulary value. **(2) Persisted predictions** — each chunk writes one validated JSON per patient to `data/out/`, and the whole analysis (this document) reads *only* those frozen artefacts with no API call, so every number and plot is **exactly reproducible run-to-run** regardless of LLM nondeterminism; this is the real guarantee. **(3) Decoding params** — `temperature` is **pinned to `0`** (greedy) in `config.json` and imported by `extract.py` — extraction here is a **classification** task, so we want *same transcript → same labels*, not sampled variety. This build is the live test case for *why*: a fresh re-run at the provider default (Gemini's default `temperature` is `1.0`) shifted long-tail outputs (the GP-node count; which biologics got mislabelled on `biologic_timing`) while the headline answers held — exactly the run-to-run drift `0` removes. Temperature is **logged per run** (with the model) so runs at different parameter levels stay comparable. A seed would add belt-and-braces, but with a reasoning-capable model `0` *minimises* rather than *guarantees* bit-identical output; **(2)** is the hard reproducibility guarantee for the analysis. **Reasoning is also disabled** — `reasoning_effort="disable"` (LiteLLM → Gemini `thinkingConfig.thinkingBudget=0`, verified via `get_optional_params`) — because extraction is *classification*, not multi-step inference: the hidden thinking step added run-to-run variance and on `gemini-2.5-flash` consumed the output budget until the JSON truncated mid-array (a `JSONSchemaValidationError`), with no accuracy upside. The *inspectable chain-of-thought* the stretch brief asks for is a **different** thing — explicit multi-stage prompts with auditable intermediates (the #1 *Next Step* above), not opaque internal tokens. No explicit prompt **caching** yet — the static system prompt + schema are identical across calls, so implicit context caching may apply, and cached-token counts are logged (`docs/TELEMETRY.md`).
 
 ## Evaluation
 
@@ -118,7 +119,7 @@ from plotnine import (
     theme_grey,
 )
 
-sys.path.insert(0, "src")
+sys.path.insert(0, str(next(p for p in (Path("src"), Path("../src")) if p.exists())))
 import post_extraction_eda as eda
 from config import PLOTS_DIR, RETRY_503_DELAY_S, RETRY_503_MAX
 
@@ -220,7 +221,7 @@ print(md_table(q2))
 
 ```{python}
 # | output: asis
-print(md_img("data/out/plots/q2_reasons.png", "Q2 reasons not on a biologic"))
+print(md_img("../data/out/plots/q2_reasons.png", "Q2 reasons not on a biologic"))
 ```
 
 > **`unspecified` (Q2) — null handling.** An `unspecified` row is a biologic **prescribed but not taken** with an **empty `reasons_for_biologic_not_taken`** list (`[]`) — no reason extracted, not a stated one. It's kept **visible as its own category** rather than dropped — consistent with the schema's stance on nulls (*Pydantic Schema Design → "Three states, not one null"*): absence, negation and truncation are distinct first-class states, and `UNKNOWN` / `NOT_APPLICABLE` exist so a missing value is never silently conflated with a real one. `system.txt` now requires a **never-empty** list (`[UNKNOWN]` for prescribed-but-not-taken with no stated reason, `[BIOLOGIC_TAKEN]` when a biologic was taken), so `unspecified` should disappear on the next extraction run.
@@ -251,7 +252,7 @@ print(md_table(q3))
 
 ```{python}
 # | output: asis
-print(md_img("data/out/plots/q3_before_biologic.png", "Q3 treatments before a biologic"))
+print(md_img("../data/out/plots/q3_before_biologic.png", "Q3 treatments before a biologic"))
 ```
 
 > **Known extraction error (Q3) — error-handling note.** A `biologic` appearing in "treatments before a biologic" carries `biologic_timing = BEFORE` on a biologic — which is either a genuine **biologic switch** (an earlier biologic tried before the one ultimately taken) or a **model mislabel** (the *taken* biologic itself flagged `BEFORE`, which can't be right — a treatment isn't "before" itself); the per-patient `treatment_records` distinguish the two. So "treatments before a biologic" currently also counts biologics. We **surface this rather than silently drop it**: a clear include/exclude rule for biologics, plus the prompt fix, is tracked in `docs/TODO.md`.
@@ -288,7 +289,7 @@ print(md_table(q4_dist))
 
 ```{python}
 # | output: asis
-print(md_img("data/out/plots/q4_steps.png", "Q4 steps to biologic recommendation"))
+print(md_img("../data/out/plots/q4_steps.png", "Q4 steps to biologic recommendation"))
 ```
 
 The **most common** journey length is **`{python} mode_steps` steps** (the modal value — highest patient count in the chart), with a **median of ~`{python} int(steps.median())`** (range `{python} int(steps.min())`–`{python} int(steps.max())`, n=`{python} int(steps.count())`).
@@ -301,8 +302,8 @@ ex_pid = eda.pick_cyclic_example(records)
 print(
     f"**Deep dive — the individual journeys.** Two views of the same data: a GitHub-viewable "
     f"static gallery of all {N} pathways as Mermaid diagrams in "
-    f"[docs/referral_pathways.md](docs/referral_pathways.md), and the **interactive** pyvis graphs "
-    f"in [`data/out/html/`](data/out/html/) (open `index.html`) — these render **live in a browser "
+    f"[referral_pathways.md](referral_pathways.md), and the **interactive** pyvis graphs "
+    f"in [`data/out/html/`](../data/out/html/) (open `index.html`) — these render **live in a browser "
     f"from a local clone**; GitHub only shows them as source. As a teaser, here is patient "
     f"**{ex_pid}** — a *cyclic* journey (a phase recurs, so it renders as a loop):\n"
 )
@@ -333,7 +334,7 @@ The model flagged `churn = true` for only **`{python} int((df["churn"] == True).
 ### Churn — definition & handling
 
 **Definition.** The spec never defines the "interview". We read it as the patient's interaction
-with the Mama Health AI companion app — patients describe their doctors in the *third person*, so
+with the health-tech AI companion app — patients describe their doctors in the *third person*, so
 they're narrating *to the app*, not conversing with a clinician. **Churn is therefore
 disengagement from that app interaction**, which in the data shows up as a transcript that stops
 early. The spec backs this: *"patients disengage partway through their interview — they churn —
@@ -376,12 +377,12 @@ The brief offers five optional stretches but asks for *a tight core over a bloat
 
 **Beyond the brief's list — extra stretches I added.**
 
-- **Dagster orchestration.** The whole pipeline is an asset graph (`uv run dg dev`), so a failure is pinpointed per-stage in the UI instead of as one opaque error — and the same `src/` functions still run standalone from the CLI ([SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
+- **Dagster orchestration.** The whole pipeline is an asset graph (`uv run dg dev`), so a failure is pinpointed per-stage in the UI instead of as one opaque error — and the same `src/` functions still run standalone from the CLI ([SYSTEM_DESIGN.md](SYSTEM_DESIGN.md)).
 - **Determinism + an accidental consistency check.** `temperature = 0` is pinned, and the repeated runs gave a free reliability signal — a partial take on stretches (2)/(3) (see *Evaluation* and *Extraction Pipeline → Determinism*).
-- **Reproducible reporting + an API docsite.** This README is Quarto-rendered from the persisted predictions (no API call), and a MkDocs + mkdocstrings site documents the `src/` API.
+- **Reproducible reporting + an API docsite.** This write-up is Quarto-rendered from the persisted predictions (no API call), and a MkDocs + mkdocstrings site documents the `src/` API.
 - **Centralised config + a quality gate.** One `config.json` feeds every entry point; `ruff` / `ruff format` / `ty` / `pytest` (with coverage) gate every change.
 
-**Deferred to keep the core tight** (tracked in *Next Steps* / [`docs/TODO.md`](docs/TODO.md)).
+**Deferred to keep the core tight** (tracked in *Next Steps* / [`TODO.md`](TODO.md)).
 
 - **(1) Multi-stage / chain-of-thought prompts** with inspectable intermediates — my #1 *Next Step*.
 - **(2) Per-field confidence scoring** (self-reported, or from consistency across samples).
@@ -404,7 +405,7 @@ With more time, after the core is complete:
   reproducibility* above) and add *explicit* staged CoT here — complementary, not contradictory.
 
 - **A telemetry feature for optimisation.** Per-call usage is currently logged (tokens, cost,
-  cached tokens — see [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I'd surface it as a
+  cached tokens — see [TELEMETRY.md](TELEMETRY.md)); with more time I'd surface it as a
   first-class artifact (a structured per-run metrics file + plots) to track cost/latency/cache-hit
   rate and tune the pipeline at scale.
 
@@ -448,7 +449,7 @@ With more time, after the core is complete:
 - **Lift test coverage on the orchestration + LLM-call paths.** The gate reports coverage
   (`pytest --cov`): **64%** total — but that headline hides a deliberate shape. The **pure logic is
   well-covered**: `schema` and `config` at 100%, and `post_extraction_eda` (every analysis number in
-  this README) at 98%. The gaps fall **exactly on the side-effecting I/O boundary** — the code you
+  this write-up) at 98%. The gaps fall **exactly on the side-effecting I/O boundary** — the code you
   can't exercise without mocking an external service: the live `litellm` call in `extract.py` (36%)
   and the `main.py` / `pipeline.py` entry points (0% — the fire CLI + the Dagster assets, which shell
   out to Gemini, `quarto` and `mkdocs`). So the untested code is the **plumbing, not the analysis**.
@@ -483,19 +484,19 @@ With more time, after the core is complete:
 
 ### With AI
 
-- After clarifying the project specification and system design and how I was going to work with AI, I started using Claude Code in a terminal in my VS Code. Initially I was going to use SKILLS/*.md files, but decided this was overkill. So I used "Explanatory mode" which is for software engineers and offers explanations while you code. I exported the CC chat with `/export` into `.txt` files to show the workflow. CC opened windows so I could compare diffs in my VS Code using the Claude Code extension. This was really effective. I was conservative and only allowed CC to make changes after my manual approval.
+- After clarifying the project specification and system design and how I was going to work with AI, I started using Claude Code in a terminal in my VS Code. Initially I was going to use SKILLS/*.md files, but decided this was overkill. So I used "Explanatory mode" which is for software engineers and offers explanations while you code. I exported the CC chat with `/export` as I went, to review the workflow. CC opened windows so I could compare diffs in my VS Code using the Claude Code extension. This was really effective. I was conservative and only allowed CC to make changes after my manual approval.
 
 - I did pretty much all the dev work with Claude Code, starting off with writing all the unit tests, logging outputs, and Pydantic schema validation versions using what I would call a "agentic engineering" perspective. I questioned every decision, was pretty strict, and used my judgement either to approve or override CC. I checked all code and outputs as much as I could in VS Code via diffs or using VS Code as a code viewer/editor.
 
 - For the agentic engineering, I was very test- and data- and log- and doc-driven so that I could inspect the outputs at every stage and compare against expected versions. This worked pretty well and either I or CC caught issues as they emerged in the dev process.
 
-- Most of the docs in `docs/` were generated with CC, so there is a potential for drift with the implementation. However, the Quarto `README.qmd` is programmatic to ensure all the data values are dynamically generated rather than hardcoded.
+- Most of the docs in `docs/` were generated with CC, so there is a potential for drift with the implementation. However, the Quarto `SOLUTION.qmd` is programmatic to ensure all the data values are dynamically generated rather than hardcoded.
 
 - I was very much "data science" style in my dev workflow, iterating using the data output, and validating against the tests, as much in a REPL style as possible. 
 
 ## Usage
 
-**Dagster, driven by the `dg` CLI, is the main entry point.** It orchestrates the whole pipeline end-to-end — extract → (EDA/README render · referral graphs · referral-pathway gallery) → docsite — and shows which stage failed in the UI. Launch a run two ways — the UI's *Materialize all*, or headless from a second terminal:
+**Dagster, driven by the `dg` CLI, is the main entry point.** It orchestrates the whole pipeline end-to-end — extract → (EDA/SOLUTION render · referral graphs · referral-pathway gallery) → docsite — and shows which stage failed in the UI. Launch a run two ways — the UI's *Materialize all*, or headless from a second terminal:
 
 ```bash
 uv run dg dev -m pipeline -d src -p 3050   # UI at http://127.0.0.1:3050 → "Materialize all" (port: config.json → dagster_port)
@@ -504,7 +505,7 @@ uv run dg dev -m pipeline -d src -p 3050   # UI at http://127.0.0.1:3050 → "Ma
 uv run dg launch --assets "*" -m pipeline -d src
 ```
 
-> `DAGSTER_HOME` is set in `.env` to `.dagster_home/` (see DEV_SETUP), so Dagster persists run history there — **not** a temp dir (a temp dir is only the fallback if the var is unset). The instance config `.dagster_home/dagster.yaml` is committed (it shows the pipeline wiring); the sqlite run-state is git-ignored. Dagster runs **locally only** — it never pushes to GitHub, so publishing refreshed artefacts (data + logs + README) is your separate `git` step.
+> `DAGSTER_HOME` is set in `.env` to `.dagster_home/` (see DEV_SETUP), so Dagster persists run history there — **not** a temp dir (a temp dir is only the fallback if the var is unset). The instance config `.dagster_home/dagster.yaml` is committed (it shows the pipeline wiring); the sqlite run-state is git-ignored. Dagster runs **locally only** — it never pushes to GitHub, so publishing refreshed artefacts (data + logs + SOLUTION) is your separate `git` step.
 
 The processes below are the stages Dagster orchestrates; each also runs **standalone** to drive or test one part on its own (Dagster calls the same `src/` functions — it doesn't shell around them). Extraction uses the chunked 10×5 batch strategy to fit the Gemini free-tier ~20-requests/day cap.
 
@@ -523,7 +524,7 @@ express; litellm's per-exception `RetryPolicy` is Router-only, not on `litellm.c
 switch the blanket retry off and own a tiny loop, `_with_503_retry`.) A **429** (rate-limit / daily quota) **fails fast** — no retry, since retrying
 a spent quota only burns more of it — while a **503** (transient model overload) is retried
 **sparingly** (up to `{python} RETRY_503_MAX` retries, `{python} RETRY_503_DELAY_S`s apart — set in `config.json`), then gives up. The **stop-vs-retry decision is in the code** (`give_up_reason`), not left to manual log-watching: the failure message states the action — **429 → stop** (the quota won't clear by retrying; wait for the reset), **503 → wait and re-run**. Full table:
-[`docs/DEBUGGING_ERROR_HANDLING.md`](docs/DEBUGGING_ERROR_HANDLING.md).
+[`DEBUGGING_ERROR_HANDLING.md`](DEBUGGING_ERROR_HANDLING.md).
 
 ```bash
 uv run python src/main.py                          # all 50, chunks of 10 (5 calls)
@@ -539,8 +540,8 @@ uv run python src/main.py --limit=10 --offset=10   # run 2: P011–P020 (no re-r
 | `--chunk-size` | `10` | transcripts per API call |
 | `--out-dir` | `data/out` | route test runs to `data/out/tests` so they don't clobber production |
 
-The post-extraction EDA (this README's tables/plots) is generated by `uv run quarto render
-README.qmd`, which reads only `data/out/` — **independent of the Gemini API**. Each chunk persists
+The post-extraction EDA (this write-up's tables/plots) is generated by `uv run quarto render
+docs/SOLUTION.qmd`, which reads only `data/out/` — **independent of the Gemini API**. Each chunk persists
 its predictions (one JSON per patient) as soon as it validates, so a completed chunk is durable and
 `--offset` lets you resume/retry without re-spending calls. Per-call telemetry (tokens, cost) is
 logged to `logs/extract.log`.
@@ -556,7 +557,7 @@ uv run python src/referral_pathway_analysis.py   # writes data/out/html/referral
 ### Rebuild the answers doc
 
 ```bash
-uv run quarto render README.qmd                  # regenerate README.md (gfm) + README.html from data/out/
+uv run quarto render docs/SOLUTION.qmd                  # regenerate SOLUTION.md (gfm) + SOLUTION.html from data/out/
 ```
 
 ### Development — quality gate
@@ -596,37 +597,37 @@ uv run mkdocs build   # render the static site to site/ (gitignored)
 > It is acceptable **here only** because the dataset is **synthetic**, the repo is **private**, and
 > committing the data + outputs makes this **internal job-interview take-home auditable** end-to-end
 > by the reviewer. In production, inputs/outputs would live in secure storage under a data-processing
-> agreement and **only code** would be version-controlled. See [docs/QUESTIONS.md](docs/QUESTIONS.md) #7.
+> agreement and **only code** would be version-controlled. See [QUESTIONS.md](QUESTIONS.md) #7.
 
 ## Requirements
 
 Dev environment requirements and setup — Python 3.14 (via uv), a `GEMINI_API_KEY`, and the
 VS Code + Claude Code extension diff-review workflow — are documented once in
-[docs/DEV_SETUP.md](docs/DEV_SETUP.md); this README only links there to avoid duplication.
+[DEV_SETUP.md](DEV_SETUP.md); this write-up only links there to avoid duplication.
 
 ## Docs & further reading
 
-Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in [`docs/`](docs/):
+Project instructions are in [CLAUDE.md](../CLAUDE.md); the rest lives in [`docs/`](.):
 
 *Design & decisions*
 
-- [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) — architecture diagram: the Dagster asset graph + the library-first CLI/gate relation.
-- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema and the Pydantic-model rationale.
-- [QUESTIONS.md](docs/QUESTIONS.md) — outstanding questions for the CAIO (assumptions needing a domain decision).
-- [HYPOTHESES.md](docs/HYPOTHESES.md) — early hypotheses about the data and the disease journey.
+- [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) — architecture diagram: the Dagster asset graph + the library-first CLI/gate relation.
+- [SCHEMA.md](SCHEMA.md) — the ground-truth annotation schema and the Pydantic-model rationale.
+- [QUESTIONS.md](QUESTIONS.md) — outstanding questions for the CAIO (assumptions needing a domain decision).
+- [HYPOTHESES.md](HYPOTHESES.md) — early hypotheses about the data and the disease journey.
 
 *Process & operations*
 
-- [DEV_SETUP.md](docs/DEV_SETUP.md) — local dev setup: uv, the Jupyter kernel, Dagster (`dg`), the quality gate.
-- [TODO.md](docs/TODO.md) — deferred engineering tasks + the *Tomorrow — pre-interview* checklist (the clean `temperature=0` re-run).
-- [TELEMETRY.md](docs/TELEMETRY.md) — per-call API telemetry (tokens, cached tokens, cost, latency) and how to read it.
-- [TO_REVIEW.md](docs/TO_REVIEW.md) — the manual gold-set edge-case audit (the churn false-positive / false-negative findings).
-- [DEBUGGING_ERROR_HANDLING.md](docs/DEBUGGING_ERROR_HANDLING.md) — debugging notes + error-handling behaviour seen in development.
+- [DEV_SETUP.md](DEV_SETUP.md) — local dev setup: uv, the Jupyter kernel, Dagster (`dg`), the quality gate.
+- [TODO.md](TODO.md) — deferred engineering tasks + the *Tomorrow — pre-interview* checklist (the clean `temperature=0` re-run).
+- [TELEMETRY.md](TELEMETRY.md) — per-call API telemetry (tokens, cached tokens, cost, latency) and how to read it.
+- [TO_REVIEW.md](TO_REVIEW.md) — the manual gold-set edge-case audit (the churn false-positive / false-negative findings).
+- [DEBUGGING_ERROR_HANDLING.md](DEBUGGING_ERROR_HANDLING.md) — debugging notes + error-handling behaviour seen in development.
 
 *Reference*
 
-- [RESOURCES.md](docs/RESOURCES.md) — external references (Crohn's pathways, biologics).
-- [TASK_INSTRUCTIONS.md](docs/TASK_INSTRUCTIONS.md) — the original Mama Health challenge brief.
+- [RESOURCES.md](RESOURCES.md) — external references (Crohn's pathways, biologics).
+- [TASK_INSTRUCTIONS.md](TASK_INSTRUCTIONS.md) — the original health-tech take-home brief.
 
 ### Browse the docs locally (MkDocs)
 
@@ -637,7 +638,7 @@ uv run mkdocs serve -a localhost:8000     # live preview at http://localhost:800
 uv run mkdocs build     # render the static site to site/ (git-ignored)
 ```
 
-`mkdocs build` is wired as the `docsite` asset, which depends on `referral_pathways_md` so the journey gallery is re-rendered from the latest predictions before the site is built (see [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
+`mkdocs build` is wired as the `docsite` asset, which depends on `referral_pathways_md` so the journey gallery is re-rendered from the latest predictions before the site is built (see [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md)).
 
 ## Project layout
 
@@ -649,7 +650,7 @@ uv run mkdocs build     # render the static site to site/ (git-ignored)
 │   ├── extract.py                    #   the Gemini call — chunked, structured-output, temperature=0
 │   ├── main.py                       #   fire CLI: load → run_chunked → persist
 │   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs/pathways-md → docsite
-│   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
+│   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the write-up + tests)
 │   └── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
 ├── tests/                            # pytest suite + the quality gate
 │   ├── test_*.py
@@ -662,5 +663,5 @@ uv run mkdocs build     # render the static site to site/ (git-ignored)
 ├── config.json                       # single source of truth for params (model, temperature, paths…)
 ├── pyproject.toml / uv.lock          # uv-managed deps + lockfile
 ├── mkdocs.yml                        # docsite config
-└── README.qmd → README.md            # this report (edit the .qmd, render to .md)
+└── docs/SOLUTION.qmd → docs/SOLUTION.md   # this write-up (edit the .qmd, render to .md)
 ```

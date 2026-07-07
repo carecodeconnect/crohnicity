@@ -28,7 +28,7 @@
     {
       "name": "Prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": "weight gain horrible",
       "biologic_timing": "BEFORE"
     },
@@ -59,8 +59,8 @@
     "biologic_taken",
     "comorbidity",
     "comorbidity",
-    "planning_next_step",
-    "unresolved"
+    "unresolved",
+    "planning_next_step"
   ],
-  "evidence_notes": "Michelle, 41, has had Crohn's for eight years. She also has rheumatoid arthritis (RA) and fibromyalgia. She started with mesalamine, then prednisone for flares, which caused weight gain. Methotrexate caused hair loss. Three years ago, she switched to Humira, which helps somewhat. She was then diagnosed with RA and later fibromyalgia. She is a single mom struggling with work, finances, and the impact of her illnesses on her family. She is considering switching to Stelara."
+  "evidence_notes": "Michelle, 41, has had Crohn's for about eight years. She also has rheumatoid arthritis (RA) and fibromyalgia. She was diagnosed with Crohn's in her early thirties. She tried mesalamine, prednisone (caused weight gain), and methotrexate (caused hair loss). She switched to Humira three years ago, which helps somewhat. She was then diagnosed with RA and later fibromyalgia. She is a single mom struggling with work, finances, and guilt. She is considering switching to Stelara."
 }

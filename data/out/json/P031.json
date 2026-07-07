@@ -50,7 +50,8 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
+    "misdiagnosis",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "conventional_therapy",
@@ -62,5 +63,5 @@
     "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "Patricia, 46, has had Crohn's for 15 years. She also has fibromyalgia and is a breast cancer survivor. She was diagnosed with Crohn's at 31. She started with mesalamine and prednisone. Seven years ago, she started Remicade, which worked for three years. She had to stop all immunosuppressants for breast cancer treatment. After cancer treatment, she started Stelara, which is working somewhat but not achieving remission. She is on disability and manages her diet strictly. She also deals with depression and is considering surgery if Stelara fails."
+  "evidence_notes": "Patricia, 46, has had Crohn's for 15 years. She also has fibromyalgia and is a breast cancer survivor. She was diagnosed with Crohn's at 31. She started with mesalamine and prednisone. Seven years ago, she started Remicade, which worked for three years. She stopped all immunosuppressants for breast cancer treatment. After cancer treatment, she started Stelara, which is working somewhat but not achieving remission. She is on disability and manages her diet strictly. She also deals with depression and is considering surgery if Stelara fails."
 }

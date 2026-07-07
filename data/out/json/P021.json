@@ -49,7 +49,7 @@
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
-      "outcome": "FAILED",
+      "outcome": "PARTIAL",
       "reason_stopped": "hair loss",
       "biologic_timing": "LATER"
     },
@@ -61,10 +61,11 @@
       "biologic_timing": "LATER"
     }
   ],
-  "treatment_outcome": "ONGOING",
+  "treatment_outcome": "PARTIAL",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
+    "symptoms_worsen",
+    "primary_care_contact",
     "misdiagnosis",
     "specialist_referral",
     "diagnostic_testing",
@@ -84,8 +85,9 @@
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
+    "comorbidity",
     "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "Rachel, 31, was diagnosed with Crohn's five years ago. She also has endometriosis and chronic fatigue syndrome. She started with mesalamine, then azathioprine, with minimal improvement. She then moved to Remicade, which worked for a year before an allergic reaction. She switched to Humira, which was only 50% effective, and added methotrexate, which caused hair loss. She then started Stelara, which was initially denied by insurance but eventually approved and she has been on it for 18 months, finding it \"okay, not great.\" She is considering combination therapy with Stelara and methotrexate, or surgery. Her overall outcome is ongoing as she is still seeking a better solution."
+  "evidence_notes": "Rachel, 31, has Crohn's, endometriosis, and chronic fatigue syndrome. She was diagnosed five years ago after experiencing fatigue and stomach issues. She tried mesalamine and azathioprine with minimal improvement. She then started Remicade, which worked for a year before she had an allergic reaction. She switched to Humira, which provided about 50% improvement. Methotrexate was added, but she experienced hair loss. She then started Stelara, which was initially denied by insurance but eventually approved and she has been on it for eighteen months, finding it \"okay, not great, just okay.\" She is considering experimental treatments and clinical trials, and her doctor is discussing combination therapy with Stelara and methotrexate. She is also considering surgery but is hesitant."
 }

@@ -1,963 +1,162 @@
 # Crohnicity
 
+Crohnicity is a prototype data-extraction pipeline for a health-tech setting. It turns 50 messy,
+free-text patient interview transcripts about Crohn's disease into structured, validated, evaluated
+records, and uses that structured output to answer four commercial questions about the treatment
+landscape.
 
-<!-- Source of truth: edit README.qmd, then `uv run quarto render README.qmd` to regenerate
-     README.md (gfm) + README.html (local verification). The analysis chunks read only the
-     persisted predictions in data/out/ — no Gemini API calls. -->
+It is built as an **AI-engineering / data-science** exercise: pulling trustworthy structured data
+out of unstructured natural-language text with a large language model, wrapped in the
+software-engineering practices that make an LLM pipeline reproducible, testable, and auditable rather
+than a one-off script.
 
-***Crohnicity*** = **Crohn’s** + **chronicity** — the disease and its
-time dimension. Crohn’s is a chronic, lifelong condition, and the Mama
-Health AI companion records each patient’s treatment journey
-**longitudinally over time**, so the temporal axis is central to the
-data.
+The full, **data-generated** write-up — the four business answers, the schema rationale, the
+evaluation against a hand-labelled gold set, and the churn/limitations discussion — lives in
+**[docs/SOLUTION.md](docs/SOLUTION.md)**. This README is the high-level overview.
 
-*Pipeline version `0.1.0` · extraction model `gemini/gemini-2.5-flash` ·
-gold `interviews_ground_truth_v7.ods` — rendered from `config.json` /
-`pyproject.toml`, so this line always names the model this build used
-(`config.MODEL` resolves the `CROHNICITY_MODEL` env override; the model
-is also logged per call in `logs/extract.log`). Changes between runs:
-[`CHANGELOG.md`](CHANGELOG.md).*
+## The problem it solves
 
-## Pydantic Schema Design
+Health-tech and health-analytics teams sit on large volumes of unstructured patient narratives —
+interview transcripts, intake notes, support conversations. That text carries exactly the signal the
+business needs (what treatments people are on, why they stopped, where they are in a referral
+pathway), but in a form no dashboard or SQL query can touch. Turning messy text into clean, typed,
+trustworthy records is the recurring, high-value task behind a lot of applied-ML and AI-engineering
+work — especially in health tech, where the same job shows up as clinical-note extraction, symptom
+coding, and patient-journey analytics.
 
-- Which fields should be **enums** vs. **free text** vs. **structured
-  objects** (e.g., a list of treatment records with name, class,
-  outcome, reason_stopped)?
-- How do you distinguish **“not mentioned”** from **“explicitly
-  denied”** from **“cut off before we could find out”**? These are three
-  very different states and they matter for the analysis.
-- How do you capture **evidence** — a supporting snippet, turn
-  reference, or rationale per extracted field — so a reviewer can audit
-  the model’s decisions?
-- Socio-demographic fields: what’s worth extracting, what’s noise?
+Crohnicity is a small, honest, end-to-end example of that task:
 
-**Answers.**
+- **Messy input, structured output.** Transcripts of varying length and completeness — some clear,
+  some vague, some cut off mid-sentence — become one validated record per patient.
+- **Uncertainty as a first-class signal.** The schema keeps "not mentioned", "explicitly denied",
+  and "the interview was cut off before we found out" as *distinct* states rather than collapsing
+  them into a single null, because they mean different things to the analysis.
+- **Answers with caveats.** The structured output is aggregated into four business questions, each
+  reported with its evaluation evidence and the limitations behind it, not as bare numbers.
 
-- **Enums vs. free text vs. objects.** Closed vocabularies the analysis
-  groups on are **enums** — `TreatmentOutcome`, `ReasonPrescribed`,
-  `ReasonNotTaken`, `ComorbidCondition`, `PathwayStep` — so
-  `value_counts`/joins get stable categories and membership is checked
-  at the model boundary (`enforce_validation`) — **Gemini literally
-  cannot return a value outside each enum, regardless of what the prompt
-  lists** (the schema is sent as `response_schema` and the reply is
-  validated, raising `JSONSchemaValidationError` on a mismatch). Open,
-  high-cardinality, not-yet-canonical fields stay **free text**:
-  `biologic_type`, `TreatmentRecord.name`/`treatment_class` (a
-  branded-drug + treatment-class registry is future work —
-  `docs/TODO.md`). Repeated, multi-attribute things are **structured
-  objects/lists**: `treatment_records` (a list of `TreatmentRecord`,
-  each carrying `biologic_timing`, the field that answers Q3),
-  `demographics`, and `referral_pathway` (`list[PathwayStep]`). The
-  visible cost of the free-text choice shows up in the **Q3 table** —
-  `conventional_therapy`/`conventional` and case variants are one class
-  left un-normalised.
-- **Three states, not one null.** “Not mentioned” (absence), “explicitly
-  denied” (negation) and “cut off” (truncation) are kept as *separate*
-  signals rather than collapsed into a null: absence →
-  `biologic_not_mentioned` + null/empty fields + `NOT_MENTIONED`;
-  negation → the `biologic_prescribed` vs. `biologic_taken` pair + one
-  or more `ReasonNotTaken` (`EXPLICIT_DENIAL`/`INSURANCE_PROBLEMS`/…;
-  multi-select); truncation → `churn` (a cut-off journey is the same
-  truncation signal `churn` already carries, so there is no separate
-  `JOURNEY_CUT_OFF` reason — it was folded into `churn`, like
-  `incomplete_journey` before it). Explicit non-reason values
-  (`BIOLOGIC_TAKEN` when a biologic was taken, `NOT_APPLICABLE` when
-  none was ever prescribed) keep `reasons_for_biologic_not_taken`
-  **never empty**, so “doesn’t apply” is never confused with a missing
-  value or a blank “not yet annotated” cell. This is the split the churn
-  table under Q4 operationalises.
-- **Reason enums — aligned to the spec, departing only where the
-  evidence demanded.** The spec’s Q2 reasons (*doctor choice / patient
-  fears / cost / access*) shaped these enums, but reviewing all 50
-  transcripts drove two deliberate calls (evidenced in
-  [`docs/SCHEMA.md`](docs/SCHEMA.md) v0.7): **(1)** we keep
-  `INSURANCE_PROBLEMS` rather than the spec’s bare *“access”* — every
-  real barrier in the data is payer-gating (step-therapy / prior-auth /
-  tier), not drug *availability*, and `ACCESS` had **zero** transcript
-  support (covered by `COST` + `INSURANCE_PROBLEMS`); **(2)**
-  `reasons_for_biologic_not_taken` is **multi-select** (a list), because
-  patients routinely have several reasons at once (e.g. cost + fear).
-  Relatedly, `ReasonPrescribed` was trimmed to the initiation signal
-  (`DOCTOR_CHOICE` / `PATIENT_REQUEST`), since cost / fears / access are
-  reasons a biologic is *not taken*, not reasons it was prescribed.
-- **Evidence / auditability.** The model **does populate
-  `evidence_notes`** — a free-text rationale per patient (all 50
-  predictions carry one, e.g. *“cycled through Remicade, Humira due to
-  loss of response; currently on Stelara; injection anxiety”*). What’s
-  **deferred is the manual side**: the gold annotation keeps
-  `evidence_notes` as an unfilled column (`docs/SCHEMA.md`), and
-  structured **per-field** evidence — a snippet/turn-ref *per field*
-  rather than one blob — is stretch task 2 (it costs tokens + prompt
-  complexity). The broader audit trail is the **logged raw model
-  output** (`logs/extract.log` keeps the system prompt, schema, input
-  and pre-validation response per call) plus the **gold-set comparison**
-  (`docs/TO_REVIEW.md`).
-- **Socio-demographics.** Deliberately minimal —
-  `Demographics{gender, age}`, self-reported, grouped so a later “do
-  pathways/outcomes differ by demographic” cut is possible; everything
-  else is noise for these four questions.
+## What it produces
 
-## Extraction Pipeline
+The four questions it answers (a pharma commercial team preparing to launch a Crohn's biologic wants
+to understand the landscape it is entering):
 
-> **Architecture diagram.** The full Dagster asset graph and the Dagster
-> ↔ `uv run` relation are drawn in
-> [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md).
+1. What share of patients appear to be on a biologic?
+2. For patients not on a biologic, what are the primary reasons?
+3. What other treatments are commonly tried before a biologic?
+4. What does a typical referral pathway look like, in steps to a biologic-prescribing specialist?
 
-- **Single-shot vs. multi-stage extraction.** One big call, or a
-  pipeline (e.g., identify-then-extract, or narrative-then-structured)?
-  What are the tradeoffs?
-- **Prompt design for uncertainty.** How do you instruct the model to
-  separate absence, negation, and truncation?
-- **Determinism and reproducibility.** Temperature, structured output
-  mode, seed, caching — what did you pick and why?
+The answers, with the evaluation and the caveats that matter, are in
+[docs/SOLUTION.md](docs/SOLUTION.md).
 
-**Answers.**
+## System design
 
-- **Single-shot, batched — not multi-stage.** One system prompt extracts
-  *all* `PatientLabels` fields in a single structured call per patient;
-  transcripts are then **batched** (10 per request) only to fit Gemini’s
-  free-tier ~20-requests/day cap — batching ≠ staging, it’s still one
-  pass over every field, just several patients per call. Single-shot
-  minimises calls (decisive under the rate cap), keeps the code simple,
-  and lets the model set inter-dependent fields
-  (`biologic_prescribed`/`biologic_taken`, `churn`, `referral_pathway`)
-  with the whole story in view. The cost: every field competes for
-  attention in one prompt, so the hard fields suffer — the EDA shows
-  `churn` unreliable and the GP node under-emitted. A multi-stage split
-  (per-section prompts run concurrently, with inspectable intermediates)
-  is the \#1 item in *Next Steps* below; it trades more calls +
-  orchestration for better per-field accuracy.
-- **Uncertainty: absence vs. negation vs. truncation.** The prompt
-  separates them by construction, onto the three schema mechanisms
-  above. A global rule — *“Leave a field null or empty when the
-  transcript does not support a confident value”* — covers **absence**.
-  **Negation** rides on the prescribed-vs-taken booleans + the
-  `ReasonNotTaken` enum. **Truncation** gets the most explicit
-  instruction: judge `churn` from how the transcript *ends* — churn
-  **only** when it breaks off mid-word / mid-thought (e.g. ends on
-  “Chronic…”), while a deliberately-typed “…” on a coherent phrase is an
-  intentional sign-off, **not** churn (no recurrence heuristic) — and —
-  critically — *“keep this truncation signal distinct from a topic
-  simply being absent … (that is ‘not mentioned’, not churn).”* Honest
-  limit: truncation is a lexical/structural property of the transcript’s
-  end that the narrative under-determines, so the instruction alone
-  isn’t enough — the gold audit found it unreliable in both directions
-  (over-flagging and missed truncation), and a deterministic
-  tail-of-text rule would do better (`docs/TO_REVIEW.md`).
-- **Determinism & reproducibility.** Three levers, in decreasing order
-  of leverage. **(1) Structured-output mode** —
-  `response_format={"type": "json_object", "response_schema": PatientLabels.model_json_schema(), "enforce_validation": true}`:
-  a Pydantic-derived schema constrains the *shape* and enum membership,
-  and LiteLLM validates the reply (raising `JSONSchemaValidationError`
-  on a mismatch), so format/parse variance is removed and downstream
-  pandas never meets an off-vocabulary value. **(2) Persisted
-  predictions** — each chunk writes one validated JSON per patient to
-  `data/out/`, and the whole analysis (this README) reads *only* those
-  frozen artefacts with no API call, so every number and plot is
-  **exactly reproducible run-to-run** regardless of LLM nondeterminism;
-  this is the real guarantee. **(3) Decoding params** — `temperature` is
-  **pinned to `0`** (greedy) in `config.json` and imported by
-  `extract.py` — extraction here is a **classification** task, so we
-  want *same transcript → same labels*, not sampled variety. This build
-  is the live test case for *why*: a fresh re-run at the provider
-  default (Gemini’s default `temperature` is `1.0`) shifted long-tail
-  outputs (the GP-node count; which biologics got mislabelled on
-  `biologic_timing`) while the headline answers held — exactly the
-  run-to-run drift `0` removes. Temperature is **logged per run** (with
-  the model) so runs at different parameter levels stay comparable. A
-  seed would add belt-and-braces, but with a reasoning-capable model `0`
-  *minimises* rather than *guarantees* bit-identical output; **(2)** is
-  the hard reproducibility guarantee for the analysis. **Reasoning is
-  also disabled** — `reasoning_effort="disable"` (LiteLLM → Gemini
-  `thinkingConfig.thinkingBudget=0`, verified via `get_optional_params`)
-  — because extraction is *classification*, not multi-step inference:
-  the hidden thinking step added run-to-run variance and on
-  `gemini-2.5-flash` consumed the output budget until the JSON truncated
-  mid-array (a `JSONSchemaValidationError`), with no accuracy upside.
-  The *inspectable chain-of-thought* the stretch brief asks for is a
-  **different** thing — explicit multi-stage prompts with auditable
-  intermediates (the \#1 *Next Step* above), not opaque internal tokens.
-  No explicit prompt **caching** yet — the static system prompt + schema
-  are identical across calls, so implicit context caching may apply, and
-  cached-token counts are logged (`docs/TELEMETRY.md`).
+High-level flow (full diagram and rationale in
+[docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)):
 
-## Evaluation
-
-Pick **one** approach that gives you a real signal on quality. We don’t
-need a rigorous eval harness — we want to see you know how to probe your
-own pipeline:
-
-1.  **Mini golden set:** hand-label 5–10 transcripts yourself on key
-    fields, compute agreement with the model, **or**
-2.  **LLM-as-judge:** a second LLM call scoring extraction fidelity on a
-    sample against the source transcript, **or**
-3.  **Consistency check:** run extraction twice (different prompts,
-    temperatures, or models) and use disagreement as a proxy for
-    reliability.
-
-Write up what it told you in a few lines: what the pipeline is solid on,
-where it’s shaky, what you’d fix first with more time.
-
-I picked (1).
-
-**What it surfaced.** Gold labels live in
-interviews_ground_truth_v7.ods, scored on the human-reviewed gold set
-(`to_review == 1`). Headline: `biologic_taken` — the field Q1 rests on —
-scores a high F1 (precision / recall / F1 computed inline in the Q1
-gold-eval table below), so the “% on a biologic” answer is
-well-supported. Where it’s shaky: **`churn`** is unreliable in both
-directions (a false positive *and* a false negative in the gold audit —
-`docs/TO_REVIEW.md`) because truncation is a lexical/structural signal
-the narrative under-determines; **`treatment_class`** drifts
-(un-normalised free-text categories inflate the Q3 count); and the **GP
-node** (`primary_care_contact`) is under-emitted (see the Q4 caveat’s
-live count), weakening the strict Q4 step count. Fix-first order: a
-deterministic tail-of-text churn rule, a treatment/biologic registry to
-normalise classes, and a larger, multi-annotator gold set — today’s is
-single-annotator over the `to_review` gold set, so the metric carries
-real sampling uncertainty.
-
-**Edge case — biologic over-detection (P047).** P047’s transcript names
-*no* biologic (conventional therapy only — prednisone, mesalamine,
-methotrexate), yet the model returned `biologic_prescribed=True` with a
-fabricated `DOCTOR_CHOICE` reason — a hallucination inferred from
-disease severity, because the biologic-funnel booleans had no prompt
-guidance. Two fixes landed: P047 is now a reviewed gold case
-(`biologic_not_mentioned=1`, `biologic_prescribed=0`), and `system.txt`
-now instructs the model never to *infer* `biologic_prescribed` and to
-set `biologic_not_mentioned` when no biologic is named. Tellingly, this
-error sat in the then-unreviewed cases — invisible to the gold metric
-until P047 was reviewed.
-
-> **A second eval, by accident — the temperature consistency check
-> (option 3).** I picked (1), but the rate-limited re-runs left a
-> natural option-(3) experiment, and it **supports the `temperature = 0`
-> decision** (*Extraction Pipeline → Determinism*). The *same*
-> `P001–P010` batch (identical transcripts + prompt) was extracted three
-> times at Gemini’s default `temperature = 1.0` and twice at the
-> now-pinned `0`, and the result is textbook: at **`1.0` the output
-> drifts** — `total_tokens` of **11,570 / 12,260 / 12,197** across runs
-> (~6% spread; input is fixed, so a moving total means *different
-> generated content* each run) — whereas at **`0` it is byte-identical**
-> (**12,034 = 12,034**), i.e. same input → same output. So determinism
-> here is *demonstrated, not asserted*. Caveats: `total_tokens` is a
-> coarse, **lower-bound** proxy (it only catches drift that changes
-> output *length*, so field-level drift at `1.0` is likely larger), and
-> the temp-0 sample is n=2 from one session. **With more time** I’d run
-> the check deliberately — all 50 patients ×2 at each temperature,
-> diffing the JSON field-by-field — turning this accidental signal into
-> a measured disagreement rate.
-
-## Analysis
-
-A short answer to PharmaCorp’s four questions. Numbers with ranges or
-caveats where sensible. Keep it tight — the point is to demonstrate the
-structured output is usable, not to write a consulting deck.
-
-1.  What percentage of patients in the dataset appear to be on a
-    biologic?
-2.  For patients *not* on a biologic, what are the primary reasons
-    (doctor choice, patient fears, cost, access, something else)?
-3.  What other treatments are commonly tried or discussed before a
-    biologic is considered?
-4.  What does a typical referral pathway look like, in number of steps
-    from GP to a specialist who can prescribe a biologic?
-
-### Answers
-
-Computed from the persisted predictions in `data/out/` (`n = 50`).
-
-#### Q1 — % on a biologic
-
-| status                | patients | pct |
-|:----------------------|---------:|----:|
-| on a biologic (taken) |       37 |  74 |
-| not on a biologic     |       13 |  26 |
-
-74% of patients (37/50) appear to be **on a biologic**
-(`biologic_taken == true`).
-
-*Evaluation — mini golden set.* `biologic_taken` (the field Q1 rests on)
-scored against the hand-annotated gold in interviews_ground_truth_v7.ods
-(the `to_review` cases), as precision / recall / F1:
-
-| metric    | value |
-|:----------|------:|
-| precision |   0.9 |
-| recall    |     1 |
-| F1        | 0.947 |
-| accuracy  |  0.95 |
-| n (gold)  |    20 |
-
-On the 20-case golden set, `biologic_taken` scores **F1 = 0.95**
-(precision 0.9, recall 1.0; TP/FP/FN/TN = 9/1/0/10) — so the Q1 headline
-is well-supported by the gold.
-
-*Limitation.* This is measured only on the hand-annotated gold
-(`to_review`) set — **20 of 50** patients (those with a non-null
-`biologic_taken`) — so the metric carries real **sampling uncertainty**
-(a few flips would move it noticeably), and the gold is a
-**single-annotator judgement** with its own error. A trustworthy
-at-scale accuracy estimate would need a larger, ideally multi-annotator
-audit set (a bigger `…_v*.ods`); see `docs/TODO.md`.
-
-#### Q2 — reasons not on a biologic
-
-| reason             | mentions |
-|:-------------------|---------:|
-| INSURANCE_PROBLEMS |        5 |
-| PATIENT_FEARS      |        4 |
-| COST               |        3 |
-| DEFERRED           |        2 |
-| NOT_APPLICABLE     |        1 |
-| CONTRAINDICATION   |        1 |
-
-![Q2 reasons not on a biologic](data/out/plots/q2_reasons.png)
-
-> **`unspecified` (Q2) — null handling.** An `unspecified` row is a
-> biologic **prescribed but not taken** with an **empty
-> `reasons_for_biologic_not_taken`** list (`[]`) — no reason extracted,
-> not a stated one. It’s kept **visible as its own category** rather
-> than dropped — consistent with the schema’s stance on nulls (*Pydantic
-> Schema Design → “Three states, not one null”*): absence, negation and
-> truncation are distinct first-class states, and `UNKNOWN` /
-> `NOT_APPLICABLE` exist so a missing value is never silently conflated
-> with a real one. `system.txt` now requires a **never-empty** list
-> (`[UNKNOWN]` for prescribed-but-not-taken with no stated reason,
-> `[BIOLOGIC_TAKEN]` when a biologic was taken), so `unspecified` should
-> disappear on the next extraction run.
-
-#### Q3 — treatments tried before a biologic
-
-    | treatment_class   |   mentions |
-    |:------------------|-----------:|
-    | 5-asa             |         48 |
-    | corticosteroid    |         40 |
-    | immunomodulator   |         37 |
-    | nsaid             |          2 |
-    | other             |          1 |
-    | antibiotic        |          1 |
-
-![Q3 treatments before a
-biologic](data/out/plots/q3_before_biologic.png)
-
-> **Known extraction error (Q3) — error-handling note.** A `biologic`
-> appearing in “treatments before a biologic” carries
-> `biologic_timing = BEFORE` on a biologic — which is either a genuine
-> **biologic switch** (an earlier biologic tried before the one
-> ultimately taken) or a **model mislabel** (the *taken* biologic itself
-> flagged `BEFORE`, which can’t be right — a treatment isn’t “before”
-> itself); the per-patient `treatment_records` distinguish the two. So
-> “treatments before a biologic” currently also counts biologics. We
-> **surface this rather than silently drop it**: a clear include/exclude
-> rule for biologics, plus the prompt fix, is tracked in `docs/TODO.md`.
-
-#### Q4 — referral pathway length (steps to a biologic-prescribing specialist)
-
-> **Caveat.** The literal “GP” node (`primary_care_contact`) appears in
-> only 4/50 predicted pathways, so a strict GP→prescriber count isn’t
-> representative. We count steps from the journey **start** (or
-> `primary_care_contact` where present) to `biologic_recommended`
-> (present in 29/50) — the point a biologic-prescribing specialist is
-> reached. Under-emission of the GP node is a prompt-fix candidate (see
-> `docs/TODO.md`). The per-case interactive journey graphs are linked
-> below.
-
-| steps | patients |
-|------:|---------:|
-|    10 |        7 |
-|     6 |        5 |
-|     9 |        3 |
-|    11 |        2 |
-|    13 |        2 |
-|     8 |        2 |
-|     7 |        2 |
-|     5 |        2 |
-|    12 |        1 |
-|    15 |        1 |
-|    14 |        1 |
-|    16 |        1 |
-
-![Q4 steps to biologic recommendation](data/out/plots/q4_steps.png)
-
-The **most common** journey length is **10 steps** (the modal value —
-highest patient count in the chart), with a **median of ~10** (range
-5–16, n=29).
-
-Crucially, **48/50 journeys are cyclic** — the patient loops back
-through relapse / `loss_of_response` / `biologic_switch` (recurrence the
-prompt now captures; the per-case graphs render these as loops — see the
-deep-dive below). So “a typical referral pathway” is as much about
-**recurrence** (repeated biologic switching) as about step count — a
-linear step number alone understates the journey for the **96%** of
-patients whose journey loops.
-
-**Deep dive — the individual journeys.** Two views of the same data: a
-GitHub-viewable static gallery of all 50 pathways as Mermaid diagrams in
-[docs/referral_pathways.md](docs/referral_pathways.md), and the
-**interactive** pyvis graphs in [`data/out/html/`](data/out/html/) (open
-`index.html`) — these render **live in a browser from a local clone**;
-GitHub only shows them as source. As a teaser, here is patient **P047**
-— a *cyclic* journey (a phase recurs, so it renders as a loop):
-
-``` mermaid
-%%{init: {'theme':'neutral'}}%%
-flowchart LR
-    n0["symptom_onset"]
-    n1["misdiagnosis"]
-    n2["diagnostic_delay"]
-    n3["crohns_diagnosis"]
-    n4["conventional_therapy"]
-    n5["adverse_reaction"]
-    n0 -->n1
-    n1 -->n2
-    n2 -->n3
-    n3 -->n4
-    n4 -->n5
-    n5 -->n4
+```
+interviews.json  ->  extraction (LiteLLM -> Gemini, structured output)
+                 ->  Pydantic validation  ->  one persisted JSON per patient
+                 ->  post-extraction analysis (pandas)
+                 ->  reporting (Quarto + MkDocs)
 ```
 
-**Churn handling matters here.** Be explicit about:
+- **Extraction.** One structured LLM call per patient (batched several patients per request to fit
+  the free-tier request cap), constrained to a Pydantic-derived JSON schema so the model *cannot*
+  return values outside the controlled vocabularies.
+- **Validation.** Every response is validated against the schema at the call boundary and again when
+  it is loaded for analysis.
+- **Determinism.** Temperature is pinned to 0 and model reasoning is disabled — extraction is a
+  classification task, not multi-step inference — and the persisted per-patient JSON is the real
+  reproducibility guarantee: the analysis reads only those frozen artefacts, so every number and plot
+  is stable run to run.
+- **Evaluation.** Predictions are scored field by field against a gold set hand-labelled by the
+  author, so the write-up can state where the pipeline is solid and where it is shaky.
+- **Orchestration.** Dagster runs ingest → extract → analysis → reporting as a dependency graph, so a
+  failure is pinpointed by stage rather than lost in a monolithic script.
 
-- How many journeys in your output look truncated vs. complete, and how
-  you decided.
-- How you separated “biologic not mentioned” from “biologic discussed
-  and rejected” from “patient churned before reaching that point.”
-- Which of the four answers are most and least trustworthy given the
-  churn distribution, and why.
+The single source of truth for runtime values (model, paths, decoding params) is
+[`config.json`](config.json); the schema is defined once in [`src/schema.py`](src/schema.py)
+(documented in [docs/SCHEMA.md](docs/SCHEMA.md)); changes between runs are recorded in
+[CHANGELOG.md](CHANGELOG.md).
 
-**Three data-states, by patient count** — how many patients show each
-way the biologic signal can present: *absence* (biologic never
-mentioned), *negation* (prescribed but not taken), and *truncation* (the
-interview churned before resolving). These are **independent counts, not
-a partition** of the cohort. Here *absence* is `0` because the model
-marks **every** patient `biologic_prescribed` (so none are “never
-mentioned”), and *truncation* is `0` because the model under-detects
-churn (see the false-negative note below).
+## Tech stack
 
-| state                              | patients |
-|:-----------------------------------|---------:|
-| biologic not mentioned (absence)   |        0 |
-| discussed but not taken (negation) |       13 |
-| churned / truncated                |        4 |
+| Concern | Choice | Why it's here |
+|---|---|---|
+| Language / env | Python 3.14, managed with `uv` | Fast, reproducible dependency + venv management |
+| LLM gateway | **LiteLLM** → **Gemini** | One provider-agnostic interface; the working model is set in [`config.json`](config.json) |
+| Schema / validation | **Pydantic** | Types the output and enforces enum membership at the model boundary |
+| Analysis | **pandas** | Aggregation into the business answers + the gold-set evaluation |
+| Orchestration | **Dagster** | Per-stage dependency graph with failure visibility |
+| Reporting | **Quarto** + **MkDocs** / mkdocstrings | Data-generated solution write-up + an API docsite from docstrings |
+| Quality gate | **ruff**, **ty**, **pytest** (Rust-based toolchain) | Lint, type-check, and tests run on every change |
 
-The model flagged `churn = true` for only **4/50** patient(s). Manual
-review of the flagged/edge cases (`docs/TO_REVIEW.md`) found churn
-detection unreliable in both directions — both an over-flag and a missed
-truncation — because truncation is a lexical/structural property of the
-transcript’s *end* that the narrative under-determines. **Q1 and Q3 are
-the most trustworthy** answers (they depend on facts stated early); **Q4
-is the least** (it depends on the full pathway surviving, and on the
-under-emitted GP node).
+Read as a portfolio piece, the stack is deliberately the shape of an applied **AI-engineering /
+health-tech** role: LLM-based information extraction, prompt design and structured output,
+schema-enforced validation, a real evaluation harness, and a reproducible, orchestrated pipeline —
+the "prompts, evals, and pipelines" core rather than a notebook.
 
-> **Why `churn` reads low — under-detection, not absence.** The gold set
-> flags genuinely truncated transcripts the model misses (gold
-> `churn = 1` but the model returns `False`; this run: **none**) — a
-> **false negative**. A low count is therefore *not* “no truncated
-> transcripts”: the model **can’t reliably detect truncation** — a
-> lexical/structural end-of-text signal the narrative under-determines,
-> compounded by the prompt’s conservative bias toward `false`. This is
-> **independent of `temperature`** (it persists at `0`); pinning
-> `temperature = 0` (see *Extraction Pipeline → Determinism*) makes the
-> count reproducible run-to-run, but the real fix is a deterministic
-> tail-of-text rule (`docs/TODO.md`). The temperature change is about
-> *reproducibility*, not detection: earlier **exploratory/testing** runs
-> used Gemini’s default **`temperature = 1.0`** (sampled — long-tail
-> outputs drifted run-to-run), whereas this **final pipeline pins
-> `temperature = 0`** (greedy, deterministic). Same under-detection
-> either way; only the run-to-run stability differs.
+## How I worked with AI (a careful, sceptical approach)
 
-### Churn — definition & handling
+I built this with an AI coding assistant, but deliberately conservatively. I designed the pipeline
+and the Pydantic schema by hand first, from repeated close reads of the spec, and hand-labelled the
+gold set myself. From there I used the assistant for most of the implementation but questioned every
+decision: I ran the tests and pipelines in a separate terminal so I was never trusting the
+assistant's *reported* output, did all `git` operations myself, and only accepted a change after
+reviewing its diff. The approach was test-, data-, log-, and doc-driven, so I could inspect the
+output at every stage and compare it against an expected version.
 
-**Definition.** The spec never defines the “interview”. We read it as
-the patient’s interaction with the Mama Health AI companion app —
-patients describe their doctors in the *third person*, so they’re
-narrating *to the app*, not conversing with a clinician. **Churn is
-therefore disengagement from that app interaction**, which in the data
-shows up as a transcript that stops early. The spec backs this:
-*“patients disengage partway through their interview — they churn —
-leaving us with truncated journeys”*, and the transcripts vary in
-*“completeness… some cut off mid-journey”* (with a worked “incomplete,
-likely churn” example).
+The full first-person account — what I did with AI and what I deliberately did without it — is in the
+"Where I used AI" section of [docs/SOLUTION.md](docs/SOLUTION.md).
 
-**One flag, not two.** Because “churned” and “incomplete journey” are
-the *same* signal under this reading, we collapse them into a single
-`churn` field (the ground truth drops `incomplete_journey`).
-`churn = true` when there’s evidence of **(a)** disengagement from the
-app interaction, or **(b)** a truncated / cut-off / vague narrative.
-Signals: completeness, cut off mid-journey, truncation, vagueness.
+## Programmatic reporting with Quarto
 
-**Deciding churn from a trailing `"..."`.** A trailing `"..."` is
-ambiguous — it can be an intentional emotional sign-off *or* a real
-cut-off — and we have no behavioural signal (e.g. a last-login
-timestamp) to disambiguate, so we decide from the text alone: **churn
-only when the transcript breaks off mid-word / mid-thought**, not when
-it closes on a coherent phrase. We do **not** use whether `"..."` recurs
-elsewhere (an earlier heuristic we dropped).
+[docs/SOLUTION.md](docs/SOLUTION.md) is **generated from the data**, not written by hand. It is a
+Quarto document whose code chunks read the persisted predictions and render the tables, plots, and
+headline figures at build time, so every number refreshes from the latest run and nothing is pasted
+in or left to drift. Literate, code-driven reporting is common in the R world but still unusual in
+Python; using it here keeps the analysis and the document that describes it in lockstep — the same
+discipline that keeps the rest of the repo on a single source of truth.
 
-- **Mid-thought break → churn:** P049
-  `"…Different but same. Chronic..."` — ends on an incomplete fragment
-  (“Chronic” with no following noun), so the interview was genuinely cut
-  off.
-- **Coherent emotional close → NOT churn:** P016
-  `"…better than this..."`, P036 `"…Don't want to   know..."`, P045
-  `"…but it's hard..."`, P046 `"…how people manage..."`, P047
-  `"…Not worry about   mom..."`, P048 `"…I'm only 56..."` — the patient
-  *typed* the ellipsis, a deliberate sign-off, not a disconnection.
+## Background
 
-**Why this matters for the answers.** `churn` is the *truncation* state
-that, with `biologic_not_mentioned` (absence) and a
-discussed-but-not-taken biologic (negation), gives the three-way split
-the analysis needs — “not mentioned” vs “discussed and rejected” vs
-“churned before we could find out”. It stays a judgement call with
-residual uncertainty, but a single honest flag beats splitting two
-overlapping ones.
-
-## Optional stretch tasks
-
-The brief offers five optional stretches but asks for *a tight core over
-a bloated stretch*, so I picked the one that directly answers a business
-question and put the rest of my effort into reproducibility and
-orchestration.
-
-**Attempted.**
-
-- **(4) Pathway visualisation — successful.** The interactive per-case
-  referral-journey graphs (the deep-dive under Q4) answer business
-  question 4. I chose a directed graph over a Sankey deliberately — it
-  shows *recurrence* (relapse / loss-of-response loops), which a Sankey
-  flattens.
-- **(3) Open-source model swap (local Ollama) — attempted, an
-  instructive failure.** The plumbing works: `--model` routes extraction
-  through any LiteLLM-supported model with no code change
-  (e.g. `uv run python src/main.py --model=ollama_chat/qwen3:30b-a3b`
-  for a local Qwen, also a way to dodge the Gemini quota), and
-  `extract()` drops provider-unsupported params automatically. But the
-  local models I tried did **not** return reliable schema-valid output —
-  they invent fields and off-vocabulary enum values, so
-  `tests/test_ollama.py` records this as a graceful `xfail` rather than
-  a pass. **Insight:** the strict structured-output +
-  `enforce_validation` Gemini honours is exactly where local models fall
-  down, so the swap isn’t drop-in for this task — it would need a
-  tolerant per-record parse (or a JSON-tuned model) first.
-
-**Beyond the brief’s list — extra stretches I added.**
-
-- **Dagster orchestration.** The whole pipeline is an asset graph
-  (`uv run dg dev`), so a failure is pinpointed per-stage in the UI
-  instead of as one opaque error — and the same `src/` functions still
-  run standalone from the CLI
-  ([SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
-- **Determinism + an accidental consistency check.** `temperature = 0`
-  is pinned, and the repeated runs gave a free reliability signal — a
-  partial take on stretches (2)/(3) (see *Evaluation* and *Extraction
-  Pipeline → Determinism*).
-- **Reproducible reporting + an API docsite.** This README is
-  Quarto-rendered from the persisted predictions (no API call), and a
-  MkDocs + mkdocstrings site documents the `src/` API.
-- **Centralised config + a quality gate.** One `config.json` feeds every
-  entry point; `ruff` / `ruff format` / `ty` / `pytest` (with coverage)
-  gate every change.
-
-**Deferred to keep the core tight** (tracked in *Next Steps* /
-[`docs/TODO.md`](docs/TODO.md)).
-
-- **(1) Multi-stage / chain-of-thought prompts** with inspectable
-  intermediates — my \#1 *Next Step*.
-- **(2) Per-field confidence scoring** (self-reported, or from
-  consistency across samples).
-- **(5) Dockerfile** for cross-machine reproducibility.
-
-## Next Steps
-
-With more time, after the core is complete:
-
-- **Split the single system prompt into multiple focused prompts run
-  concurrently.** This version deliberately uses one prompt; a later
-  iteration would split it **by task** into focused prompts run in
-  parallel — **(1)** biologic funnel (prescribed/taken/type/reasons),
-  **(2)** treatment history (records + `biologic_timing` + outcome),
-  **(3)** referral pathway, **(4)** context (churn, demographics,
-  comorbidities) — then merge into one `PatientLabels`. Better per-field
-  accuracy and inspectable intermediates, at the cost of more calls and
-  orchestration. **This is where chain-of-thought genuinely earns its
-  place here:** as the *explicit, inspectable* reasoning the stretch
-  brief means, it both fixes the single-shot attention-competition
-  behind shaky `churn`/`referral_pathway`/`biologic_timing` **and**
-  hands a reviewer auditable intermediates (the brief’s whole point). So
-  we turn off the *opaque* internal thinking now (*Determinism &
-  reproducibility* above) and add *explicit* staged CoT here —
-  complementary, not contradictory.
-
-- **A telemetry feature for optimisation.** Per-call usage is currently
-  logged (tokens, cost, cached tokens — see
-  [docs/TELEMETRY.md](docs/TELEMETRY.md)); with more time I’d surface it
-  as a first-class artifact (a structured per-run metrics file + plots)
-  to track cost/latency/cache-hit rate and tune the pipeline at scale.
-
-- **Try an even larger Gemini model.** This run uses
-  gemini/gemini-2.5-flash (it ran on `gemini-2.5-flash-lite` during
-  iteration, then moved up to dodge `-lite`’s 503 spikes and give the
-  batched JSON enough output budget). With more time I’d evaluate
-  `gemini-2.5-pro` for extraction quality, weighed against its free-tier
-  **request/token rate limits** (the ~20 calls/day cap that drove the
-  chunking design) and cost.
-
-- **Deep dive on cyclical journey patterns.** The `referral_pathway`
-  initially flattened recurrence (each phase emitted once); the prompt
-  now asks the model to repeat steps when phases recur. A proper
-  follow-up would analyse the *cyclicity* itself — how many biologics
-  patients cycle through, repeated relapse / loss-of-response / switch
-  loops, time-to-switch — and classify journeys as genuinely cyclic vs
-  linear (the recurrence is also recoverable from `treatment_records`).
-
-- **Productionise as a FastAPI inference endpoint (deployment MVP).**
-  Wrap `extract()` in a **FastAPI** service (already a declared
-  dependency): `POST` an `interview_transcript`, get back a validated
-  `PatientLabels` JSON generated **dynamically by a cloud-hosted model**
-  — turning the current offline batch CLI into a real-time production
-  inference path. Package the API **into the Docker image** (the
-  Packaging item in `docs/TODO.md`) so one container serves it, and ship
-  it via **CI/CD to a cloud service** for an always-on, auto-deployed
-  endpoint.
-
-- **SQL + dbt for transformation layers at scale (once they’re better
-  defined).** The post-extraction aggregations (Q1–Q4, the churn
-  three-way split) are pandas in `src/post_extraction_eda.py` — fine for
-  50 patients and a single analyst, and the right tool while the
-  transformations are still *exploratory* and in flux. **Once the
-  analytics transformation layers are better understood** — at cohort
-  scale, across a team — I’d lift the stabilised ones into **dbt**
-  models: version-controlled, tested, documented SQL over a warehouse,
-  with lineage — modular and collaboratively maintained rather than
-  ad-hoc DataFrame wrangling. It slots into the existing **Dagster**
-  orchestration via `dagster-dbt` (dbt models become assets in the same
-  DAG).
-
-- **Pipeline optimisation: Arrow-backed pandas, then Polars / DuckDB +
-  Parquet.** The EDA currently loads 50 per-patient JSON files into
-  default (NumPy-backed) pandas in memory. A low-effort first win for
-  query times: switch pandas to the **PyArrow dtype backend**
-  (`dtype_backend="pyarrow"`) — faster, lower-memory columnar ops with
-  near-zero code change. Beyond that, benchmark **Polars** (lazy,
-  multi-threaded) and **DuckDB** (in-process analytical SQL straight
-  over the artefacts), persisting predictions as **Parquet** (columnar,
-  compressed) instead of loose JSON — faster aggregations and a format
-  that scales. DuckDB also doubles as the local warehouse for the dbt
-  step above.
-
-- **Lift test coverage on the orchestration + LLM-call paths.** The gate
-  reports coverage (`pytest --cov`): **64%** total — but that headline
-  hides a deliberate shape. The **pure logic is well-covered**: `schema`
-  and `config` at 100%, and `post_extraction_eda` (every analysis number
-  in this README) at 98%. The gaps fall **exactly on the side-effecting
-  I/O boundary** — the code you can’t exercise without mocking an
-  external service: the live `litellm` call in `extract.py` (36%) and
-  the `main.py` / `pipeline.py` entry points (0% — the fire CLI + the
-  Dagster assets, which shell out to Gemini, `quarto` and `mkdocs`). So
-  the untested code is the **plumbing, not the analysis**. With more
-  time I’d **mock the `litellm` call** to exercise the retry /
-  schema-rejection / partial-output branches without hitting the API,
-  test the CLI slicing, and smoke-test the Dagster `Definitions` load —
-  closing the gap where reliability, not correctness of the numbers, is
-  at stake.
-
-- **Explore patient journey narratives as complaints.** The
-  `interview_transcript` patient narratives read like complaints. There
-  is a research literature in Conversation Analysis (CA) on complaints
-  and narrative storytelling. I would see if this social scientific
-  research has insights for identifying patterns in complaints that
-  could upgrade the prompts to enhance classification of the parts of
-  the narratives.
-
-## Where I used AI
-
-### Without AI
-
-- At beginning of project, I did not use AI. I read the task
-  instructions ~5 times, started handwriting a plan of action, and did
-  system design and designed the Pydantic schema at a high level -
-  making notes of questions - as I read/re-read the task. I was also
-  thinking about how I would incorporate AI into my dev workflow later.
-
-- I wrote ~6 pages of handwritten notes as I designed “Crohnicity”.
-
-- After deciding to read, review and annotate the `interviews.json`
-  `interview_transcript` dataset, I did annotations by hand in
-  LibreOffice Writer (open source version of Excel) to mimic
-  non-technical domain expert labeling of a “gold” ground truth dataset.
-  I returned to this dataset and manual labeling throughout the process,
-  labeling ~21/50 cases.
-
-- I wrote the code for the beginning notebooks (`00_setup`, half of
-  `01_eda_transform_export`) by hand, before transitioning to Claude
-  Code for the more tricky programmatic updates to my LibreOffice Write
-  `.ods` spreadsheet files (see next section).
-
-- I would always do `git` commands (`add`, `commit`, `pull`, `push`)
-  myself manually via `!` commands in the CC terminal.
-
-- I would run the CLI script commands to execute the tests/pipelines in
-  a separate terminal to make sure CC was not hallucinated
-  execution/output.
-
-- At the end of the process, I ran Dagster commands from the CLI and
-  used the Dagster UI to check if my pipelines were running with
-  success/failure.
-
-- I wrote this “Where I used AI” section without AI, by hand!
-
-### With AI
-
-- After clarifying the project specification and system design and how I
-  was going to work with AI, I started using Claude Code in a terminal
-  in my VS Code. Initially I was going to use SKILLS/\*.md files, but
-  decided this was overkill. So I used “Explanatory mode” which is for
-  software engineers and offers explanations while you code. I exported
-  the CC chat with `/export` into `.txt` files to show the workflow. CC
-  opened windows so I could compare diffs in my VS Code using the Claude
-  Code extension. This was really effective. I was conservative and only
-  allowed CC to make changes after my manual approval.
-
-- I did pretty much all the dev work with Claude Code, starting off with
-  writing all the unit tests, logging outputs, and Pydantic schema
-  validation versions using what I would call a “agentic engineering”
-  perspective. I questioned every decision, was pretty strict, and used
-  my judgement either to approve or override CC. I checked all code and
-  outputs as much as I could in VS Code via diffs or using VS Code as a
-  code viewer/editor.
-
-- For the agentic engineering, I was very test- and data- and log- and
-  doc-driven so that I could inspect the outputs at every stage and
-  compare against expected versions. This worked pretty well and either
-  I or CC caught issues as they emerged in the dev process.
-
-- Most of the docs in `docs/` were generated with CC, so there is a
-  potential for drift with the implementation. However, the Quarto
-  `README.qmd` is programmatic to ensure all the data values are
-  dynamically generated rather than hardcoded.
-
-- I was very much “data science” style in my dev workflow, iterating
-  using the data output, and validating against the tests, as much in a
-  REPL style as possible.
+The approach is grounded in Agrawal, Hegselmann, Lang, Kim & Sontag,
+[*"Large language models are few-shot clinical information extractors"*](https://aclanthology.org/2022.emnlp-main.130/)
+(EMNLP 2022) — the finding that general-purpose LLMs, given a well-designed prompt and output schema,
+can extract structured clinical information from unstructured text without task-specific training.
+Crohnicity applies that idea with production-oriented guardrails around it: an enforced schema, a
+gold-set evaluation, pinned decoding for determinism, and orchestration.
 
 ## Usage
 
-**Dagster, driven by the `dg` CLI, is the main entry point.** It
-orchestrates the whole pipeline end-to-end — extract → (EDA/README
-render · referral graphs · referral-pathway gallery) → docsite — and
-shows which stage failed in the UI. Launch a run two ways — the UI’s
-*Materialize all*, or headless from a second terminal:
+The commands are the canonical set in [CLAUDE.md → Commands](CLAUDE.md#commands); the full local
+setup is in [docs/DEV_SETUP.md](docs/DEV_SETUP.md). The short version:
 
-``` bash
-uv run dg dev -m pipeline -d src -p 3050   # UI at http://127.0.0.1:3050 → "Materialize all" (port: config.json → dagster_port)
-
-# ...or headless from another terminal (no UI):
-uv run dg launch --assets "*" -m pipeline -d src
+```bash
+uv sync                                      # install the pinned environment
+bash tests/type_lint_unit_tests.sh           # the quality gate: ruff + ty + pytest
+uv run dg dev -m pipeline -d src -p 3050      # Dagster UI -> "Materialize all"
 ```
 
-> `DAGSTER_HOME` is set in `.env` to `.dagster_home/` (see DEV_SETUP),
-> so Dagster persists run history there — **not** a temp dir (a temp dir
-> is only the fallback if the var is unset). The instance config
-> `.dagster_home/dagster.yaml` is committed (it shows the pipeline
-> wiring); the sqlite run-state is git-ignored. Dagster runs **locally
-> only** — it never pushes to GitHub, so publishing refreshed artefacts
-> (data + logs + README) is your separate `git` step.
+A `GEMINI_API_KEY` in `.env` is required for the extraction step; the analysis and reporting steps
+read only the committed `data/out/` artefacts and make no API calls.
 
-The processes below are the stages Dagster orchestrates; each also runs
-**standalone** to drive or test one part on its own (Dagster calls the
-same `src/` functions — it doesn’t shell around them). Extraction uses
-the chunked 10×5 batch strategy to fit the Gemini free-tier
-~20-requests/day cap.
+## Roadmap
 
-### Extraction (`src/main.py`)
+The next step is to expose the extractor as a **FastAPI** endpoint, **Dockerised** for local hosting,
+on the same Gemini/LiteLLM infrastructure — turning the batch pipeline into a service that structures
+a single transcript on request.
 
-Run the extraction pipeline via the `src/main.py` CLI (python-fire).
-**By default it extracts all 50 transcripts in chunks of 10 → 5 API
-calls**, sized to the Gemini free tier’s ~20 requests/day cap (taken as
-a fixed constraint; 50 one-at-a-time calls would exceed it).
+## Repository
 
-**Retries are quota-sparing.** On the free tier a *failed* request costs
-the same daily quota as a successful one, so retry policy is
-deliberately frugal and **treats the two error classes differently**:
-litellm’s own auto-retries are **off** (`num_retries=0`), so one failure
-is one request — not three. (Why off, not just lower? `num_retries` is
-one knob across *all* error types, but a daily quota needs *opposite*
-policies — retry 503, never 429 — which a single count can’t express;
-litellm’s per-exception `RetryPolicy` is Router-only, not on
-`litellm.completion()`, so we switch the blanket retry off and own a
-tiny loop, `_with_503_retry`.) A **429** (rate-limit / daily quota)
-**fails fast** — no retry, since retrying a spent quota only burns more
-of it — while a **503** (transient model overload) is retried
-**sparingly** (up to 4 retries, 60s apart — set in `config.json`), then
-gives up. The **stop-vs-retry decision is in the code**
-(`give_up_reason`), not left to manual log-watching: the failure message
-states the action — **429 → stop** (the quota won’t clear by retrying;
-wait for the reset), **503 → wait and re-run**. Full table:
-[`docs/DEBUGGING_ERROR_HANDLING.md`](docs/DEBUGGING_ERROR_HANDLING.md).
-
-``` bash
-uv run python src/main.py                          # all 50, chunks of 10 (5 calls)
-uv run python src/main.py --limit=10               # run 1 only: P001–P010
-uv run python src/main.py --limit=10 --offset=10   # run 2: P011–P020 (no re-run of earlier chunks)
+```
+src/         pipeline modules (schema, extract, config, main, pipeline, EDA, referral analysis)
+tests/       pytest suite + the quality-gate script
+data/        in/ committed input (interviews + gold) - out/ generated artefacts - prompts/
+docs/        SOLUTION (the data-generated write-up), SYSTEM_DESIGN, SCHEMA, and design notes
+config.json  single source of truth for runtime values
 ```
 
-| Flag | Default | Purpose |
-|----|----|----|
-| `--model` | gemini/gemini-2.5-flash | swap model (Gemini ↔ local Ollama, e.g. `ollama_chat/qwen3:30b-a3b`) |
-| `--limit` | all | slice size — run one chunk for testing / incremental runs |
-| `--offset` | `0` | which slice — incremental runs without redoing earlier chunks |
-| `--chunk-size` | `10` | transcripts per API call |
-| `--out-dir` | `data/out` | route test runs to `data/out/tests` so they don’t clobber production |
-
-The post-extraction EDA (this README’s tables/plots) is generated by
-`uv run quarto render README.qmd`, which reads only `data/out/` —
-**independent of the Gemini API**. Each chunk persists its predictions
-(one JSON per patient) as soon as it validates, so a completed chunk is
-durable and `--offset` lets you resume/retry without re-spending calls.
-Per-call telemetry (tokens, cost) is logged to `logs/extract.log`.
-
-### Referral-pathway graphs
-
-Generate the per-case journey graphs + phase/transition tables behind Q4
-(reads the pathways, no API call):
-
-``` bash
-uv run python src/referral_pathway_analysis.py   # writes data/out/html/referral_pathway_P*.html
-```
-
-### Rebuild the answers doc
-
-``` bash
-uv run quarto render README.qmd                  # regenerate README.md (gfm) + README.html from data/out/
-```
-
-### Development — quality gate
-
-Run the manual gate on every code change (no pre-commit hooks, by design
-— see `CLAUDE.md`):
-
-``` bash
-bash tests/type_lint_unit_tests.sh   # ruff check + ruff format --check + ty check + pytest (src + tests)
-```
-
-…or the individual tools:
-
-``` bash
-uv run ruff check src tests                            # lint
-uv run ruff format src tests                           # auto-format
-uv run ty check src tests                              # type-check (Rust-based; not mypy)
-uv run pytest -q                                       # unit tests
-RUN_RENDER_TEST=1 uv run pytest tests/test_render.py   # gated end-to-end render smoke test
-```
-
-### Docsite (API reference)
-
-Preview the mkdocstrings API site locally — it regenerates from the
-docstrings on every build:
-
-``` bash
-uv run mkdocs serve -a localhost:8000   # live preview at http://localhost:8000 (port: config.json → docsite_port)
-uv run mkdocs build   # render the static site to site/ (gitignored)
-```
-
-## Data handling & privacy
-
-> ⚠️ **This repo commits `data/in/` and `data/out/` (model inputs and
-> outputs) to git — which you should NOT do in a production system.**
-> Real patient interview data and extracted records are **personal /
-> special-category health data** under GDPR and must never be pushed to
-> GitHub or any external version control — PII exposure, data-residency,
-> retention, and access-control all forbid it.
->
-> It is acceptable **here only** because the dataset is **synthetic**,
-> the repo is **private**, and committing the data + outputs makes this
-> **internal job-interview take-home auditable** end-to-end by the
-> reviewer. In production, inputs/outputs would live in secure storage
-> under a data-processing agreement and **only code** would be
-> version-controlled. See [docs/QUESTIONS.md](docs/QUESTIONS.md) \#7.
-
-## Requirements
-
-Dev environment requirements and setup — Python 3.14 (via uv), a
-`GEMINI_API_KEY`, and the VS Code + Claude Code extension diff-review
-workflow — are documented once in
-[docs/DEV_SETUP.md](docs/DEV_SETUP.md); this README only links there to
-avoid duplication.
-
-## Docs & further reading
-
-Project instructions are in [CLAUDE.md](CLAUDE.md); the rest lives in
-[`docs/`](docs/):
-
-*Design & decisions*
-
-- [SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) — architecture diagram: the
-  Dagster asset graph + the library-first CLI/gate relation.
-- [SCHEMA.md](docs/SCHEMA.md) — the ground-truth annotation schema and
-  the Pydantic-model rationale.
-- [QUESTIONS.md](docs/QUESTIONS.md) — outstanding questions for the CAIO
-  (assumptions needing a domain decision).
-- [HYPOTHESES.md](docs/HYPOTHESES.md) — early hypotheses about the data
-  and the disease journey.
-
-*Process & operations*
-
-- [DEV_SETUP.md](docs/DEV_SETUP.md) — local dev setup: uv, the Jupyter
-  kernel, Dagster (`dg`), the quality gate.
-- [TODO.md](docs/TODO.md) — deferred engineering tasks + the *Tomorrow —
-  pre-interview* checklist (the clean `temperature=0` re-run).
-- [TELEMETRY.md](docs/TELEMETRY.md) — per-call API telemetry (tokens,
-  cached tokens, cost, latency) and how to read it.
-- [TO_REVIEW.md](docs/TO_REVIEW.md) — the manual gold-set edge-case
-  audit (the churn false-positive / false-negative findings).
-- [DEBUGGING_ERROR_HANDLING.md](docs/DEBUGGING_ERROR_HANDLING.md) —
-  debugging notes + error-handling behaviour seen in development.
-
-*Reference*
-
-- [RESOURCES.md](docs/RESOURCES.md) — external references (Crohn’s
-  pathways, biologics).
-- [TASK_INSTRUCTIONS.md](docs/TASK_INSTRUCTIONS.md) — the original Mama
-  Health challenge brief.
-
-### Browse the docs locally (MkDocs)
-
-`docs/` plus an auto-generated `src/` API reference render as a small
-site via [MkDocs](https://www.mkdocs.org/) + mkdocstrings:
-
-``` bash
-uv run mkdocs serve -a localhost:8000     # live preview at http://localhost:8000 (hot-reloads; port: config.json → docsite_port)
-uv run mkdocs build     # render the static site to site/ (git-ignored)
-```
-
-`mkdocs build` is wired as the `docsite` asset, which depends on
-`referral_pathways_md` so the journey gallery is re-rendered from the
-latest predictions before the site is built (see
-[SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md)).
-
-## Project layout
-
-``` text
-.
-├── src/                              # pipeline library (imported by BOTH Dagster + the CLI)
-│   ├── config.py                     #   central config loader (reads config.json)
-│   ├── schema.py                     #   Pydantic models + enums (PatientLabels, …)
-│   ├── extract.py                    #   the Gemini call — chunked, structured-output, temperature=0
-│   ├── main.py                       #   fire CLI: load → run_chunked → persist
-│   ├── pipeline.py                   #   Dagster assets: interviews → predictions → readme/graphs/pathways-md → docsite
-│   ├── post_extraction_eda.py        #   pure analysis fns over data/out (power the README + tests)
-│   └── referral_pathway_analysis.py  #   per-case journey graphs + the gallery index.html
-├── tests/                            # pytest suite + the quality gate
-│   ├── test_*.py
-│   └── type_lint_unit_tests.sh       #   ruff + ruff format + ty + pytest (the gate)
-├── data/                             # in/ static input (interviews.json + gold .ods) · out/ generated artefacts (json · html · plots) · prompts/
-├── docs/                             # design notes + the MkDocs docsite source (above)
-├── notebooks/                        # jupytext-paired prototyping (.py is the edit source)
-├── sandbox/                          # one-off scripts kept as a dev record (gold-set builders)
-├── logs/                             # loguru run logs (extract · referral · dagster) + litellm debug
-├── config.json                       # single source of truth for params (model, temperature, paths…)
-├── pyproject.toml / uv.lock          # uv-managed deps + lockfile
-├── mkdocs.yml                        # docsite config
-└── README.qmd → README.md            # this report (edit the .qmd, render to .md)
-```
+Further reading: [docs/SOLUTION.md](docs/SOLUTION.md) (the full solution),
+[docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) (architecture),
+[docs/SCHEMA.md](docs/SCHEMA.md) (the annotation schema), [CHANGELOG.md](CHANGELOG.md) (what changed
+between runs), and [docs/TODO.md](docs/TODO.md) (next steps).

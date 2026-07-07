@@ -15,7 +15,7 @@
   ],
   "comorbid_conditions": [
     "OTHER",
-    "HYPERTENSION"
+    "OTHER"
   ],
   "treatment_records": [
     {
@@ -29,7 +29,7 @@
       "name": "Budesonide",
       "treatment_class": "corticosteroid",
       "outcome": "PARTIAL",
-      "reason_stopped": null,
+      "reason_stopped": "long-term steroids not option",
       "biologic_timing": "BEFORE"
     },
     {
@@ -58,7 +58,8 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
-    "diagnostic_delay",
+    "misdiagnosis",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "conventional_therapy",
@@ -66,9 +67,11 @@
     "adverse_reaction",
     "conventional_therapy",
     "adverse_reaction",
+    "patient_fear",
     "biologic_taken",
     "comorbidity",
-    "unresolved"
+    "unresolved",
+    "planning_next_step"
   ],
-  "evidence_notes": "Robert, 61, was diagnosed with Crohn's five years ago, but likely had it longer. He also has COPD and peripheral neuropathy. He experienced misdiagnosis for years before his Crohn's diagnosis at 56. He started with mesalamine, then budesonide, and then azathioprine, which caused liver issues. Methotrexate caused unbearable fatigue. He initially resisted biologics due to lung disease but started Remicade a year ago, which has shown noticeable improvement. He is dealing with neuropathy, restricted diet, and the impact of his illness on his retirement and family. He is discussing adding an immunomodulator to Remicade."
+  "evidence_notes": "Robert, 61, was diagnosed with Crohn's five years ago, but likely had it longer. He also has COPD and peripheral neuropathy. He experienced symptoms in his mid-fifties, initially misdiagnosed as IBS and diverticulitis. He was diagnosed with Crohn's at 56. He tried mesalamine, budesonide, azathioprine (stopped due to liver issues), and methotrexate (stopped due to unbearable fatigue). He resisted biologics due to fears of immune suppression with lung disease, but eventually started Remicade a year ago. He has seen noticeable improvement but is not great. He is also dealing with neuropathy and a complicated diet. He is considering adding an immunomodulator to Remicade."
 }

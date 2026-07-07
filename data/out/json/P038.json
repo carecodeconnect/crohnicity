@@ -14,6 +14,7 @@
     "BIOLOGIC_TAKEN"
   ],
   "comorbid_conditions": [
+    "OTHER",
     "OTHER"
   ],
   "treatment_records": [
@@ -27,7 +28,7 @@
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "SUCCESS",
+      "outcome": "FAILED",
       "reason_stopped": "stopped working",
       "biologic_timing": "LATER"
     },
@@ -43,8 +44,8 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
+    "adverse_reaction",
     "diagnostic_delay",
-    "comorbidity",
     "crohns_diagnosis",
     "biologic_taken",
     "loss_of_response",
@@ -53,5 +54,5 @@
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "Daniel, 37, has had Crohn's for ten years. He also has ankylosing spondylitis (AS) and chronic kidney disease. He was initially misdiagnosed and took NSAIDs for AS, which damaged his kidneys. He was diagnosed with both Crohn's and AS and started Remicade, which initially worked. When Remicade stopped working, he switched to Humira, which was less effective. He is now on disability, divorced, and living alone. He is struggling with conflicting advice from specialists and the impact of his illnesses on his life. He is considering surgery for Crohn's and is being offered Stelara."
+  "evidence_notes": "Daniel, 37, has had Crohn's for ten years. He also has ankylosing spondylitis (AS) and chronic kidney disease. He was initially prescribed NSAIDs for back pain, which damaged his kidneys. He was diagnosed with both Crohn's and AS. He started Remicade for both conditions, which worked initially but then stopped. He switched to Humira, which was less effective. He is struggling with quality of life, work, and relationships. He is on disability and is divorced. He is considering surgery for Crohn's but is concerned about recovery with AS. His doctor wants to try Stelara, but his kidney doctor is reluctant."
 }

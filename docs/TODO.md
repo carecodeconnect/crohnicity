@@ -7,11 +7,11 @@ enforcement waits until we understand what to test and what to validate.
 ## Extraction run — status
 
 `data/out/` is the **final `temperature = 0` snapshot**: all 50 predictions regenerated in one clean
-run and the README re-renders from that consistent set (the provisional-run note in README → *Answers*
+run and the SOLUTION write-up re-renders from that consistent set (the provisional-run note in SOLUTION → *Answers*
 has been removed).
 
 - [x] **Clean `temperature = 0` full re-run.** All 50 predictions regenerated at `temperature = 0`
-  (deterministic) from one run; `README.md` re-rendered from the consistent set.
+  (deterministic) from one run; `docs/SOLUTION.md` re-rendered from the consistent set.
 - [ ] **EDA plot P-id clarity** (the *EDA plot clarity* items in the final-sweep section below). The
   Q2 `(null)→unspecified` and Q3 biologic-mislabel **prompt fixes are now in
   `data/prompts/system.txt`** and `data/out/` **was regenerated and reflects them** (P047 =
@@ -33,7 +33,7 @@ here, not changed silently.
   *every* field in `PatientLabels` — not just `churn`, `biologic_timing`, `referral_pathway` — so
   each label (biologic funnel, reasons, comorbidities, treatment outcomes, demographics) is
   populated deliberately rather than left to the model's defaults. Single prompt for this version;
-  the concurrent multi-prompt split is a post-completion idea (README → Next Steps) — and the place
+  the concurrent multi-prompt split is a post-completion idea (SOLUTION → Next Steps) — and the place
   where *explicit, inspectable* chain-of-thought earns its keep: it fixes the single-shot
   attention-competition behind shaky `churn`/`referral_pathway`/`biologic_timing` **and** gives a
   reviewer auditable intermediates, as opposed to the *opaque* internal thinking now disabled
@@ -74,30 +74,30 @@ extract the logic into proper Python modules.
 - [x] Keep notebooks as thin exploration/drivers that import from `src/`, not as the source of truth.
 - [x] Mirror the module layout with `pytest` unit tests under `tests/` — this is the prerequisite for the Tests section below.
 
-## Post-extraction EDA — extract `README.qmd` chunks into `src/post_extraction_eda.py`
+## Post-extraction EDA — extract `docs/SOLUTION.qmd` chunks into `src/post_extraction_eda.py`
 
 The post-extraction EDA is a distinct **phase**: it runs *after* the inference loop and reads only
 the persisted artefacts in `data/out/` (the validated predictions, plus `_v7.ods` for the gold
-eval) — no Gemini calls. Its logic currently lives inline in the `README.qmd` `{python}` cells, so
+eval) — no Gemini calls. Its logic currently lives inline in the `docs/SOLUTION.qmd` `{python}` cells, so
 it can't be reused anywhere else or unit-tested.
 
-- [x] **Move each `README.qmd` code cell into a reusable function** in `src/post_extraction_eda.py`
+- [x] **Move each `docs/SOLUTION.qmd` code cell into a reusable function** in `src/post_extraction_eda.py`
   — e.g. `load_predictions(out_dir) -> DataFrame`, `q1_share(df)`, `gold_eval(df, gold)`,
   `q2_reasons(df)`, `q3_before_biologic(records)`, `q4_steps(records)`, `churn_three_state(df)`.
   Pure functions over the `data/out/` artefacts — **reusable anywhere** (notebooks, the QMD, tests,
   a future Dagster asset).
-- [x] **The QMD cells then just import and call** these functions, so `README.qmd` holds only
+- [x] **The QMD cells then just import and call** these functions, so `docs/SOLUTION.qmd` holds only
   presentation (tables/plots/prose) and `src/` holds the computation — the same notebooks→`src/`
   split (above) applied to the report.
 - [x] **Cover the functions with `pytest`** (now importable + deterministic over fixed artefacts) and
   bring them under the `tests/type_lint_unit_tests.sh` gate (`tests/test_post_extraction_eda.py`).
 - [ ] **Plot the eval metrics.** Add a **precision / recall / F1** (and accuracy) bar plot beside the
-  Q1 gold-eval table in `README.qmd`, driven by `gold_eval(df)` — same plotnine treatment as the
+  Q1 gold-eval table in `docs/SOLUTION.qmd`, driven by `gold_eval(df)` — same plotnine treatment as the
   Q2–Q4 charts — so the eval is visual, not just a table.
 - [ ] **Visualise gold coverage + its uncertainty.** A plot showing only **21/50** patients are
   manually gold-scored (the `to_review` reviewed set; 20 with a non-null `biologic_taken`) vs the **~29/50**
   with **unknown** ground truth, plus a **confidence interval** on the implied at-scale accuracy
-  (e.g. a Wilson / binomial CI, or bootstrap, on the 20-case metrics) — so the README's *sampling
+  (e.g. a Wilson / binomial CI, or bootstrap, on the 20-case metrics) — so the SOLUTION's *sampling
   uncertainty* caveat is **quantified and shown**, not merely asserted.
 
 ## Tests — once we have a mental model of what to test
@@ -151,7 +151,7 @@ keep the batch going where sensible, but make every failure visible and countabl
 - [x] **Pin `temperature=0`** (greedy) on the `litellm.completion` calls in `src/extract.py` (`TEMPERATURE`
   from `config.json`), to minimise extraction sampling variance, and the clean re-run regenerated
   `data/out/` at that setting. Structured-output mode + the persisted `data/out/` artefacts are the
-  hard reproducibility guarantee (see README → Extraction Pipeline → Determinism); a `seed` would add
+  hard reproducibility guarantee (see SOLUTION → Extraction Pipeline → Determinism); a `seed` would add
   belt-and-braces but isn't wired (with reasoning disabled, `0` already minimises drift).
 
 ## Reference data — canonical lookup lists
@@ -209,20 +209,20 @@ committed** input — the `interviews` source asset always reads it as-is; the p
 re-downloads or re-fetches** it. So there is **no Dagster sensor/schedule** watching for new data;
 the full run is **manual / on-demand** (materialise the assets in the UI). A sensor/schedule only
 earns its place once the input becomes *dynamic* — e.g. new transcripts arriving via the FastAPI
-endpoint in the README's Next Steps.
+endpoint in the SOLUTION's Next Steps.
 
 - [ ] **Per-stage dependency graph for failure visibility.** `src/pipeline.py` is a minimal start
   (`interviews` → `predictions`). Expand to distinct assets/ops at **each stage — data ingestion →
   transformation → model call → schema validation** — so a failure is pinpointed at *any* point,
   ideally per-patient (the UI shows which transcript failed where, not just the whole batch).
 - [x] Wire the pipeline with **Dagster**. `src/pipeline.py` runs the graph
-  `interviews -> predictions -> {referral_graphs, readme, referral_pathways_md -> docsite}`, with
+  `interviews -> predictions -> {referral_graphs, solution, referral_pathways_md -> docsite}`, with
   `referral_pathway_analysis` (the `referral_graphs` asset) downstream of `predictions` so the
   phase/transition table and the interactive journey graphs are regenerated from the latest pathways
   on every run. The script now reads the `referral_pathway` lists from the persisted predictions
   (`data/out/json/P*.json`) — the hardcoded `PATHWAYS` dict is gone.
-- [x] **Doc/report artifacts as final assets (orchestrated).** The **README render**
-  (`quarto render README.qmd`), the **referral graphs**, and **`referral_pathways_md`**
+- [x] **Doc/report artifacts as final assets (orchestrated).** The **SOLUTION render**
+  (`quarto render docs/SOLUTION.qmd`), the **referral graphs**, and **`referral_pathways_md`**
   (`quarto render docs/referral_pathways.qmd`) are downstream assets of `predictions` (they read
   `data/out/`). The **docsite** (`mkdocs build`) **depends on `referral_pathways_md`** — *not* an
   independent asset — because the journey gallery (`docs/referral_pathways.md`) is rendered from the
@@ -255,9 +255,9 @@ scaling EDA**.
 
 ## Reporting — Quarto → GFM
 
-- [x] **`README.qmd` business answers.** `README.qmd` **dynamically generates the plots and tables**
+- [x] **`docs/SOLUTION.qmd` business answers.** `docs/SOLUTION.qmd` **dynamically generates the plots and tables**
   answering the four PharmaCorp questions (Q1–Q4) — with the per-case `referral_pathway` diagrams —
-  by importing `src/post_extraction_eda.py`, and renders to **GitHub-flavoured markdown** (`README.md`,
+  by importing `src/post_extraction_eda.py`, and renders to **GitHub-flavoured markdown** (`docs/SOLUTION.md`,
   Q1 = 74% / 37-of-50) via `quarto render`. A static, version-controlled answers doc that refreshes
   from the latest predictions.
 - [x] **System-design diagram.** `docs/DESIGN.qmd` was renamed to **`docs/SYSTEM_DESIGN.qmd`** (rendered
@@ -265,7 +265,7 @@ scaling EDA**.
   **Dagster / `uv run` relation**: `uv run dg dev -m pipeline -d src` is the orchestrating entry point,
   while `uv run python src/main.py` (CLI) and the `.sh` gate run the *same* `src/` functions
   **standalone** (library-first, not nested); static `data/in/interviews.json` input → no sensor. It is
-  **linked from `README.qmd`** (multiple places), and the draft's stale bits (title, `_v7.ods`, the
+  **linked from `docs/SOLUTION.qmd`** (multiple places), and the draft's stale bits (title, `_v7.ods`, the
   Dagster asset graph) are fixed.
 
 ## Packaging — Docker
@@ -282,15 +282,15 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
 - [x] **Centralise config in a `config.json`.** Every setting is loaded via `src/config.py` from one
   `config.json` (model default, gold path/version `_v7.ods`, the `interviews.json` path, `data/out/`
   locations, `chunk_size`, retry, ports, `max_tokens`, `temperature`), imported across `extract.py` /
-  `main.py` / `pipeline.py` / `post_extraction_eda.py` / `referral_pathway_analysis.py` / `README.qmd`.
+  `main.py` / `pipeline.py` / `post_extraction_eda.py` / `referral_pathway_analysis.py` / `docs/SOLUTION.qmd`.
   The app version is sourced from `pyproject.toml` via `config.APP_VERSION`. A single source of truth.
 - [ ] **Kill redundancy + fix drift.** Version drift **resolved** — the schema version lives once in
-  `SCHEMA.md`, the mkdocs nav + README dropped the duplicate, and the app version is sourced from
+  `SCHEMA.md`, the mkdocs nav + SOLUTION dropped the duplicate, and the app version is sourced from
   `pyproject.toml` via `config.APP_VERSION`; `_v3`/`_v4` mentions bumped to `_v7`; `DESIGN.qmd` →
   `SYSTEM_DESIGN.qmd`. Remaining: scan for any duplicated setup text / drifted docstrings before the final build.
 - [ ] **Every TODO item addressed** (this file) — each one done, or consciously moved to
-  README → *Next Steps* as post-MVP.
-- [ ] **Every question answered** — cross-check `docs/TASK_INSTRUCTIONS.md` *and* `README.qmd`: all
+  SOLUTION → *Next Steps* as post-MVP.
+- [ ] **Every question answered** — cross-check `docs/TASK_INSTRUCTIONS.md` *and* `docs/SOLUTION.md`: all
   four business questions *and* the schema / pipeline / evaluation dev-questions carry a written
   answer (no prompt-only sections left). This is the last gate before CAIO handover.
 - [x] **Docsite builds complete.** `uv run mkdocs build` covers *all* `src/` modules + tests via
@@ -310,7 +310,7 @@ The last pass before finalising, **after** the pipeline runs end-to-end. Do **al
   (`gh repo view --json visibility`) and the **`.gitignore` is correct** — `.env` (the only secret,
   `GEMINI_API_KEY`), `.venv/`, `site/`, and the Dagster run-state (`logs/dagster/*` except
   `dagster.yaml`) are all ignored, and `git ls-files` lists no credentials or unintended files. The
-  synthetic `data/in` / `data/out` are committed *deliberately* — see README → *Data handling & privacy*.
+  synthetic `data/in` / `data/out` are committed *deliberately* — see SOLUTION → *Data handling & privacy*.
 
 ## Polish
 

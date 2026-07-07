@@ -14,20 +14,21 @@
     "BIOLOGIC_TAKEN"
   ],
   "comorbid_conditions": [
+    "OTHER",
     "OTHER"
   ],
   "treatment_records": [
     {
       "name": "Mesalamine",
       "treatment_class": "5-asa",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": null,
       "biologic_timing": "BEFORE"
     },
     {
       "name": "Prednisone",
       "treatment_class": "corticosteroid",
-      "outcome": "PARTIAL",
+      "outcome": "FAILED",
       "reason_stopped": null,
       "biologic_timing": "BEFORE"
     },
@@ -70,14 +71,19 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
+    "specialist_referral",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "conventional_therapy",
     "biologic_taken",
     "comorbidity",
+    "complication",
     "biologic_switch",
+    "conventional_therapy",
+    "conventional_therapy",
     "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "Ashley, 30, was diagnosed with Crohn's at 16. She also has primary sclerosing cholangitis (PSC) and autoimmune hepatitis. She started with mesalamine and prednisone. At 17, she started Remicade, which worked for several years. At 22, she was diagnosed with PSC and autoimmune hepatitis. She is now on Ursodiol for PSC, prednisone and azathioprine for autoimmune hepatitis, and Entyvio for Crohn's. She is experiencing unbearable fatigue, recently broke up with her boyfriend, and is facing financial and insurance challenges. She is looking into clinical trials and discussing transplant timeline."
+  "evidence_notes": "Ashley, 30, was diagnosed with Crohn's at 16. She also has primary sclerosing cholangitis (PSC) and autoimmune hepatitis. She started with mesalamine and prednisone. At 17, she started Remicade, which worked well for several years. At 22, she was diagnosed with PSC and autoimmune hepatitis. She is now on Ursodiol for PSC, prednisone and azathioprine for autoimmune hepatitis, and Entyvio for Crohn's. She is experiencing unbearable fatigue and is struggling with work and relationships. She is facing the possibility of a liver transplant and is concerned about financial stability. She is looking into clinical trials."
 }

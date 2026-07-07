@@ -64,7 +64,9 @@
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
-    "planning_next_step"
+    "biologic_recommended",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Julie, 35, female, diagnosed with Crohn's at 28. Also has severe endometriosis and chronic migraines. Started on prednisone and mesalamine. Then Remicade, which worked for four years. Now on Stelara, which is 60% effective. Doctor wants to try Stelara plus methotrexate. She is considering clinical trials."
+  "evidence_notes": "Julie, 35, was diagnosed with Crohn's at 28. She also has severe endometriosis and chronic migraines. She was initially treated with prednisone and mesalamine, then Remicade, which worked for four years before it stopped. She is currently on Stelara, which provides about 60% improvement. Her doctor wants to try combination therapy with Stelara and methotrexate next. She is struggling with the impact of her conditions on her career, personal life, and finances."
 }

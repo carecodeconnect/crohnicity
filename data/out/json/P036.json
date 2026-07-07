@@ -1,6 +1,6 @@
 {
   "patient_id": "P036",
-  "churn": true,
+  "churn": false,
   "demographics": {
     "gender": "Male",
     "age": 48
@@ -15,7 +15,7 @@
   ],
   "comorbid_conditions": [
     "OTHER",
-    "RHEUMATOID_ARTHRITIS"
+    "OTHER"
   ],
   "treatment_records": [
     {
@@ -37,12 +37,14 @@
   "referral_pathway": [
     "symptom_onset",
     "misdiagnosis",
+    "diagnostic_testing",
     "crohns_diagnosis",
     "biologic_taken",
     "insurance_denial",
     "relapse",
+    "insurance_approval",
     "unresolved",
     "planning_next_step"
   ],
-  "evidence_notes": "William, 48, was diagnosed with Crohn's three years ago. He also has severe psoriasis and psoriatic arthritis. He spent two years trying different NSAIDs before his Crohn's diagnosis. He had already failed two biologics for psoriasis. He started Stelara, which helped both conditions somewhat. However, his insurance denied renewal, leading to a flare. He is struggling with physical work, financial issues, and depression. He is considering adding methotrexate to Stelara or switching biologics again."
+  "evidence_notes": "William, 48, was diagnosed with Crohn's three years ago. He also has severe psoriasis and psoriatic arthritis. He spent two years trying different NSAIDs for his arthritis before being diagnosed with Crohn's. He had already failed two biologics for psoriasis. He started on Stelara, which helped both conditions somewhat. However, his insurance denied renewal after a year, leading to a flare. He is struggling with physical work, financial issues, and depression. He is considering adding methotrexate to Stelara or switching biologics again."
 }

@@ -36,12 +36,13 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "acute_flare",
+    "complication",
     "surgery",
     "crohns_diagnosis",
     "conventional_therapy",
     "conventional_therapy",
-    "biologic_recommended"
+    "biologic_recommended",
+    "unresolved"
   ],
-  "evidence_notes": "Larry, 56, male, diagnosed with Crohn's three weeks ago after emergency surgery. Also has diabetes and heart disease. Started on mesalamine and antibiotics. Doctor wants biologics after he heals from surgery."
+  "evidence_notes": "Larry, 56, was diagnosed with Crohn's three weeks ago after emergency surgery to remove a blocked section of intestine. He also has diabetes and heart disease. He is currently on mesalamine and antibiotics. His doctor wants biologics after he heals from surgery. He is struggling with recovery, living alone, and mounting medical bills."
 }

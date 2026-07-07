@@ -35,7 +35,7 @@
     {
       "name": "methotrexate",
       "treatment_class": "immunomodulator",
-      "outcome": "FAILED",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "BEFORE"
     },
@@ -54,20 +54,20 @@
     "misdiagnosis",
     "acute_flare",
     "diagnostic_testing",
-    "specialist_referral",
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
     "conventional_therapy",
-    "therapy_failed",
+    "biologic_recommended",
+    "patient_fear",
     "alternative_therapy",
     "symptoms_worsen",
     "conventional_therapy",
     "adverse_reaction",
     "therapy_failed",
-    "biologic_recommended",
     "biologic_taken",
+    "patient_fear",
     "unresolved"
   ],
-  "evidence_notes": "Sophie, 22, was diagnosed with Crohn's six months ago during her senior year of college. She also has severe anxiety and a history of an eating disorder. She started with prednisone and mesalamine. Prednisone caused mood swings, so she tapered quickly. Mesalamine helped little. Her GI wanted to start methotrexate, but she negotiated trying diet changes first, which made her worse. She then started methotrexate, which caused terrible nausea and weight loss. Methotrexate was not enough, so she started Humira two months ago, but it's too early to tell if it's working. She has needle phobia from her ED treatment history. Her overall outcome is ongoing as she is still in the early stages of biologic treatment and managing multiple complex conditions."
+  "evidence_notes": "Sophie, 22, was diagnosed with Crohn's six months ago. She also has severe anxiety and a history of an eating disorder. She started with prednisone and mesalamine; prednisone caused mood swings. Mesalamine helped little. She initially resisted methotrexate due to side effects but eventually started it, experiencing terrible nausea and further weight loss. Methotrexate was not enough, so she started Humira two months ago. It's too early to tell if it's working, and she experiences panic attacks during injections due to needle phobia."
 }

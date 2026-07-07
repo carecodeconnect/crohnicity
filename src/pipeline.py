@@ -3,16 +3,17 @@ shows which stage failed in the UI.
 
     uv run dg dev -m pipeline -d src -p 3050     # UI at http://127.0.0.1:3050 (port: config.json -> dagster_port)
 
-Data flow: ``interviews -> predictions -> {readme, referral_graphs, referral_pathways_md -> docsite}``.
-``docsite`` (mkdocs) depends on ``referral_pathways_md`` because the journey gallery
-(``docs/referral_pathways.md``) is *rendered from the predictions*; the rest of the site documents
+Data flow: ``interviews -> predictions -> {solution, referral_graphs, referral_pathways_md} -> docsite``.
+``docsite`` (mkdocs) depends on ``referral_pathways_md`` + ``solution`` because both the journey
+gallery (``docs/referral_pathways.md``) and the solution write-up (``docs/SOLUTION.md``) are
+*rendered from the predictions*; the rest of the site documents
 the *source* docstrings. Extraction is **chunked** (``CHUNK_SIZE``
 transcripts/call) to fit the Gemini free-tier ~20-requests/day cap. The model comes from ``config``
 (``CROHNICITY_MODEL`` env var overrides ``config.json``). Input is the static committed
 ``data/in/interviews.json``, so there is **no sensor** — materialise on demand.
 
 **Local-only — never commits to git.** The assets only write artefacts to disk (predictions,
-README, graphs, docsite); publishing the updated artefacts to GitHub is a *separate, manual build
+the SOLUTION write-up, graphs, docsite); publishing the updated artefacts to GitHub is a *separate, manual build
 step* the human runs, not part of the orchestration.
 
 **Instance home.** Dagster reads its config from ``$DAGSTER_HOME/dagster.yaml`` — the canonical
@@ -31,7 +32,7 @@ import dagster as dg
 from loguru import logger
 
 # Dagster's `-f` loader doesn't add src/ to sys.path, so make the sibling modules importable here
-# (mirrors pytest's `pythonpath=[src]` and the README.qmd setup chunk).
+# (mirrors pytest's `pythonpath=[src]` and the docs/SOLUTION.qmd setup chunk).
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import referral_pathway_analysis as rpa  # noqa: E402
@@ -64,10 +65,10 @@ def referral_graphs() -> None:
 
 
 @dg.asset(deps=[predictions])
-def readme() -> None:
-    """Post-extraction EDA report: quarto render -> README.md/html + plots (reads data/out)."""
+def solution() -> None:
+    """Solution write-up: quarto render docs/SOLUTION.qmd -> docs/SOLUTION.md/html + plots (reads data/out)."""
     subprocess.run(
-        ["uv", "run", "quarto", "render", "README.qmd"], cwd=ROOT, check=True
+        ["uv", "run", "quarto", "render", "docs/SOLUTION.qmd"], cwd=ROOT, check=True
     )
 
 
@@ -82,10 +83,10 @@ def referral_pathways_md() -> None:
     )
 
 
-@dg.asset(deps=[referral_pathways_md])
+@dg.asset(deps=[referral_pathways_md, solution])
 def docsite() -> None:
-    """mkdocs site -> site/. Depends on referral_pathways_md so the data-derived journey gallery is
-    freshly rendered before mkdocs copies it; the rest of the site documents source docstrings."""
+    """mkdocs site -> site/. Depends on referral_pathways_md + solution so the data-derived journey
+    gallery and the SOLUTION write-up are freshly rendered before mkdocs copies them."""
     subprocess.run(["uv", "run", "mkdocs", "build"], cwd=ROOT, check=True)
 
 
@@ -94,7 +95,7 @@ defs = dg.Definitions(
         interviews,
         predictions,
         referral_graphs,
-        readme,
+        solution,
         referral_pathways_md,
         docsite,
     ]

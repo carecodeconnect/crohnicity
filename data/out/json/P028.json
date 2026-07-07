@@ -43,19 +43,19 @@
   "referral_pathway": [
     "symptom_onset",
     "diagnostic_delay",
-    "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
     "comorbidity",
     "adverse_reaction",
-    "conventional_therapy",
+    "alternative_therapy",
     "conventional_therapy",
     "biologic_recommended",
     "insurance_denial",
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
-    "unresolved"
+    "unresolved",
+    "planning_next_step"
   ],
-  "evidence_notes": "Thomas, 43, has had Crohn's for about six years and also deals with chronic kidney disease. He started with mesalamine, which helped initially, but he had to stop due to declining kidney function. He tried dietary management with some improvement. He then took budesonide, which helped somewhat but was not a long-term solution. His GI wants biologics, but his nephrologist is concerned about immune suppression. After much disagreement between specialists and three insurance denials, he was finally approved for Entyvio three months ago. It's too early to tell if it's working. His overall outcome is ongoing as he is navigating complex treatment decisions due to multiple comorbidities and is in the early stages of biologic therapy."
+  "evidence_notes": "Thomas, 43, has had Crohn's for about six years and also deals with chronic kidney disease. He started with mesalamine, which helped initially but then his kidney function declined, and he had to stop. He tried dietary management with some improvement. He then used budesonide, which helped somewhat but was not a long-term solution. His GI wants biologics, but his nephrologist is concerned about immune suppression. After four months of appeals, he was approved for Entyvio, which he started three months ago. It's too early to tell if it's working. He is discussing increasing Entyvio frequency."
 }

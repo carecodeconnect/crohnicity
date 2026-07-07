@@ -90,6 +90,7 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "comorbidity",
+    "therapy_failed",
     "conventional_therapy",
     "therapy_failed",
     "biologic_recommended",
@@ -104,5 +105,5 @@
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "James, 35, was diagnosed with severe Crohn's two years ago. He also has medication-induced diabetes and osteoporosis. He was hospitalized and started on IV steroids, which led to steroid-induced diabetes. He then took high-dose prednisone, followed by azathioprine, which helped minimally. His GI pushed for biologics, and he started Remicade after a four-month insurance battle. Remicade worked for a year, then he developed antibodies. He switched to Humira, which was 60% effective, and added methotrexate, which caused nausea and hair thinning. He is now on calcium, vitamin D, and bisphosphonates for osteoporosis. He is considering Stelara or Entyvio next. His overall outcome is ongoing as he is still managing his conditions and considering future treatments."
+  "evidence_notes": "James, 35, was diagnosed with severe Crohn's two years ago. He also has medication-induced diabetes and osteoporosis from steroids. He was hospitalized and started on IV steroids, which led to diabetes. He then took high-dose prednisone, followed by azathioprine, which helped minimally. His GI pushed for biologics, and he started Remicade after a four-month insurance appeal. Remicade worked for a year, then he developed antibodies. He switched to Humira, which provides about 60% improvement. Methotrexate was added, and he experienced nausea and hair thinning. He is now on calcium, vitamin D, and bisphosphonates for osteoporosis. If the Humira/methotrexate combo fails, the next step is Stelara or Entyvio. Surgery is a looming possibility."
 }

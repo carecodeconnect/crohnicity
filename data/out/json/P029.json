@@ -49,7 +49,7 @@
     {
       "name": "Remicade",
       "treatment_class": "biologic",
-      "outcome": "FAILED",
+      "outcome": "PARTIAL",
       "reason_stopped": null,
       "biologic_timing": "LATER"
     },
@@ -62,7 +62,7 @@
     },
     {
       "name": "Synthroid",
-      "treatment_class": "hormone replacement",
+      "treatment_class": "hormone",
       "outcome": "ONGOING",
       "reason_stopped": null,
       "biologic_timing": "LATER"
@@ -78,16 +78,17 @@
   "treatment_outcome": "ONGOING",
   "referral_pathway": [
     "symptom_onset",
-    "diagnostic_delay",
+    "symptoms_worsen",
     "diagnostic_testing",
     "crohns_diagnosis",
     "conventional_therapy",
+    "therapy_failed",
     "conventional_therapy",
+    "adverse_reaction",
     "conventional_therapy",
     "loss_of_response",
     "conventional_therapy",
     "adverse_reaction",
-    "biologic_recommended",
     "biologic_taken",
     "loss_of_response",
     "biologic_switch",
@@ -98,8 +99,9 @@
     "insurance_appeal",
     "insurance_approval",
     "biologic_taken",
+    "alternative_therapy",
     "planning_next_step",
     "unresolved"
   ],
-  "evidence_notes": "Linda, 38, has had Crohn's for twelve years. She also has thyroid disease and chronic migraines. She started with mesalamine, then prednisone for flares, which caused 50 pounds of weight gain. Azathioprine worked for two years, then stopped. Methotrexate caused hair loss. She started Remicade five years ago, then switched to Humira after Remicade failed. Humira was less effective (60% improvement). She developed thyroid disease and takes Synthroid. She is currently on Stelara, which was approved after six months of appeals and is working \"okay, not great.\" She is discussing combo therapy with Stelara and something else. Her overall outcome is ongoing as she is managing multiple chronic conditions and seeking more effective treatment for her Crohn's."
+  "evidence_notes": "Linda, 38, has had Crohn's for twelve years and also has thyroid disease and chronic migraines. She started with mesalamine, then prednisone for flares, which caused weight gain. Azathioprine worked for two years, then stopped working. Methotrexate was added, causing hair loss. She started Remicade five years ago, then switched to Humira after Remicade failed. Humira was less effective, providing about 60% improvement. She then started Stelara, which was approved after six months of appeals and is working \"okay, not great, just okay.\" She is looking into fecal transplant trials and discussing combo therapy with Stelara plus something else."
 }

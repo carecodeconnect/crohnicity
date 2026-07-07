@@ -40,13 +40,6 @@
       "biologic_timing": "LATER"
     },
     {
-      "name": "Synthroid",
-      "treatment_class": "thyroid hormone",
-      "outcome": "PARTIAL",
-      "reason_stopped": null,
-      "biologic_timing": "UNKNOWN"
-    },
-    {
       "name": "Stelara",
       "treatment_class": "biologic",
       "outcome": "ONGOING",
@@ -65,9 +58,9 @@
     "loss_of_response",
     "biologic_switch",
     "conventional_therapy",
-    "loss_of_response",
-    "biologic_switch",
-    "planning_next_step"
+    "biologic_recommended",
+    "planning_next_step",
+    "unresolved"
   ],
-  "evidence_notes": "Sandra, 44, female, diagnosed with Crohn's twelve years ago. Also has Hashimoto's thyroiditis and osteoarthritis. Had surgery (resection). Started Remicade, which worked for five years, then developed antibodies. Tried Humira (60% effective), added methotrexate (75% effective). Now Humira is losing effectiveness and she is looking at Stelara next. Also discussing another surgery."
+  "evidence_notes": "Sandra, 44, was diagnosed with Crohn's twelve years ago. She also has Hashimoto's thyroiditis and osteoarthritis in her spine. She had a resection surgery, then started Remicade, which worked for five years before she developed antibodies. She then tried Humira, which provided moderate help (60%), and added methotrexate, which improved her to 75% functional. Humira is losing effectiveness, and her doctor is looking at Stelara next. She is also considering another surgery."
 }

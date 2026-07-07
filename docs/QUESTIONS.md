@@ -6,7 +6,7 @@ tracked separately as the domain-expert item in `docs/TODO.md`.)
 
 ## 1. What does "churn" mean?
 
-- **From the app?** — a user disengages from / stops using the Mama Health product.
+- **From the app?** — a user disengages from / stops using the product.
 - **From treatment?** — a patient disengages from medical care (stops treatment, lost to
   follow-up, abandons a clinician).
 - **Both / something else?**
@@ -16,17 +16,17 @@ This decides how `churn` is annotated and what it can measure. From the data rev
 P001–P050). If "churn" means *app* churn, the interview transcripts likely don't contain the
 signal at all — we'd need product/usage data instead.
 
-**Spec hint (README):** *"Some patients disengage partway through their interview — they churn —
+**Spec hint (SOLUTION):** *"Some patients disengage partway through their interview — they churn —
 leaving us with truncated journeys."* This frames churn as **disengaging partway through the
 interview itself** (a truncated transcript) — closer to our `incomplete_journey` notion (Q4) than
 to app/treatment churn.
 
-**Decision (v4):** we read the "interview" as the patient's interaction with the Mama Health app
+**Decision (v4):** we read the "interview" as the patient's interaction with the app
 (patients describe their doctors in the *third person*, so they're narrating to the app, not a
 clinician). So `churn` = disengagement from that interaction, which surfaces as a **truncated
 transcript**. Because that is the *same* signal as `incomplete_journey`, the two are **merged into
 a single `churn` flag** (`incomplete_journey` dropped in v4) — one honest flag beats two
-overlapping ones. See README "Churn"; CAIO confirmation still welcome.
+overlapping ones. See SOLUTION "Churn"; CAIO confirmation still welcome.
 
 ## 2. What is the source of the interview transcripts?
 
@@ -34,7 +34,7 @@ overlapping ones. See README "Churn"; CAIO confirmation still welcome.
   notes, synthetic / LLM-generated, or a mix?
 - This affects how much extracted detail we can trust and what biases to expect.
 
-**Partly answered (README):** the transcripts are **synthetic** ("50 synthetic interview
+**Partly answered (SOLUTION):** the transcripts are **synthetic** ("50 synthetic interview
 transcripts"), and patient stories are **collected longitudinally**, with some patients
 disengaging partway. Still open: *how* the interviews are administered/collected (self-report,
 clinician-led, app-based?) and what the synthetic generator modelled.
@@ -54,7 +54,7 @@ definition; the live schema is [`src/schema.py`](../src/schema.py)). **Still ope
 > **Resolved (v4):** `incomplete_journey` has been **merged into `churn`** and dropped as a separate
 > field. Under the app-interaction reading of "interview" (Q1), a truncated transcript *is* churn —
 > the same signal — so two overlapping flags added noise, not precision. Question retained for
-> context. See README "Churn".
+> context. See SOLUTION "Churn".
 
 - Where's the boundary? Some cases reach an apparent endpoint yet were flagged incomplete
   (e.g. **P045**), so the criterion is unclear — does "incomplete" mean the transcript cuts off
@@ -95,7 +95,7 @@ Before any **real** patient data enters the pipeline we need a decision on:
 - Where production inputs/outputs should live (secure storage, not version control), and what the
   **data-processing agreement** with the model provider must cover.
 
-**Interim stance:** the current data is synthetic, so it's committed to the private repo; README →
+**Interim stance:** the current data is synthetic, so it's committed to the private repo; SOLUTION →
 *Data handling & privacy* documents this and the production must-haves. The decisions above remain
 stakeholder / legal calls.
 

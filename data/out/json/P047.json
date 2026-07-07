@@ -5,7 +5,7 @@
     "gender": "Female",
     "age": 41
   },
-  "biologic_prescribed": true,
+  "biologic_prescribed": false,
   "biologic_taken": false,
   "biologic_not_mentioned": false,
   "biologic_type": null,
@@ -48,7 +48,8 @@
     "crohns_diagnosis",
     "conventional_therapy",
     "adverse_reaction",
-    "conventional_therapy"
+    "conventional_therapy",
+    "unresolved"
   ],
-  "evidence_notes": "Donna, 41, female, diagnosed with Crohn's five months ago after years of misdiagnosis. Also hypothyroid and battling depression. Started on prednisone (helped but gained 30 pounds) and mesalamine. Now trying methotrexate, which causes hair loss and nausea, but provides 30% improvement."
+  "evidence_notes": "Donna, 41, was diagnosed with Crohn's five months ago after years of misdiagnosis. She also has hypothyroidism and depression. She started on prednisone (helped but caused 30lb weight gain) and mesalamine. She is currently trying methotrexate, which causes hair loss and nausea, but provides about 30% improvement. She is hiding her symptoms at work and is worried about her upcoming review."
 }
