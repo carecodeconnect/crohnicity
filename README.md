@@ -1,4 +1,4 @@
-# Crohnicity: Mama Health Challenge
+# Crohnicity
 
 
 <!-- Source of truth: edit README.qmd, then `uv run quarto render README.qmd` to regenerate
