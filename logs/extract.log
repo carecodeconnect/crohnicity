@@ -4446,3 +4446,88 @@
 2026-07-07 19:29:52.104 | INFO     | extract:extract_batch:256 - extracted P048 -> /Users/shoutt/projects/mama_health/crohnicity/data/out/json/P048.json
 2026-07-07 19:29:52.104 | INFO     | extract:extract_batch:256 - extracted P049 -> /Users/shoutt/projects/mama_health/crohnicity/data/out/json/P049.json
 2026-07-07 19:29:52.105 | INFO     | extract:extract_batch:256 - extracted P050 -> /Users/shoutt/projects/mama_health/crohnicity/data/out/json/P050.json
+2026-07-07 19:49:16.599 | INFO     | extract:_log_request_config:82 - system prompt sent to model:
+Extract the structured labels from this Crohn's disease patient interview. Return only valid JSON matching the schema — no prose, no code fences. Use the schema's enum values exactly. Base every field only on what the transcript states: leave a field null or empty when the transcript does not support a confident value, except where a field's guidance below gives a default.
+
+patient_id: copy the value given in the message exactly.
+
+demographics: set gender and age only from what the patient self-reports; leave either null if not stated.
+
+churn: set true ONLY when the transcript breaks off mid-word or mid-thought with no resolution — a genuine cut-off signalling the interview was actually interrupted (e.g. it ends on "Chronic..." — an incomplete fragment with no following noun). A deliberately typed "..." on a grammatically complete or coherent phrase is an intentional trailing-off (the patient chose to type it), so set false even if the tone is downbeat or emotional — e.g. "...anything would be better than this...", "...I'm only 56...", "...not worry about mom..." all read as complete endings, NOT churn. Do NOT use whether "..." appears elsewhere in the transcript as a signal. Keep churn (the transcript was cut off) distinct from a topic merely being absent from an otherwise complete story (that is "not mentioned", not churn).
+
+biologic_prescribed: set true ONLY when the transcript states a biologic was actually prescribed, recommended, or offered. Do NOT infer it from disease severity, escalation, or an implied "next step" — if no biologic is named or discussed, set false.
+
+biologic_taken: set true only if the patient actually started or took a biologic (prescribed is not the same as taken).
+
+biologic_not_mentioned: set true when NO biologic is referenced anywhere — neither the word "biologic"/"biological" nor any named biologic (e.g. Humira, Remicade, Stelara, Entyvio, Skyrizi, Cimzia, Simponi, infliximab, adalimumab, ustekinumab, vedolizumab, risankizumab). When true, biologic_prescribed and biologic_taken are both false.
+
+biologic_type: name the biologic(s) mentioned, brand or generic (e.g. "Humira", "infliximab"); leave null when none.
+
+reasons_for_biologic_prescribed: who/what drove choosing the biologic. Use DOCTOR_CHOICE when the doctor recommended or chose it (the usual case), PATIENT_REQUEST when the patient asked for or advocated for it, OTHER for anything else, and NOT_APPLICABLE when no biologic was prescribed.
+
+reasons_for_biologic_not_taken: a LIST that is NEVER empty. When a biologic was prescribed or recommended but NOT taken, list every reason, most important first — a patient often has several (e.g. COST + PATIENT_FEARS). Reasons: NOT_MENTIONED, EXPLICIT_DENIAL, INSURANCE_PROBLEMS (denial / prior-auth / tier / step-therapy "fail first"), COST (affordability), PATIENT_FEARS, CONTRAINDICATION, DEFERRED, UNKNOWN, BIOLOGIC_TAKEN, NOT_APPLICABLE, OTHER. For the non-reason states use exactly one value: [BIOLOGIC_TAKEN] when a biologic WAS taken, [NOT_MENTIONED] when biologics never come up, [NOT_APPLICABLE] when none was ever prescribed or offered, [UNKNOWN] when one was prescribed but not taken with no reason stated. Never return an empty list.
+
+comorbid_conditions: list independent coexisting diagnoses using the enum tokens (e.g. HYPOTHYROIDISM, DEPRESSION, TYPE_2_DIABETES). Do NOT include Crohn's-driven sequelae (anemia, osteoporosis, psoriasis, etc.). Use OTHER for a real comorbidity with no token; leave the list empty if none.
+
+treatment_records: one entry per treatment the patient mentions, in order. For each give name, treatment_class (lowercase, e.g. corticosteroid, 5-asa, immunomodulator, biologic), outcome (the enum), and reason_stopped if stated. Also set biologic_timing on each treatment to place it relative to the patient's FIRST biologic: use BEFORE for treatments tried before that first biologic was started or offered (the conventional / step-up therapies); use LATER for the biologic itself — including one the patient actually took (e.g. Humira) and any later switch — and for anything tried after the first biologic (a biologic is never BEFORE a biologic); use NO_BIOLOGIC for every treatment when the patient never had a biologic prescribed, offered, or mentioned; use UNKNOWN only when a biologic exists but you cannot tell whether this treatment came before or after it.
+
+treatment_outcome: the overall patient-level outcome (SUCCESS, FAILED, PARTIAL, AMBIGUOUS, ONGOING, UNKNOWN). Use ONGOING when the journey is unresolved or still escalating, AMBIGUOUS when stated but mixed/contradictory, and UNKNOWN when not stated.
+
+referral_pathway: list the patient's journey as an ordered sequence of the canonical PathwayStep values. Treat it as an event log, NOT a deduplicated set: if a phase recurs — the patient relapses again, loses response to a second biologic, or switches biologics more than once — repeat that step each time it happens, in order. A patient who cycles through several biologics should show the loop, e.g. biologic_taken -> loss_of_response -> biologic_switch -> loss_of_response -> biologic_switch.
+
+evidence_notes: a short free-text summary of the patient's situation and the key evidence behind the labels above.
+2026-07-07 19:49:16.599 | INFO     | extract:_log_request_config:83 - response schema sent to model: {"$defs": {"BiologicTiming": {"description": "Where a treatment sits relative to the patient's FIRST biologic \u2014 the before/after split\nthat answers Q3. Replaces an overloaded `bool | None`: the old `null` had to mean both \"no\nbiologic exists to anchor the split\" and \"ordering unclear\", so it splits into the explicit\n`NO_BIOLOGIC` and `UNKNOWN`.", "enum": ["BEFORE", "LATER", "NO_BIOLOGIC", "UNKNOWN"], "title": "BiologicTiming", "type": "string"}, "ComorbidCondition": {"description": "Independent coexisting diagnoses only \u2014 NOT Crohn's-driven sequelae (psoriasis,\nosteoporosis, etc.). Lumping treatment/disease effects in here would make a later \"does\ncomorbidity X predict outcome Y\" analysis circular. Seeded from P001-P050; extend as found.", "enum": ["TYPE_2_DIABETES", "HYPERTENSION", "HYPERLIPIDEMIA", "ANXIETY_DISORDER", "DEPRESSION", "PCOS", "ENDOMETRIOSIS", "MIGRAINE", "HYPOTHYROIDISM", "FIBROMYALGIA", "ASTHMA", "RHEUMATOID_ARTHRITIS", "ADHD", "SLEEP_APNEA", "OTHER"], "title": "ComorbidCondition", "type": "string"}, "Demographics": {"description": "Self-reported gender/age, grouped so we can later test for demographic differences in\npathways/outcomes. The flat `gender`/`age` spreadsheet columns map into this sub-model.", "properties": {"gender": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Gender"}, "age": {"anyOf": [{"type": "integer"}, {"type": "null"}], "default": null, "title": "Age"}}, "title": "Demographics", "type": "object"}, "PathwayStep": {"description": "Canonical referral-pathway steps \u2014 the draft vocabulary already used to render the\nper-case journey graphs in `data/out/*.html` (mirrors the consolidated phases in\n`src/referral_pathway_analysis.py`). Values are lowercase to match those graph tokens.\n\nMinimal for this iteration: enough to type `referral_pathway` and drive the diagrams. A\ndedicated extraction prompt fills this field; the eventual goal is clustering these per-case\nchains into journey *types* (`docs/SCHEMA.md`). `OTHER` absorbs steps not yet in the vocab.", "enum": ["symptom_onset", "self_managed", "primary_care_contact", "misdiagnosis", "diagnostic_delay", "symptoms_worsen", "specialist_referral", "diagnostic_testing", "crohns_diagnosis", "conventional_therapy", "therapy_failed", "adverse_reaction", "relapse", "acute_flare", "complication", "surgery", "comorbidity", "biologic_recommended", "patient_fear", "insurance_denial", "insurance_appeal", "insurance_approval", "insurance_cost_barrier", "insurance_step_therapy", "biologic_not_taken", "biologic_taken", "biologic_switch", "loss_of_response", "remission", "breakthrough_symptoms", "alternative_therapy", "planning_next_step", "unresolved", "other"], "title": "PathwayStep", "type": "string"}, "ReasonNotTaken": {"description": "Why a prescribed biologic wasn't taken / wasn't reached.\n\n`PATIENT_FEARS` lives here (fear of needles/side-effects blocks *taking*, not prescribing);\n`CONTRAINDICATION` and `DEFERRED` were added from real cases (e.g. COPD risk; post-surgery).\n\nThe list is **never empty** \u2014 an empty list is indistinguishable from a missing value, losing\nthe \"we don't know\" vs \"doesn't apply\" distinction. Use exactly `[BIOLOGIC_TAKEN]` when a\nbiologic was taken, `[NOT_MENTIONED]` when biologics never come up, `[NOT_APPLICABLE]` when none\nwas ever prescribed/offered, and `[UNKNOWN]` when one was prescribed but not taken with no\nreason stated.", "enum": ["NOT_MENTIONED", "EXPLICIT_DENIAL", "INSURANCE_PROBLEMS", "COST", "PATIENT_FEARS", "CONTRAINDICATION", "DEFERRED", "UNKNOWN", "BIOLOGIC_TAKEN", "NOT_APPLICABLE", "OTHER"], "title": "ReasonNotTaken", "type": "string"}, "ReasonPrescribed": {"description": "Who/what drove choosing the biologic path \u2014 the initiation signal. Trimmed to what the\ntranscripts support: almost always DOCTOR_CHOICE, rarely PATIENT_REQUEST. Cost / access /\npatient-fears are reasons a biologic is NOT taken (see ReasonNotTaken), not reasons it was\nprescribed; ACCESS in particular had zero transcript support (covered by COST +\nINSURANCE_PROBLEMS), so they were removed.", "enum": ["DOCTOR_CHOICE", "PATIENT_REQUEST", "NOT_APPLICABLE", "OTHER"], "title": "ReasonPrescribed", "type": "string"}, "TreatmentOutcome": {"description": "Overall outcome. `AMBIGUOUS`/`ONGOING` exist because Crohn's journeys are often circular \u2014\nforcing every patient into SUCCESS/FAILED would fabricate a certainty the transcripts lack.", "enum": ["SUCCESS", "FAILED", "PARTIAL", "AMBIGUOUS", "ONGOING", "UNKNOWN"], "title": "TreatmentOutcome", "type": "string"}, "TreatmentRecord": {"description": "One treatment in the patient's history. `biologic_timing` places it relative to the\npatient's first biologic \u2014 the before/after split that answers business Q3 (what is tried\nbefore a biologic). Set by the model, not inferred downstream, because the biologic may not\nappear as a treatment at all (e.g. prescribed-but-not-taken).", "properties": {"name": {"title": "Name", "type": "string"}, "treatment_class": {"title": "Treatment Class", "type": "string"}, "outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "reason_stopped": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Reason Stopped"}, "biologic_timing": {"$ref": "#/$defs/BiologicTiming", "default": "UNKNOWN"}}, "required": ["name", "treatment_class", "outcome"], "title": "TreatmentRecord", "type": "object"}}, "description": "One patient's labels \u2014 the shared shape of the gold annotations (`.ods`) and a model\nprediction from `extract.py`; provenance differs, structure doesn't.\n\nWhen produced by `extract.py` these are the model's **predictions** (inference, not ground\ntruth); evaluation compares them field-by-field against the gold values in\n`data/in/interviews_ground_truth_v7.ods` for the 21-of-50 cases a human annotator has\nreviewed (`to_review == 1`).\n\nField names match the v5 spreadsheet columns 1:1 (see `docs/SCHEMA.md`). Required fields are\nthe ones every transcript can answer; the rest default to `None`/`[]` so a partial extraction\nstill validates.", "properties": {"patient_id": {"title": "Patient Id", "type": "string"}, "churn": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "default": null, "title": "Churn"}, "demographics": {"$ref": "#/$defs/Demographics", "default": {"gender": null, "age": null}}, "biologic_prescribed": {"title": "Biologic Prescribed", "type": "boolean"}, "biologic_taken": {"title": "Biologic Taken", "type": "boolean"}, "biologic_not_mentioned": {"title": "Biologic Not Mentioned", "type": "boolean"}, "biologic_type": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Biologic Type"}, "reasons_for_biologic_prescribed": {"anyOf": [{"$ref": "#/$defs/ReasonPrescribed"}, {"type": "null"}], "default": null}, "reasons_for_biologic_not_taken": {"default": [], "items": {"$ref": "#/$defs/ReasonNotTaken"}, "title": "Reasons For Biologic Not Taken", "type": "array"}, "comorbid_conditions": {"default": [], "items": {"$ref": "#/$defs/ComorbidCondition"}, "title": "Comorbid Conditions", "type": "array"}, "treatment_records": {"default": [], "items": {"$ref": "#/$defs/TreatmentRecord"}, "title": "Treatment Records", "type": "array"}, "treatment_outcome": {"$ref": "#/$defs/TreatmentOutcome"}, "referral_pathway": {"default": [], "items": {"$ref": "#/$defs/PathwayStep"}, "title": "Referral Pathway", "type": "array"}, "evidence_notes": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Evidence Notes"}}, "required": ["patient_id", "biologic_prescribed", "biologic_taken", "biologic_not_mentioned", "treatment_outcome"], "title": "PatientLabels", "type": "object"}
+2026-07-07 19:49:16.599 | INFO     | extract:extract:145 - P000 input: patient_id: P000
+
+I am Alex, 38, male. Diagnosed with Crohns four years ago. After mesalamine and prednisone failed, my gastroenterologist started me on Humira, which I have taken ever since and it keeps me in remission.
+2026-07-07 19:49:19.745 | INFO     | extract:extract:175 - P000 telemetry: model=gemini/gemini-2.5-flash temperature=0 prompt_tokens=1302 completion_tokens=433 total_tokens=1735 cost_usd=0.0014731000000000002
+2026-07-07 19:49:19.745 | INFO     | extract:extract:187 - P000 raw model response: {
+  "patient_id": "P000",
+  "biologic_prescribed": true,
+  "biologic_taken": true,
+  "biologic_not_mentioned": false,
+  "treatment_outcome": "SUCCESS",
+  "biologic_type": "Humira",
+  "churn": false,
+  "comorbid_conditions": [],
+  "demographics": {
+    "age": 38,
+    "gender": "male"
+  },
+  "evidence_notes": "Alex, 38, male, was diagnosed with Crohn's four years ago. Mesalamine and prednisone failed. He was started on Humira, which he has taken ever since and it keeps him in remission.",
+  "reasons_for_biologic_not_taken": [
+    "BIOLOGIC_TAKEN"
+  ],
+  "reasons_for_biologic_prescribed": "DOCTOR_CHOICE",
+  "referral_pathway": [
+    "crohns_diagnosis",
+    "conventional_therapy",
+    "therapy_failed",
+    "conventional_therapy",
+    "therapy_failed",
+    "biologic_taken",
+    "remission"
+  ],
+  "treatment_records": [
+    {
+      "name": "mesalamine",
+      "treatment_class": "5-asa",
+      "outcome": "FAILED",
+      "biologic_timing": "BEFORE"
+    },
+    {
+      "name": "prednisone",
+      "treatment_class": "corticosteroid",
+      "outcome": "FAILED",
+      "biologic_timing": "BEFORE"
+    },
+    {
+      "name": "Humira",
+      "treatment_class": "biologic",
+      "outcome": "SUCCESS",
+      "biologic_timing": "LATER"
+    }
+  ]
+}
+2026-07-07 19:49:19.745 | INFO     | extract:extract:189 - P000 output (validated): {"patient_id":"P000","churn":false,"demographics":{"gender":"male","age":38},"biologic_prescribed":true,"biologic_taken":true,"biologic_not_mentioned":false,"biologic_type":"Humira","reasons_for_biologic_prescribed":"DOCTOR_CHOICE","reasons_for_biologic_not_taken":["BIOLOGIC_TAKEN"],"comorbid_conditions":[],"treatment_records":[{"name":"mesalamine","treatment_class":"5-asa","outcome":"FAILED","reason_stopped":null,"biologic_timing":"BEFORE"},{"name":"prednisone","treatment_class":"corticosteroid","outcome":"FAILED","reason_stopped":null,"biologic_timing":"BEFORE"},{"name":"Humira","treatment_class":"biologic","outcome":"SUCCESS","reason_stopped":null,"biologic_timing":"LATER"}],"treatment_outcome":"SUCCESS","referral_pathway":["crohns_diagnosis","conventional_therapy","therapy_failed","conventional_therapy","therapy_failed","biologic_taken","remission"],"evidence_notes":"Alex, 38, male, was diagnosed with Crohn's four years ago. Mesalamine and prednisone failed. He was started on Humira, which he has taken ever since and it keeps him in remission."}
+2026-07-07 19:49:19.745 | INFO     | extract:extract:193 - extracted P000 (not persisted)

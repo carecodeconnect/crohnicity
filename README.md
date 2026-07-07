@@ -72,6 +72,10 @@ interviews.json  ->  extraction (LiteLLM -> Gemini, structured output)
   author, so the write-up can state where the pipeline is solid and where it is shaky.
 - **Orchestration.** Dagster runs ingest → extract → analysis → reporting as a dependency graph, so a
   failure is pinpointed by stage rather than lost in a monolithic script.
+- **Service.** A FastAPI app ([`app/`](app/)) exposes the same `extract()` as a RESTful endpoint —
+  `POST /extract` structures a single transcript on request (stateless by default), with upstream
+  errors mapped to proper HTTP statuses (429/503/502) and the same action messages the CLI prints.
+  It ships with a Dockerfile for local hosting.
 
 The single source of truth for runtime values (model, paths, decoding params) is
 [`config.json`](config.json); the schema is defined once in [`src/schema.py`](src/schema.py)
@@ -94,6 +98,44 @@ Read as a portfolio piece, the stack is deliberately the shape of an applied **A
 health-tech** role: LLM-based information extraction, prompt design and structured output,
 schema-enforced validation, a real evaluation harness, and a reproducible, orchestrated pipeline —
 the "prompts, evals, and pipelines" core rather than a notebook.
+
+## Software engineering practices
+
+The pipeline is a prototype, but it is built like software rather than a notebook:
+
+- **DRY and SSOT.** Every current value — model, paths, ports, decoding parameters — is stated once
+  ([`config.json`](config.json), [`pyproject.toml`](pyproject.toml), [`src/schema.py`](src/schema.py))
+  and everything else links to it or renders from it; no doc restates a literal that can drift.
+  Changes between runs are history, and go to [CHANGELOG.md](CHANGELOG.md).
+- **KISS.** The smallest change that works, no speculative abstraction: one system prompt rather
+  than a multi-stage pipeline (until the evaluation justifies the extra calls), one config file
+  rather than a settings framework. Where a fancier design was considered and rejected, the docs say
+  so and why.
+- **Modular, clean code.** Library-first `src/` modules: the same typed functions are driven by the
+  CLI, the Dagster assets, the tests, and the Quarto report — no logic trapped in a notebook or
+  copy-pasted between entry points.
+- **Pydantic schema validation.** The schema is defined once and enforced twice: it is sent to
+  Gemini as the response schema with validation enforced (the model cannot return off-schema
+  output), and every persisted record is re-validated when loaded for analysis. Nulls are designed,
+  not accidental — absence, negation, and truncation are distinct states.
+- **Unit testing.** A pytest suite covers the schema, the analysis functions against the gold set,
+  the error-classification logic (401/429/503/schema failures each map to a stated action), and a
+  render check on the generated report; live API tests exist but are gated off by default so the
+  suite runs offline.
+- **Linting and type checking, required rather than optional.** `ruff` (lint + format) and `ty`
+  (types) run with the tests on every change via one gate script
+  ([`tests/type_lint_unit_tests.sh`](tests/type_lint_unit_tests.sh)); a change that fails the gate
+  doesn't land.
+- **Version control discipline.** Small, self-contained, reviewable commits; generated artefacts
+  committed deliberately so the analysis is reproducible from the repo alone; all `git` operations
+  done by hand, not by the AI assistant.
+- **Documentation.** Docstrings render to an API reference site (MkDocs + mkdocstrings), design
+  decisions live in `docs/`, and the report itself is generated from the data so it cannot drift
+  from the pipeline.
+
+I stopped short of **CI/CD** deliberately: this is a prototype, and the quality gate is run manually
+on every change instead. Mirroring the same gate in CI would be the first step if this moved beyond
+a prototype (noted in [docs/TODO.md](docs/TODO.md)).
 
 ## How I worked with AI (a careful, sceptical approach)
 
@@ -134,7 +176,12 @@ setup is in [docs/DEV_SETUP.md](docs/DEV_SETUP.md). The short version:
 ```bash
 uv sync                                      # install the pinned environment
 bash tests/type_lint_unit_tests.sh           # the quality gate: ruff + ty + pytest
-uv run dg dev -m pipeline -d src -p 3050      # Dagster UI -> "Materialize all"
+uv run dg dev -m pipeline -d src -p 3050      # Dagster UI -> "Materialize all" (batch pipeline)
+
+# REST API (single-transcript extraction; port: config.json -> api_port)
+uv run python app/main.py                    # serve locally at http://127.0.0.1:8100
+docker build -t crohnicity-api .             # ...or Dockerised:
+docker run --rm --env-file .env -p 8100:8100 crohnicity-api
 ```
 
 A `GEMINI_API_KEY` in `.env` is required for the extraction step; the analysis and reporting steps
@@ -142,18 +189,23 @@ read only the committed `data/out/` artefacts and make no API calls.
 
 ## Roadmap
 
-The next step is to expose the extractor as a **FastAPI** endpoint, **Dockerised** for local hosting,
-on the same Gemini/LiteLLM infrastructure — turning the batch pipeline into a service that structures
-a single transcript on request.
+The FastAPI service and Dockerfile shipped (see *Usage*): the batch pipeline is now also a **RESTful
+service** that structures a single transcript on request, on the same Gemini/LiteLLM infrastructure.
+Natural next steps, in order: mirror the quality gate in **CI** (the step deliberately skipped at
+prototype stage), slim the Docker image with a dedicated dependency group, and the extraction-quality
+items tracked in [docs/TODO.md](docs/TODO.md) (multi-stage prompts with inspectable intermediates,
+a branded-biologics registry, journey-type clustering).
 
 ## Repository
 
 ```
+app/         FastAPI service (the RESTful front door over src/)
 src/         pipeline modules (schema, extract, config, main, pipeline, EDA, referral analysis)
 tests/       pytest suite + the quality-gate script
 data/        in/ committed input (interviews + gold) - out/ generated artefacts - prompts/
 docs/        SOLUTION (the data-generated write-up), SYSTEM_DESIGN, SCHEMA, and design notes
 config.json  single source of truth for runtime values
+Dockerfile   local hosting for the API service
 ```
 
 Further reading: [docs/SOLUTION.md](docs/SOLUTION.md) (the full solution),

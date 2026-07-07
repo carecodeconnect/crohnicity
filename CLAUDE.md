@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Crohnicity is a health-tech take-home, now a public prototype. The deliverable is a pipeline that ingests patient interview transcripts (`data/in/interviews.json`, 50 Crohn's disease patients) and produces structured output that answers four business questions. The expected artefacts (per `docs/SOLUTION.md`, the data-generated solution write-up) are: the four business answers, a pipeline design write-up, an evaluation section, a churn/limitations discussion, and an AI-usage note. `README.md` is the high-level public overview.
 
-Pipeline code lives in `src/`, with matching `pytest` tests in `tests/`. `notebooks/` are for prototyping and visual inspection — `00_setup.ipynb` records *why* the stack was chosen. Design notes, open questions, and the work backlog live in `docs/` (`SCHEMA.md`, `QUESTIONS.md`, `TODO.md`).
+Pipeline code lives in `src/`, the FastAPI service layer in `app/` (a thin front door over the same `src/` functions), with matching `pytest` tests in `tests/`. `notebooks/` are for prototyping and visual inspection — `00_setup.ipynb` records *why* the stack was chosen. Design notes, open questions, and the work backlog live in `docs/` (`SCHEMA.md`, `QUESTIONS.md`, `TODO.md`).
 
 ## Stack
 
 - **Python 3.14** (pinned in `.python-version`), managed with **uv** (lockfile is `uv.lock`).
 - **LiteLLM** is the LLM gateway to **Gemini**; the working model is the single source of truth in `config.json` (`config.MODEL`, which also resolves the `CROHNICITY_MODEL` env override) — don't hard-code a model name in docs. Authentication is via `GEMINI_API_KEY` loaded from `.env` with `python-dotenv`. *(Model/reasoning changes are recorded in `CHANGELOG.md`.)*
-- **Pydantic** for schemas, **pandas** for tabular work, **Dagster** and **FastAPI** are declared dependencies but not yet wired.
+- **Pydantic** for schemas, **pandas** for tabular work. **Dagster** orchestrates the batch pipeline (`src/pipeline.py`); **FastAPI** serves the single-transcript REST API (`app/main.py`, port from `config.json` → `api_port`), Dockerised via the root `Dockerfile`.
 - Lint/type/test toolchain is deliberately Rust-based: **ruff**, **ty**, **pytest**. Prefer these over Black/mypy.
 
 `requirements.txt` is a uv export (with hashes) kept for the reviewer's build — regenerate it after changing dependencies; don't hand-edit.
@@ -49,6 +49,10 @@ uv run ty check                     # type-check
 # run the pipeline
 uv run jupyter lab                  # extraction / EDA notebooks (current driver)
 uv run python src/referral_pathway_analysis.py   # phase/transition tables + journey graphs
+
+# run the REST API (port: config.json -> api_port)
+uv run python app/main.py           # serve locally
+docker build -t crohnicity-api . && docker run --rm --env-file .env -p 8100:8100 crohnicity-api
 
 # serve / build the MkDocs API docs locally (site/ is gitignored)
 uv run mkdocs serve                 # live preview at http://127.0.0.1:8000

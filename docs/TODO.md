@@ -27,6 +27,56 @@ enters `gold_eval`: the reviewed set goes **21 → 22** and the eval **n goes 20
 the `test_gold_eval_matches_documented_metrics` assertion (verified via the gold/eval audit). Flagged
 here, not changed silently.
 
+## FastAPI service + Docker (shipped 2026-07-07 — v0.2.0)
+
+Turn the batch pipeline into a small **RESTful service, Dockerised for local hosting**, on the same
+Gemini/LiteLLM infrastructure. The pipeline stays **library-first**: the API is a thin new front
+door over `extract()`, exactly like the CLI and the Dagster assets — no logic moves.
+**Done — all items below verified live** (offline contract tests + a real Gemini extraction through
+the running container, `HEALTHCHECK` = healthy). See `CHANGELOG.md` → 0.2.0.
+
+- [x] **Service package `app/`** — the FastAPI app lives in its own top-level `app/` directory
+  (`app/main.py` → `uvicorn app.main:app`, the conventional FastAPI layout), keeping the *service
+  layer* separate from the *pipeline library*; it imports `extract()`/`schema` from `src/` with the
+  same `sys.path` pattern `src/pipeline.py` already uses. FastAPI is already a declared dependency:
+  - `POST /extract` — request body is the existing `Interview` model (`patient_id`,
+    `interview_transcript`); response is the validated `PatientLabels` JSON. Plain `def` endpoint
+    (the litellm call is sync; FastAPI runs it in its threadpool — no async rewrite, KISS).
+  - `GET /health` — liveness for the Docker `HEALTHCHECK`; returns `config.APP_VERSION` +
+    `config.MODEL`.
+  - `GET /schema` — returns `PatientLabels.model_json_schema()` so clients can validate without
+    reading the repo.
+  - **Error mapping reuses the `give_up_reason()` taxonomy** (the stop-vs-retry decision stays in
+    one place): `AuthenticationError` → **500** (server misconfig — the key, not the client),
+    `RateLimitError` → **429**, `ServiceUnavailableError` → **503**, `JSONSchemaValidationError` →
+    **502** (upstream returned invalid output). The response detail is `give_up_reason(e)` — the
+    same action-oriented message the CLI prints. Malformed request bodies are FastAPI/Pydantic's
+    **422** for free.
+  - **Stateless by default** — does not write `data/out/`; an explicit `?persist=true` opts in via
+    the existing `save()`.
+- [x] **Config SSOT**: add `api_port` to `config.json` (joins `dagster_port`/`docsite_port`); add
+  the `uvicorn` dependency (`fastapi` is declared but `uvicorn` is not) and regenerate
+  `requirements.txt` via `uv export`. Extend the quality gate's scope (`ruff` / `ty` / `pytest` in
+  `tests/type_lint_unit_tests.sh`) to cover `app/` alongside `src` and `tests`.
+- [x] **Tests first, offline by default** (mirrors the existing pattern): FastAPI `TestClient` with
+  `extract` monkeypatched to a fixture `PatientLabels` — asserts the 200 shape, the 422 on a bad
+  body, and one test per error-class → status-code mapping; plus a live smoke test gated by
+  `RUN_LIVE_TESTS` like `tests/test_extract.py`.
+- [x] **Dockerfile — smallest thing that works**: `python:3.14-slim` + `uv` (copied from the
+  official uv image), `uv sync --frozen --no-dev`, copy only what the service needs (`app/`, `src/`,
+  `config.json`, `data/prompts/`); `GEMINI_API_KEY` injected at **runtime** (`--env-file .env`),
+  never baked into the image; `EXPOSE` the `api_port`; `CMD` uvicorn; `HEALTHCHECK` on `/health`.
+  Plus a `.dockerignore` (`.venv`, `.git`, `data/out`, `site`, `logs`, `notebooks`, `docs`).
+- [x] **Verify end-to-end**: gate green; `docker build` + `docker run --env-file .env -p <port>`;
+  `curl /health` → 200; `curl -X POST /extract` with the synthetic transcript from
+  `tests/test_extract.py` → a valid `PatientLabels`.
+- [x] **Docs sweep once it works**: README (Usage + Roadmap), `SYSTEM_DESIGN.qmd` diagram (a fourth
+  entry point beside the CLI / Dagster / gate), CLAUDE.md commands, `CHANGELOG.md` entry.
+
+**Out of scope for the prototype** (deliberate): auth on the endpoint, rate-limit middleware,
+CI/CD, and container orchestration (a single container needs no compose file). Dagster remains the
+batch entry point; the API serves the single-transcript case.
+
 ## Prompt — cover every field (next task)
 
 - [x] **Build up the single system prompt** (`data/prompts/system.txt`) with explicit guidance for
@@ -269,6 +319,10 @@ scaling EDA**.
   Dagster asset graph) are fixed.
 
 ## Packaging — Docker
+
+> Superseded by the fuller plan in **"Next up — FastAPI service + Docker (planned)"** at the top of
+> this file — the image is now scoped to the API service (the smallest useful unit) rather than the
+> whole batch pipeline; the original intent (runs-on-any-machine reproducibility) carries over.
 
 - [ ] After the `src/` refactor, add the **simplest possible Dockerfile** producing the **smallest
   image** for this use case (e.g. `python:3.14-slim` + `uv sync --frozen`), so the whole pipeline can

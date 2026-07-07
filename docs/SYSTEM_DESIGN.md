@@ -26,6 +26,7 @@ flowchart TB
     subgraph entry["Entry points — all call the same src/ functions (library-first, not nested)"]
         dgr["Dagster · uv run dg dev -m pipeline -d src -p 3050<br/>day-of orchestrator; per-asset status in the UI"]
         cli["CLI · uv run python src/main.py<br/>extraction, standalone"]
+        api["API · uv run python app/main.py<br/>REST front door (app/) · Dockerised · stateless"]
         gate["Gate · bash tests/type_lint_unit_tests.sh<br/>ruff · ruff format · ty · pytest"]
     end
 
@@ -48,9 +49,11 @@ flowchart TB
 
     cfg --> dgr
     cfg --> cli
+    cfg --> api
     cfg --> gate
     dgr --> interviews
     cli -. same src/ funcs .-> predictions
+    api -. extract() per request .-> gemini
     indata --> interviews
     predictions --> gemini
     predictions --> outjson
@@ -62,11 +65,13 @@ flowchart TB
     docsite --> arte
 ```
 
-**Library-first — why both frontends agree.** Each Dagster asset *wraps*
+**Library-first — why all frontends agree.** Each Dagster asset *wraps*
 a `src/` function (`interviews` → `load_interviews`, `predictions` →
 `run_chunked`, `referral_graphs` → `rpa.main`); it does **not** shell
 out to the CLI. So the identical code path runs whether you launch the
-whole graph in Dagster or one part from `uv run python src/main.py`.
+whole graph in Dagster, one part from `uv run python src/main.py`, or a
+single transcript through the FastAPI service (`app/main.py` imports the
+same `extract()`; stateless per request unless `?persist=true`).
 (`solution`, `referral_pathways_md` and `docsite` *do* subprocess out —
 but to the external `quarto` / `mkdocs` tools, not to our own scripts.
 `docsite` depends on `referral_pathways_md` so the journey gallery is

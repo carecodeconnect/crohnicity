@@ -7,6 +7,27 @@ Notable changes to the Crohnicity **pipeline**, for vetting across runs.
 > *changes* over time (naming old→new is correct here: it's history, not a live pointer).
 > **Schema-vocabulary** history lives in [`docs/SCHEMA.md`](docs/SCHEMA.md#changelog).
 
+## [0.2.0] — 2026-07-07
+
+### FastAPI service + Docker (the RESTful upgrade)
+- **New `app/` service layer** (`app/main.py`): `POST /extract` structures one transcript into a
+  validated `PatientLabels` (stateless by default; `?persist=true` writes `data/out/json` like a
+  batch run), `GET /health` (version + model), `GET /schema` (the PatientLabels JSON schema).
+  Library-first: the endpoint calls the same `extract()` the CLI and Dagster drive.
+- **Error contract reuses `give_up_reason()`**: 401 → HTTP 500 (server misconfig), 429 → 429,
+  503 → 503, connection/schema-invalid output → 502 — the response detail is the same action
+  message the CLI prints.
+- **`extract()` gained a stateless mode** (`out_dir=None` skips persisting); batch callers are
+  unchanged.
+- **Dockerfile + .dockerignore** for local hosting (`python:3.14-slim` + `uv sync --frozen
+  --no-dev`; `GEMINI_API_KEY` injected at runtime, never baked; `HEALTHCHECK` on `/health`).
+- **Config/gate**: `api_port` added to `config.json` (SSOT); `uvicorn` dependency added +
+  `requirements.txt` re-exported; the quality gate now lints/type-checks/tests `app/` too
+  (10 new offline contract tests via FastAPI `TestClient`).
+- **401 handling hardened** (from the run-failure diagnosis that preceded this): 
+  `AuthenticationError` joined `HANDLED` + `give_up_reason` — an invalid `GEMINI_API_KEY` now fails
+  fast with the fix stated, instead of a traceback dump.
+
 ## [0.1.0] — 2026-06-29
 
 ### Model & inference

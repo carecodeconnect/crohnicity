@@ -39,6 +39,9 @@ DAGSTER_PORT: int = _CFG[
 DOCSITE_PORT: int = _CFG[
     "docsite_port"
 ]  # MkDocs preview port (passed to `mkdocs serve -a`; see DEV_SETUP)
+API_PORT: int = _CFG[
+    "api_port"
+]  # FastAPI service port (app/main.py; EXPOSEd by the Dockerfile)
 CHUNK_SIZE: int = _CFG[
     "chunk_size"
 ]  # transcripts per Gemini call (free-tier RPD workaround)

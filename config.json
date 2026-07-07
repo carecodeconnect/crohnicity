@@ -12,6 +12,7 @@
   "log_dir": "logs",
   "dagster_port": 3050,
   "docsite_port": 8000,
+  "api_port": 8100,
   "chunk_size": 10,
   "retry_503_max": 4,
   "retry_503_delay_s": 60,

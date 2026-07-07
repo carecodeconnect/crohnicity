@@ -130,9 +130,15 @@ def give_up_reason(e: Exception) -> str:
 # Log unexpected failures (traceback) + re-raise; retryable API errors handled below.
 @logger.catch(exclude=HANDLED, reraise=True)
 def extract(
-    transcript: str, patient_id: str, out_dir: Path = JSON_DIR, model: str = MODEL
+    transcript: str,
+    patient_id: str,
+    out_dir: Path | None = JSON_DIR,
+    model: str = MODEL,
 ) -> PatientLabels:
-    """Extract one patient's labels from their interview transcript via Gemini (a prediction)."""
+    """Extract one patient's labels from their interview transcript via Gemini (a prediction).
+
+    ``out_dir=None`` skips persisting — the stateless mode the FastAPI service (``app/``) defaults
+    to; batch callers keep the default ``JSON_DIR`` write."""
     load_dotenv()  # GEMINI_API_KEY -> env; litellm reads it for the gemini/ provider
     _log_request_config()  # once per run: the system prompt + schema sent to the model
     user_message = f"patient_id: {patient_id}\n\n{transcript}"
@@ -180,9 +186,13 @@ def extract(
     raw = response.choices[0].message.content
     logger.info("{} raw model response: {}", patient_id, raw)
     labels = PatientLabels.model_validate_json(raw)
-    path = save(labels, out_dir)
     logger.info("{} output (validated): {}", patient_id, labels.model_dump_json())
-    logger.info("extracted {} -> {}", patient_id, path)
+    if (
+        out_dir is None
+    ):  # stateless mode (the API's default) — validated, returned, not persisted
+        logger.info("extracted {} (not persisted)", patient_id)
+    else:
+        logger.info("extracted {} -> {}", patient_id, save(labels, out_dir))
     return labels
 
 

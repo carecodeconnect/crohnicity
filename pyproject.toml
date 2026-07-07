@@ -1,6 +1,6 @@
 [project]
 name = "crohnicity"
-version = "0.1.0"
+version = "0.2.0"
 description = "LLM extraction pipeline turning Crohn's patient interview transcripts into structured, evaluated records (health-tech prototype)."
 readme = "README.md"
 requires-python = ">=3.14"
@@ -35,13 +35,14 @@ dependencies = [
     "ruff>=0.15.17",
     "tabulate>=0.10.0",
     "ty>=0.0.49",
+    "uvicorn>=0.49.0",
     "wordcloud>=1.9.6",
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "."]  # src for the library; "." so tests import the app/ service package
 # coverage metric on every gate run (measure, don't gate on a threshold — MVP)
-addopts = "--cov=src --cov-report=term-missing"
+addopts = "--cov=src --cov=app --cov-report=term-missing"
 # Only collect tests/ — keeps the jupytext notebook mirrors in notebooks/ (e.g.
 # 03_extraction_test.py, which matches *_test.py) out of test discovery.
 testpaths = ["tests"]

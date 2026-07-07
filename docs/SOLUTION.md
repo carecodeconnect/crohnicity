@@ -11,7 +11,7 @@ health-tech AI companion records each patient’s treatment journey
 **longitudinally over time**, so the temporal axis is central to the
 data.
 
-*Pipeline version `0.1.0` · extraction model `gemini/gemini-2.5-flash` ·
+*Pipeline version `0.2.0` · extraction model `gemini/gemini-2.5-flash` ·
 gold `interviews_ground_truth_v7.ods` — rendered from `config.json` /
 `pyproject.toml`, so this line always names the model this build used
 (`config.MODEL` resolves the `CROHNICITY_MODEL` env override; the model

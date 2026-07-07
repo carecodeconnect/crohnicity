@@ -1,0 +1,17 @@
+# Build context = only what the Dockerfile COPYs (deps manifest, config, prompt, src/, app/).
+# Everything below is either secret, generated, or irrelevant to the API image.
+.env
+.git/
+.venv/
+.dagster_home/
+.claude/
+data/out/
+data/in/
+docs/
+logs/
+notebooks/
+sandbox/
+site/
+tests/
+*.md
+*.html
